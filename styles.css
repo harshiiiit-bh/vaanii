@@ -298,6 +298,9 @@ main{max-width:1600px;margin:0 auto;padding:var(--space-6) var(--container-pad) 
 .tab-btn.active{color:var(--gold);border-color:var(--gold)}
 .tab-pane{display:none}.tab-pane.active{display:block;animation:fadeUp .35s}
 .explain-block{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:24px;line-height:1.85;font-size:.95rem;margin-bottom:18px}
+.pv-passage{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:16px;max-height:260px;overflow-y:auto}
+.pv-passage-label{font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;color:var(--gold-d);text-transform:uppercase;margin-bottom:8px}
+.pv-passage-text{font-size:.9rem;line-height:1.75;color:var(--text);white-space:pre-wrap}
 .explain-block p{margin-bottom:12px;color:var(--text)}
 .explain-block ul{margin:10px 0 10px 20px}
 .explain-block li{margin-bottom:6px;color:var(--text)}

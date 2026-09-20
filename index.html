@@ -2660,6 +2660,7 @@ function pvSessionHTML(){
         ${q.diff?`<span class="pyq-chip diff-${q.diff}">${q.diff}</span>`:''}
         <button class="bm-star ${bookmarked?'active':''}" onclick="toggleBookmark('${bmId}', this)" title="Bookmark" style="margin-left:auto">★</button>
       </div>
+      ${q.passage ? `<div class="pv-passage"><div class="pv-passage-label">Passage</div><div class="pv-passage-text">${escapeHtmlVaani(q.passage)}</div></div>` : ''}
       <div class="pv-qtext">${pyqHi(q)}</div>
       <div class="pv-options">${optsHTML}</div>
       ${feedbackHTML}
@@ -4125,7 +4126,9 @@ function renderReviewCard(){
     const q = PYQ_BY_ID[item.ref];
     if(!q){ reviewAdvance(); return; }
     front.onclick = back.onclick = null;
-    front.innerHTML = `<div class="review-kind-tag">PYQ · ${escapeHtmlVaani(q.sec||'')}</div><div class="review-q">${q.q}</div>
+    front.innerHTML = `<div class="review-kind-tag">PYQ · ${escapeHtmlVaani(q.sec||'')}</div>
+      ${q.passage ? `<div class="pv-passage"><div class="pv-passage-label">Passage</div><div class="pv-passage-text">${escapeHtmlVaani(q.passage)}</div></div>` : ''}
+      <div class="review-q">${q.q}</div>
       <div class="review-opts">${q.o.map((o,i)=>`<button class="opt-btn" onclick="reviewAnswerPyq(${i})">${o}</button>`).join('')}</div>`;
     back.innerHTML = '';
     actions.innerHTML = '';
