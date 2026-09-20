@@ -1,58 +1,320 @@
-/* VAANI PYQ paper — NDA II 2011.
-   One file per paper. To add a new paper, copy this file, rename it,
-   fill in the questions (every question needs y/s/n/sec/q/o/ans), and
-   add a <script src="data/pyq/2011-II.js"></script> tag in index.html
-   next to the others. It will be picked up automatically — nothing else
-   in index.html needs to change. */
 var PYQ_2011_II = [
-{y:2011,s:"II",n:1,sec:"Spotting Errors",sub:"Spotting Errors",q:"It was really smart of him (a) | to have chosen the right course, (b) | is n't it ? (c) | No error (d)",o:["It was really smart of him", "to have chosen the right course,", "is n't it ?", "No error"],ans:2,exp:"The main clause is affirmative ('It was really smart'), so the tag question must be negative and in the same (past) tense — 'wasn't it?', not 'is n't it?'.",diff:"Medium",rule:"Concept tested: locating the single flawed segment among three underlined parts — the error is always grammatical (agreement, tense, article, preposition, parallelism), never a matter of style.",shortcut:"Shortcut: check the segments in this order — subject-verb agreement, tense consistency, article/preposition choice, then parallel structure. Most NDA spotting-error traps fall into one of these four buckets.",lessonType:"grammar",lessonId:"tenses",keyword:null,tags:["Spotting Errors"]},
-{y:2011,s:"II",n:2,sec:"Spotting Errors",sub:"Spotting Errors",q:"The doctor advised me (a) | that I am going on a salt free diet. (b) |  (c) | No error (d)",o:["The doctor advised me", "that I am going on a salt free diet.", "", "No error"],ans:2,exp:"In reported speech introduced by a past-tense verb ('advised'), the reported clause should also shift to past tense — 'that I was going on a salt free diet.'",diff:"Medium",rule:"Concept tested: locating the single flawed segment among three underlined parts — the error is always grammatical (agreement, tense, article, preposition, parallelism), never a matter of style.",shortcut:"Shortcut: check the segments in this order — subject-verb agreement, tense consistency, article/preposition choice, then parallel structure. Most NDA spotting-error traps fall into one of these four buckets.",lessonType:"grammar",lessonId:"tenses",keyword:null,tags:["Spotting Errors"]},
-{y:2011,s:"II",n:3,sec:"Spotting Errors",sub:"Spotting Errors",q:"It can't be true (a) | that he has never done something wrong (b) | in his entire career. (c) | No error (d)",o:["It can't be true", "that he has never done something wrong", "in his entire career.", "No error"],ans:1,exp:"In a negative context ('never'), the indefinite pronoun should be 'anything', not 'something' — negative concord requires 'has never done anything wrong'.",diff:"Medium",rule:"Concept tested: locating the single flawed segment among three underlined parts — the error is always grammatical (agreement, tense, article, preposition, parallelism), never a matter of style.",shortcut:"Shortcut: check the segments in this order — subject-verb agreement, tense consistency, article/preposition choice, then parallel structure. Most NDA spotting-error traps fall into one of these four buckets.",lessonType:"grammar",lessonId:"conjunction",keyword:null,tags:["Spotting Errors"]},
-{y:2011,s:"II",n:4,sec:"Spotting Errors",sub:"Spotting Errors",q:"He told (a) | that his brother (b) | was singer. (c) | No error (d)",o:["He told", "that his brother", "was singer.", "No error"],ans:2,exp:"The singular countable noun 'singer' needs an indefinite article — it should read 'was a singer.'",diff:"Easy",rule:"Concept tested: locating the single flawed segment among three underlined parts — the error is always grammatical (agreement, tense, article, preposition, parallelism), never a matter of style.",shortcut:"Shortcut: check the segments in this order — subject-verb agreement, tense consistency, article/preposition choice, then parallel structure. Most NDA spotting-error traps fall into one of these four buckets.",lessonType:"grammar",lessonId:"articles",keyword:null,tags:["Spotting Errors"]},
-{y:2011,s:"II",n:5,sec:"Spotting Errors",sub:"Spotting Errors",q:"When we reached at the station (a) | I fought my way through people and luggage (b) | and secured a place next to the window. (c) | No error (d)",o:["When we reached at the station", "I fought my way through people and luggage", "and secured a place next to the window.", "No error"],ans:0,exp:"'Reach' is a transitive verb and takes a direct object without a preposition — it should be 'reached the station', not 'reached at the station.'",diff:"Medium",rule:"Concept tested: locating the single flawed segment among three underlined parts — the error is always grammatical (agreement, tense, article, preposition, parallelism), never a matter of style.",shortcut:"Shortcut: check the segments in this order — subject-verb agreement, tense consistency, article/preposition choice, then parallel structure. Most NDA spotting-error traps fall into one of these four buckets.",lessonType:"grammar",lessonId:"preposition",keyword:null,tags:["Spotting Errors"]},
-{y:2011,s:"II",n:6,sec:"Spotting Errors",sub:"Spotting Errors",q:"The managing director along with his staff members were present (a) | for (b) | the annual general body meeting. (c) | No error (d)",o:["The managing director along with his staff members were present", "for", "the annual general body meeting.", "No error"],ans:0,exp:"A phrase joined by 'along with' does not make the subject plural; the verb must agree with the singular head noun 'director', so it should be 'was present', not 'were present'.",diff:"Medium",rule:"Concept tested: locating the single flawed segment among three underlined parts — the error is always grammatical (agreement, tense, article, preposition, parallelism), never a matter of style.",shortcut:"Shortcut: check the segments in this order — subject-verb agreement, tense consistency, article/preposition choice, then parallel structure. Most NDA spotting-error traps fall into one of these four buckets.",lessonType:"grammar",lessonId:"subject-verb-agreement",keyword:null,tags:["Spotting Errors"]},
-{y:2011,s:"II",n:7,sec:"Spotting Errors",sub:"Spotting Errors",q:"If you will follow my instructions, (a) | you will definitely score high marks (b) | in the entrance examination. (c) | No error (d)",o:["If you will follow my instructions,", "you will definitely score high marks", "in the entrance examination.", "No error"],ans:0,exp:"A conditional 'if'-clause describing a future possibility uses the simple present, not 'will' — it should be 'If you follow my instructions'.",diff:"Medium",rule:"Concept tested: locating the single flawed segment among three underlined parts — the error is always grammatical (agreement, tense, article, preposition, parallelism), never a matter of style.",shortcut:"Shortcut: check the segments in this order — subject-verb agreement, tense consistency, article/preposition choice, then parallel structure. Most NDA spotting-error traps fall into one of these four buckets.",lessonType:"grammar",lessonId:"conditionals",keyword:null,tags:["Spotting Errors"]},
-{y:2011,s:"II",n:8,sec:"Spotting Errors",sub:"Spotting Errors",q:"In many respects, (a) | India is different (b) | than western countries. (c) | No error (d)",o:["In many respects,", "India is different", "than western countries.", "No error"],ans:2,exp:"The correct idiomatic collocation is 'different from', not 'different than' — it should read 'different from western countries.'",diff:"Medium",rule:"Concept tested: locating the single flawed segment among three underlined parts — the error is always grammatical (agreement, tense, article, preposition, parallelism), never a matter of style.",shortcut:"Shortcut: check the segments in this order — subject-verb agreement, tense consistency, article/preposition choice, then parallel structure. Most NDA spotting-error traps fall into one of these four buckets.",lessonType:"grammar",lessonId:"preposition",keyword:null,tags:["Spotting Errors"]},
-{y:2011,s:"II",n:9,sec:"Spotting Errors",sub:"Spotting Errors",q:"The members of the family (a) | soon became (b) | aware what had taken place. (c) | No error (d)",o:["The members of the family", "soon became", "aware what had taken place.", "No error"],ans:2,exp:"'Aware' is followed by the preposition 'of' before a noun clause — it should be 'aware of what had taken place.'",diff:"Medium",rule:"Concept tested: locating the single flawed segment among three underlined parts — the error is always grammatical (agreement, tense, article, preposition, parallelism), never a matter of style.",shortcut:"Shortcut: check the segments in this order — subject-verb agreement, tense consistency, article/preposition choice, then parallel structure. Most NDA spotting-error traps fall into one of these four buckets.",lessonType:"grammar",lessonId:"preposition",keyword:null,tags:["Spotting Errors"]},
-{y:2011,s:"II",n:10,sec:"Spotting Errors",sub:"Spotting Errors",q:"I have met him (a) | on Monday last (b) | and had a long discussion. (c) | No error (d)",o:["I have met him", "on Monday last", "and had a long discussion.", "No error"],ans:0,exp:"A definite past time reference ('Monday last') requires the simple past tense, not the present perfect — it should be 'I met him', not 'I have met him.'",diff:"Medium",rule:"Concept tested: locating the single flawed segment among three underlined parts — the error is always grammatical (agreement, tense, article, preposition, parallelism), never a matter of style.",shortcut:"Shortcut: check the segments in this order — subject-verb agreement, tense consistency, article/preposition choice, then parallel structure. Most NDA spotting-error traps fall into one of these four buckets.",lessonType:"grammar",lessonId:"tenses",keyword:null,tags:["Spotting Errors"]},
-{y:2011,s:"II",n:11,sec:"Spotting Errors",sub:"Spotting Errors",q:"It is time (a) | we decide not to play cricket, (b) | for the next two years. (c) | No error (d)",o:["It is time", "we decide not to play cricket,", "for the next two years.", "No error"],ans:1,exp:"After the fixed expression 'It is time', the following verb must be in the past subjunctive form — it should be 'we decided', not 'we decide'.",diff:"Hard",rule:"Concept tested: locating the single flawed segment among three underlined parts — the error is always grammatical (agreement, tense, article, preposition, parallelism), never a matter of style.",shortcut:"Shortcut: check the segments in this order — subject-verb agreement, tense consistency, article/preposition choice, then parallel structure. Most NDA spotting-error traps fall into one of these four buckets.",lessonType:"grammar",lessonId:"tenses",keyword:null,tags:["Spotting Errors"]},
-{y:2011,s:"II",n:12,sec:"Spotting Errors",sub:"Spotting Errors",q:"He likes (a) | the sceneries (b) | of the hills. (c) | No error (d)",o:["He likes", "the sceneries", "of the hills.", "No error"],ans:1,exp:"'Scenery' is an uncountable noun and has no plural form — it should simply be 'the scenery of the hills.'",diff:"Easy",rule:"Concept tested: locating the single flawed segment among three underlined parts — the error is always grammatical (agreement, tense, article, preposition, parallelism), never a matter of style.",shortcut:"Shortcut: check the segments in this order — subject-verb agreement, tense consistency, article/preposition choice, then parallel structure. Most NDA spotting-error traps fall into one of these four buckets.",lessonType:"grammar",lessonId:"articles",keyword:null,tags:["Spotting Errors"]},
-{y:2011,s:"II",n:13,sec:"Spotting Errors",sub:"Spotting Errors",q:"I did not know (a) | that you have left your handbag in our office (b) | when you came to see me last Friday. (c) | No error (d)",o:["I did not know", "that you have left your handbag in our office", "when you came to see me last Friday.", "No error"],ans:1,exp:"Since the leaving of the handbag happened before another past action ('came to see me'), the past perfect is required — 'that you had left your handbag', not 'have left'.",diff:"Medium",rule:"Concept tested: locating the single flawed segment among three underlined parts — the error is always grammatical (agreement, tense, article, preposition, parallelism), never a matter of style.",shortcut:"Shortcut: check the segments in this order — subject-verb agreement, tense consistency, article/preposition choice, then parallel structure. Most NDA spotting-error traps fall into one of these four buckets.",lessonType:"grammar",lessonId:"tenses",keyword:null,tags:["Spotting Errors"]},
-{y:2011,s:"II",n:14,sec:"Spotting Errors",sub:"Spotting Errors",q:"He wanted me (a) | to bring two breads and some butter (b) | for breakfast. (c) | No error (d)",o:["He wanted me", "to bring two breads and some butter", "for breakfast.", "No error"],ans:1,exp:"'Bread' is an uncountable noun; to indicate units it must be 'two loaves of bread', not 'two breads'.",diff:"Easy",rule:"Concept tested: locating the single flawed segment among three underlined parts — the error is always grammatical (agreement, tense, article, preposition, parallelism), never a matter of style.",shortcut:"Shortcut: check the segments in this order — subject-verb agreement, tense consistency, article/preposition choice, then parallel structure. Most NDA spotting-error traps fall into one of these four buckets.",lessonType:"grammar",lessonId:"articles",keyword:null,tags:["Spotting Errors"]},
-{y:2011,s:"II",n:15,sec:"Spotting Errors",sub:"Spotting Errors",q:"The parents are happy to know (a) | that a number of summer programmes have been arranged (b) | for the benefit of their children. (c) | No error (d)",o:["The parents are happy to know", "that a number of summer programmes have been arranged", "for the benefit of their children.", "No error"],ans:1,exp:"The official key marks the error here; a stricter reading treats 'a number of' as denoting a single overall quantity in this context, calling for 'has been arranged' rather than 'have been arranged'.",diff:"Hard",rule:"Concept tested: locating the single flawed segment among three underlined parts — the error is always grammatical (agreement, tense, article, preposition, parallelism), never a matter of style.",shortcut:"Shortcut: check the segments in this order — subject-verb agreement, tense consistency, article/preposition choice, then parallel structure. Most NDA spotting-error traps fall into one of these four buckets.",lessonType:"grammar",lessonId:"subject-verb-agreement",keyword:null,tags:["Spotting Errors"]},
-{y:2011,s:"II",n:16,sec:"Vocabulary",sub:"Synonyms",q:"GRADIENT",o:["road with sharp bends", "bumpy, uneven path", "slope or incline", "mountainous area"],ans:2,exp:"'Gradient' means the degree of slope or incline of a road or path.",diff:"Medium",rule:"Concept tested: word meaning (denotation) — find the option that preserves the underlined word's core sense, not just a loosely related idea.",shortcut:"Shortcut: cover the options, silently supply your own one-word meaning for the underlined word first, then match — this stops near-meaning distractors from pulling you off track.",lessonType:"vocab",lessonId:null,keyword:"gradient",tags:["Vocabulary", "Synonyms"]},
-{y:2011,s:"II",n:17,sec:"Vocabulary",sub:"Synonyms",q:"DEPLORABLE",o:["hateful", "regrettable", "undesirable", "unpleasant"],ans:1,exp:"'Deplorable' means deserving strong condemnation or regret — closest to 'regrettable'.",diff:"Medium",rule:"Concept tested: word meaning (denotation) — find the option that preserves the underlined word's core sense, not just a loosely related idea.",shortcut:"Shortcut: cover the options, silently supply your own one-word meaning for the underlined word first, then match — this stops near-meaning distractors from pulling you off track.",lessonType:"vocab",lessonId:null,keyword:"deplorable",tags:["Vocabulary", "Synonyms"]},
-{y:2011,s:"II",n:18,sec:"Vocabulary",sub:"Synonyms",q:"PROSCRIBE",o:["rusticate", "excommunicate", "ban", "outlaw"],ans:2,exp:"'Proscribe' means to forbid or condemn officially — closest match is 'ban'.",diff:"Medium",rule:"Concept tested: word meaning (denotation) — find the option that preserves the underlined word's core sense, not just a loosely related idea.",shortcut:"Shortcut: cover the options, silently supply your own one-word meaning for the underlined word first, then match — this stops near-meaning distractors from pulling you off track.",lessonType:"vocab",lessonId:null,keyword:"proscribe",tags:["Vocabulary", "Synonyms"]},
-{y:2011,s:"II",n:19,sec:"Vocabulary",sub:"Synonyms",q:"DORMANT",o:["cold", "inactive", "dangerous", "old"],ans:1,exp:"'Dormant' means temporarily inactive — matching 'inactive'.",diff:"Easy",rule:"Concept tested: word meaning (denotation) — find the option that preserves the underlined word's core sense, not just a loosely related idea.",shortcut:"Shortcut: cover the options, silently supply your own one-word meaning for the underlined word first, then match — this stops near-meaning distractors from pulling you off track.",lessonType:"vocab",lessonId:null,keyword:"dormant",tags:["Vocabulary", "Synonyms"]},
-{y:2011,s:"II",n:20,sec:"Vocabulary",sub:"Synonyms",q:"EQUIVOCATES",o:["deceives others", "tells lies", "gives misleading statements", "flatters"],ans:2,exp:"'Equivocates' means to use ambiguous language to conceal the truth — closest to 'gives misleading statements'.",diff:"Hard",rule:"Concept tested: word meaning (denotation) — find the option that preserves the underlined word's core sense, not just a loosely related idea.",shortcut:"Shortcut: cover the options, silently supply your own one-word meaning for the underlined word first, then match — this stops near-meaning distractors from pulling you off track.",lessonType:"vocab",lessonId:null,keyword:"equivocates",tags:["Vocabulary", "Synonyms"]},
-{y:2011,s:"II",n:21,sec:"Vocabulary",sub:"Synonyms",q:"MENDACIOUS",o:["mischievous", "truthful", "provocative", "false"],ans:3,exp:"'Mendacious' means untruthful or lying — matching 'false'.",diff:"Medium",rule:"Concept tested: word meaning (denotation) — find the option that preserves the underlined word's core sense, not just a loosely related idea.",shortcut:"Shortcut: cover the options, silently supply your own one-word meaning for the underlined word first, then match — this stops near-meaning distractors from pulling you off track.",lessonType:"vocab",lessonId:null,keyword:"mendacious",tags:["Vocabulary", "Synonyms"]},
-{y:2011,s:"II",n:22,sec:"Vocabulary",sub:"Synonyms",q:"BENEDICTION",o:["good wishes", "blessings", "punishment", "appreciation"],ans:1,exp:"'Benediction' means a spoken blessing, especially at the end of a religious service.",diff:"Easy",rule:"Concept tested: word meaning (denotation) — find the option that preserves the underlined word's core sense, not just a loosely related idea.",shortcut:"Shortcut: cover the options, silently supply your own one-word meaning for the underlined word first, then match — this stops near-meaning distractors from pulling you off track.",lessonType:"vocab",lessonId:null,keyword:"benediction",tags:["Vocabulary", "Synonyms"]},
-{y:2011,s:"II",n:23,sec:"Vocabulary",sub:"Synonyms",q:"INNOCUOUS",o:["useful", "injurious", "causing no harm", "bad"],ans:2,exp:"'Innocuous' means not harmful or offensive — matching 'causing no harm'.",diff:"Easy",rule:"Concept tested: word meaning (denotation) — find the option that preserves the underlined word's core sense, not just a loosely related idea.",shortcut:"Shortcut: cover the options, silently supply your own one-word meaning for the underlined word first, then match — this stops near-meaning distractors from pulling you off track.",lessonType:"vocab",lessonId:null,keyword:"innocuous",tags:["Vocabulary", "Synonyms"]},
-{y:2011,s:"II",n:24,sec:"Vocabulary",sub:"Synonyms",q:"INVEIGHED",o:["criticized", "rebuked", "disliked", "appreciated"],ans:0,exp:"'Inveighed against' means spoke or wrote with strong hostility — matching 'criticized'.",diff:"Hard",rule:"Concept tested: word meaning (denotation) — find the option that preserves the underlined word's core sense, not just a loosely related idea.",shortcut:"Shortcut: cover the options, silently supply your own one-word meaning for the underlined word first, then match — this stops near-meaning distractors from pulling you off track.",lessonType:"vocab",lessonId:null,keyword:"inveighed",tags:["Vocabulary", "Synonyms"]},
-{y:2011,s:"II",n:25,sec:"Vocabulary",sub:"Synonyms",q:"BEFOGGED",o:["terrified", "panicky", "surprised", "puzzled"],ans:3,exp:"'Befogged' means confused or bewildered — matching 'puzzled'.",diff:"Medium",rule:"Concept tested: word meaning (denotation) — find the option that preserves the underlined word's core sense, not just a loosely related idea.",shortcut:"Shortcut: cover the options, silently supply your own one-word meaning for the underlined word first, then match — this stops near-meaning distractors from pulling you off track.",lessonType:"vocab",lessonId:null,keyword:"befogged",tags:["Vocabulary", "Synonyms"]},
-{y:2011,s:"II",n:26,sec:"Vocabulary",sub:"Antonyms",q:"DARKEN",o:["brighten", "please", "enlighten", "glamorize"],ans:0,exp:"'Darken' means to make dark; its direct opposite is 'brighten'.",diff:"Easy",rule:"Concept tested: opposite meaning — the correct option must reverse the underlined word's core sense, not merely differ in tone or intensity.",shortcut:"Shortcut: eliminate any option that is a synonym or near-synonym first (a common trap), then check the remaining options against the word's precise opposite.",lessonType:"vocab",lessonId:null,keyword:"darken",tags:["Vocabulary", "Antonyms"]},
-{y:2011,s:"II",n:27,sec:"Vocabulary",sub:"Antonyms",q:"ICY",o:["hostile", "warm", "pleasing", "strange"],ans:1,exp:"'Icy' (of a reception) means coldly unfriendly; its opposite is 'warm'.",diff:"Easy",rule:"Concept tested: opposite meaning — the correct option must reverse the underlined word's core sense, not merely differ in tone or intensity.",shortcut:"Shortcut: eliminate any option that is a synonym or near-synonym first (a common trap), then check the remaining options against the word's precise opposite.",lessonType:"vocab",lessonId:null,keyword:"icy",tags:["Vocabulary", "Antonyms"]},
-{y:2011,s:"II",n:28,sec:"Vocabulary",sub:"Antonyms",q:"ENERGETIC",o:["inactive", "dull", "gloomy", "lethargic"],ans:0,exp:"'Energetic' means full of energy; its direct opposite is 'inactive'.",diff:"Easy",rule:"Concept tested: opposite meaning — the correct option must reverse the underlined word's core sense, not merely differ in tone or intensity.",shortcut:"Shortcut: eliminate any option that is a synonym or near-synonym first (a common trap), then check the remaining options against the word's precise opposite.",lessonType:"vocab",lessonId:null,keyword:"energetic",tags:["Vocabulary", "Antonyms"]},
-{y:2011,s:"II",n:29,sec:"Vocabulary",sub:"Antonyms",q:"SECURE",o:["rigid", "precarious", "static", "secondary"],ans:1,exp:"'Secure' (a secure position) means safe and stable; its opposite is 'precarious' (unstable).",diff:"Medium",rule:"Concept tested: opposite meaning — the correct option must reverse the underlined word's core sense, not merely differ in tone or intensity.",shortcut:"Shortcut: eliminate any option that is a synonym or near-synonym first (a common trap), then check the remaining options against the word's precise opposite.",lessonType:"vocab",lessonId:null,keyword:"secure",tags:["Vocabulary", "Antonyms"]},
-{y:2011,s:"II",n:30,sec:"Vocabulary",sub:"Antonyms",q:"ACQUITTED",o:["held guilty", "betrayed", "involved", "offended"],ans:0,exp:"'Acquitted' means found not guilty; its opposite is 'held guilty'.",diff:"Easy",rule:"Concept tested: opposite meaning — the correct option must reverse the underlined word's core sense, not merely differ in tone or intensity.",shortcut:"Shortcut: eliminate any option that is a synonym or near-synonym first (a common trap), then check the remaining options against the word's precise opposite.",lessonType:"vocab",lessonId:null,keyword:"acquitted",tags:["Vocabulary", "Antonyms"]},
-{y:2011,s:"II",n:31,sec:"Vocabulary",sub:"Antonyms",q:"COMPULSORY",o:["optional", "contrary", "obligatory", "conditional"],ans:0,exp:"'Compulsory' means required by rule; its opposite is 'optional'.",diff:"Easy",rule:"Concept tested: opposite meaning — the correct option must reverse the underlined word's core sense, not merely differ in tone or intensity.",shortcut:"Shortcut: eliminate any option that is a synonym or near-synonym first (a common trap), then check the remaining options against the word's precise opposite.",lessonType:"vocab",lessonId:null,keyword:"compulsory",tags:["Vocabulary", "Antonyms"]},
-{y:2011,s:"II",n:32,sec:"Vocabulary",sub:"Antonyms",q:"LUGUBRIOUS",o:["happy", "hopeful", "helpful", "reassuring"],ans:0,exp:"'Lugubrious' means mournful or dismal; its opposite is 'happy'.",diff:"Medium",rule:"Concept tested: opposite meaning — the correct option must reverse the underlined word's core sense, not merely differ in tone or intensity.",shortcut:"Shortcut: eliminate any option that is a synonym or near-synonym first (a common trap), then check the remaining options against the word's precise opposite.",lessonType:"vocab",lessonId:null,keyword:"lugubrious",tags:["Vocabulary", "Antonyms"]},
-{y:2011,s:"II",n:33,sec:"Vocabulary",sub:"Antonyms",q:"ACCELERATED",o:["retarded", "reviewed", "recorded", "restored"],ans:0,exp:"'Accelerated' means sped up; its opposite is 'retarded' (slowed down).",diff:"Medium",rule:"Concept tested: opposite meaning — the correct option must reverse the underlined word's core sense, not merely differ in tone or intensity.",shortcut:"Shortcut: eliminate any option that is a synonym or near-synonym first (a common trap), then check the remaining options against the word's precise opposite.",lessonType:"vocab",lessonId:null,keyword:"accelerated",tags:["Vocabulary", "Antonyms"]},
-{y:2011,s:"II",n:34,sec:"Vocabulary",sub:"Antonyms",q:"VARIOUS",o:["separate", "distinct", "identical", "similar"],ans:2,exp:"'Various' (known by various names) implies difference; its opposite is 'identical' (the same).",diff:"Medium",rule:"Concept tested: opposite meaning — the correct option must reverse the underlined word's core sense, not merely differ in tone or intensity.",shortcut:"Shortcut: eliminate any option that is a synonym or near-synonym first (a common trap), then check the remaining options against the word's precise opposite.",lessonType:"vocab",lessonId:null,keyword:"various",tags:["Vocabulary", "Antonyms"]},
-{y:2011,s:"II",n:35,sec:"Vocabulary",sub:"Antonyms",q:"METICULOUS",o:["haphazard", "random", "ridiculous", "shabby"],ans:0,exp:"'Meticulous' means extremely careful and precise; its opposite is 'haphazard' (disorganized).",diff:"Medium",rule:"Concept tested: opposite meaning — the correct option must reverse the underlined word's core sense, not merely differ in tone or intensity.",shortcut:"Shortcut: eliminate any option that is a synonym or near-synonym first (a common trap), then check the remaining options against the word's precise opposite.",lessonType:"vocab",lessonId:null,keyword:"meticulous",tags:["Vocabulary", "Antonyms"]},
-{y:2011,s:"II",n:36,sec:"Sentence Arrangement (PQRS)",sub:"Ordering of Sentences",q:"they marched (P) | for a while under a tree (Q) | often they had rested (R) | on to their journey (S)",o:["SRQP", "PSRQ", "QRPS", "RQPS"],ans:3,exp:"Correct order: 'Often they had rested (R) for a while under a tree (Q), they marched (P) on to their journey (S).'",diff:"Hard",rule:"Concept tested: logical/grammatical sequencing — find the part that must come first (usually the one introducing the subject or setting up the rest), then chain the parts using pronoun references, conjunctions, and cause-effect links.",shortcut:"Shortcut: look for a pronoun (it/they/this) or a linking word (but/so/and) in each part — a part starting with a pronoun almost never opens the sequence, since the noun it refers to must appear earlier.",lessonType:"practice",lessonId:"p-rearrange",keyword:null,tags:["Sentence Arrangement (PQRS)", "Ordering of Sentences"]},
-{y:2011,s:"II",n:37,sec:"Sentence Arrangement (PQRS)",sub:"Ordering of Sentences",q:"as the President entered the hall (P) | from his seat (Q) | to greet him (R) | everyone got up (S)",o:["RQPS", "QPRS", "PSQR", "SQRP"],ans:2,exp:"Correct order: 'As the President entered the hall (P), everyone got up (S) from his seat (Q) to greet him (R).'",diff:"Hard",rule:"Concept tested: logical/grammatical sequencing — find the part that must come first (usually the one introducing the subject or setting up the rest), then chain the parts using pronoun references, conjunctions, and cause-effect links.",shortcut:"Shortcut: look for a pronoun (it/they/this) or a linking word (but/so/and) in each part — a part starting with a pronoun almost never opens the sequence, since the noun it refers to must appear earlier.",lessonType:"practice",lessonId:"p-rearrange",keyword:null,tags:["Sentence Arrangement (PQRS)", "Ordering of Sentences"]},
-{y:2011,s:"II",n:38,sec:"Sentence Arrangement (PQRS)",sub:"Ordering of Sentences",q:"he took shelter (P) | near the lake (Q) | when there was a heavy downpour (R) | under the large mango tree (S)",o:["PRQS", "PSRQ", "RSPQ", "RPSQ"],ans:3,exp:"Correct order: 'When there was a heavy downpour (R), he took shelter (P) under the large mango tree (S) near the lake (Q).'",diff:"Medium",rule:"Concept tested: logical/grammatical sequencing — find the part that must come first (usually the one introducing the subject or setting up the rest), then chain the parts using pronoun references, conjunctions, and cause-effect links.",shortcut:"Shortcut: look for a pronoun (it/they/this) or a linking word (but/so/and) in each part — a part starting with a pronoun almost never opens the sequence, since the noun it refers to must appear earlier.",lessonType:"practice",lessonId:"p-rearrange",keyword:null,tags:["Sentence Arrangement (PQRS)", "Ordering of Sentences"]},
-{y:2011,s:"II",n:39,sec:"Sentence Arrangement (PQRS)",sub:"Ordering of Sentences",q:"Our educationalists are (stem) | to teach children (P) | too often anxious (Q) | without any utility (R) | so many languages (S)",o:["PQRS", "QRSP", "SRQP", "QPSR"],ans:3,exp:"Correct order: 'Our educationalists are too often anxious (Q) to teach children (P) so many languages (S) without any utility (R).'",diff:"Hard",rule:"Concept tested: logical/grammatical sequencing — find the part that must come first (usually the one introducing the subject or setting up the rest), then chain the parts using pronoun references, conjunctions, and cause-effect links.",shortcut:"Shortcut: look for a pronoun (it/they/this) or a linking word (but/so/and) in each part — a part starting with a pronoun almost never opens the sequence, since the noun it refers to must appear earlier.",lessonType:"practice",lessonId:"p-rearrange",keyword:null,tags:["Sentence Arrangement (PQRS)", "Ordering of Sentences"]},
-{y:2011,s:"II",n:40,sec:"Sentence Arrangement (PQRS)",sub:"Ordering of Words in a Sentence",q:"the rain did not prevent (P) | from being played (Q) | to a finish (R) | the match (S)",o:["PQSR", "PSQR", "PSRQ", "SQPR"],ans:1,exp:"Correct order: 'The rain did not prevent (P) the match (S) from being played (Q) to a finish (R).'",diff:"Medium",rule:"Concept tested: logical/grammatical sequencing — find the part that must come first (usually the one introducing the subject or setting up the rest), then chain the parts using pronoun references, conjunctions, and cause-effect links.",shortcut:"Shortcut: look for a pronoun (it/they/this) or a linking word (but/so/and) in each part — a part starting with a pronoun almost never opens the sequence, since the noun it refers to must appear earlier.",lessonType:"practice",lessonId:"p-rearrange",keyword:null,tags:["Sentence Arrangement (PQRS)", "Ordering of Words in a Sentence"]},
-{y:2011,s:"II",n:41,sec:"Sentence Arrangement (PQRS)",sub:"Ordering of Words in a Sentence",q:"It has been like inheriting some money (P) | and afterwards (Q) | marrying for love (R) | through the wife (S)",o:["RQPS", "PSQR", "SPQR", "PQSR"],ans:0,exp:"Correct order: 'It has been like marrying for love (R) and afterwards (Q) inheriting some money (P) through the wife (S).'",diff:"Hard",rule:"Concept tested: logical/grammatical sequencing — find the part that must come first (usually the one introducing the subject or setting up the rest), then chain the parts using pronoun references, conjunctions, and cause-effect links.",shortcut:"Shortcut: look for a pronoun (it/they/this) or a linking word (but/so/and) in each part — a part starting with a pronoun almost never opens the sequence, since the noun it refers to must appear earlier.",lessonType:"practice",lessonId:"p-rearrange",keyword:null,tags:["Sentence Arrangement (PQRS)", "Ordering of Words in a Sentence"]},
-{y:2011,s:"II",n:42,sec:"Sentence Arrangement (PQRS)",sub:"Ordering of Words in a Sentence",q:"His mother (P) | when he was hungry (Q) | last evening (R) | could not feed the baby (S)",o:["RSPQ", "PQRS", "SPQR", "QPRS"],ans:0,exp:"Correct order: 'When he was hungry (Q), last evening (R), his mother (P) could not feed the baby (S).'",diff:"Medium",rule:"Concept tested: logical/grammatical sequencing — find the part that must come first (usually the one introducing the subject or setting up the rest), then chain the parts using pronoun references, conjunctions, and cause-effect links.",shortcut:"Shortcut: look for a pronoun (it/they/this) or a linking word (but/so/and) in each part — a part starting with a pronoun almost never opens the sequence, since the noun it refers to must appear earlier.",lessonType:"practice",lessonId:"p-rearrange",keyword:null,tags:["Sentence Arrangement (PQRS)", "Ordering of Words in a Sentence"]},
-{y:2011,s:"II",n:43,sec:"Sentence Arrangement (PQRS)",sub:"Ordering of Words in a Sentence",q:"Whenever he heard the question (P) | the old man (Q) | answered (R) | who lived in that house (S) | that the Earth is flat",o:["PQRS", "PQSR", "PRQS", "SPQR"],ans:2,exp:"Correct order: 'Whenever he heard the question (P), answered (R) the old man (Q) who lived in that house (S) that the Earth is flat.'",diff:"Hard",rule:"Concept tested: logical/grammatical sequencing — find the part that must come first (usually the one introducing the subject or setting up the rest), then chain the parts using pronoun references, conjunctions, and cause-effect links.",shortcut:"Shortcut: look for a pronoun (it/they/this) or a linking word (but/so/and) in each part — a part starting with a pronoun almost never opens the sequence, since the noun it refers to must appear earlier.",lessonType:"practice",lessonId:"p-rearrange",keyword:null,tags:["Sentence Arrangement (PQRS)", "Ordering of Words in a Sentence"]},
-{y:2011,s:"II",n:44,sec:"Reading Comprehension",sub:"Detail-based",q:"Passage I (Elephants) — According to the passage, water is",o:["quite important for the elephant", "vital for the elephant's survival", "occasionally useful for the elephant", "often a problem for the elephant"],ans:1,exp:"The passage stresses an adult elephant's daily dependence on water (about thirty gallons a day) and the lengths it goes to during droughts, showing water is vital for its survival.",diff:"Medium",rule:"Concept tested: reading for the author's stated meaning, not outside knowledge — NDA comprehension answers must be traceable to the passage's own words or clearly implied logic.",shortcut:"Shortcut: for 'title' or 'tone' questions, re-read the passage's first and last lines only — they usually carry the main idea; for detail questions, match key nouns from the question back to the exact sentence in the passage.",lessonType:"reading",lessonId:null,keyword:null,tags:["Reading Comprehension", "Detail-based"]},
-{y:2011,s:"II",n:45,sec:"Reading Comprehension",sub:"Detail-based",q:"Passage I (Elephants) — According to the passage, elephants spray water over themselves",o:["to have fun", "to ward off the heat", "to cool their heels", "to quench their thirst"],ans:1,exp:"The passage opens by stating elephants spray water over their ears to stay cool, i.e. to ward off the heat.",diff:"Easy",rule:"Concept tested: reading for the author's stated meaning, not outside knowledge — NDA comprehension answers must be traceable to the passage's own words or clearly implied logic.",shortcut:"Shortcut: for 'title' or 'tone' questions, re-read the passage's first and last lines only — they usually carry the main idea; for detail questions, match key nouns from the question back to the exact sentence in the passage.",lessonType:"reading",lessonId:null,keyword:null,tags:["Reading Comprehension", "Detail-based"]},
-{y:2011,s:"II",n:46,sec:"Reading Comprehension",sub:"Detail-based",q:"Passage I (Elephants) — During droughts, elephants",o:["burrow in the sand to avoid heat", "find water in rivers", "dig holes in the river bed to reach the water", "find new water holes"],ans:2,exp:"The passage describes elephants digging wells in a dried-up river bed with their forefeet until they reach water.",diff:"Medium",rule:"Concept tested: reading for the author's stated meaning, not outside knowledge — NDA comprehension answers must be traceable to the passage's own words or clearly implied logic.",shortcut:"Shortcut: for 'title' or 'tone' questions, re-read the passage's first and last lines only — they usually carry the main idea; for detail questions, match key nouns from the question back to the exact sentence in the passage.",lessonType:"reading",lessonId:null,keyword:null,tags:["Reading Comprehension", "Detail-based"]},
-{y:2011,s:"II",n:47,sec:"Reading Comprehension",sub:"Detail-based",q:"Passage I (Elephants) — When the elephants find water",o:["the baby elephants drink first", "the oldest adult drinks first", "the largest elephant drinks first", "the youngest adult drinks first"],ans:1,exp:"The passage states they 'drink in order of seniority, calves last', meaning the oldest adult drinks first.",diff:"Medium",rule:"Concept tested: reading for the author's stated meaning, not outside knowledge — NDA comprehension answers must be traceable to the passage's own words or clearly implied logic.",shortcut:"Shortcut: for 'title' or 'tone' questions, re-read the passage's first and last lines only — they usually carry the main idea; for detail questions, match key nouns from the question back to the exact sentence in the passage.",lessonType:"reading",lessonId:null,keyword:null,tags:["Reading Comprehension", "Detail-based"]},
-{y:2011,s:"II",n:48,sec:"Reading Comprehension",sub:"Inference",q:"Passage II (song-bird) — One day the writer's brother brought home a bird",o:["which never ate food", "which flew so high it seemed to touch the sun", "whose colours shone brightly in the sunlight", "which was the largest of all the birds in his collection"],ans:2,exp:"The bird is described as 'a tiny creature of a blue and a red that sparkled when brushed by the sun', i.e. its colours shone brightly in sunlight.",diff:"Medium",rule:"Concept tested: reading for the author's stated meaning, not outside knowledge — NDA comprehension answers must be traceable to the passage's own words or clearly implied logic.",shortcut:"Shortcut: for 'title' or 'tone' questions, re-read the passage's first and last lines only — they usually carry the main idea; for detail questions, match key nouns from the question back to the exact sentence in the passage.",lessonType:"reading",lessonId:null,keyword:null,tags:["Reading Comprehension", "Inference"]},
-{y:2011,s:"II",n:49,sec:"Reading Comprehension",sub:"Inference",q:"Passage II (song-bird) — At first his brother tried to get the bird to sing by",o:["tempting with food", "placing it in the company of the other birds while they sang", "singing to the bird himself", "withholding food"],ans:1,exp:"The bird was kept 'while the others sang'; the brother first tried coaxing it in that setting before resorting to a stick and then withholding food.",diff:"Hard",rule:"Concept tested: reading for the author's stated meaning, not outside knowledge — NDA comprehension answers must be traceable to the passage's own words or clearly implied logic.",shortcut:"Shortcut: for 'title' or 'tone' questions, re-read the passage's first and last lines only — they usually carry the main idea; for detail questions, match key nouns from the question back to the exact sentence in the passage.",lessonType:"reading",lessonId:null,keyword:null,tags:["Reading Comprehension", "Inference"]},
-{y:2011,s:"II",n:50,sec:"Reading Comprehension",sub:"Detail-based",q:"Passage II (song-bird) — What does the word \"coaxing\" mean?",o:["to behave rudely", "to use violent means", "to gently persuade", "to beg repeatedly"],ans:2,exp:"'Coaxing' means gently and persistently persuading someone (or something) to do what is wanted.",diff:"Easy",rule:"Concept tested: reading for the author's stated meaning, not outside knowledge — NDA comprehension answers must be traceable to the passage's own words or clearly implied logic.",shortcut:"Shortcut: for 'title' or 'tone' questions, re-read the passage's first and last lines only — they usually carry the main idea; for detail questions, match key nouns from the question back to the exact sentence in the passage.",lessonType:"reading",lessonId:null,keyword:null,tags:["Reading Comprehension", "Detail-based"]}
+  // ---------- Spotting Errors (Q1-15) ----------
+  {
+    y: 2011, s: 'II', n: 1, sec: 'Spotting Errors',
+    q: 'It was really smart of him to have chosen the right course, is n\'t it ?',
+    o: ['It was really smart of him', 'to have chosen the right course,', 'is n\'t it ?', 'No error'],
+    ans: 2
+  },
+  {
+    y: 2011, s: 'II', n: 2, sec: 'Spotting Errors',
+    q: 'The doctor advised me that I am going on a salt free diet.',
+    o: ['The doctor advised me', 'that', 'I am going on a salt free diet.', 'No error.'],
+    ans: 2
+  },
+  {
+    y: 2011, s: 'II', n: 3, sec: 'Spotting Errors',
+    q: 'It can\'t be true that he has never done something wrong in his entire career.',
+    o: ['It can\'t be true', 'that he has never done something wrong', 'in his entire career.', 'No error'],
+    ans: 1
+  },
+  {
+    y: 2011, s: 'II', n: 4, sec: 'Spotting Errors',
+    q: 'He told that his brother was singer.',
+    o: ['He told', 'that his brother', 'was singer.', 'No error'],
+    ans: 2
+  },
+  {
+    y: 2011, s: 'II', n: 5, sec: 'Spotting Errors',
+    q: 'When we reached at the station I fought my way through people and luggage and secured a place next to the window.',
+    o: ['When we reached at the station', 'I fought my way through people and luggage', 'and secured a place next to the window.', 'No error'],
+    ans: 0
+  },
+  {
+    y: 2011, s: 'II', n: 6, sec: 'Spotting Errors',
+    q: 'The managing director along with his staff members were present for the annual general body meeting.',
+    o: ['The managing director along with his staff members were present', 'for', 'the annual general body meeting.', 'No error'],
+    ans: 0
+  },
+  {
+    y: 2011, s: 'II', n: 7, sec: 'Spotting Errors',
+    q: 'If you will follow my instructions, you will definitely score high marks in the entrance examination.',
+    o: ['If you will follow my instructions,', 'you will definitely score high marks', 'in the entrance examination.', 'No error'],
+    ans: 0
+  },
+  {
+    y: 2011, s: 'II', n: 8, sec: 'Spotting Errors',
+    q: 'In many respects, India is different than western countries.',
+    o: ['In many respects,', 'India is different', 'than western countries.', 'No error'],
+    ans: 2
+  },
+  {
+    y: 2011, s: 'II', n: 9, sec: 'Spotting Errors',
+    q: 'The members of the family soon became aware what had taken place.',
+    o: ['The members of the family', 'soon became', 'aware what had taken place.', 'No error'],
+    ans: 2
+  },
+  {
+    y: 2011, s: 'II', n: 10, sec: 'Spotting Errors',
+    q: 'I have met him on Monday last and had a long discussion.',
+    o: ['I have met him', 'on Monday last', 'and had a long discussion.', 'No error'],
+    ans: 0
+  },
+  {
+    y: 2011, s: 'II', n: 11, sec: 'Spotting Errors',
+    q: 'It is time we decide not to play cricket, for the next two years.',
+    o: ['It is time', 'we decide not to play cricket,', 'for the next two years.', 'No error'],
+    ans: 1
+  },
+  {
+    y: 2011, s: 'II', n: 12, sec: 'Spotting Errors',
+    q: 'He likes the sceneries of the hills.',
+    o: ['He likes', 'the sceneries', 'of the hills.', 'No error'],
+    ans: 1
+  },
+  {
+    y: 2011, s: 'II', n: 13, sec: 'Spotting Errors',
+    q: 'I did not know that you have left your handbag in our office when you came to see me last Friday.',
+    o: ['I did not know', 'that you have left your handbag in our office', 'when you came to see me last Friday.', 'No error'],
+    ans: 1
+  },
+  {
+    y: 2011, s: 'II', n: 14, sec: 'Spotting Errors',
+    q: 'He wanted me to bring two breads and some butter for breakfast.',
+    o: ['He wanted me', 'to bring two breads and some butter', 'for breakfast.', 'No error'],
+    ans: 1
+  },
+  {
+    y: 2011, s: 'II', n: 15, sec: 'Spotting Errors',
+    q: 'The parents are happy to know that a number of summer programmes have been arranged for the benefit of their children.',
+    o: ['The parents are happy to know', 'that a number of summer programmes have been arranged', 'for the benefit of their children.', 'No error.'],
+    ans: 3
+  },
+
+  // ---------- Vocabulary: Synonyms (Q16-25) ----------
+  {
+    y: 2011, s: 'II', n: 16, sec: 'Vocabulary',
+    q: 'The vehicle slowed down as they moved up the GRADIENT.',
+    o: ['road with sharp bends', 'bumpy, uneven path', 'slope or incline', 'mountainous area'],
+    ans: 2, keyword: 'GRADIENT'
+  },
+  {
+    y: 2011, s: 'II', n: 17, sec: 'Vocabulary',
+    q: 'It is DEPLORABLE that millions of people in India are below the poverty line.',
+    o: ['hateful', 'regrettable', 'undesirable', 'unpleasant'],
+    ans: 1, keyword: 'DEPLORABLE'
+  },
+  {
+    y: 2011, s: 'II', n: 18, sec: 'Vocabulary',
+    q: 'The government should PROSCRIBE that sort of literature.',
+    o: ['rusticate', 'excommunicate', 'ban', 'outlaw'],
+    ans: 2, keyword: 'PROSCRIBE'
+  },
+  {
+    y: 2011, s: 'II', n: 19, sec: 'Vocabulary',
+    q: 'The volcano on the island is DORMANT.',
+    o: ['cold', 'inactive', 'dangerous', 'old'],
+    ans: 1, keyword: 'DORMANT'
+  },
+  {
+    y: 2011, s: 'II', n: 20, sec: 'Vocabulary',
+    q: 'A person who EQUIVOCATES should not be relied upon.',
+    o: ['deceives others', 'tells lies', 'gives misleading statements', 'flatters'],
+    ans: 2, keyword: 'EQUIVOCATES'
+  },
+  {
+    y: 2011, s: 'II', n: 21, sec: 'Vocabulary',
+    q: 'The newspaper reports were MENDACIOUS.',
+    o: ['mischievous', 'truthful', 'provocative', 'false'],
+    ans: 3, keyword: 'MENDACIOUS'
+  },
+  {
+    y: 2011, s: 'II', n: 22, sec: 'Vocabulary',
+    q: 'The priest pronounced BENEDICTION.',
+    o: ['good wishes', 'blessings', 'punishment', 'appreciation'],
+    ans: 1, keyword: 'BENEDICTION'
+  },
+  {
+    y: 2011, s: 'II', n: 23, sec: 'Vocabulary',
+    q: 'Her habits are INNOCUOUS.',
+    o: ['useful', 'injurious', 'causing no harm', 'bad'],
+    ans: 2, keyword: 'INNOCUOUS'
+  },
+  {
+    y: 2011, s: 'II', n: 24, sec: 'Vocabulary',
+    q: 'I INVEIGHED her for her different outlook.',
+    o: ['criticized', 'rebuked', 'disliked', 'appreciated'],
+    ans: 0, keyword: 'INVEIGHED'
+  },
+  {
+    y: 2011, s: 'II', n: 25, sec: 'Vocabulary',
+    q: 'The youth was BEFOGGED when he was interrogated loudly by the police inspector.',
+    o: ['terrified', 'panicky', 'surprised', 'puzzled'],
+    ans: 3, keyword: 'BEFOGGED'
+  },
+
+  // ---------- Vocabulary: Antonyms (Q26-35) ----------
+  {
+    y: 2011, s: 'II', n: 26, sec: 'Vocabulary',
+    q: 'A few heavenly talents DARKEN the world in each generation.',
+    o: ['brighten', 'please', 'enlighten', 'glamorize'],
+    ans: 0, keyword: 'DARKEN'
+  },
+  {
+    y: 2011, s: 'II', n: 27, sec: 'Vocabulary',
+    q: 'An ICY reception greeted the arrivals.',
+    o: ['hostile', 'warm', 'pleasing', 'strange'],
+    ans: 1, keyword: 'ICY'
+  },
+  {
+    y: 2011, s: 'II', n: 28, sec: 'Vocabulary',
+    q: 'The young athlete is ENERGETIC enough to run ten thousand meters at a stretch.',
+    o: ['inactive', 'dull', 'gloomy', 'lethargic'],
+    ans: 3, keyword: 'ENERGETIC'
+  },
+  {
+    y: 2011, s: 'II', n: 29, sec: 'Vocabulary',
+    q: 'He has a SECURE position in the entrance examination.',
+    o: ['rigid', 'precarious', 'static', 'secondary'],
+    ans: 1, keyword: 'SECURE'
+  },
+  {
+    y: 2011, s: 'II', n: 30, sec: 'Vocabulary',
+    q: 'The accused was ACQUITTED of the charge.',
+    o: ['held guilty', 'betrayed', 'involved', 'offended'],
+    ans: 0, keyword: 'ACQUITTED'
+  },
+  {
+    y: 2011, s: 'II', n: 31, sec: 'Vocabulary',
+    q: 'It is COMPULSORY that all members of the board be present at the meeting.',
+    o: ['optional', 'contrary', 'obligatory', 'conditional'],
+    ans: 0, keyword: 'COMPULSORY'
+  },
+  {
+    y: 2011, s: 'II', n: 32, sec: 'Vocabulary',
+    q: 'Events ultimately led to LUGUBRIOUS ending.',
+    o: ['happy', 'hopeful', 'helpful', 'reassuring'],
+    ans: 0, keyword: 'LUGUBRIOUS'
+  },
+  {
+    y: 2011, s: 'II', n: 33, sec: 'Vocabulary',
+    q: 'He ACCELERATED the speed of his car.',
+    o: ['retarded', 'reviewed', 'recorded', 'restored'],
+    ans: 0, keyword: 'ACCELERATED'
+  },
+  {
+    y: 2011, s: 'II', n: 34, sec: 'Vocabulary',
+    q: 'The criminal was known to the police by VARIOUS names.',
+    o: ['separate', 'distinct', 'identical', 'similar'],
+    ans: 2, keyword: 'VARIOUS'
+  },
+  {
+    y: 2011, s: 'II', n: 35, sec: 'Vocabulary',
+    q: 'The police praised the METICULOUS arrangements made by the organizers to receive the guest at the airport.',
+    o: ['haphazard', 'random', 'ridiculous', 'shabby'],
+    ans: 0, keyword: 'METICULOUS'
+  },
+
+  // ---------- Sentence Arrangement (PQRS) (Q36-43) ----------
+  {
+    y: 2011, s: 'II', n: 36, sec: 'Sentence Arrangement (PQRS)',
+    q: '(P) they marched\n(Q) for a while under a tree\n(R) often they had rested\n(S) on to their journey\nThe correct sequence should be',
+    o: ['SRQP', 'PSRQ', 'QRPS', 'RQPS'],
+    ans: 3
+  },
+  {
+    y: 2011, s: 'II', n: 37, sec: 'Sentence Arrangement (PQRS)',
+    q: '(P) as the President entered the hall\n(Q) from his seat\n(R) to greet him\n(S) everyone got up\nThe correct sequence should be',
+    o: ['RQPS', 'QPRS', 'PSQR', 'SQRP'],
+    ans: 2
+  },
+  {
+    y: 2011, s: 'II', n: 38, sec: 'Sentence Arrangement (PQRS)',
+    q: '(P) he took shelter\n(Q) near the lake\n(R) when there was a heavy downpour\n(S) under the large mango tree\nThe correct sequence should be',
+    o: ['PRQS', 'PSRQ', 'RSPQ', 'RPSQ'],
+    ans: 3
+  },
+  {
+    y: 2011, s: 'II', n: 39, sec: 'Sentence Arrangement (PQRS)',
+    q: 'Our educationalists are\n(P) to teach children\n(Q) too often anxious\n(R) without any utility\n(S) so many languages\nThe correct sequence should be',
+    o: ['PQRS', 'QRSP', 'SRQP', 'QPSR'],
+    ans: 3
+  },
+  {
+    y: 2011, s: 'II', n: 40, sec: 'Sentence Arrangement (PQRS)',
+    q: '(P) the rain did not prevent\n(Q) from being played\n(R) to a finish\n(S) the match\nThe correct sequence should be',
+    o: ['PQRS', 'PSQR', 'PSRQ', 'SQPR'],
+    ans: 1
+  },
+  {
+    y: 2011, s: 'II', n: 41, sec: 'Sentence Arrangement (PQRS)',
+    q: 'It has been like\n(P) inheriting some money\n(Q) and afterwards\n(R) marrying for love\n(S) through the wife\nThe correct sequence should be',
+    o: ['RQPS', 'PSQR', 'SPQR', 'PQSR'],
+    ans: 0
+  },
+  {
+    y: 2011, s: 'II', n: 42, sec: 'Sentence Arrangement (PQRS)',
+    q: 'His mother\n(P) when he was hungry\n(Q) last evening\n(R) could not feed\n(S) the baby\nThe correct sequence should be',
+    o: ['RSPQ', 'PQRS', 'SPQR', 'QPRS'],
+    ans: 0
+  },
+  {
+    y: 2011, s: 'II', n: 43, sec: 'Sentence Arrangement (PQRS)',
+    q: 'Whenever he heard the question\n(P) the old man\n(Q) answered\n(R) who lived in that house\n(S) that the Earth is flat\nThe correct sequence should be',
+    o: ['PQRS', 'PQSR', 'PRQS', 'SPQR'],
+    ans: 2
+  },
+
+  // ---------- Reading Comprehension: Passage I (Q44-47) ----------
+  {
+    y: 2011, s: 'II', n: 44, sec: 'Reading Comprehension',
+    q: 'According to the passage, water is',
+    o: ['quite important for the elephant', 'vital for the elephant\'s survival', 'occasionally useful for the elephant', 'often a problem for the elephant'],
+    ans: 1,
+    passage: 'Elephants spray water over their ears to stay cool. The rhythm of an elephant\'s day is set largely by its watering routine. An adult needs about thirty gallons of water a day. When water is abundant there is no problem. But during droughts, elephants resort to an intriguing technique : digging wells. In a dried-up river bed they scoop out holes with their forefeet until they reach water. After waiting patiently for the sand to settle, they drink in order of seniority, calves last.'
+  },
+  {
+    y: 2011, s: 'II', n: 45, sec: 'Reading Comprehension',
+    q: 'According to the passage, elephants spray water over themselves',
+    o: ['to have fun', 'to ward off the heat', 'to cool their heels', 'to quench their thirst'],
+    ans: 1,
+    passage: 'Elephants spray water over their ears to stay cool. The rhythm of an elephant\'s day is set largely by its watering routine. An adult needs about thirty gallons of water a day. When water is abundant there is no problem. But during droughts, elephants resort to an intriguing technique : digging wells. In a dried-up river bed they scoop out holes with their forefeet until they reach water. After waiting patiently for the sand to settle, they drink in order of seniority, calves last.'
+  },
+  {
+    y: 2011, s: 'II', n: 46, sec: 'Reading Comprehension',
+    q: 'During droughts, elephants',
+    o: ['burrow in the sand to avoid heat', 'find water in rivers', 'dig holes in the river bed to reach the water', 'find new water holes'],
+    ans: 2,
+    passage: 'Elephants spray water over their ears to stay cool. The rhythm of an elephant\'s day is set largely by its watering routine. An adult needs about thirty gallons of water a day. When water is abundant there is no problem. But during droughts, elephants resort to an intriguing technique : digging wells. In a dried-up river bed they scoop out holes with their forefeet until they reach water. After waiting patiently for the sand to settle, they drink in order of seniority, calves last.'
+  },
+  {
+    y: 2011, s: 'II', n: 47, sec: 'Reading Comprehension',
+    q: 'When the elephants find water',
+    o: ['the baby elephants drink first', 'the oldest adult drinks first', 'the largest elephant drinks first', 'the youngest adult drinks first'],
+    ans: 1,
+    passage: 'Elephants spray water over their ears to stay cool. The rhythm of an elephant\'s day is set largely by its watering routine. An adult needs about thirty gallons of water a day. When water is abundant there is no problem. But during droughts, elephants resort to an intriguing technique : digging wells. In a dried-up river bed they scoop out holes with their forefeet until they reach water. After waiting patiently for the sand to settle, they drink in order of seniority, calves last.'
+  },
+
+  // ---------- Reading Comprehension: Passage II (Q48, Q50; Q49 omitted) ----------
+  {
+    y: 2011, s: 'II', n: 48, sec: 'Reading Comprehension',
+    q: 'One day the writer\'s brother brought home a bird',
+    o: ['which never ate food', 'which flew so high it seemed to touch the sun', 'whose colours shone brightly in the sunlight', 'which was the largest of all the birds in his collection'],
+    ans: 2,
+    passage: 'One day my brother brought home a new song-bird. It was the smallest of them all, a tiny creature of a blue and a red that sparkled when brushed by the sun. But there was a problem : while the others sang, this new bird remained silent. My brother tried coaxing music out of him, in vain. He tried attacking with a stick, but the bird was unmoved. My brother first tried withholding food, but later when the incentive was offered the bird ignored it, and twice he knocked over his dish, scattering the seed.'
+  },
+  {
+    y: 2011, s: 'II', n: 49, sec: 'Reading Comprehension',
+    q: 'At first his brother tried to get the bird to sing by',
+    o: ['tempting with food', 'placing it in the company of the other birds while they sang', 'singing to the bird himself', 'withholding food'],
+    ans: 3,
+    passage: 'One day my brother brought home a new song-bird. It was the smallest of them all, a tiny creature of a blue and a red that sparkled when brushed by the sun. But there was a problem : while the others sang, this new bird remained silent. My brother tried coaxing music out of him, in vain. He tried attacking with a stick, but the bird was unmoved. My brother first tried withholding food, but later when the incentive was offered the bird ignored it, and twice he knocked over his dish, scattering the seed.'
+  },
+  {
+    y: 2011, s: 'II', n: 50, sec: 'Reading Comprehension',
+    q: 'What does the word "coaxing" mean ?',
+    o: ['to behave rudely', 'to use violent means', 'to gently persuade.', 'to beg repeatedly'],
+    ans: 2,
+    passage: 'One day my brother brought home a new song-bird. It was the smallest of them all, a tiny creature of a blue and a red that sparkled when brushed by the sun. But there was a problem : while the others sang, this new bird remained silent. My brother tried coaxing music out of him, in vain. He tried attacking with a stick, but the bird was unmoved. My brother first tried withholding food, but later when the incentive was offered the bird ignored it, and twice he knocked over his dish, scattering the seed.'
+  }
 ];
