@@ -213,6 +213,7 @@ button{font-family:inherit;cursor:pointer}
 
 /* ===== TOP BAR ===== */
 header{position:sticky;top:0;z-index:100;border-bottom:1px solid var(--line);padding-top:var(--safe-t)}
+body.pv-session-active header{display:none}
 /* Blur/background lives on a ::before instead of directly on <header> — putting backdrop-filter
    on header itself would make header the containing block for any position:fixed descendant
    (like the full-screen mobile nav overlay and hamburger button), breaking their positioning. */

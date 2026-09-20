@@ -2020,6 +2020,7 @@ function pvRender(){
   else if(PV.screen==='exampicker') root.innerHTML = pvExamPickerHTML();
   else if(PV.screen==='session') root.innerHTML = pvSessionHTML();
   else if(PV.screen==='summary') root.innerHTML = pvSummaryHTML();
+  document.body.classList.toggle('pv-session-active', PV.screen==='session');
   window.scrollTo({top:0,behavior:'smooth'});
   setTimeout(()=>{ if(typeof initReveal==='function') initReveal(); },30);
 }
