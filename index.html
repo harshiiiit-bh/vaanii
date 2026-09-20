@@ -31,6 +31,20 @@
 <div id="cursorGlow"></div>
 <div id="cursorDot"></div>
 <canvas id="confetti-canvas"></canvas>
+
+<div id="reviewOverlay" aria-hidden="true">
+  <div class="review-overlay-inner">
+    <button class="review-close" onclick="closeReviewSession()" aria-label="Close review">✕</button>
+    <div class="review-progress" id="reviewProgress">1 / 5</div>
+    <div class="review-card-wrap">
+      <div class="review-card" id="reviewCard">
+        <div class="review-card-face review-card-front" id="reviewFront"></div>
+        <div class="review-card-face review-card-back" id="reviewBack"></div>
+      </div>
+    </div>
+    <div class="review-actions" id="reviewActions"></div>
+  </div>
+</div>
 <div class="grain"></div>
 <div id="toast-wrap"></div>
 <button id="backToTop" title="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
@@ -247,6 +261,12 @@
         <button class="btn ghost" onclick="switchView('grammar')">Browse All Topics</button>
       </div>
     </div>
+  </div>
+
+  <!-- ===== MISTAKE NOTEBOOK (spaced review) ===== -->
+  <div class="card reveal review-widget" id="reviewWidgetCard" style="margin-top:22px;padding:26px">
+    <div class="panel-title"><span class="bar"></span>Mistake Notebook</div>
+    <div id="reviewWidgetBody"></div>
   </div>
 
   <!-- ===== TODAY'S FOCUS + CONTINUE + RECOMMENDED ===== -->
@@ -939,17 +959,17 @@
 
 <script src="data/grammar.js"></script>
 <script src="data/vocab.js"></script>
-<script src="data/pyq/2009-I.js"></script>
-<script src="data/pyq/2009-II.js"></script>
-<script src="data/pyq/2010-I.js"></script>
-<script src="data/pyq/2010-II.js"></script>
-<script src="data/pyq/2011-I.js"></script>
-<script src="data/pyq/2011-II.js"></script>
-<script src="data/pyq/2012-I.js"></script>
-<script src="data/pyq/2017-I.js"></script>
-<script src="data/pyq/2017-II.js"></script>
-<script src="data/pyq/2018-I.js"></script>
-<script src="data/pyq/2018-II.js"></script>
+<script src="data/pyq/manifest.js"></script>
+<script>
+  /* Writes out a normal <script src> tag for every paper listed in the
+     manifest above, right here in the document as it's still being
+     parsed — so these load exactly as synchronously and reliably as if
+     they'd been typed directly into this file by hand. Nothing async,
+     nothing that can silently fail: if the page loaded, these load. */
+  PYQ_PAPER_FILES.forEach(function(f){
+    document.write('<script src="data/pyq/'+f+'.js"><\/script>');
+  });
+</script>
 <!-- Book Reading (Veer Bhogya Vasundhara) — data first, then its app logic -->
 <script src="data/vbv/images.js"></script>
 <script src="data/vbv/quotes.js"></script>
@@ -973,7 +993,7 @@ function countUp(id,target,suffix){
   requestAnimationFrame(step);
 }
 document.addEventListener('click',(e)=>{
-  const btn = e.target.closest('.btn, .opt-btn, .gate-btn, .ma-year-tile, .ma-session-card, .ma-gate-card, .ma-era-head');
+  const btn = e.target.closest('.btn, .opt-btn, .gate-btn, .ma-year-tile, .ma-session-card, .ma-gate-card, .ma-era-head, .pv-examtype-card');
   if(!btn) return;
   const r = btn.getBoundingClientRect();
   const circle = document.createElement('span');
@@ -1000,7 +1020,7 @@ document.addEventListener('mousemove',(e)=>{
 const State = {
   name:'Cadet', xp:0, streak:0, lastActive:null,
   completedTopics:{}, quizScores:{}, vocabLearned:{}, theme:'light', missions:{},
-  dailyActivity:{}, mysteryBoxesClaimed:0,
+  dailyActivity:{}, mysteryBoxesClaimed:0, reviewQueue:[],
   personalBests:{ bestCombo:0, longestStreak:0, highestQuizScore:0, fastestQuizSeconds:null, fastestQuizLabel:'', totalQuizzesTaken:0 },
   pyqStats:{ attempts:{} }
 };
@@ -1024,6 +1044,7 @@ function normalizeState(){
   State.topicLastAttempt = State.topicLastAttempt || {};
   State.personalBests = State.personalBests || { bestCombo:0, longestStreak:0, highestQuizScore:0, fastestQuizSeconds:null, fastestQuizLabel:'', totalQuizzesTaken:0 };
   State.mysteryBoxesClaimed = State.mysteryBoxesClaimed || 0;
+  State.reviewQueue = Array.isArray(State.reviewQueue) ? State.reviewQueue : [];
   State.theme = State.theme || 'light';
   State.name = State.name || 'Cadet';
 }
@@ -1635,6 +1656,17 @@ function buildGenericQuiz(n){
 const _pyqRegistry = [];
 const _pyqSeenKeys = new Set();
 
+/* ---- exam types ----
+   Bare `PYQ_<year>_<session>` globals are NDA by default (unchanged,
+   zero renaming of existing files). `PYQ_CDS_<year>_<session>` globals
+   are CDS. Add new exam types here if the archive ever grows beyond
+   these two — nothing else needs a hardcoded exam list. */
+const PYQ_EXAM_INFO = {
+  NDA: { code:'NDA', full:'National Defence Academy', short:'NDA' },
+  CDS: { code:'CDS', full:'Combined Defence Services', short:'CDS' }
+};
+function _pyqKey(exam, year, session){ return exam+'-'+year+'-'+session; }
+
 // Roman-numeral-aware session ranking, so sorting keeps working
 // correctly even for session labels this file's author never
 // anticipated (III, IV, etc.) instead of a hardcoded {I,II} map.
@@ -1655,9 +1687,11 @@ function _pyqValidateQuestion(item){
 
 /**
  * Register one paper's question array. Year/session are read straight
- * off the questions themselves — see contract above.
+ * off the questions themselves — see contract above. `exam` is 'NDA'
+ * (default, for backward compatibility) or 'CDS'.
  */
-function registerPYQPaper(data){
+function registerPYQPaper(data, exam){
+  const examCode = exam || 'NDA';
   if(!Array.isArray(data) || !data.length){
     console.warn('[PYQ] Skipped an invalid paper source (expected a non-empty array).', data);
     return;
@@ -1669,7 +1703,8 @@ function registerPYQPaper(data){
   }
   const year = Number(validQuestions[0].y);
   const session = String(validQuestions[0].s);
-  const label = 'NDA ' + session + ' ' + year;
+  const examShort = (PYQ_EXAM_INFO[examCode] && PYQ_EXAM_INFO[examCode].short) || examCode;
+  const label = examShort + ' ' + session + ' ' + year;
 
   // Guard against a single array accidentally mixing questions from
   // more than one paper — keep only the ones matching the paper's
@@ -1679,26 +1714,35 @@ function registerPYQPaper(data){
     console.warn('[PYQ] "'+label+'": '+(validQuestions.length-cleanQuestions.length)+' question(s) had mismatched year/session metadata and were dropped.');
   }
 
-  const key = year + '-' + session;
+  const key = _pyqKey(examCode, year, session);
   if(_pyqSeenKeys.has(key)){
     console.warn('[PYQ] Duplicate paper ignored: "'+label+'" is already registered.');
     return;
   }
   _pyqSeenKeys.add(key);
-  _pyqRegistry.push({ year:year, session:session, label:label, data:cleanQuestions });
+  _pyqRegistry.push({ year:year, session:session, exam:examCode, label:label, data:cleanQuestions });
 }
 
-/* ---- forward-compatible auto-discovery (see point 6 above) ---- */
+/* ---- forward-compatible auto-discovery (see point 6 above) ----
+   Two naming conventions, two exams: bare `PYQ_<year>_<session>` is
+   NDA (unchanged); `PYQ_CDS_<year>_<session>` is CDS. The CDS pattern
+   is checked first since it's the more specific of the two — a CDS
+   global would never match the bare NDA pattern anyway (it doesn't
+   start with 4 digits right after "PYQ_"), but checking order keeps
+   the intent explicit. */
 function _pyqAutoDiscover(){
   if(typeof window === 'undefined') return;
-  const pattern = /^PYQ_(\d{4})_([IVXLC]+)$/;
+  const cdsPattern = /^PYQ_CDS_(\d{4})_([IVXLC]+)$/;
+  const ndaPattern = /^PYQ_(\d{4})_([IVXLC]+)$/;
   Object.keys(window).forEach(function(key){
-    const m = key.match(pattern);
-    if(!m) return;
+    let exam = null;
+    if(cdsPattern.test(key)) exam = 'CDS';
+    else if(ndaPattern.test(key)) exam = 'NDA';
+    else return;
     const candidate = window[key];
     if(!Array.isArray(candidate) || !candidate.length) return;
-    const already = _pyqSeenKeys.has(Number(candidate[0].y) + '-' + String(candidate[0].s));
-    if(!already) registerPYQPaper(candidate);
+    const already = _pyqSeenKeys.has(_pyqKey(exam, Number(candidate[0].y), String(candidate[0].s)));
+    if(!already) registerPYQPaper(candidate, exam);
   });
 }
 
@@ -1721,7 +1765,13 @@ function getSortedPYQPapers(){
   });
 }
 const PYQ_PAPERS = getSortedPYQPapers();
-const PYQ_ALL = PYQ_PAPERS.flatMap(p=>p.data.map(q=>({...q, _id:`${q.y}-${q.s}-${q.n}`})));
+// _id stays exactly `${y}-${s}-${n}` for NDA (the default/original exam) so
+// every existing user's saved stats/bookmarks keep matching with zero
+// migration. Only non-NDA exams (CDS, etc.) get an exam prefix, which is
+// enough on its own to guarantee no collision with NDA even if a future
+// exam ever shares a year+session+question-number with an NDA paper.
+function _pyqQuestionId(exam, q){ return (exam && exam!=='NDA' ? exam+'-' : '') + `${q.y}-${q.s}-${q.n}`; }
+const PYQ_ALL = PYQ_PAPERS.flatMap(p=>p.data.map(q=>({...q, _id:_pyqQuestionId(p.exam,q), _exam:p.exam})));
 const PYQ_BY_ID = {}; PYQ_ALL.forEach(q=>PYQ_BY_ID[q._id]=q);
 
 /* ---- highlight the tested word inside a PYQ question string —
@@ -1770,12 +1820,54 @@ function pyqTopicAccuracy(){
   });
   return Object.entries(bySec).map(([sec,v])=>({sec, acc:Math.round(v.c/v.t*100), n:v.t}));
 }
+/* ============================================================
+   MISTAKE NOTEBOOK — spaced repetition for vocab + PYQ.
+   Leitner-style boxes: get it wrong -> back to box 0, due tomorrow.
+   Get it right -> advance a box, due further out. Reach the last box
+   and get it right once more -> it's graduated, drops off the list.
+============================================================ */
+const REVIEW_INTERVALS_DAYS = [1,2,4,8,16,30];
+function ensureReviewQueue(){ if(!Array.isArray(State.reviewQueue)) State.reviewQueue=[]; return State.reviewQueue; }
+function findReviewItem(kind, ref){ return ensureReviewQueue().find(x=>x.kind===kind && x.ref===ref); }
+function addDaysISO(days){ const d=new Date(); d.setDate(d.getDate()+days); return d.toISOString(); }
+function reviewMarkWrong(kind, ref){
+  const q = ensureReviewQueue();
+  let item = findReviewItem(kind, ref);
+  if(!item){ item = {kind, ref, box:0, wrongCount:0, rightCount:0, addedAt:new Date().toISOString()}; q.push(item); }
+  item.box = 0;
+  item.wrongCount = (item.wrongCount||0)+1;
+  item.nextReview = addDaysISO(REVIEW_INTERVALS_DAYS[0]);
+  saveState();
+}
+function reviewMarkRight(kind, ref){
+  const item = findReviewItem(kind, ref);
+  if(!item) return; // never missed, nothing to track
+  item.rightCount = (item.rightCount||0)+1;
+  if(item.box >= REVIEW_INTERVALS_DAYS.length-1){
+    const q = ensureReviewQueue(); const idx = q.indexOf(item); if(idx>-1) q.splice(idx,1); // graduated
+  } else {
+    item.box++;
+    item.nextReview = addDaysISO(REVIEW_INTERVALS_DAYS[item.box]);
+  }
+  saveState();
+}
+function reviewDueItems(kindFilter){
+  const now = Date.now();
+  return ensureReviewQueue().filter(x=> (!kindFilter || x.kind===kindFilter) && new Date(x.nextReview).getTime() <= now);
+}
+function reviewSoonestDue(){
+  const q = ensureReviewQueue();
+  if(!q.length) return null;
+  return q.reduce((a,b)=> new Date(a.nextReview) < new Date(b.nextReview) ? a : b);
+}
+
 function recordPyqAttempt(qid, correct){
   const st = ensurePyqStats();
   st.attempts[qid] = correct;
   st.history = st.history.filter(h=>h.qid!==qid);
   st.history.unshift({qid, correct, ts:Date.now()});
   if(st.history.length>40) st.history.length = 40;
+  if(correct) reviewMarkRight('pyq', qid); else reviewMarkWrong('pyq', qid);
   saveState();
 }
 
@@ -1811,7 +1903,7 @@ function pyqLearnConcept(qid){
    ============================================================ */
 const letters = ['a','b','c','d'];
 const TOPIC_ICONS = { 'Spotting Errors':'🔍', 'Vocabulary':'📚', 'Grammar':'✍️', 'Reading Comprehension':'📖', 'Sentence Arrangement (PQRS)':'🔀' };
-const PV = { screen:'home', paperKey:null, session:null, archiveEra:null, archiveYear:null, paperReturn:null };
+const PV = { screen:'home', paperKey:null, session:null, archiveEra:null, archiveYear:null, paperReturn:null, examType:null };
 
 function pvShuffle(arr){
   const a = arr.slice();
@@ -1857,8 +1949,13 @@ function pvResumeContinue(){
   });
 }
 
-/* ---- data groupers ---- */
-function pvPapersByYear(){
+/* ---- data groupers ----
+   `exam` is optional on all of these: pass it to scope to one exam
+   (used by the Previous Years Papers archive, via PV.examType), or
+   omit it to see every exam's papers together (used by the unrelated,
+   pre-existing global Exam Mode picker, which is out of scope here and
+   left exactly as it behaved before). */
+function pvPapersByYear(exam){
   const years = {};
   // PYQ_PAPERS is already globally sorted (year ascending; within a
   // year, sessions in roman-numeral order — I before II before III...)
@@ -1866,7 +1963,8 @@ function pvPapersByYear(){
   // without needing to re-sort. Years with only one session (or any
   // number of sessions) are handled automatically — nothing here
   // assumes a fixed pair of papers per year.
-  PYQ_PAPERS.forEach(p=>{ years[p.year] = years[p.year] || []; years[p.year].push(p); });
+  const papersToGroup = exam ? PYQ_PAPERS.filter(p=>p.exam===exam) : PYQ_PAPERS;
+  papersToGroup.forEach(p=>{ years[p.year] = years[p.year] || []; years[p.year].push(p); });
   return Object.keys(years).sort((a,b)=>a-b).map(y=>{
     const papers = years[y];
     const st = ensurePyqStats();
@@ -1875,7 +1973,7 @@ function pvPapersByYear(){
       const qs = p.data;
       totalQ += qs.length;
       qs.forEach(q=>{
-        const id = `${q.y}-${q.s}-${q.n}`;
+        const id = _pyqQuestionId(p.exam, q);
         if(st.attempts[id]!==undefined){ attempted++; answeredSum++; if(st.attempts[id]===true) correctSum++; }
       });
     });
@@ -1884,11 +1982,11 @@ function pvPapersByYear(){
     return { year:y, papers, totalQ, completion, bestScore };
   });
 }
-function pvPaperQuestions(year, session){
-  return PYQ_ALL.filter(q=>String(q.y)===String(year) && q.s===session);
+function pvPaperQuestions(year, session, exam){
+  return PYQ_ALL.filter(q=>String(q.y)===String(year) && q.s===session && (!exam || q._exam===exam));
 }
-function pvPaperSections(year, session){
-  const list = pvPaperQuestions(year, session);
+function pvPaperSections(year, session, exam){
+  const list = pvPaperQuestions(year, session, exam);
   const order = [], groups = {};
   list.forEach(q=>{ if(!groups[q.sec]){ groups[q.sec]=[]; order.push(q.sec); } groups[q.sec].push(q); });
   return order.map(sec=>({ sec, list:groups[sec] }));
@@ -1912,8 +2010,8 @@ function pvEraForYear(year){
   const label = (end>=nowYear) ? (start+'+') : (start+'–'+end);
   return { key:start, start, end, label };
 }
-function pvEraGroups(){
-  const yearGroups = pvPapersByYear();
+function pvEraGroups(exam){
+  const yearGroups = pvPapersByYear(exam);
   const st = ensurePyqStats();
   const eras = {};
   yearGroups.forEach(g=>{
@@ -1927,7 +2025,7 @@ function pvEraGroups(){
     era.years.forEach(y=>{
       totalPapers += y.papers.length;
       totalQ += y.totalQ;
-      y.papers.forEach(p=>{ p.data.forEach(q=>{ const id=`${q.y}-${q.s}-${q.n}`; if(st.attempts[id]!==undefined) attempted++; }); });
+      y.papers.forEach(p=>{ p.data.forEach(q=>{ const id=_pyqQuestionId(p.exam,q); if(st.attempts[id]!==undefined) attempted++; }); });
     });
     const completion = totalQ ? Math.round(attempted/totalQ*100) : 0;
     return { key:era.key, label:era.label, years:era.years, totalPapers, totalQ, completion };
@@ -1939,6 +2037,7 @@ function renderPyqView(){ pvRender(); }
 function pvRender(){
   const root = document.getElementById('pvApp'); if(!root) return;
   if(PV.screen==='home') root.innerHTML = pvHomeHTML();
+  else if(PV.screen==='examtype') root.innerHTML = pvExamTypeHTML();
   else if(PV.screen==='archive') root.innerHTML = pvArchiveHTML();
   else if(PV.screen==='archiveSessions') root.innerHTML = pvArchiveSessionsHTML();
   else if(PV.screen==='paper') root.innerHTML = pvPaperHTML();
@@ -1956,7 +2055,62 @@ function pvGoHome(){ pvStopTimer(); PV.screen='home'; PV.session=null; PV.paperR
    that accordion open into a Year grid, which drills into a Session
    list, which hands off to the existing Paper screen (unchanged).
    ============================================================ */
-function pvGoArchive(){ PV.screen='archive'; PV.archiveEra=null; PV.archiveYear=null; pvRender(); }
+/* ---- exam-choice screen: shown first, ahead of the archive itself ----
+   PV.examType is the single piece of state that scopes every archive
+   screen below (era list, year, session list, paper) to one exam. It's
+   set here and only read by the archive-flow functions, so it can never
+   bleed into the unrelated global Exam Mode picker (pvExamPickerHTML),
+   which never looks at it. */
+function pvGoExamType(){ PV.screen='examtype'; PV.examType=null; PV.archiveEra=null; PV.archiveYear=null; pvRender(); }
+function pvGoArchive(exam){ if(exam) PV.examType=exam; PV.screen='archive'; PV.archiveEra=null; PV.archiveYear=null; pvRender(); }
+/**
+ * Runs the click micro-interaction (chosen card pulses, the other
+ * fades) then hands off to pvGoArchive(exam). Skips the animation
+ * delay entirely under prefers-reduced-motion — the CSS classes below
+ * still apply (so state/appearance stays correct) but the site's global
+ * reduced-motion rule (see styles.css) already zeroes their transition
+ * durations; this only additionally avoids the JS setTimeout delay,
+ * which that CSS rule can't reach on its own.
+ */
+function pvChooseExamType(exam, btnEl){
+  const grid = document.getElementById('pvExamTypeGrid');
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(!grid || !btnEl || reduce){ pvGoArchive(exam); return; }
+  grid.querySelectorAll('.pv-examtype-card').forEach(c=>{
+    c.classList.add(c===btnEl ? 'is-chosen' : 'is-fading');
+  });
+  setTimeout(()=>{ pvGoArchive(exam); }, 480);
+}
+function pvExamTypeHTML(){
+  const ndaPapers = PYQ_PAPERS.filter(p=>p.exam==='NDA');
+  const cdsPapers = PYQ_PAPERS.filter(p=>p.exam==='CDS');
+  const ndaQ = PYQ_ALL.filter(q=>q._exam==='NDA').length;
+  const cdsQ = PYQ_ALL.filter(q=>q._exam==='CDS').length;
+  const examCard = (code, icon, fullName, papers, qCount)=>{
+    const countLabel = papers.length
+      ? `${papers.length} paper${papers.length!==1?'s':''} · ${qCount} question${qCount!==1?'s':''}`
+      : 'Coming soon';
+    return `<button type="button" class="pv-examtype-card pv-examtype-${code.toLowerCase()}" onclick="pvChooseExamType('${code}', this)">
+      <span class="pv-examtype-overlay"></span>
+      <span class="pv-examtype-body">
+        <span class="pv-examtype-crest">${icon}</span>
+        <span class="pv-examtype-name">${fullName}</span>
+        <span class="pv-examtype-code">${code}</span>
+        <span class="pv-examtype-stats">${countLabel}</span>
+      </span>
+    </button>`;
+  };
+  return `<div class="pv-screen ma-root">
+    <div class="pv-topbar">
+      <div class="pv-back" onclick="pvGoHome()">←</div>
+      <div class="pv-topbar-title">Previous Years Papers<small>Choose Your Exam</small></div>
+    </div>
+    <div class="pv-examtype-grid" id="pvExamTypeGrid">
+      ${examCard('NDA', '🎖️', 'National Defence Academy', ndaPapers, ndaQ)}
+      ${examCard('CDS', '🛡️', 'Combined Defence Services', cdsPapers, cdsQ)}
+    </div>
+  </div>`;
+}
 function pvToggleEra(key){ PV.archiveEra = (PV.archiveEra===key ? null : key); pvRender(); }
 function pvOpenArchiveYear(year){ PV.archiveYear=year; PV.screen='archiveSessions'; pvRender(); }
 function pvBackToArchive(){ PV.screen='archive'; pvRender(); }
@@ -1967,10 +2121,13 @@ function pvPaperBack(){
 }
 
 function pvArchiveHTML(){
-  const eras = pvEraGroups();
-  const totalPapers = PYQ_PAPERS.length, totalQAll = PYQ_ALL.length;
+  const exam = PV.examType;
+  const examInfo = PYQ_EXAM_INFO[exam] || { full:exam||'', short:exam||'' };
+  const eras = pvEraGroups(exam);
+  const totalPapers = PYQ_PAPERS.filter(p=>p.exam===exam).length;
+  const totalQAll = PYQ_ALL.filter(q=>q._exam===exam).length;
   const st = ensurePyqStats();
-  const attemptedAll = Object.keys(st.attempts).length;
+  const attemptedAll = PYQ_ALL.filter(q=>q._exam===exam && st.attempts[q._id]!==undefined).length;
   const overallPct = totalQAll ? Math.round(attemptedAll/totalQAll*100) : 0;
 
   const erasHTML = eras.length ? eras.map((e,i)=>{
@@ -1998,22 +2155,26 @@ function pvArchiveHTML(){
         <div class="ma-year-grid">${yearsHTML}</div>
       </div></div>
     </div>`;
-  }).join('') : `<div class="pv-empty-note">No dossiers on file yet — papers will appear here the moment they're added.</div>`;
+  }).join('') : `<div class="pv-empty-note pv-empty-note-lg">
+      <div class="pv-empty-icon">🗄️</div>
+      <div class="pv-empty-title">No ${examInfo.short} papers yet</div>
+      <div class="pv-empty-sub">Check back soon — this vault gets filled in as papers are verified and added.</div>
+    </div>`;
 
   return `<div class="pv-screen ma-root">
     <div class="pv-topbar">
-      <div class="pv-back" onclick="pvGoHome()">←</div>
-      <div class="pv-topbar-title">Previous Years Papers<small>Records &amp; Dossiers Division</small></div>
+      <div class="pv-back" onclick="pvGoExamType()">←</div>
+      <div class="pv-topbar-title">Previous Years Papers<small>${examInfo.full} · Records &amp; Dossiers Division</small></div>
     </div>
     <div class="ma-hero reveal">
       <div class="ma-hero-stamp">Official Records</div>
       <div class="ma-hero-top">
         <div class="ma-hero-crest">🗃️</div>
         <div>
-          <div class="ma-hero-title">The Archive Vault</div>
+          <div class="ma-hero-title">The ${examInfo.short} Archive Vault</div>
         </div>
       </div>
-      <div class="ma-hero-desc">Every previous-year paper on file, filed by era. Break the seal on an Era to reveal its years, then select a session to begin your briefing.</div>
+      <div class="ma-hero-desc">Every previous-year ${examInfo.short} paper on file, filed by era. Break the seal on an Era to reveal its years, then select a session to begin your briefing.</div>
       <div class="ma-hero-stats">
         <div class="ma-hero-stat"><b>${eras.length}</b><span>Eras</span></div>
         <div class="ma-hero-stat"><b>${totalPapers}</b><span>Papers</span></div>
@@ -2027,17 +2188,18 @@ function pvArchiveHTML(){
 
 function pvArchiveSessionsHTML(){
   const year = PV.archiveYear;
-  const g = pvPapersByYear().find(x=>String(x.year)===String(year));
+  const exam = PV.examType;
+  const g = pvPapersByYear(exam).find(x=>String(x.year)===String(year));
   if(!g){ setTimeout(pvGoArchive,0); return `<div class="pv-screen"></div>`; }
   const st = ensurePyqStats();
   const rows = g.papers.map((p,i)=>{
-    const qs = pvPaperQuestions(p.year,p.session);
+    const qs = pvPaperQuestions(p.year,p.session,exam);
     const attempted = qs.filter(q=>st.attempts[q._id]!==undefined).length;
     const pct = qs.length ? Math.round(attempted/qs.length*100) : 0;
     return `<div class="ma-session-card" style="animation-delay:${i*80}ms" onclick="pvOpenSessionFromArchive(${p.year},'${p.session}')">
       <div class="ma-session-icon">🎖️</div>
       <div class="ma-session-body">
-        <div class="ma-session-title">NDA ${p.session} ${p.year}</div>
+        <div class="ma-session-title">${p.label}</div>
         <div class="ma-session-sub">${qs.length} Questions${attempted?` · ${pct}% progress`:' · Not started'}</div>
         <div class="ma-session-progress"><div class="ma-session-progress-fill" style="width:${pct}%"></div></div>
       </div>
@@ -2095,7 +2257,7 @@ function pvHomeHTML(){
     </div>`).join('');
 
   const eraGroups = pvEraGroups();
-  const archiveGateHTML = `<div class="ma-gate-card" onclick="pvGoArchive()">
+  const archiveGateHTML = `<div class="ma-gate-card" onclick="pvGoExamType()">
     <div class="ma-gate-icon">🗃️</div>
     <div class="ma-gate-body">
       <div class="ma-gate-title">Previous Years Papers</div>
@@ -2214,14 +2376,18 @@ function pvLaunchMode(mode){
    PAPER PAGE
    ============================================================ */
 function pvOpenPaper(year, session){
-  PV.paperKey = year+'-'+session;
+  // paperKey carries the exam too (PV.examType, set back when the exam
+  // was first chosen) so a paper opened from the CDS archive can never
+  // pull in an NDA paper's questions even if year+session happen to match.
+  PV.paperKey = (PV.examType||'NDA')+'-'+year+'-'+session;
   PV.screen='paper';
   pvRender();
 }
 function pvPaperHTML(){
-  const [year, session] = PV.paperKey.split('-');
-  const sections = pvPaperSections(year, session);
-  const allQ = pvPaperQuestions(year, session);
+  const [exam, year, session] = PV.paperKey.split('-');
+  const examLabel = (PYQ_EXAM_INFO[exam] && PYQ_EXAM_INFO[exam].short) || exam;
+  const sections = pvPaperSections(year, session, exam);
+  const allQ = pvPaperQuestions(year, session, exam);
   const acc = pyqAccuracyFor(allQ);
   const attempted = allQ.filter(q=>ensurePyqStats().attempts[q._id]!==undefined).length;
   const pct = allQ.length ? Math.round(attempted/allQ.length*100) : 0;
@@ -2241,12 +2407,12 @@ function pvPaperHTML(){
   return `<div class="pv-screen">
     <div class="pv-topbar">
       <div class="pv-back" onclick="pvPaperBack()">←</div>
-      <div class="pv-topbar-title">NDA ${session} · ${year}<small>Mission Briefing</small></div>
+      <div class="pv-topbar-title">${examLabel} ${session} · ${year}<small>Mission Briefing</small></div>
     </div>
     <div class="pv-paper-hero">
       ${pvRingSVG(pct,80,8,'--gold')}
       <div class="pv-paper-hero-body">
-        <div class="pv-paper-hero-title">NDA ${session} English Paper — ${year}</div>
+        <div class="pv-paper-hero-title">${examLabel} ${session} English Paper — ${year}</div>
         <div class="pv-paper-hero-sub">${allQ.length} questions · ${attempted} attempted${acc!==null?` · ${acc}% accuracy`:''}</div>
       </div>
     </div>
@@ -2256,12 +2422,16 @@ function pvPaperHTML(){
   </div>`;
 }
 function pvOpenSection(year, session, sec){
-  const list = pvPaperQuestions(year, session).filter(q=>q.sec===sec);
-  pvStartSession('section', list, {title:`NDA ${session} ${year} · ${sec}`});
+  const exam = PV.examType;
+  const examLabel = (PYQ_EXAM_INFO[exam] && PYQ_EXAM_INFO[exam].short) || exam || '';
+  const list = pvPaperQuestions(year, session, exam).filter(q=>q.sec===sec);
+  pvStartSession('section', list, {title:`${examLabel} ${session} ${year} · ${sec}`});
 }
 function pvPracticeFullPaper(year, session){
-  const list = pvPaperQuestions(year, session);
-  pvStartSession('section', list, {title:`NDA ${session} ${year} — Full Paper`});
+  const exam = PV.examType;
+  const examLabel = (PYQ_EXAM_INFO[exam] && PYQ_EXAM_INFO[exam].short) || exam || '';
+  const list = pvPaperQuestions(year, session, exam);
+  pvStartSession('section', list, {title:`${examLabel} ${session} ${year} — Full Paper`});
 }
 
 /* ============================================================
@@ -3720,8 +3890,8 @@ function renderWordQuiz(v){
       const b=document.createElement('button'); b.className='opt-btn'; b.textContent=o;
       b.onclick=()=>{
         optsWrap.querySelectorAll('.opt-btn').forEach(x=>x.disabled=true);
-        if(oi===item.ans){b.classList.add('correct');handleQuizCorrect(b,null);}
-        else{b.classList.add('wrong');optsWrap.querySelectorAll('.opt-btn')[item.ans].classList.add('correct');handleQuizWrong(null);}
+        if(oi===item.ans){b.classList.add('correct');handleQuizCorrect(b,null);reviewMarkRight('vocab',v.id);}
+        else{b.classList.add('wrong');optsWrap.querySelectorAll('.opt-btn')[item.ans].classList.add('correct');handleQuizWrong(null);reviewMarkWrong('vocab',v.id);}
         const fb=block.querySelector(`#wdFb${qi}`); fb.classList.add('show'); fb.textContent=item.exp;
       };
       optsWrap.appendChild(b);
@@ -3903,9 +4073,111 @@ function refreshDashboard(){
 
   renderBadges();
   renderMysteryBox();
+  renderReviewWidget();
   refreshHomeV2();
 }
 function checkBadges(){ refreshDashboard(); }
+
+/* ---- Mistake Notebook: dashboard widget + review session UI ---- */
+function relativeDueText(iso){
+  const diffMs = new Date(iso).getTime() - Date.now();
+  const days = Math.round(diffMs/86400000);
+  if(days<=0) return 'today';
+  if(days===1) return 'tomorrow';
+  return 'in '+days+' days';
+}
+function renderReviewWidget(){
+  const body = document.getElementById('reviewWidgetBody');
+  const card = document.getElementById('reviewWidgetCard');
+  if(!body) return;
+  const queue = ensureReviewQueue();
+  const due = reviewDueItems();
+  card.classList.toggle('review-due-glow', due.length>0);
+  if(!queue.length){
+    body.innerHTML = `<p class="review-empty">Nothing here yet — any vocab word or PYQ question you get wrong will land here for spaced review, so mistakes turn into the thing you know best.</p>`;
+    return;
+  }
+  if(!due.length){
+    const soonest = reviewSoonestDue();
+    body.innerHTML = `<p class="review-empty">All caught up. ${queue.length} item${queue.length===1?'':'s'} in your notebook — next one due ${soonest?relativeDueText(soonest.nextReview):'soon'}.</p>`;
+    return;
+  }
+  const dueVocab = due.filter(x=>x.kind==='vocab').length;
+  const duePyq = due.filter(x=>x.kind==='pyq').length;
+  body.innerHTML = `
+    <div class="review-due-row">
+      <div class="review-due-count" id="reviewDueCount">0</div>
+      <div class="review-due-text">due for review right now<br><span class="review-due-breakdown">${dueVocab} vocab · ${duePyq} PYQ</span></div>
+      <button class="btn" onclick="openReviewSession()">Start Review →</button>
+    </div>`;
+  countUp('reviewDueCount', due.length);
+}
+let reviewSessionQueue = [], reviewSessionIdx = 0;
+function openReviewSession(kindFilter){
+  const due = reviewDueItems(kindFilter);
+  if(!due.length){ toast('Nothing due for review right now.'); return; }
+  reviewSessionQueue = due.slice(0,20).sort(()=>Math.random()-0.5);
+  reviewSessionIdx = 0;
+  document.getElementById('reviewOverlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+  renderReviewCard();
+}
+function closeReviewSession(){
+  document.getElementById('reviewOverlay').classList.remove('show');
+  document.body.style.overflow = '';
+  renderReviewWidget();
+}
+function renderReviewCard(){
+  const item = reviewSessionQueue[reviewSessionIdx];
+  const cardEl = document.getElementById('reviewCard');
+  cardEl.classList.remove('flipped');
+  document.getElementById('reviewProgress').textContent = (reviewSessionIdx+1)+' / '+reviewSessionQueue.length;
+  const front = document.getElementById('reviewFront');
+  const back = document.getElementById('reviewBack');
+  const actions = document.getElementById('reviewActions');
+  if(item.kind==='vocab'){
+    const v = VOCAB.find(x=>x.id===item.ref);
+    if(!v){ reviewAdvance(); return; }
+    front.innerHTML = `<div class="review-kind-tag">VOCAB</div><div class="review-word">${v.w}</div><div class="review-hint">Tap the card to reveal the meaning</div>`;
+    back.innerHTML = `<div class="review-kind-tag">VOCAB</div><div class="review-word">${v.w}</div><div class="review-meaning">${v.meanEn||''}</div>`;
+    front.onclick = back.onclick = ()=>cardEl.classList.toggle('flipped');
+    actions.innerHTML = `
+      <button class="btn ghost" onclick="reviewGradeVocab(false)">Still shaky</button>
+      <button class="btn" onclick="reviewGradeVocab(true)">Got it ✓</button>`;
+  } else {
+    const q = PYQ_BY_ID[item.ref];
+    if(!q){ reviewAdvance(); return; }
+    front.onclick = back.onclick = null;
+    front.innerHTML = `<div class="review-kind-tag">PYQ · ${escapeHtmlVaani(q.sec||'')}</div><div class="review-q">${q.q}</div>
+      <div class="review-opts">${q.o.map((o,i)=>`<button class="opt-btn" onclick="reviewAnswerPyq(${i})">${o}</button>`).join('')}</div>`;
+    back.innerHTML = '';
+    actions.innerHTML = '';
+  }
+}
+function reviewAnswerPyq(oi){
+  const item = reviewSessionQueue[reviewSessionIdx];
+  const q = PYQ_BY_ID[item.ref];
+  const correct = oi === q.ans;
+  const opts = document.querySelectorAll('#reviewFront .opt-btn');
+  opts.forEach((b,i)=>{ b.disabled=true; if(i===q.ans) b.classList.add('correct'); else if(i===oi) b.classList.add('wrong'); });
+  recordPyqAttempt(q._id, correct);
+  setTimeout(reviewAdvance, 850);
+}
+function reviewGradeVocab(gotIt){
+  const item = reviewSessionQueue[reviewSessionIdx];
+  if(gotIt) reviewMarkRight('vocab', item.ref); else reviewMarkWrong('vocab', item.ref);
+  reviewAdvance();
+}
+function reviewAdvance(){
+  reviewSessionIdx++;
+  if(reviewSessionIdx >= reviewSessionQueue.length){
+    toast('Review session complete — nice work.');
+    closeReviewSession();
+    return;
+  }
+  renderReviewCard();
+}
+function escapeHtmlVaani(s){ return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
 /* ============================================================
    VAANI 2.0 — HOME REDESIGN DATA LAYER (uses existing GRAMMAR/SKILL_TIERS data only)
