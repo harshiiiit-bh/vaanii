@@ -916,11 +916,10 @@ fetch: function (code) {
         );
       }
 
-      return JSON.parse(body);
+           return JSON.parse(body);
     });
   });
 }
-      }
     };
   };
 
