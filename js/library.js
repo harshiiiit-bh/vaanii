@@ -585,13 +585,13 @@ function renderHome(){
     <div class="section-title-row"><h3>Your Command Tools</h3></div>
     <div class="book-grid" style="grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); margin-bottom:46px;">
       <div class="tool-tile" style="background-image:url('${IMG.parade_ncc}')" onclick="location.hash='#/dashboard'">
-        <div><span class="tt-label">📊 Progress Tracker</span><small class="tt-sub">Streaks, heatmap &amp; goals</small></div>
+        <div><span class="tt-label"><svg class="tt-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19V10M11 19V5M18 19v-7"/></svg>Progress Tracker</span><small class="tt-sub">Streaks, heatmap &amp; goals</small></div>
       </div>
       <div class="tool-tile" style="background-image:url('${IMG.officers_march}')" onclick="location.hash='#/board'">
-        <div><span class="tt-label">🗂️ Reading Board</span><small class="tt-sub">Drag books across stages</small></div>
+        <div><span class="tt-label"><svg class="tt-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="4" width="17" height="16" rx="1.5"/><path d="M9 4v16M15 4v16"/></svg>Reading Board</span><small class="tt-sub">Drag books across stages</small></div>
       </div>
       <div class="tool-tile" style="background-image:url('${IMG.mud}')" onclick="location.hash='#/achievements'">
-        <div><span class="tt-label">🎖️ Medals &amp; Stickers</span><small class="tt-sub">${DATA.achievements.length} earned so far</small></div>
+        <div><span class="tt-label"><svg class="tt-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="9" r="5.2"/><path d="M8.5 13.5 6.5 21l5.5-3 5.5 3-2-7.5"/></svg>Medals &amp; Stickers</span><small class="tt-sub">${DATA.achievements.length} earned so far</small></div>
       </div>
     </div>
   </div>`;
