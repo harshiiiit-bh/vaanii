@@ -863,19 +863,63 @@
       name: 'supabase',
       live: true,
       submit: function (code, e) {
-        return fetch(base, {
-          method: 'POST', headers: headers,
-          body: JSON.stringify({
-            code: code, pid: e.pid, name: e.name,
-            score: e.score, seconds: e.seconds, total: e.total, at: e.at
-          })
-        }).then(function (r) { return r.ok; });
-      },
-      fetch: function (code) {
-        return fetch(base + '?code=eq.' + encodeURIComponent(code) +
-          '&order=score.desc,seconds.asc&limit=' + MAX_PLAYERS, { headers: headers })
-          .then(function (r) { return r.ok ? r.json() : []; })
-          .catch(function () { return []; });
+  console.log('[Arena Supabase] SUBMIT', {
+    code: code,
+    pid: e.pid,
+    name: e.name,
+    score: e.score,
+    seconds: e.seconds,
+    total: e.total
+  });
+
+  return fetch(base, {
+    method: 'POST',
+    headers: headers,
+    body: JSON.stringify({
+      code: code,
+      pid: e.pid,
+      name: e.name,
+      score: e.score,
+      seconds: e.seconds,
+      total: e.total,
+      at: e.at
+    })
+  }).then(function (r) {
+    return r.text().then(function (body) {
+      console.log('[Arena Supabase] POST', r.status, body);
+
+      if (!r.ok) {
+        throw new Error(
+          'Supabase POST failed: HTTP ' + r.status + ' — ' + body
+        );
+      }
+
+      return true;
+    });
+  });
+},
+
+fetch: function (code) {
+  console.log('[Arena Supabase] FETCH BOARD', code);
+
+  return fetch(
+    base + '?code=eq.' + encodeURIComponent(code) +
+    '&order=score.desc,seconds.asc&limit=' + MAX_PLAYERS,
+    { headers: headers }
+  ).then(function (r) {
+    return r.text().then(function (body) {
+      console.log('[Arena Supabase] GET', r.status, body);
+
+      if (!r.ok) {
+        throw new Error(
+          'Supabase GET failed: HTTP ' + r.status + ' — ' + body
+        );
+      }
+
+      return JSON.parse(body);
+    });
+  });
+}
       }
     };
   };
