@@ -683,7 +683,8 @@ const _pyqSeenKeys = new Set();
    these two — nothing else needs a hardcoded exam list. */
 const PYQ_EXAM_INFO = {
   NDA: { code:'NDA', full:'National Defence Academy', short:'NDA' },
-  CDS: { code:'CDS', full:'Combined Defence Services', short:'CDS' }
+  CDS: { code:'CDS', full:'Combined Defence Services', short:'CDS' },
+  AFCAT: { code:'AFCAT', full:'Air Force Common Admission Test', short:'AFCAT' }
 };
 function _pyqKey(exam, year, session){ return exam+'-'+year+'-'+session; }
 
@@ -753,10 +754,12 @@ function registerPYQPaper(data, exam){
 function _pyqAutoDiscover(){
   if(typeof window === 'undefined') return;
   const cdsPattern = /^PYQ_CDS_(\d{4})_([IVXLC]+)$/;
+  const afcatPattern = /^PYQ_AFCAT_(\d{4})_([IVXLC]+)$/;
   const ndaPattern = /^PYQ_(\d{4})_([IVXLC]+)$/;
   Object.keys(window).forEach(function(key){
     let exam = null;
     if(cdsPattern.test(key)) exam = 'CDS';
+    else if(afcatPattern.test(key)) exam = 'AFCAT';
     else if(ndaPattern.test(key)) exam = 'NDA';
     else return;
     const candidate = window[key];
@@ -1103,11 +1106,15 @@ function pvChooseExamType(exam, btnEl){
   setTimeout(()=>{ pvGoArchive(exam); }, 480);
 }
 function pvExamTypeHTML(){
-  const ndaPapers = PYQ_PAPERS.filter(p=>p.exam==='NDA');
-  const cdsPapers = PYQ_PAPERS.filter(p=>p.exam==='CDS');
-  const ndaQ = PYQ_ALL.filter(q=>q._exam==='NDA').length;
-  const cdsQ = PYQ_ALL.filter(q=>q._exam==='CDS').length;
-  const examCard = (code, icon, fullName, papers, qCount)=>{
+  // Icons for known exams; anything registered in PYQ_EXAM_INFO without
+  // an icon here still gets a card (falls back to a generic crest), so
+  // adding a future exam only ever means one line in PYQ_EXAM_INFO.
+  const EXAM_ICONS = { NDA:'🎖️', CDS:'🛡️', AFCAT:'✈️' };
+  const examCard = (code)=>{
+    const info = PYQ_EXAM_INFO[code] || { full:code, short:code };
+    const papers = PYQ_PAPERS.filter(p=>p.exam===code);
+    const qCount = PYQ_ALL.filter(q=>q._exam===code).length;
+    const icon = EXAM_ICONS[code] || '🎯';
     const countLabel = papers.length
       ? `${papers.length} paper${papers.length!==1?'s':''} · ${qCount} question${qCount!==1?'s':''}`
       : 'Coming soon';
@@ -1115,8 +1122,8 @@ function pvExamTypeHTML(){
       <span class="pv-examtype-overlay"></span>
       <span class="pv-examtype-body">
         <span class="pv-examtype-crest">${icon}</span>
-        <span class="pv-examtype-name">${fullName}</span>
-        <span class="pv-examtype-code">${code}</span>
+        <span class="pv-examtype-name">${info.full}</span>
+        <span class="pv-examtype-code">${info.short}</span>
         <span class="pv-examtype-stats">${countLabel}</span>
       </span>
     </button>`;
@@ -1127,8 +1134,7 @@ function pvExamTypeHTML(){
       <div class="pv-topbar-title">Previous Years Papers<small>Choose Your Exam</small></div>
     </div>
     <div class="pv-examtype-grid" id="pvExamTypeGrid">
-      ${examCard('NDA', '🎖️', 'National Defence Academy', ndaPapers, ndaQ)}
-      ${examCard('CDS', '🛡️', 'Combined Defence Services', cdsPapers, cdsQ)}
+      ${Object.keys(PYQ_EXAM_INFO).map(examCard).join('')}
     </div>
   </div>`;
 }
@@ -1308,7 +1314,7 @@ function pvHomeHTML(){
       <div class="pv-recent-dot ${h.correct?'ok':'no'}">${h.correct?'✓':'✕'}</div>
       <div class="pv-recent-body">
         <div class="pv-recent-q">${pyqHi(q)}</div>
-        <div class="pv-recent-meta">NDA ${q.s} ${q.y} · ${q.sec}</div>
+        <div class="pv-recent-meta">${(PYQ_EXAM_INFO[q._exam]&&PYQ_EXAM_INFO[q._exam].short)||'NDA'} ${q.s} ${q.y} · ${q.sec}</div>
       </div>
     </div>`;
   }).join('') : `<div class="pv-empty-note">Solve a few questions and your recent activity will show up here.</div>`;
@@ -1461,11 +1467,12 @@ function pvPracticeFullPaper(year, session){
 function pvExamPickerHTML(){
   const yearGroups = pvPapersByYear();
   const rows = yearGroups.flatMap(g=>g.papers).map(p=>{
-    const qs = pvPaperQuestions(p.year, p.session);
+    const qs = pvPaperQuestions(p.year, p.session, p.exam);
     const mins = Math.max(15, Math.round(qs.length*1));
-    return `<div class="pv-paper-row" onclick="pvStartExam(${p.year},'${p.session}')">
+    const examLabel = (PYQ_EXAM_INFO[p.exam] && PYQ_EXAM_INFO[p.exam].short) || p.exam;
+    return `<div class="pv-paper-row" onclick="pvStartExam(${p.year},'${p.session}','${p.exam}')">
       <div class="pv-paper-row-body">
-        <div class="pv-paper-row-title">NDA ${p.session} · ${p.year} Simulation</div>
+        <div class="pv-paper-row-title">${examLabel} ${p.session} · ${p.year} Simulation</div>
         <div class="pv-paper-row-sub">${qs.length} questions · ${mins} min timer</div>
       </div>
       <div class="pv-paper-row-arrow">→</div>
@@ -1480,12 +1487,16 @@ function pvExamPickerHTML(){
     ${rows}
   </div>`;
 }
-function pvStartExam(year, session){
-  const qs = pvPaperQuestions(year, session);
+function pvStartExam(year, session, exam){
+  // exam is passed explicitly from the picker above; PV.examType is set here
+  // too since vaani-testkit.js's own pvStartExam patch reads it from there.
+  if(exam) PV.examType = exam;
+  const qs = pvPaperQuestions(year, session, exam);
   if(!qs.length){ toast('This paper is not available yet.'); return; }
   const mins = Math.max(15, Math.round(qs.length*1));
+  const examLabel = (PYQ_EXAM_INFO[exam] && PYQ_EXAM_INFO[exam].short) || exam || 'NDA';
   pvStartSession('exam', qs, {
-    title:`NDA ${session} ${year} · Exam Simulation`, negativeMarking:true, deferReveal:true, timeLimitSec: mins*60
+    title:`${examLabel} ${session} ${year} · Exam Simulation`, negativeMarking:true, deferReveal:true, timeLimitSec: mins*60
   });
 }
 
@@ -1666,12 +1677,8 @@ function pvSessionHTML(){
   }
   let explainHTML = '';
   if(showResult || isRevisionLike){
-    explainHTML = `<div class="pv-explain-panel">
-      <b>Explanation:</b> ${q.exp}
-      ${q.rule?`<div style="margin-top:8px"><b>📐 Rule:</b> ${q.rule}</div>`:''}
-      ${q.shortcut?`<div style="margin-top:8px">⚡ ${q.shortcut}</div>`:''}
-      ${q.correctionNote?`<div style="margin-top:8px;color:var(--red)">⚠ <b>Answer-key note:</b> ${q.correctionNote}</div>`:''}
-    </div>`;
+    const extraNotes = `${q.rule?`<div><b>📐 Rule:</b> ${q.rule}</div>`:''}${q.shortcut?`<div style="margin-top:8px">⚡ ${q.shortcut}</div>`:''}${q.correctionNote?`<div style="margin-top:8px;color:var(--red)">⚠ <b>Answer-key note:</b> ${q.correctionNote}</div>`:''}`;
+    if(extraNotes) explainHTML = `<div class="pv-explain-panel">${extraNotes}</div>`;
   } else if(s.mode==='exam' && answer){
     explainHTML = `<div class="pv-feedback" style="background:rgba(201,162,75,.1);border-left:3px solid var(--gold);color:var(--gold)">✓ Answer locked in — review after you submit the exam.</div>`;
   }
@@ -1699,7 +1706,7 @@ function pvSessionHTML(){
 
     <div class="pv-qcard reveal">
       <div class="pv-qmeta-row">
-        <span class="pyq-chip yr">NDA ${q.s} ${q.y}</span>
+        <span class="pyq-chip yr">${(PYQ_EXAM_INFO[q._exam]&&PYQ_EXAM_INFO[q._exam].short)||'NDA'} ${q.s} ${q.y}</span>
         <span class="pyq-chip tp">${q.sec}</span>
         ${q.diff?`<span class="pyq-chip diff-${q.diff}">${q.diff}</span>`:''}
         <button class="bm-star ${bookmarked?'active':''}" onclick="toggleBookmark('${bmId}', this)" title="Bookmark" style="margin-left:auto">★</button>
@@ -1711,7 +1718,6 @@ function pvSessionHTML(){
       ${explainHTML}
       ${(showResult || isRevisionLike) ? `<div class="pv-qcard-actions">
         <div class="pv-qcard-actions-left">
-          <button class="pv-icon-btn" onclick="pyqLearnConcept('${q._id}')">📖 Learn Concept</button>
           <button class="pv-icon-btn" onclick="pvReportError('${q._id}')">⚑ Report</button>
         </div>
       </div>` : ''}
@@ -1854,7 +1860,7 @@ function relatedPyqHTML(lessonId){
   const preview = related.slice(0,3);
   return `<div id="fs-pyq-real" class="panel-title" style="margin-top:24px"><span class="bar"></span>Real NDA PYQs On This Topic (${related.length})</div>
     ${preview.map(q=>`<div class="related-pyq-mini" onclick="openPyqByLesson('${lessonId}')">
-       <div class="rpm-meta">NDA ${q.s} ${q.y} · ${q.sub}</div>${pyqHi(q)}
+       <div class="rpm-meta">${(PYQ_EXAM_INFO[q._exam]&&PYQ_EXAM_INFO[q._exam].short)||'NDA'} ${q.s} ${q.y} · ${q.sub}</div>${pyqHi(q)}
      </div>`).join('')}
     <button class="btn ghost" style="margin-top:6px" onclick="openPyqByLesson('${lessonId}')">🎯 Solve All ${related.length} Previous Year Questions on this Topic</button>`;
 }
@@ -1894,7 +1900,7 @@ function renderGlobalSearch(){
   }
   if(pyqs.length){
     html += `<div class="gsearch-group-label">Previous Year Questions (${pyqs.length}${pyqs.length===6?'+':''})</div>` + pyqs.map(q=>
-      `<div class="gsearch-item" onclick="closeGlobalSearch();pvOpenSearchResult('${q._id}','${term.replace(/'/g,"\\'")}')"><span class="gi-title">NDA ${q.s} ${q.y} · ${q.sec}</span><span class="gi-sub">${q.q.slice(0,90)}${q.q.length>90?'…':''}</span></div>`).join('');
+      `<div class="gsearch-item" onclick="closeGlobalSearch();pvOpenSearchResult('${q._id}','${term.replace(/'/g,"\\'")}')"><span class="gi-title">${(PYQ_EXAM_INFO[q._exam]&&PYQ_EXAM_INFO[q._exam].short)||'NDA'} ${q.s} ${q.y} · ${q.sec}</span><span class="gi-sub">${q.q.slice(0,90)}${q.q.length>90?'…':''}</span></div>`).join('');
   }
   if(practice.length){
     html += `<div class="gsearch-group-label">Practice</div>` + practice.map(p=>
@@ -2761,8 +2767,6 @@ function renderQuizPane(id, quiz){
           b.classList.add('wrong');document.querySelectorAll('.opt-btn')[item.ans].classList.add('correct');
           handleQuizWrong(cardEl);
         }
-        fb.classList.add('show');
-        fb.textContent = item.exp;
         document.getElementById('nextBtn').style.display='inline-flex';
       };
       wrap.appendChild(b);
@@ -2951,7 +2955,6 @@ function renderWordQuiz(v){
         optsWrap.querySelectorAll('.opt-btn').forEach(x=>x.disabled=true);
         if(oi===item.ans){b.classList.add('correct');handleQuizCorrect(b,null);reviewMarkRight('vocab',v.id);}
         else{b.classList.add('wrong');optsWrap.querySelectorAll('.opt-btn')[item.ans].classList.add('correct');handleQuizWrong(null);reviewMarkWrong('vocab',v.id);}
-        const fb=block.querySelector(`#wdFb${qi}`); fb.classList.add('show'); fb.textContent=item.exp;
       };
       optsWrap.appendChild(b);
     });
@@ -3677,8 +3680,6 @@ function renderComparePane(id, quiz){
           b.classList.add('wrong');document.querySelectorAll('#cmpOptsWrap .opt-btn')[item.ans].classList.add('correct');
           handleQuizWrong(cardEl);
         }
-        fb.classList.add('show');
-        fb.textContent = item.exp;
         document.getElementById('cmpNextBtn').style.display='inline-flex';
       };
       wrap.appendChild(b);

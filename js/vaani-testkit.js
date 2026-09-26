@@ -85,12 +85,14 @@
   /** Which exam sources actually have questions loaded right now. */
   VX.availableSources = function (baseList) {
     var list = baseList || allQuestions();
-    var out = [];
-    ['NDA', 'CDS'].forEach(function (code) {
-      var n = list.filter(function (q) { return q._exam === code; }).length;
-      if (n > 0) out.push({ code: code, count: n });
+    var counts = {}, order = [];
+    list.forEach(function (q) {
+      var code = q._exam;
+      if (!code) return;
+      if (!counts[code]) { counts[code] = 0; order.push(code); }
+      counts[code]++;
     });
-    return out;
+    return order.map(function (code) { return { code: code, count: counts[code] }; });
   };
 
   /* =========================================================
@@ -164,22 +166,17 @@
         /* ---- exam source ---- */
         if (showSource) {
           var f0 = el('div', 'vx-field');
-          var totalN = VX.poolFor('NDA', opts.baseList).length;
-          var totalC = VX.poolFor('CDS', opts.baseList).length;
+          var avail = VX.availableSources(opts.baseList);
+          var totalAll = avail.reduce(function (sum, a) { return sum + a.count; }, 0);
           f0.appendChild(el('label', null,
             'Question bank<span class="vx-hint">Where the questions are drawn from.</span>'));
-          var choices = [];
-          if (totalN) choices.push('NDA');
-          if (totalC) choices.push('CDS');
-          if (totalN && totalC) choices.push('BOTH');
+          var choices = avail.map(function (a) { return a.code; });
+          if (avail.length > 1) choices.push('BOTH');
           f0.appendChild(segRow(choices, cfg.source, function (v) {
-            if (v === 'BOTH') return 'Both (' + (totalN + totalC) + ')';
-            return v + ' (' + (v === 'NDA' ? totalN : totalC) + ')';
+            if (v === 'BOTH') return 'Both (' + totalAll + ')';
+            var match = avail.filter(function (a) { return a.code === v; })[0];
+            return v + ' (' + (match ? match.count : 0) + ')';
           }, function (v) { cfg.source = v; draw(); }));
-          if (!totalC) {
-            f0.appendChild(el('span', 'vx-hint',
-              'CDS papers are not loaded yet. Add them under data/pyq/ and they appear here automatically.'));
-          }
           sheet.appendChild(f0);
         }
 
@@ -493,9 +490,12 @@
 
     /* ---- exam simulation: let the host set the clock ---- */
     if (typeof global.pvStartExam === 'function' && !global.pvStartExam.__vx) {
-      global.pvStartExam = function (year, session) {
+      global.pvStartExam = function (year, session, exam) {
+        var PVs = sharedPV();
+        if (exam && PVs) PVs.examType = exam;
+        var examType = (PVs && PVs.examType) || exam || null;
         var qs = typeof global.pvPaperQuestions === 'function'
-          ? global.pvPaperQuestions(year, session, (sharedPV() && sharedPV().examType) || null) : [];
+          ? global.pvPaperQuestions(year, session, examType) : [];
         if (!qs.length) { say('That paper is not available yet.'); return; }
         VX.setup({
           title: 'Exam simulation',
@@ -511,7 +511,7 @@
           var picked = shuffle(qs).slice(0, cfg.count)
             .sort(function (a, b) { return (a.n || 0) - (b.n || 0); });
           global.pvStartSession('exam', picked, {
-            title: ((sharedPV() && sharedPV().examType) || 'NDA') + ' ' + session + ' ' + year + ' · Exam simulation',
+            title: (examType || 'NDA') + ' ' + session + ' ' + year + ' · Exam simulation',
             negativeMarking: true, deferReveal: true,
             timeLimitSec: cfg.seconds, vxTiming: 'countdown'
           });

@@ -1714,6 +1714,9 @@ body.mode-sepia main{line-height:1.8}
 @media(min-width:640px){
   .pv-examtype-grid{grid-template-columns:1fr 1fr}
 }
+@media(min-width:900px){
+  .pv-examtype-grid{grid-template-columns:1fr 1fr 1fr}
+}
 .pv-examtype-card{position:relative;overflow:hidden;display:block;width:100%;min-height:238px;
   border:1px solid rgba(201,162,75,.3);border-radius:22px;padding:0;margin:0;cursor:pointer;
   background-color:#10141b;background-size:cover;background-position:center;background-repeat:no-repeat;
@@ -1721,6 +1724,7 @@ body.mode-sepia main{line-height:1.8}
   transition:transform .3s var(--ease-out),border-color .3s,box-shadow .3s,filter .3s,opacity .45s var(--ease-out),scale .45s var(--ease-out)}
 .pv-examtype-nda{background-image:url("assets/nda-card-bg.jpg")}
 .pv-examtype-cds{background-image:url("assets/cds-card-bg.jpg")}
+.pv-examtype-afcat{background-image:url("assets/afcat-card-bg.jpg")}
 .pv-examtype-overlay{position:absolute;inset:0;pointer-events:none;
   background:
     linear-gradient(180deg,rgba(5,7,10,.30) 0%,rgba(5,7,10,.40) 45%,rgba(5,7,10,.92) 100%),
