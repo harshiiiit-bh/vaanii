@@ -22,8 +22,10 @@
   var A = VX.arena = {};
 
   var MAX_PLAYERS = 100;
-  var CODE_VERSION = 1;
+  var CODE_VERSION = 2;
   var EPOCH = Date.UTC(2024, 0, 1) / 60000; // minutes since 2024-01-01, keeps codes short
+  var NEG_MARKS = [0, -1 / 3, -1 / 2, -1]; // index stored in the code -> fraction lost per wrong answer
+  var NEG_LABELS = ['No penalty', '&minus;1/3', '&minus;1/2', '&minus;1'];
 
   /* ---------------------------------------------------------
      helpers
@@ -92,10 +94,24 @@
     return b36(h % 1296, 2);
   }
 
+  /* layout (v2): v(1) src(1) count(2) secs(3) cap(2) seed(6) exp(7)
+                  type(2) paper(3) perQ(2) neg(1) check(2)  =  32 chars
+     type/paper are 1-based indices into typesFor(source)/papersFor(source);
+     0 means "no filter" (Mixed types / Any paper). Those lists come from
+     the bundled question data, which is identical on every device — same
+     assumption the seeded shuffle already relies on. */
   A.encode = function (m) {
     var srcIdx = SRC_CODES.indexOf(m.source);
     if (srcIdx < 0) srcIdx = 2;
     if (m.shuffleOrder) srcIdx += 3;
+    var typeIdx = 0;
+    if (m.type) { var ti = typesFor(m.source).indexOf(m.type); typeIdx = ti >= 0 ? ti + 1 : 0; }
+    var paperIdx = 0;
+    if (m.paperKey) {
+      var papers = papersFor(m.source), pi = -1;
+      for (var i = 0; i < papers.length; i++) if (papers[i].key === m.paperKey) { pi = i; break; }
+      paperIdx = pi >= 0 ? pi + 1 : 0;
+    }
     var body =
       b36(CODE_VERSION, 1) +
       b36(srcIdx, 1) +
@@ -103,29 +119,41 @@
       b36(m.seconds, 3) +
       b36(m.cap, 2) +
       b36(m.seed, 6) +
-      b36(Math.round(m.expiresAt / 60000) - EPOCH, 7);
+      b36(Math.round(m.expiresAt / 60000) - EPOCH, 7) +
+      b36(typeIdx, 2) +
+      b36(paperIdx, 3) +
+      b36(m.perQSeconds || 0, 2) +
+      b36(m.negMark || 0, 1);
     return body + checksum(body);
   };
 
   A.decode = function (raw) {
     var code = String(raw || '').toUpperCase().replace(/[^0-9A-Z]/g, '');
-    if (code.length !== 24) return null;
-    var body = code.slice(0, 22);
-    if (checksum(body) !== code.slice(22)) return null;
+    if (code.length !== 32) return null;
+    var body = code.slice(0, 30);
+    if (checksum(body) !== code.slice(30)) return null;
     var v = unb36(body.slice(0, 1));
     if (v !== CODE_VERSION) return null;
     var srcIdx = unb36(body.slice(1, 2));
     var shuffleOrder = srcIdx >= 3;
     if (shuffleOrder) srcIdx -= 3;
+    var source = SRC_CODES[srcIdx] || 'BOTH';
+    var typeIdx = unb36(body.slice(22, 24));
+    var paperIdx = unb36(body.slice(24, 27));
+    var types = typesFor(source), papers = papersFor(source);
     var m = {
       code: code,
-      source: SRC_CODES[srcIdx] || 'BOTH',
+      source: source,
       shuffleOrder: shuffleOrder,
       count: unb36(body.slice(2, 4)),
       seconds: unb36(body.slice(4, 7)),
       cap: unb36(body.slice(7, 9)),
       seed: unb36(body.slice(9, 15)),
-      expiresAt: (unb36(body.slice(15, 22)) + EPOCH) * 60000
+      expiresAt: (unb36(body.slice(15, 22)) + EPOCH) * 60000,
+      type: typeIdx > 0 ? (types[typeIdx - 1] || null) : null,
+      paperKey: paperIdx > 0 ? ((papers[paperIdx - 1] || {}).key || null) : null,
+      perQSeconds: unb36(body.slice(27, 29)),
+      negMark: unb36(body.slice(29, 30))
     };
     if (!m.count || !m.seconds) return null;
     return m;
@@ -143,8 +171,50 @@
     catch (e) { return []; }
   }
 
+  function paperKeyOf(q) { return String(q._exam || '') + '|' + String(q.s || '') + '|' + String(q.y || ''); }
+
+  /* Distinct question types ("sec") available in a bank, alphabetical —
+     same bundled data on every device means this list, and therefore
+     its indices, line up host-to-joiner exactly like the seeded shuffle does. */
+  function typesFor(source) {
+    var pool = VX.poolFor ? VX.poolFor(source) : sharedPYQAll();
+    var seen = {}, out = [];
+    pool.forEach(function (q) { if (q.sec && !seen[q.sec]) { seen[q.sec] = true; out.push(q.sec); } });
+    out.sort();
+    return out;
+  }
+
+  /* Distinct papers (exam + session + year) in a bank, newest first. */
+  function papersFor(source) {
+    var pool = VX.poolFor ? VX.poolFor(source) : sharedPYQAll();
+    var seen = {}, out = [];
+    pool.forEach(function (q) {
+      var key = paperKeyOf(q);
+      if (!seen[key]) { seen[key] = { key: key, exam: q._exam, s: q.s, y: q.y, count: 0 }; out.push(seen[key]); }
+      seen[key].count++;
+    });
+    out.sort(function (a, b) {
+      if (String(a.y) !== String(b.y)) return Number(b.y) - Number(a.y);
+      if (a.exam !== b.exam) return String(a.exam).localeCompare(String(b.exam));
+      return String(a.s).localeCompare(String(b.s));
+    });
+    return out;
+  }
+  A.typesFor = typesFor;
+  A.papersFor = papersFor;
+
+  function applyFilters(pool, type, paperKey) {
+    if (paperKey) pool = pool.filter(function (q) { return paperKeyOf(q) === paperKey; });
+    if (type) pool = pool.filter(function (q) { return q.sec === type; });
+    return pool;
+  }
+  A.poolForDraft = function (source, type, paperKey) {
+    return applyFilters(VX.poolFor ? VX.poolFor(source) : sharedPYQAll(), type, paperKey);
+  };
+
   A.questionsFor = function (match, playerName) {
     var pool = (VX.poolFor ? VX.poolFor(match.source) : sharedPYQAll());
+    pool = applyFilters(pool, match.type, match.paperKey);
     // sort first so the starting order is identical everywhere,
     // regardless of the order papers happened to load in
     pool = pool.slice().sort(function (a, b) {
@@ -212,7 +282,12 @@
 
   function host() { return document.getElementById('view-games'); }
 
+  function clearQTimer() {
+    if (S._qTimerHandle) { clearInterval(S._qTimerHandle); S._qTimerHandle = null; }
+  }
+
   function render() {
+    clearQTimer(); // any per-question countdown belongs to the screen being replaced
     var h = host();
     if (!h) return;
     h.innerHTML = '';
@@ -289,7 +364,7 @@
       w.appendChild(el('h3', null, 'Your recent matches'));
       var board = el('div', 'vx-board');
       board.style.marginTop = '12px';
-      recent.slice(0, 6).forEach(function (r) {
+      recent.forEach(function (r) {
         var row = el('div', 'vx-row');
         var expired = Date.now() > r.expiresAt;
         row.innerHTML =
@@ -353,12 +428,21 @@
     return {
       source: sources.length > 1 ? 'BOTH' : (sources[0] ? sources[0].code : 'NDA'),
       count: 20,
-      minutes: 20,
+      timeUnit: 'min', timeValue: 20,
       cap: 10,
       shuffleOrder: false,
-      deadline: d.toISOString().slice(0, 16)
+      deadline: d.toISOString().slice(0, 16),
+      type: null,       // null = Mixed (every type)
+      paperKey: null,   // null = Any paper
+      perQOn: false, perQSeconds: 30,
+      negMark: 0        // 0 = no penalty, index into NEG_MARKS
     };
   }
+  function draftSeconds(d) {
+    var mult = d.timeUnit === 'sec' ? 1 : d.timeUnit === 'hr' ? 3600 : 60;
+    return Math.max(1, Math.min(46655, Math.round(d.timeValue * mult)));
+  }
+  function draftPool(d) { return A.poolForDraft(d.source, d.type, d.paperKey); }
 
   function screenCreate(w) {
     backBtn(w, 'Arena', 'home');
@@ -381,11 +465,29 @@
       return row;
     }
 
+    function select(cls, options, current, onPick) {
+      var s = el('select', cls);
+      options.forEach(function (o) {
+        var opt = el('option', null, esc(o.label));
+        opt.value = o.value;
+        if (o.value === (current || '')) opt.selected = true;
+        s.appendChild(opt);
+      });
+      s.addEventListener('change', function () { onPick(s.value); });
+      return s;
+    }
+
     function draw() {
       form.innerHTML = '';
       var nda = VX.poolFor ? VX.poolFor('NDA').length : 0;
       var cds = VX.poolFor ? VX.poolFor('CDS').length : 0;
-      var max = VX.poolFor ? VX.poolFor(d.source).length : 0;
+      // a paper/type pick made under one bank may not exist under another
+      var typeOptsRaw = typesFor(d.source);
+      if (d.type && typeOptsRaw.indexOf(d.type) < 0) d.type = null;
+      var paperOptsRaw = papersFor(d.source);
+      if (d.paperKey && !paperOptsRaw.some(function (p) { return p.key === d.paperKey; })) d.paperKey = null;
+
+      var max = draftPool(d).length;
       if (d.count > max) d.count = max;
 
       /* bank */
@@ -402,12 +504,32 @@
       if (!cds) f0.appendChild(el('span', 'vx-hint', 'CDS papers are not loaded yet. Drop them into data/pyq/ and this option appears on its own.'));
       form.appendChild(f0);
 
+      /* paper */
+      var fP = el('div', 'vx-field');
+      fP.appendChild(el('label', null, 'Paper<span class="vx-hint">Pin the match to one specific paper, or draw from every paper in the bank.</span>'));
+      var paperOpts = [{ value: '', label: 'Any paper (all years mixed)' }].concat(
+        paperOptsRaw.map(function (p) {
+          return { value: p.key, label: (p.exam || '') + ' ' + (p.s || '') + ' ' + (p.y || '') + ' (' + p.count + ')' };
+        })
+      );
+      fP.appendChild(select('vx-num', paperOpts, d.paperKey || '', function (v) { d.paperKey = v || null; draw(); }));
+      form.appendChild(fP);
+
+      /* question type */
+      var fT = el('div', 'vx-field');
+      fT.appendChild(el('label', null, 'Question type<span class="vx-hint">Stick to one topic, or leave it Mixed for a bit of everything.</span>'));
+      var typeOpts = [{ value: '', label: 'Mixed (every type)' }].concat(
+        typeOptsRaw.map(function (t) { return { value: t, label: t }; })
+      );
+      fT.appendChild(select('vx-num', typeOpts, d.type || '', function (v) { d.type = v || null; draw(); }));
+      form.appendChild(fT);
+
       /* questions */
       var f1 = el('div', 'vx-field');
-      f1.appendChild(el('label', null, 'Questions<span class="vx-hint">' + max + ' available in this bank. Up to 1295 per match.</span>'));
+      f1.appendChild(el('label', null, 'Questions<span class="vx-hint">' + max + ' available with these filters. Up to 1295 per match.</span>'));
       f1.appendChild(seg([10, 20, 30, 50].filter(function (v) { return v <= max; }), d.count,
         function (v) { return v; }, function (v) { d.count = v; draw(); }));
-      var cn = el('input', 'vx-num'); cn.type = 'number'; cn.min = 1; cn.max = Math.min(max, 1295); cn.value = d.count;
+      var cn = el('input', 'vx-num'); cn.type = 'number'; cn.min = 1; cn.max = Math.max(1, Math.min(max, 1295)); cn.value = d.count;
       cn.setAttribute('aria-label', 'Custom number of questions'); cn.style.marginTop = '8px';
       cn.addEventListener('change', function () { d.count = Math.max(1, Math.min(cn.max, parseInt(cn.value, 10) || 1)); draw(); });
       f1.appendChild(cn);
@@ -415,14 +537,51 @@
 
       /* time */
       var f2 = el('div', 'vx-field');
-      f2.appendChild(el('label', null, 'Time limit<span class="vx-hint">Every player gets the same clock. Tests submit themselves at zero.</span>'));
-      f2.appendChild(seg([5, 10, 20, 30, 45], d.minutes, function (v) { return v + ' min'; },
-        function (v) { d.minutes = v; draw(); }));
-      var mn = el('input', 'vx-num'); mn.type = 'number'; mn.min = 1; mn.max = 300; mn.value = d.minutes;
-      mn.setAttribute('aria-label', 'Custom minutes'); mn.style.marginTop = '8px';
-      mn.addEventListener('change', function () { d.minutes = Math.max(1, Math.min(300, parseInt(mn.value, 10) || 1)); draw(); });
-      f2.appendChild(mn);
+      f2.appendChild(el('label', null, 'Time limit<span class="vx-hint">Every player gets the same overall clock. Tests submit themselves at zero.</span>'));
+      var unitRow = seg(['sec', 'min', 'hr'], d.timeUnit, function (v) {
+        return v === 'sec' ? 'Seconds' : v === 'hr' ? 'Hours' : 'Minutes';
+      }, function (v) {
+        // carry over a sensible value when switching units
+        if (v === 'sec' && d.timeUnit === 'min') d.timeValue = d.timeValue * 60;
+        else if (v === 'min' && d.timeUnit === 'sec') d.timeValue = Math.max(1, Math.round(d.timeValue / 60));
+        else if (v === 'min' && d.timeUnit === 'hr') d.timeValue = d.timeValue * 60;
+        else if (v === 'hr' && d.timeUnit === 'min') d.timeValue = Math.max(1, Math.round(d.timeValue / 60));
+        else if (v === 'sec' && d.timeUnit === 'hr') d.timeValue = d.timeValue * 3600;
+        else if (v === 'hr' && d.timeUnit === 'sec') d.timeValue = Math.max(1, Math.round(d.timeValue / 3600));
+        d.timeUnit = v; draw();
+      });
+      f2.appendChild(unitRow);
+      var timePresets = { sec: [15, 30, 45, 60, 90], min: [5, 10, 20, 30, 45], hr: [1, 2, 3, 6, 12] };
+      var timeMax = { sec: 3600, min: 300, hr: 12 };
+      f2.appendChild(seg(timePresets[d.timeUnit], d.timeValue, function (v) { return v + ' ' + d.timeUnit; },
+        function (v) { d.timeValue = v; draw(); }));
+      var tn = el('input', 'vx-num'); tn.type = 'number'; tn.min = 1; tn.max = timeMax[d.timeUnit]; tn.value = d.timeValue;
+      tn.setAttribute('aria-label', 'Custom time limit'); tn.style.marginTop = '8px';
+      tn.addEventListener('change', function () { d.timeValue = Math.max(1, Math.min(timeMax[d.timeUnit], parseInt(tn.value, 10) || 1)); draw(); });
+      f2.appendChild(tn);
       form.appendChild(f2);
+
+      /* per-question timer */
+      var fQ = el('div', 'vx-field');
+      fQ.appendChild(el('label', null, 'Time per question<span class="vx-hint">Optional. Each question gets its own countdown and auto-advances at zero — on top of the overall clock above.</span>'));
+      fQ.appendChild(seg([false, true], d.perQOn, function (v) { return v ? 'On' : 'Off'; },
+        function (v) { d.perQOn = v; draw(); }));
+      if (d.perQOn) {
+        fQ.appendChild(seg([10, 15, 30, 45, 60, 90], d.perQSeconds, function (v) { return v + 's'; },
+          function (v) { d.perQSeconds = v; draw(); }));
+        var pq = el('input', 'vx-num'); pq.type = 'number'; pq.min = 5; pq.max = 1295; pq.value = d.perQSeconds;
+        pq.setAttribute('aria-label', 'Custom seconds per question'); pq.style.marginTop = '8px';
+        pq.addEventListener('change', function () { d.perQSeconds = Math.max(5, Math.min(1295, parseInt(pq.value, 10) || 5)); draw(); });
+        fQ.appendChild(pq);
+      }
+      form.appendChild(fQ);
+
+      /* negative marking */
+      var fN = el('div', 'vx-field');
+      fN.appendChild(el('label', null, 'Negative marking<span class="vx-hint">Deduct marks for a wrong answer. Blanks are never penalised.</span>'));
+      fN.appendChild(seg([0, 1, 2, 3], d.negMark, function (v) { return NEG_LABELS[v]; },
+        function (v) { d.negMark = v; draw(); }));
+      form.appendChild(fN);
 
       /* players */
       var f3 = el('div', 'vx-field');
@@ -453,14 +612,17 @@
       var cancel = el('button', 'vx-btn ghost', 'Cancel'); cancel.type = 'button';
       cancel.addEventListener('click', function () { go('home'); });
       var make = el('button', 'vx-btn primary', 'Create match'); make.type = 'button';
-      if (max < 1) { make.disabled = true; make.textContent = 'No questions loaded'; }
+      if (max < 1) { make.disabled = true; make.textContent = 'No questions match these filters'; }
       make.addEventListener('click', function () {
         var expiresAt = new Date(d.deadline).getTime();
         if (!expiresAt || expiresAt <= Date.now()) { say('Pick a closing time in the future.'); return; }
         var match = {
-          source: d.source, count: d.count, seconds: d.minutes * 60,
+          source: d.source, count: d.count, seconds: draftSeconds(d),
           cap: Math.min(d.cap, MAX_PLAYERS), shuffleOrder: d.shuffleOrder,
-          seed: Math.floor(Math.random() * 2176782335), expiresAt: expiresAt
+          seed: Math.floor(Math.random() * 2176782335), expiresAt: expiresAt,
+          type: d.type, paperKey: d.paperKey,
+          perQSeconds: d.perQOn ? d.perQSeconds : 0,
+          negMark: d.negMark
         };
         match.code = A.encode(match);
         // round-trip so what we show is exactly what a joiner will read
@@ -493,7 +655,7 @@
 
     var deepLink = location.origin + location.pathname + '?arena=' + m.code;
     var shareText = 'Join my Arena match on VAANI — ' + m.count + ' questions, ' +
-      Math.round(m.seconds / 60) + ' min. Tap to jump straight in:';
+      timeLabel(m.seconds) + '. Tap to jump straight in:';
 
     var actions = el('div', 'vx-actions');
 
@@ -526,13 +688,27 @@
     w.appendChild(actions);
   }
 
+  function timeLabel(seconds) {
+    if (seconds % 3600 === 0 && seconds >= 3600) return (seconds / 3600) + ' hr';
+    if (seconds % 60 === 0) return (seconds / 60) + ' min';
+    return seconds + ' sec';
+  }
+  function paperLabel(m) {
+    var hit = papersFor(m.source).filter(function (p) { return p.key === m.paperKey; })[0];
+    return hit ? ((hit.exam || '') + ' ' + (hit.s || '') + ' ' + (hit.y || '')) : 'One paper';
+  }
+
   function matchStrip(m) {
     var strip = el('div', 'vx-meta-strip');
     var closed = Date.now() > m.expiresAt;
     strip.innerHTML =
       '<span class="vx-chip">' + m.count + ' questions</span>' +
-      '<span class="vx-chip">' + Math.round(m.seconds / 60) + ' min</span>' +
+      '<span class="vx-chip">' + timeLabel(m.seconds) + '</span>' +
       '<span class="vx-chip">' + (m.source === 'BOTH' ? 'NDA + CDS' : m.source) + '</span>' +
+      (m.paperKey ? '<span class="vx-chip">' + esc(paperLabel(m)) + '</span>' : '') +
+      (m.type ? '<span class="vx-chip">' + esc(m.type) + '</span>' : '') +
+      (m.perQSeconds ? '<span class="vx-chip">' + m.perQSeconds + 's / question</span>' : '') +
+      (m.negMark ? '<span class="vx-chip">' + NEG_LABELS[m.negMark] + ' penalty</span>' : '') +
       '<span class="vx-chip">up to ' + m.cap + ' players</span>' +
       '<span class="vx-chip' + (closed ? ' warn' : '') + '">' +
         (closed ? 'Closed ' : 'Closes ') + new Date(m.expiresAt).toLocaleString() + '</span>';
@@ -610,8 +786,10 @@
 
     var ol = el('ol', 'vx-steps');
     ol.innerHTML =
-      '<li><b>' + m.count + ' questions, ' + Math.round(m.seconds / 60) + ' minutes.</b> The clock starts the moment you begin and does not pause.</li>' +
-      '<li><b>It submits itself at zero.</b> Anything left blank is marked wrong.</li>' +
+      '<li><b>' + m.count + ' questions, ' + timeLabel(m.seconds) + '.</b> The clock starts the moment you begin and does not pause.</li>' +
+      (m.perQSeconds ? '<li><b>' + m.perQSeconds + ' seconds per question.</b> Each question moves on by itself if you take too long — on top of the overall clock.</li>' : '') +
+      '<li><b>It submits itself at zero.</b> Anything left blank scores zero, no penalty.</li>' +
+      (m.negMark ? '<li><b>Negative marking is on:</b> a wrong answer costs ' + NEG_LABELS[m.negMark].replace('&minus;', '−') + ' mark. Blanks are still safe.</li>' : '') +
       '<li><b>One attempt.</b> Your score and your finishing time both go on the board.</li>';
     w.appendChild(ol);
 
@@ -648,9 +826,30 @@
       '<span class="vx-chip">' + esc(q._exam || 'NDA') + ' ' + esc(q.s || '') + ' ' + esc(q.y || '') + '</span>';
     w.appendChild(top);
 
+    /* optional per-question countdown — fresh every time a question is
+       shown; auto-advances (or submits, if this is the last one) at zero */
+    if (m.perQSeconds) {
+      var qChip = el('span', 'vx-chip warn');
+      top.appendChild(qChip);
+      var deadline = Date.now() + m.perQSeconds * 1000;
+      var tick = function () {
+        var left = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
+        qChip.textContent = left + 's left';
+        if (left <= 0) {
+          clearQTimer();
+          if (r.index < r.questions.length - 1) { r.index++; render(); }
+          else finishRun(true);
+        }
+      };
+      tick();
+      S._qTimerHandle = setInterval(tick, 250);
+    }
+
     var card = el('div', 'vx-tile');
     card.style.cursor = 'default';
-    var body = '<p style="font-size:1rem;line-height:1.65;color:var(--vx-ink);margin:0 0 18px">' +
+    var body =
+      (q.passage ? '<div class="pv-passage"><div class="pv-passage-label">Passage</div><div class="pv-passage-text">' + esc(q.passage) + '</div></div>' : '') +
+      '<p style="font-size:1rem;line-height:1.65;color:var(--vx-ink);margin:0 0 18px">' +
       (q.keyword ? '<b>' + esc(q.keyword) + '</b> — ' : '') + esc(q.q) + '</p>';
     card.innerHTML = body;
 
@@ -700,8 +899,15 @@
     var r = S.run, m = S.match;
     if (!r) return;
     if (VX.timer) VX.timer.stop();
+    clearQTimer();
+    var negFrac = NEG_MARKS[m.negMark] || 0;
     var score = 0;
-    r.questions.forEach(function (q) { if (r.answers[q._id] === q.ans) score++; });
+    r.questions.forEach(function (q) {
+      var a = r.answers[q._id];
+      if (a === undefined) return; // blank — never penalised
+      score += (a === q.ans) ? 1 : negFrac;
+    });
+    score = Math.round(score * 100) / 100;
     var seconds = Math.min(m.seconds, Math.round((Date.now() - r.startedAt) / 1000));
     var entry = {
       pid: playerId(), name: playerName(), score: score,
