@@ -1,0 +1,195 @@
+/* ============================================================
+   VAANI DASHBOARD  ·  redesign layer
+   ------------------------------------------------------------
+   Loads after styles.css and vaani-x.css. Everything here reads
+   the app's own design tokens (--gold, --text, --panel, --line,
+   --serif, --mono, --spring, --ease-out …) so it stays correct
+   in both light and dark mode automatically — nothing here
+   hardcodes a colour the rest of the app doesn't already use.
+
+   Scope: only #view-dashboard. Nothing in this file touches
+   another screen, and no element id used by app.js was renamed
+   — only wrapped in new classes, so every render function still
+   finds exactly what it expects.
+   ============================================================ */
+
+/* ---------------------------------------------------------
+   0. Quick access — SVG icon tiles, replaces the emoji row
+   --------------------------------------------------------- */
+.vd-qa{ display:flex; gap:10px; }
+.vd-qa-btn{
+  flex:1 0 auto; min-width:84px;
+  display:flex; flex-direction:column; align-items:center; gap:8px;
+  padding:14px 10px 12px;
+  background:var(--panel); border:1px solid var(--line); border-radius:16px;
+  cursor:pointer; color:var(--text);
+  transition:transform .22s var(--spring), border-color .2s, box-shadow .25s var(--ease-out);
+}
+.vd-qa-btn:hover{ transform:translateY(-3px); border-color:var(--gold); box-shadow:var(--shadow-md); }
+.vd-qa-btn:active{ transform:translateY(-1px) scale(.97); }
+.vd-qa-ico{
+  width:38px; height:38px; display:flex; align-items:center; justify-content:center;
+  border-radius:50%; background:linear-gradient(155deg,var(--panel2),var(--bg2));
+  color:var(--gold); border:1px solid var(--line);
+}
+.vd-qa-ico svg{ width:19px; height:19px; }
+.vd-qa-btn span:last-child{
+  font-family:var(--serif); font-size:.66rem; letter-spacing:.06em; text-transform:uppercase;
+  color:var(--muted);
+}
+.vd-qa-btn:hover span:last-child{ color:var(--text); }
+
+/* ---------------------------------------------------------
+   1. Hero — the mission briefing plate
+   --------------------------------------------------------- */
+.vd-hero{
+  position:relative; overflow:hidden;
+  border-radius:28px; margin-bottom:26px;
+  background:
+    radial-gradient(120% 140% at 8% -10%, rgba(201,162,75,.16), transparent 55%),
+    linear-gradient(160deg, #16212e 0%, #0d1520 100%);
+  border:1px solid rgba(201,162,75,.22);
+  box-shadow:0 30px 70px -24px rgba(10,16,24,.5);
+}
+[data-theme="dark"] .vd-hero{
+  background:
+    radial-gradient(120% 140% at 8% -10%, rgba(201,162,75,.14), transparent 55%),
+    linear-gradient(160deg, #0d131b 0%, #070b10 100%);
+  border-color:rgba(201,162,75,.28);
+}
+
+.vd-hero-compass{
+  position:absolute; top:50%; right:-8%; width:480px; height:480px;
+  max-width:70%; transform:translateY(-50%);
+  color:#f3efe6; opacity:.07; pointer-events:none;
+}
+@media (prefers-reduced-motion:no-preference){
+  .vd-hero-compass{ animation:vdCompassSpin 140s linear infinite; }
+}
+@keyframes vdCompassSpin{ to{ transform:translateY(-50%) rotate(360deg); } }
+.vd-compass-n{ font-family:var(--mono); font-size:13px; fill:currentColor; }
+
+.vd-hero-photo{
+  position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+  opacity:.16; mix-blend-mode:luminosity;
+  mask-image:linear-gradient(100deg, transparent 0%, transparent 38%, #000 82%);
+  -webkit-mask-image:linear-gradient(100deg, transparent 0%, transparent 38%, #000 82%);
+}
+
+.vd-hero-inner{ position:relative; z-index:2; padding:44px 40px 38px; max-width:640px; }
+@media (min-width:880px){ .vd-hero-inner{ padding:56px 52px 46px; } }
+
+.vd-eyebrow{
+  display:inline-flex; align-items:center; gap:8px;
+  font-family:var(--mono); font-size:.68rem; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--gold-l, var(--gold));
+}
+.vd-eyebrow::before{ content:''; width:16px; height:1px; background:currentColor; opacity:.7; }
+
+.vd-hero-title{
+  font-family:var(--serif); text-transform:none; letter-spacing:.01em;
+  font-size:clamp(1.9rem, 4.6vw, 3rem); line-height:1.08;
+  color:#f6f3ec; margin:16px 0 26px;
+}
+.vd-hero-title span{ color:var(--gold-l, var(--gold)); }
+
+.vd-hero-stats{ display:flex; gap:clamp(18px,4vw,40px); flex-wrap:wrap; margin-bottom:30px; }
+.vd-stat{ display:flex; flex-direction:column; }
+.vd-stat-num{
+  font-family:var(--serif); font-size:1.65rem; color:#fff;
+  font-variant-numeric:tabular-nums;
+}
+.vd-stat-lbl{
+  font-size:.64rem; letter-spacing:.1em; text-transform:uppercase;
+  color:rgba(243,239,230,.55); margin-top:3px;
+}
+
+.vd-btn-ghost-inv{ border-color:rgba(243,239,230,.28) !important; color:#f3efe6 !important; }
+.vd-btn-ghost-inv:hover{ border-color:var(--gold-l,var(--gold)) !important; color:var(--gold-l,var(--gold)) !important; }
+
+@media (max-width:640px){
+  .vd-hero-photo{ opacity:.1; }
+  .vd-hero-compass{ opacity:.05; }
+}
+
+/* ---------------------------------------------------------
+   2. Unified card accent — every dashboard card gets the same
+   quiet top edge, so the page reads as one dossier rather than
+   a stack of unrelated widgets
+   --------------------------------------------------------- */
+.vd-card{ position:relative; }
+.vd-card::before{
+  content:''; position:absolute; top:0; left:24px; right:24px; height:2px;
+  background:linear-gradient(90deg, transparent, var(--gold) 18%, var(--gold) 82%, transparent);
+  opacity:.55; border-radius:0 0 2px 2px;
+}
+
+/* ---------------------------------------------------------
+   3. Mission briefing band — Today's Focus / Continue / Recommended
+   as one connected frame instead of three floating cards
+   --------------------------------------------------------- */
+.vd-briefing{
+  background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+  margin-top:22px; overflow:hidden; box-shadow:var(--shadow-sm);
+}
+.vd-briefing-head{
+  display:flex; align-items:baseline; gap:12px;
+  padding:20px 26px 16px; border-bottom:1px solid var(--line);
+}
+.vd-briefing-tag{
+  font-family:var(--mono); font-size:.64rem; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--gold); padding:4px 10px; border:1px solid var(--line); border-radius:999px;
+}
+.vd-briefing-head h2{
+  font-size:1.05rem; text-transform:none; letter-spacing:0; color:var(--text); font-family:var(--serif);
+}
+.vd-briefing-grid{ display:grid; grid-template-columns:repeat(3,1fr); }
+@media (max-width:880px){ .vd-briefing-grid{ grid-template-columns:1fr; } }
+.vd-brief-col{
+  padding:24px 26px; position:relative;
+}
+.vd-brief-col + .vd-brief-col::before{
+  content:''; position:absolute; left:0; top:24px; bottom:24px; width:1px; background:var(--line);
+}
+@media (max-width:880px){
+  .vd-brief-col + .vd-brief-col::before{ left:26px; right:26px; top:0; bottom:auto; width:auto; height:1px; }
+}
+
+/* ---------------------------------------------------------
+   4. Roadmap — progress-coloured connecting segments + bigger,
+   calmer nodes. Targets the exact classes app.js already
+   generates (.rm-node.done/.current/.locked, .rm-dot, .rm-label)
+   --------------------------------------------------------- */
+.vd-roadmap{ padding-top:6px; }
+.vd-roadmap .rm-node{ min-width:88px; }
+.vd-roadmap .rm-node::after{
+  content:''; position:absolute; left:50%; top:32px; width:100%; height:2px;
+  background:var(--line); z-index:0;
+}
+.vd-roadmap .rm-node.done::after{ background:linear-gradient(90deg,var(--gold),var(--gold-l)); }
+.vd-roadmap .rm-node:last-child::after{ display:none; }
+
+.vd-roadmap .rm-dot{
+  width:44px; height:44px; font-size:1.05rem;
+  box-shadow:0 2px 6px rgba(22,33,46,.08);
+  transition:transform .25s var(--spring), box-shadow .25s var(--ease-out);
+}
+.vd-roadmap .rm-node.current .rm-dot{ animation:vdPulseRing 2.2s ease-in-out infinite; }
+@keyframes vdPulseRing{
+  0%,100%{ box-shadow:0 0 0 0 rgba(173,122,36,.28); }
+  50%{ box-shadow:0 0 0 8px rgba(173,122,36,0); }
+}
+@media (prefers-reduced-motion:reduce){ .vd-roadmap .rm-node.current .rm-dot{ animation:none; } }
+
+/* ---------------------------------------------------------
+   5. Achievements — a medal shelf: earned badges sit slightly
+   raised and glossy, locked ones read as engraved outlines
+   --------------------------------------------------------- */
+.vd-badge-grid .badge{
+  transition:transform .2s var(--spring), border-color .2s;
+}
+.vd-badge-grid .badge:not(.earned){ opacity:.5; filter:grayscale(.4); }
+.vd-badge-grid .badge.earned{
+  border-color:var(--gold); box-shadow:0 6px 16px -6px rgba(173,122,36,.35);
+}
+.vd-badge-grid .badge.earned:hover{ transform:translateY(-3px); }

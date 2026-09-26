@@ -1,0 +1,52 @@
+/* ============================================================
+   VAANI PROFILE  ·  redesign layer
+   ------------------------------------------------------------
+   Profile was the thinnest screen in the app — two small cards,
+   no visual identity beyond a name and a plain rank label, and
+   a "Learning Path" list that silently showed only the first 10
+   of 34 topics with no sign the rest existed (same class of gap
+   as the Grammar tree's missing 23 nodes, just lower stakes
+   since this is a summary view rather than primary navigation —
+   fixed in app.js alongside this).
+   ============================================================ */
+
+/* ---------------------------------------------------------
+   Unifying card accent — same treatment as Dashboard/Grammar's
+   sidebar, defined locally so this file has no load-order
+   dependency on vaani-dashboard.css.
+   --------------------------------------------------------- */
+.vp-card{ position:relative; overflow:hidden; }
+.vp-card::before{
+  content:''; position:absolute; top:0; left:24px; right:24px; height:2px;
+  background:linear-gradient(90deg, transparent, var(--gold) 18%, var(--gold) 82%, transparent);
+  opacity:.55;
+}
+
+/* ---------------------------------------------------------
+   Rank insignia — chevron count scales with rank tier (1-10
+   ranks -> 1-5 chevrons), generated in app.js alongside the
+   existing rank calculation, not hardcoded here.
+   --------------------------------------------------------- */
+.vp-rank-badge{ width:104px; height:104px; margin:0 auto 4px; display:block; }
+.vp-rank-ring{
+  fill:none; stroke:var(--line); stroke-width:2;
+}
+.vp-chevron{
+  fill:none; stroke:var(--gold); stroke-width:3.4;
+  stroke-linecap:round; stroke-linejoin:round;
+  opacity:.9;
+}
+
+/* ---------------------------------------------------------
+   Learning path — now carries all 34 topics instead of 10, so
+   it needs a bounded, scrollable height rather than growing the
+   whole page. A soft fade at the bottom hints there's more to
+   scroll without needing a "show more" click.
+   --------------------------------------------------------- */
+.vp-prog-tree{
+  max-height:420px; overflow-y:auto; padding-right:6px;
+  -webkit-mask-image:linear-gradient(to bottom, #000 calc(100% - 28px), transparent 100%);
+  mask-image:linear-gradient(to bottom, #000 calc(100% - 28px), transparent 100%);
+}
+.vp-prog-tree::-webkit-scrollbar{ width:6px; }
+.vp-prog-tree::-webkit-scrollbar-thumb{ background:var(--line); border-radius:3px; }

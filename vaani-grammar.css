@@ -1,0 +1,82 @@
+/* ============================================================
+   VAANI GRAMMAR  ·  enhancement layer
+   ------------------------------------------------------------
+   The Grammar / Skill Tree section (.gt-root) already has a
+   strong, deliberate design — glassmorphic cards, a starfield
+   backdrop, a gradient title, its own dark teal/gold theme
+   independent of the app's light/dark toggle. This file does
+   NOT redesign it; it makes a few targeted additions on top,
+   and fixes the one sizing constant that had to change because
+   the tree now carries all 34 topics instead of 11 (see the
+   TREE_TOPICS note in app.js — the viewBox grew from 400×620 to
+   460×960, so the container's aspect-ratio has to match).
+   ============================================================ */
+
+/* ---------------------------------------------------------
+   1. Required fix: container aspect-ratio must match the new,
+   taller SVG viewBox now that all 34 topics have a place on
+   the tree. Scoped under #view-grammar for higher specificity
+   than the bare .gt-tree-canvas rule in styles.css, so this
+   wins regardless of stylesheet load order.
+   --------------------------------------------------------- */
+#view-grammar .gt-tree-canvas,
+#view-grammar .gt-sub .gt-tree-canvas{
+  aspect-ratio:460/960;
+}
+
+/* ---------------------------------------------------------
+   2. A little more starfield for a much taller canvas — the
+   original five dots were sized for the old, shorter tree.
+   Percentage-positioned, so this scales to any height.
+   --------------------------------------------------------- */
+.gt-root::after{
+  content:''; position:absolute; inset:0; pointer-events:none; opacity:.4;
+  background-image:
+    radial-gradient(1px 1px at 22% 30%, rgba(255,255,255,.4), transparent),
+    radial-gradient(1px 1px at 68% 22%, rgba(255,255,255,.3), transparent),
+    radial-gradient(1px 1px at 8% 52%, rgba(255,255,255,.35), transparent),
+    radial-gradient(1px 1px at 88% 58%, rgba(255,255,255,.3), transparent),
+    radial-gradient(1px 1px at 45% 70%, rgba(255,255,255,.28), transparent),
+    radial-gradient(1px 1px at 15% 88%, rgba(255,255,255,.32), transparent),
+    radial-gradient(1px 1px at 80% 92%, rgba(255,255,255,.28), transparent);
+}
+
+/* ---------------------------------------------------------
+   3. Fireflies drifting near the tree — small, slow, sparse.
+   Purely decorative, sits behind the fruit nodes (z-index),
+   respects reduced-motion.
+   --------------------------------------------------------- */
+.gt-tree-wrap{ position:relative; }
+.gt-firefly{
+  position:absolute; width:3px; height:3px; border-radius:50%;
+  background:var(--gt-teal-l); pointer-events:none; z-index:0;
+  box-shadow:0 0 6px 2px var(--gt-teal-l);
+  opacity:0;
+}
+@media (prefers-reduced-motion:no-preference){
+  .gt-firefly{ animation:gtFireflyDrift 9s ease-in-out infinite; }
+  .gt-firefly:nth-child(1){ left:12%; top:20%; animation-delay:0s; }
+  .gt-firefly:nth-child(2){ left:82%; top:35%; animation-delay:-3s; background:var(--gt-gold-l); box-shadow:0 0 6px 2px var(--gt-gold-l); }
+  .gt-firefly:nth-child(3){ left:25%; top:60%; animation-delay:-6s; }
+  .gt-firefly:nth-child(4){ left:70%; top:75%; animation-delay:-1.5s; background:var(--gt-gold-l); box-shadow:0 0 6px 2px var(--gt-gold-l); }
+}
+@keyframes gtFireflyDrift{
+  0%{ opacity:0; transform:translate(0,0); }
+  15%{ opacity:.8; }
+  50%{ transform:translate(14px,-18px); }
+  85%{ opacity:.5; }
+  100%{ opacity:0; transform:translate(-8px,-30px); }
+}
+
+/* ---------------------------------------------------------
+   4. Sidebar card accent — same unifying-edge idea used on the
+   Dashboard, in this section's own teal/gold rather than the
+   app's general gold, so the treatment matches without the
+   colour clashing against the dark theme.
+   --------------------------------------------------------- */
+.gt-sidebar .gt-card{ position:relative; overflow:hidden; }
+.gt-sidebar .gt-card::before{
+  content:''; position:absolute; top:0; left:18px; right:18px; height:2px;
+  background:linear-gradient(90deg, transparent, var(--gt-teal) 20%, var(--gt-gold) 80%, transparent);
+  opacity:.6;
+}

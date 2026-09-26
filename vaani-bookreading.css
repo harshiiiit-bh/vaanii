@@ -1,0 +1,26 @@
+/* ============================================================
+   VAANI BOOK READING  ·  enhancement layer
+   ------------------------------------------------------------
+   library.js is a genuinely complete, well-engineered feature —
+   14 screens, its own portable storage layer, a kanban board,
+   a quiz engine, spoken-English practice via the Web Speech
+   API, no hidden data gaps found anywhere in it (checked the
+   same class of bug that turned up in Grammar and Profile —
+   clean here). This file makes one small, consistent change:
+   the three "Command Tools" tiles on Home used emoji baked into
+   the label text (see the icon edit in library.js's renderHome)
+   — swapped for the same custom-SVG icon language already used
+   for the main app's navigational chrome, for the same reason:
+   emoji renders differently per device, plain stroke icons
+   don't. Content-labelling icons elsewhere in this section
+   (word-of-day glyphs, category icons) were left exactly as
+   they were — that's a different, legitimate use, same
+   distinction drawn everywhere else in this project.
+   ============================================================ */
+
+.vbv-scope .tool-tile .tt-label{
+  display:inline-flex; align-items:center; gap:7px;
+}
+.vbv-scope .tool-tile .tt-icon{
+  width:17px; height:17px; flex-shrink:0;
+}
