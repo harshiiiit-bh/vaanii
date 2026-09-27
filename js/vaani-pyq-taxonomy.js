@@ -61,5 +61,20 @@
     return aliases[raw] || raw;
   }
 
-  global.VaaniPyqTaxonomy = Object.freeze({ topic: topic });
+  function keyword(question) {
+    if (!question || typeof question !== 'object') return '';
+    if (typeof question.keyword === 'string' && question.keyword.trim()) return question.keyword.trim();
+    var text = String(question.q || '');
+    var bracketed = text.match(/\[([^\]]{1,100})\]/);
+    if (bracketed && bracketed[1].trim()) return bracketed[1].trim();
+    if (question.sec === 'Synonyms' || question.sec === 'Antonyms') {
+      var quoted = text.match(/["'“”‘’]([^"'“”‘’]{2,80})["'“”‘’]/);
+      if (quoted && /^[\p{L}'-]+(?:\s+[\p{L}'-]+)*$/u.test(quoted[1].trim())) return quoted[1].trim();
+      var caps = text.match(/\b[A-Z][A-Z'-]{2,}\b/g);
+      if (caps && caps.length) return caps[caps.length - 1];
+    }
+    return '';
+  }
+
+  global.VaaniPyqTaxonomy = Object.freeze({ topic: topic, keyword: keyword });
 })(window);
