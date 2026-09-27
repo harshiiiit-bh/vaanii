@@ -2979,6 +2979,49 @@ function pickDaily(arr,n,offset){
 function setVocabCat(c){vocabCat=c;document.querySelectorAll('#vocabCatChips .chip').forEach(ch=>ch.classList.toggle('active',ch.dataset.cat===c));renderVocabGrid();}
 function setVocabDiff(d){vocabDiff=d;document.querySelectorAll('#vocabDiffChips .chip').forEach(ch=>ch.classList.toggle('active',ch.dataset.diff===d));renderVocabGrid();}
 
+async function addVaaniItemToBookRegister(payload,button){
+  const item=payload&&typeof payload==='object'?payload:{};
+  const word=String(item.word||'').replace(/\s+/g,' ').trim();
+  if(!word){toast('This item has no word or phrase to save.');return false;}
+  if(button){button.disabled=true;button.dataset.saving='1';button.textContent='Saving…';}
+  try{
+    const bridge=window.VaaniBookRegister;
+    if(!bridge||typeof bridge.add!=='function'){
+      toast('Book Reading register is not ready yet. Open Book Reading once, then try again.');
+      if(button){button.disabled=false;button.textContent='Add to Book Register';delete button.dataset.saving;}
+      return false;
+    }
+    const result=await bridge.add({
+      word,meaning:String(item.meaning||'').trim(),
+      synonyms:Array.isArray(item.synonyms)?item.synonyms:[],
+      antonyms:Array.isArray(item.antonyms)?item.antonyms:[],
+      example:String(item.example||'').trim(),
+      kind:String(item.kind||'word'),
+      source:String(item.source||'VAANI Vocabulary')
+    });
+    if(!result||!result.ok){
+      toast((result&&result.message)||'Could not save this item. Check your account and try again.');
+      if(button){button.disabled=false;button.textContent='Add to Book Register';delete button.dataset.saving;}
+      return false;
+    }
+    if(button){button.textContent=result.duplicate?'✓ In Register':'✓ Added to Register';button.classList.add('is-saved');button.setAttribute('aria-label',word+(result.duplicate?' is already in the Book Reading Register':' added to the Book Reading Register'));}
+    toast(result.duplicate?'"'+word+'" is already in your Book Reading Register.':'Saved "'+word+'" to your Book Reading Register.');
+    return true;
+  }catch(error){
+    console.error('[VAANI → Book Register]',error);
+    toast('Could not reach the Book Reading register. Your current page is unchanged.');
+    if(button){button.disabled=false;button.textContent='Add to Book Register';delete button.dataset.saving;}
+    return false;
+  }
+}
+function makeBookRegisterButton(payload,label){
+  const button=document.createElement('button');
+  button.type='button';button.className='btn ghost v-book-capture';
+  button.textContent=label||'Add to Book Register';
+  button.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();addVaaniItemToBookRegister(payload,button);});
+  return button;
+}
+
 function renderVocabGrid(){
   const grid = document.getElementById('vocabGrid'); if(!grid) return; grid.innerHTML='';
   const term = (document.getElementById('vocabSearch')?.value||'').toLowerCase();
@@ -2992,6 +3035,7 @@ function renderVocabGrid(){
       <p class="wc-mean">${v.meanEn}</p>
       <div class="wc-tags"><span class="wc-tag wc-stars">${'★'.repeat(v.diff)}${'☆'.repeat(3-v.diff)}</span>${v.cat.map(c=>`<span class="wc-tag">${c}</span>`).join('')}</div>`;
     div.onclick=()=>openWord(v.id);
+    div.appendChild(makeBookRegisterButton({word:v.w,meaning:v.meanEn,synonyms:v.syn,antonyms:v.ant,example:v.exEasy,kind:'word',source:'VAANI Vocabulary'},'＋ Book Register'));
     grid.appendChild(div);
   });
 }
@@ -3025,6 +3069,7 @@ function renderDailySetGrid(setDef){
     picks.forEach(p=>{
       const div=document.createElement('div'); div.className='card word-card'; div.style.cursor='default';
       div.innerHTML=`<h3>${p.t}</h3><div class="wc-pos">${p.lang}</div><p class="wc-mean">${p.mean}</p><div class="example-box" style="margin-top:8px">"${p.ex}"</div>`;
+      div.appendChild(makeBookRegisterButton({word:p.t,meaning:p.mean,example:p.ex,kind:'phrase',source:'VAANI Foreign Phrases'},'＋ Book Register'));
       grid.appendChild(div);
     });
     return;
@@ -3035,6 +3080,7 @@ function renderDailySetGrid(setDef){
     const div=document.createElement('div'); div.className='card word-card';
     div.innerHTML=`<div class="wc-top"><h3>${v.w}</h3><div class="wc-imp" title="Exam importance ${v.imp}/5">${'●'.repeat(v.imp)}${'○'.repeat(5-v.imp)}</div></div><div class="wc-pos">${v.pos}</div><p class="wc-mean">${v.meanEn}</p>`;
     div.onclick=()=>openWord(v.id);
+    div.appendChild(makeBookRegisterButton({word:v.w,meaning:v.meanEn,synonyms:v.syn,antonyms:v.ant,example:v.exEasy,kind:'word',source:'VAANI Daily Vocabulary'},'＋ Book Register'));
     grid.appendChild(div);
   });
 }
@@ -3054,6 +3100,7 @@ function renderDailySingles(){
   items.forEach(it=>{
     const div=document.createElement('div'); div.className='single-card';
     div.innerHTML=`<div class="sc-badge">${it.tag}</div><div class="sc-label">${it.label.toUpperCase()}</div><div class="sc-word">${it.d.t}</div><div class="sc-mean">${it.d.mean}</div>`;
+    div.appendChild(makeBookRegisterButton({word:it.d.t,meaning:it.d.mean,example:it.d.ex,kind:it.label.toLowerCase().replace(/ of the day$/,''),source:'VAANI '+it.label},'＋ Book Register'));
     strip.appendChild(div);
   });
 }
@@ -3084,6 +3131,8 @@ function renderWOD(){
   const v = pickDaily(VOCAB,1,0)[0];
   document.getElementById('dashWord').textContent=v.w;
   document.getElementById('dashWordMeaning').textContent=v.meanEn;
+  const capture=document.getElementById('dashWordToBook');
+  if(capture)capture.onclick=()=>addVaaniItemToBookRegister({word:v.w,meaning:v.meanEn,synonyms:v.syn,antonyms:v.ant,example:v.exEasy,kind:'word',source:'VAANI Word of the Day'},capture);
 }
 
 function lookupExternalWord(){
@@ -3137,6 +3186,11 @@ function openWord(id){
   document.getElementById('wdImportance').textContent=v.imp+' / 5';
   document.getElementById('wdYears').textContent=v.years;
   document.getElementById('wdPYQ').textContent=v.pyq;
+  const capture=document.getElementById('wdAddToBookRegister');
+  if(capture){
+    capture.disabled=false;capture.textContent='＋ Add to Book Register';capture.classList.remove('is-saved');
+    capture.onclick=()=>addVaaniItemToBookRegister({word:v.w,meaning:v.meanEn,synonyms:v.syn,antonyms:v.ant,example:v.exEasy,kind:'word',source:'VAANI Vocabulary'},capture);
+  }
   const dictionaryPanel=document.getElementById('wdDictionaryResult'),dictionaryButton=document.getElementById('wdDictionaryLookup');
   if(dictionaryPanel)dictionaryPanel.textContent='';if(dictionaryButton){dictionaryButton.disabled=false;dictionaryButton.textContent='Look up word';}
   renderWordQuiz(v);
@@ -3998,6 +4052,8 @@ function openCompare(id){
   document.getElementById('cmpMeanA').innerHTML = `<h3>${c.a}</h3><p>${c.meanA}</p>`;
   document.getElementById('cmpMeanB').dataset.letter = c.b[0];
   document.getElementById('cmpMeanB').innerHTML = `<h3>${c.b}</h3><p>${c.meanB}</p>`;
+  document.getElementById('cmpMeanA').appendChild(makeBookRegisterButton({word:c.a,meaning:c.meanA,kind:'word',source:'VAANI Comparisons'},'＋ Save to Book Register'));
+  document.getElementById('cmpMeanB').appendChild(makeBookRegisterButton({word:c.b,meaning:c.meanB,kind:'word',source:'VAANI Comparisons'},'＋ Save to Book Register'));
   document.getElementById('cmpDifference').innerHTML = c.difference;
   document.getElementById('cmpRule').innerHTML = c.rule;
   document.getElementById('cmpExceptions').innerHTML = c.exceptions.map(e=>`<li>${e}</li>`).join('');
