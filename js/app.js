@@ -1743,18 +1743,9 @@ function pvSessionHTML(){
     }).join('');
   }
 
+  // Answer correctness is already shown by the option states and the explanation panel.
+  // Keep the question area clean instead of repeating a banner after every answer.
   let feedbackHTML = '';
-  if(showResult){
-    if(isRevisionLike){
-      feedbackHTML = '';
-    } else if(answer.choice===-1){
-      feedbackHTML = `<div class="pv-feedback wrong">⏱ Time's up — the correct answer will be available in your review.</div>`;
-    } else if(answer.correct){
-      feedbackHTML = `<div class="pv-feedback correct">✓ Correct. ${escapeHtmlVaani(q.exp||'You selected the right answer.')}</div>`;
-    } else {
-      feedbackHTML = `<div class="pv-feedback wrong">✕ Not quite. ${escapeHtmlVaani(q.exp||'Review the correct answer below.')}</div>`;
-    }
-  }
   let explainHTML = '';
   if(showResult || isRevisionLike){
     const extraNotes = `${q.exp?`<div><b>Why:</b> ${escapeHtmlVaani(q.exp)}</div>`:''}${q.rule?`<div style="margin-top:8px"><b>📐 Rule:</b> ${escapeHtmlVaani(q.rule)}</div>`:''}${q.shortcut?`<div style="margin-top:8px">⚡ ${escapeHtmlVaani(q.shortcut)}</div>`:''}${q.correctionNote?`<div style="margin-top:8px;color:var(--red)">⚠ <b>Answer-key note:</b> ${escapeHtmlVaani(q.correctionNote)}</div>`:''}`;
@@ -1794,6 +1785,7 @@ function pvSessionHTML(){
       </div>
       ${q.passage ? `<div class="pv-passage"><div class="pv-passage-label">Passage</div><div class="pv-passage-text">${escapeHtmlVaani(q.passage)}</div></div>` : ''}
       <div class="pv-qtext">${pyqHi(q)}</div>
+      <div class="pv-answer-hint" ${answer||isRevisionLike?'hidden':''}>Select one option to continue.</div>
       <div class="pv-options">${optsHTML}</div>
       ${feedbackHTML}
       ${explainHTML}
