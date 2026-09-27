@@ -64,3 +64,53 @@ try {
   console.error('Learning data validation failed:', error.message);
   process.exitCode = 1;
 }
+
+function contrastRatio(fg, bg) {
+  function luminance(hex) {
+    const channels = hex.slice(1).match(/../g).map((v) => parseInt(v, 16) / 255).map((v) => v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4);
+    return 0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2];
+  }
+  const a = luminance(fg), b = luminance(bg);
+  return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+}
+function token(css, selector, name) {
+  const escaped = selector.replace(/\./g, '\\.').replace(/\[/g, '\\[').replace(/\]/g, '\\]');
+  const re = new RegExp(escaped + '\\s*\\{([^}]*)\\}', 'g');
+  let match, value = null;
+  while ((match = re.exec(css))) {
+    const found = match[1].match(new RegExp('(?:^|;)\\s*' + name + '\\s*:\\s*(#[0-9a-f]{6})\\b', 'i'));
+    if (found) value = found[1];
+  }
+  return value;
+}
+function contrastAssert(label, fg, bg) {
+  if (!fg || !bg || contrastRatio(fg, bg) < 4.5) {
+    throw new Error(label + ' contrast below 4.5:1 (' + (fg && bg ? contrastRatio(fg, bg).toFixed(2) : 'missing token') + ')');
+  }
+}
+try {
+  const appCss = readFileSync('styles.css', 'utf8');
+  const contrastCss = readFileSync('vaani-contrast.css', 'utf8');
+  const themePairs = [
+    { label: 'Light muted text', selector: ':root', bgSelector: ':root', fgToken: '--muted2', bgToken: '--bg' },
+    { label: 'Dark muted text', selector: '[data-theme="dark"]', bgSelector: '[data-theme="dark"]', fgToken: '--muted2', bgToken: '--bg' },
+    { label: 'Sepia muted text', selector: 'body.mode-sepia', bgSelector: 'body.mode-sepia', fgToken: '--muted2', bgToken: '--bg' },
+    { label: 'Dashboard muted text', selector: '#view-dashboard', bgSelector: '#view-dashboard', fgToken: '--muted2', bgToken: '--panel' },
+    { label: 'Grammar locked text', selector: '.gt-root', bgSelector: '.gt-root', fgToken: '--gt-muted2', bgToken: '--gt-bg0' }
+  ];
+  for (const pair of themePairs) {
+    contrastAssert(pair.label, token(contrastCss, pair.selector, pair.fgToken), token(appCss, pair.bgSelector, pair.bgToken));
+  }
+  if (!/#view-dashboard\s*\{[^}]*color:\s*var\(--text\)/s.test(contrastCss)) throw new Error('Dashboard does not apply its scoped text color.');
+  if (!/\.gj-node\.locked\s*\{[^}]*opacity:\s*1/s.test(contrastCss)) throw new Error('Grammar Journey locked nodes still fade their text.');
+  const ink = { light: '#16212e', dark: '#e9ecef' };
+  const onInk = { light: token(contrastCss, ':root', '--vx-on-ink'), dark: token(contrastCss, '[data-theme="dark"]', '--vx-on-ink') };
+  contrastAssert('Arena selected control (light)', onInk.light, ink.light);
+  contrastAssert('Arena selected control (dark)', onInk.dark, ink.dark);
+  contrastAssert('Arena positive status', token(contrastCss, ':root', '--vx-on-ok'), '#2e8f63');
+  contrastAssert('Arena positive status (dark)', token(contrastCss, ':root', '--vx-on-ok'), '#49d186');
+  console.log('Contrast checks: dashboard, muted theme text, Grammar Journey and Arena controls validated');
+} catch (error) {
+  console.error('Contrast validation failed:', error.message);
+  process.exitCode = 1;
+}
