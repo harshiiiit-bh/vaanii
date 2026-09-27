@@ -2900,6 +2900,24 @@ function renderQuizPane(id, quiz){
 =============================================================*/
 let vocabCat='all', vocabDiff='all', currentWordId=null;
 const VOCAB_BY_ID = {}; VOCAB.forEach(v=>VOCAB_BY_ID[v.id]=v);
+function getDailyRotationSalt(){
+  const key='vaani_daily_rotation_salt_v1';
+  try{
+    let value=localStorage.getItem(key);
+    if(!value){value=Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem(key,value);}
+    return value;
+  }catch(e){return 'session-'+Date.now();}
+}
+function shuffleDailyContent(){
+  const key='vaani_daily_rotation_salt_v1';
+  const salt=Math.random().toString(36).slice(2)+Date.now().toString(36);
+  try{localStorage.setItem(key,salt);}catch(e){}
+  renderDailySetTabs();
+  renderDailySingles();
+  const note=document.getElementById('dailyRotationStatus');
+  if(note)note.innerHTML='<strong>Today’s rotation refreshed.</strong> New items were selected while recent repeats were avoided where possible.';
+  toast('Today’s learning rotation shuffled.');
+}
 function dailyDateKey(date){
   const d=date||new Date();
   return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
@@ -2931,15 +2949,16 @@ function pickDaily(arr,n,offset){
   if(!wanted)return [];
   const indexed=items.map((item,index)=>({id:dailyItemId(item,index),item:item}));
   const byId=new Map(indexed.map(entry=>[entry.id,entry.item]));
+  const rotationSalt=getDailyRotationSalt();
   const fingerprint=String(offset||0)+'|'+indexed.map(entry=>entry.id).join('|');
   const storageKey='vaani_daily_rotation_v3_'+dailyHash(fingerprint).toString(36);
   const today=dailyDateKey();
   let stored=null;
   try{stored=JSON.parse(localStorage.getItem(storageKey)||'null');}catch(e){}
   let history=stored&&Array.isArray(stored.history)?stored.history:[];
-  let orderIds=stored&&stored.date===today&&Array.isArray(stored.order)?stored.order.filter(id=>byId.has(id)):[];
+  let orderIds=stored&&stored.date===today&&stored.salt===rotationSalt&&Array.isArray(stored.order)?stored.order.filter(id=>byId.has(id)):[];
   if(orderIds.length!==items.length){
-    const shuffled=dailyShuffle(indexed,dailyHash(today+'|'+fingerprint));
+    const shuffled=dailyShuffle(indexed,dailyHash(today+'|'+fingerprint+'|'+rotationSalt));
     const cutoff=new Date();cutoff.setDate(cutoff.getDate()-7);const cutoffKey=dailyDateKey(cutoff);
     const recentIds=new Set();
     history.filter(entry=>entry&&typeof entry.date==='string'&&entry.date<today&&entry.date>=cutoffKey)
@@ -2952,7 +2971,7 @@ function pickDaily(arr,n,offset){
   const previous=history.filter(entry=>entry&&entry.date!==today);
   previous.push({date:today,ids:selectedIds});
   try{
-    localStorage.setItem(storageKey,JSON.stringify({date:today,order:orderIds,history:previous.slice(-15)}));
+    localStorage.setItem(storageKey,JSON.stringify({date:today,salt:rotationSalt,order:orderIds,history:previous.slice(-15)}));
   }catch(e){}
   return selectedIds.map(id=>byId.get(id)).filter(item=>item!==undefined);
 }
@@ -2978,6 +2997,11 @@ function renderVocabGrid(){
 }
 
 function renderDailySetTabs(){
+  const shuffleBtn=document.getElementById('dailyShuffleBtn');
+  if(shuffleBtn&&shuffleBtn.dataset.bound!=='1'){
+    shuffleBtn.dataset.bound='1';
+    shuffleBtn.addEventListener('click',shuffleDailyContent);
+  }
   const sets=[
     {key:'wod',label:'Words of the Day',cat:null,offset:0},
     {key:'advanced',label:'Advanced Words',cat:'advanced',offset:1},
@@ -3016,7 +3040,7 @@ function renderDailySetGrid(setDef){
 }
 
 function renderDailySingles(){
-  const strip=document.getElementById('dailySinglesStrip'); strip.innerHTML='';
+  const strip=document.getElementById('dailySinglesStrip'); if(!strip)return; strip.innerHTML='';
   const items=[
     {label:'Idiom of the Day',tag:'IDM',d:pickDaily(DAILY_IDIOMS,1,6)[0]},
     {label:'Phrase of the Day',tag:'PHR',d:pickDaily(DAILY_PHRASES,1,7)[0]},
@@ -3147,25 +3171,31 @@ function renderWordQuiz(v){
    PRACTICE / READING / TESTS RENDER
 =============================================================*/
 function renderPracticeGrid(){
-  const grid=document.getElementById('practiceGrid'); grid.innerHTML='';
-  PRACTICE.forEach(p=>{
+  const grid=document.getElementById('practiceGrid'); if(!grid)return; grid.innerHTML='';
+  const randomized = (typeof pvShuffle==='function' ? pvShuffle(PRACTICE) : PRACTICE.slice());
+  randomized.forEach(p=>{
     const div=document.createElement('div'); div.className='card topic-card';
-    div.innerHTML=`<div class="icon">${p.icon}</div><h3>${p.title}</h3><p>${p.desc}</p>
-      <div class="topic-meta"><span>${p.q.length} drill${p.q.length>1?'s':''}</span><span>Open ›</span></div>`;
+    div.innerHTML=`<div class="icon">${p.icon}</div><span class="vaani-mini-kicker">Randomized drill</span><h3>${p.title}</h3><p>${p.desc}</p>
+      <div class="topic-meta"><span>${p.q.length} question${p.q.length>1?'s':''}</span><span>Open ›</span></div>`;
     div.onclick=()=>openPractice(p);
     grid.appendChild(div);
   });
 }
 function openPractice(p){
-  document.getElementById('topicEyebrow').textContent='Sentence Practice';
+  document.getElementById('topicEyebrow').textContent='Sentence Practice · Randomized set';
   document.getElementById('topicTitle').textContent=p.title;
   document.getElementById('topicStamp').style.display='none';
   document.querySelectorAll('.tab-btn').forEach((b,i)=>b.style.display = b.dataset.tab==='quiz'?'block':'none');
   document.querySelectorAll('.tab-btn')[3].classList.add('active');
   document.querySelectorAll('.tab-pane').forEach(x=>x.classList.remove('active'));
   document.getElementById('pane-quiz').classList.add('active');
-  const quiz = p.q.map(item=>{
-    if(item.opts) return {q:item.s,opts:item.opts,ans:item.ans,exp:item.exp};
+  const rawQuestions = (typeof pvShuffle==='function' ? pvShuffle(p.q) : p.q.slice());
+  const quiz = rawQuestions.map(item=>{
+    if(item.opts){
+      const indexed=item.opts.map((text,index)=>({text,index}));
+      const shuffledOpts=typeof pvShuffle==='function'?pvShuffle(indexed):indexed;
+      return {q:item.s,opts:shuffledOpts.map(o=>o.text),ans:shuffledOpts.findIndex(o=>o.index===item.ans),exp:item.exp};
+    }
     return {q:item.s+' — which part has the error?',opts:['A','B','C','D'],ans:['A','B','C','D'].indexOf(item.ans),exp:item.exp};
   });
   currentTopic={id:p.id,title:p.title};
@@ -3252,14 +3282,60 @@ function renderProfileSnapshot(){
   const rankEl=document.getElementById('vpProfileRank');if(rankEl)rankEl.textContent=rank;
   const host=document.getElementById('vpOverviewStats');
   if(host)host.innerHTML=[
-    ['Total XP',String(State.xp||0),'✦'],
-    ['Current streak',(State.streak||0)+' days','🔥'],
-    ['Grammar topics',completed+'/'+GRAMMAR.length,'📘'],
-    ['Average quiz score',avg==null?'—':avg+'%','◎']
+    ['Total XP',String(State.xp||0),'✦'],['Current streak',(State.streak||0)+' days','🔥'],
+    ['Grammar topics',completed+'/'+GRAMMAR.length,'📘'],['Average quiz score',avg==null?'—':avg+'%','◎']
   ].map(item=>'<div class="vp-overview-card"><span class="vp-overview-icon" aria-hidden="true">'+item[2]+'</span><span class="vp-overview-label">'+item[0]+'</span><strong>'+item[1]+'</strong></div>').join('');
+
+  const order=SKILL_TIERS.flatMap(t=>t.ids).filter(id=>GRAMMAR.some(g=>g.id===id));
+  const nextId=order.find(id=>!State.completedTopics[id]);
+  const nextTopic=nextId?GRAMMAR.find(g=>g.id===nextId):null;
+  const mission=document.getElementById('vpFocusMission');
+  if(mission){
+    if(nextTopic){
+      mission.innerHTML='<div class="vp-focus-mission"><div class="vp-focus-icon" aria-hidden="true">'+(nextTopic.icon||'📘')+'</div><div><b>'+escapeHtmlVaani(nextTopic.title)+'</b><span>'+escapeHtmlVaani(nextTopic.desc||'Continue your Grammar journey one topic at a time.')+'</span></div></div><button type="button" class="btn vp-focus-action" onclick="openTopic(\''+String(nextTopic.id).replace(/'/g,"\\\\'")+'\')">Open next topic →</button>';
+    }else{
+      mission.innerHTML='<div class="vp-focus-mission"><div class="vp-focus-icon" aria-hidden="true">🏁</div><div><b>Grammar curriculum cleared</b><span>Revisit any topic to strengthen retention, or keep building vocabulary and comparisons.</span></div></div>';
+    }
+  }
+
+  function familyAverage(ids){
+    const values=ids.map(id=>State.quizScores[id]).map(Number).filter(n=>Number.isFinite(n)&&n>=0&&n<=100);
+    return values.length?Math.round(values.reduce((a,b)=>a+b,0)/values.length):null;
+  }
+  const grammarAvg=familyAverage(GRAMMAR.map(g=>g.id));
+  const compareAvg=familyAverage(COMPARISONS.map(c=>'cmp-'+c.id));
+  const practiceAvg=familyAverage(PRACTICE.map(p=>p.id));
+  const readingAvg=familyAverage(READING.map(r=>r.id));
+  const signals=[['Grammar',grammarAvg],['Comparisons',compareAvg],['Practice',practiceAvg],['Reading',readingAvg]];
+  const signalHost=document.getElementById('vpSkillSignals');
+  if(signalHost){
+    signalHost.innerHTML=signals.map(([label,val])=>{
+      const value=val==null?0:val;
+      return '<div class="vp-skill-signal"><label>'+label+'</label><div class="bar"><span style="width:'+value+'%"></span></div><strong>'+ (val==null?'—':value+'%') +'</strong></div>';
+    }).join('');
+  }
+
   const feed=document.getElementById('vpActivityList');if(feed){
     const activity=Array.isArray(State.activity)?State.activity.filter(a=>a&&typeof a==='object').slice(0,6):[];
     feed.innerHTML=activity.length?activity.map(a=>'<div class="vp-activity-item"><span class="vp-activity-dot" aria-hidden="true"></span><span class="vp-activity-copy"><b>'+escapeHtmlVaani(a.action||'Learning activity')+'</b><span>'+escapeHtmlVaani(a.detail||'')+'</span></span><time>'+escapeHtmlVaani(a.t||'')+'</time></div>').join(''):'<div class="vp-activity-empty">No activity has been recorded yet. Complete a lesson or quiz to start your learning log.</div>';
+  }
+
+  const rhythm=document.getElementById('vpRhythmGrid');
+  const rhythmNote=document.getElementById('vpRhythmNote');
+  if(rhythm){
+    rhythm.innerHTML='';
+    const days=[];
+    for(let i=13;i>=0;i--){
+      const d=new Date();d.setHours(12,0,0,0);d.setDate(d.getDate()-i);
+      const xp=Math.max(0,Number(State.dailyActivity&&State.dailyActivity[d.toDateString()])||0);
+      days.push({date:d,xp});
+      let level=0;if(xp>0)level=1;if(xp>=10)level=2;if(xp>=25)level=3;if(xp>=50)level=4;
+      const cell=document.createElement('span');cell.className='vp-rhythm-cell'+(level?' l'+level:'');cell.title=d.toLocaleDateString(undefined,{month:'short',day:'numeric'})+' · '+xp+' XP';rhythm.appendChild(cell);
+    }
+    if(rhythmNote){
+      const active=days.filter(d=>d.xp>0).length,totalXp=days.reduce((sum,d)=>sum+d.xp,0);
+      rhythmNote.innerHTML='<span>'+active+' active day'+(active===1?'':'s')+'</span><span>'+totalXp+' XP in 14 days</span>';
+    }
   }
 }
 function refreshDashboard(){
