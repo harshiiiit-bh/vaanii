@@ -1603,10 +1603,18 @@ function pvSelectOption(choiceIdx){
   pvRender();
 }
 
+function pvConfirmSubmitExam(){
+  const s=PV.session;if(!s||s.mode!=='exam')return;
+  const blank=s.questions.filter(q=>!s.answers[q._id]).length;
+  const message=blank?'You have '+blank+' unanswered question'+(blank===1?'':'s')+'. They will receive zero. Submit now?':'You have answered every question. Submit the exam now?';
+  if(typeof confirm==='function'&&!confirm(message))return;
+  pvFinishSession();
+}
 function pvNext(){
   const s = PV.session; if(!s) return;
   if(s.index < s.questions.length-1){ s.index++; if(s.mode==='rapidfire'){ s.remaining=s.perQSeconds; } pvRender(); if(s.mode==='rapidfire') pvStartTimerIfNeeded(); pvSaveContinue(); }
-  else { pvFinishSession(); }
+  else if(s.mode==='exam') pvConfirmSubmitExam();
+  else pvFinishSession();
 }
 function pvPrev(){
   const s = PV.session; if(!s) return;
@@ -1668,12 +1676,12 @@ function pvSessionHTML(){
   } else {
     optsHTML = q.o.map((opt,i)=>{
       let cls = '';
-      if(answer){
+      if(answer && s.mode!=='exam'){
         if(i===q.ans) cls='correct';
         else if(i===answer.choice) cls='wrong';
-      }
-      return `<button class="pv-option ${cls}" ${answer?'disabled':''} onclick="pvSelectOption(${i})">
-        <span class="ol">${letters[i]}</span><span>${opt}</span></button>`;
+      } else if(answer && s.mode==='exam' && i===answer.choice){cls='selected-neutral';}
+      return `<button class="pv-option ${cls}" aria-pressed="${answer && i===answer.choice?'true':'false'}" ${answer?'disabled':''} onclick="pvSelectOption(${i})">
+        <span class="ol">${letters[i]}</span><span>${escapeHtmlVaani(opt)}</span></button>`;
     }).join('');
   }
 
@@ -1682,26 +1690,27 @@ function pvSessionHTML(){
     if(isRevisionLike){
       feedbackHTML = '';
     } else if(answer.choice===-1){
-      feedbackHTML = `<div class="pv-feedback wrong">⏱ Time's up — the correct answer is highlighted above.</div>`;
+      feedbackHTML = `<div class="pv-feedback wrong">⏱ Time's up — the correct answer will be available in your review.</div>`;
     } else if(answer.correct){
-      feedbackHTML = `<div class="pv-feedback correct">✓ Correct!</div>`;
+      feedbackHTML = `<div class="pv-feedback correct">✓ Correct. ${escapeHtmlVaani(q.exp||'You selected the right answer.')}</div>`;
     } else {
-      feedbackHTML = `<div class="pv-feedback wrong">✕ Not quite — the correct answer is highlighted above.</div>`;
+      feedbackHTML = `<div class="pv-feedback wrong">✕ Not quite. ${escapeHtmlVaani(q.exp||'Review the correct answer below.')}</div>`;
     }
   }
   let explainHTML = '';
   if(showResult || isRevisionLike){
-    const extraNotes = `${q.rule?`<div><b>📐 Rule:</b> ${q.rule}</div>`:''}${q.shortcut?`<div style="margin-top:8px">⚡ ${q.shortcut}</div>`:''}${q.correctionNote?`<div style="margin-top:8px;color:var(--red)">⚠ <b>Answer-key note:</b> ${q.correctionNote}</div>`:''}`;
+    const extraNotes = `${q.exp?`<div><b>Why:</b> ${escapeHtmlVaani(q.exp)}</div>`:''}${q.rule?`<div style="margin-top:8px"><b>📐 Rule:</b> ${escapeHtmlVaani(q.rule)}</div>`:''}${q.shortcut?`<div style="margin-top:8px">⚡ ${escapeHtmlVaani(q.shortcut)}</div>`:''}${q.correctionNote?`<div style="margin-top:8px;color:var(--red)">⚠ <b>Answer-key note:</b> ${escapeHtmlVaani(q.correctionNote)}</div>`:''}`;
     if(extraNotes) explainHTML = `<div class="pv-explain-panel">${extraNotes}</div>`;
   } else if(s.mode==='exam' && answer){
-    explainHTML = `<div class="pv-feedback" style="background:rgba(201,162,75,.1);border-left:3px solid var(--gold);color:var(--gold)">✓ Answer locked in — review after you submit the exam.</div>`;
+    explainHTML = `<div class="pv-feedback" style="background:rgba(201,162,75,.1);border-left:3px solid var(--gold);color:var(--gold)">✓ Answer saved — answers and explanations will be revealed after submission.</div>`;
   }
 
   const qgrid = s.questions.map((qq,i)=>{
-    let cls = '';
-    if(i===s.index) cls='current';
-    else if(s.answers[qq._id]){ cls = s.answers[qq._id].correct ? 'solved' : 'incorrect'; }
-    return `<button class="${cls}" onclick="pvJumpTo(${i})">${i+1}</button>`;
+    let cls='';
+    if(i===s.index)cls='current';
+    else if(s.answers[qq._id])cls=s.mode==='exam'?'answered':(s.answers[qq._id].correct?'solved':'incorrect');
+    const status=cls==='current'?'current':cls==='answered'?'answered':cls==='solved'?'correct':cls==='incorrect'?'incorrect':'not answered';
+    return `<button class="${cls}" aria-label="Question ${i+1}, ${status}" ${i===s.index?'aria-current="step"':''} onclick="pvJumpTo(${i})">${i+1}</button>`;
   }).join('');
 
   return `<div class="pv-screen">
