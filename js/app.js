@@ -53,24 +53,33 @@ function loadState(){
    race where a render call in progress before normalization completed could throw and
    silently abort mid-function — the root cause of the blank Grammar screen on first launch. */
 function normalizeState(){
-  State.completedTopics = State.completedTopics || {};
-  State.quizScores = State.quizScores || {};
-  State.vocabLearned = State.vocabLearned || {};
-  State.missions = State.missions || {};
-  State.dailyActivity = State.dailyActivity || {};
-  State.topicProgress = State.topicProgress || {};
-  State.pyqStats = State.pyqStats || { attempts:{} };
-  State.pyqStats.attempts = State.pyqStats.attempts || {};
-  State.topicLastAttempt = State.topicLastAttempt || {};
-  State.personalBests = State.personalBests || { bestCombo:0, longestStreak:0, highestQuizScore:0, fastestQuizSeconds:null, fastestQuizLabel:'', totalQuizzesTaken:0 };
-  State.mysteryBoxesClaimed = State.mysteryBoxesClaimed || 0;
-  State.reviewQueue = Array.isArray(State.reviewQueue) ? State.reviewQueue : [];
-  State.theme = State.theme || 'light';
-  State.name = State.name || 'Cadet';
+  const isRecord=value=>!!value&&typeof value==='object'&&!Array.isArray(value);
+  State.completedTopics=isRecord(State.completedTopics)?State.completedTopics:{};
+  State.quizScores=isRecord(State.quizScores)?State.quizScores:{};
+  State.vocabLearned=isRecord(State.vocabLearned)?State.vocabLearned:{};
+  State.missions=isRecord(State.missions)?State.missions:{};
+  State.dailyActivity=isRecord(State.dailyActivity)?State.dailyActivity:{};
+  State.topicProgress=isRecord(State.topicProgress)?State.topicProgress:{};
+  State.topicLastAttempt=isRecord(State.topicLastAttempt)?State.topicLastAttempt:{};
+  State.pyqStats=isRecord(State.pyqStats)?State.pyqStats:{attempts:{}};
+  State.pyqStats.attempts=isRecord(State.pyqStats.attempts)?State.pyqStats.attempts:{};
+  State.personalBests=isRecord(State.personalBests)?State.personalBests:{};
+  Object.assign(State.personalBests,{bestCombo:0,longestStreak:0,highestQuizScore:0,fastestQuizSeconds:null,fastestQuizLabel:'',totalQuizzesTaken:0},State.personalBests);
+  State.mysteryBoxesClaimed=Number.isFinite(Number(State.mysteryBoxesClaimed))?Math.max(0,Math.floor(Number(State.mysteryBoxesClaimed))):0;
+  State.reviewQueue=Array.isArray(State.reviewQueue)?State.reviewQueue.filter(x=>x&&typeof x==='object'&&!Array.isArray(x)):[];
+  State.name=typeof State.name==='string'?(State.name.trim().slice(0,40)||'Cadet'):'Cadet';
+  State.xp=Number.isFinite(Number(State.xp))?Math.max(0,Math.floor(Number(State.xp))):0;
+  State.streak=Number.isFinite(Number(State.streak))?Math.max(0,Math.floor(Number(State.streak))):0;
+  State.theme=State.theme==='dark'?'dark':'light';
 }
+let __vaaniStorageWarningShown=false;
 function saveState(){
-  localStorage.setItem('vaani_state', JSON.stringify(State));
-  if(typeof persistCombinedAccount==='function') persistCombinedAccount();
+  let saved=false;
+  try{localStorage.setItem('vaani_state',JSON.stringify(State));saved=true;}
+  catch(err){console.warn('[VAANI] Browser storage could not save progress:',err);if(!__vaaniStorageWarningShown&&typeof toast==='function'){__vaaniStorageWarningShown=true;toast('Browser storage is full or unavailable. Your current session can continue, but progress may not persist.');}}
+  try{if(typeof persistCombinedAccount==='function')persistCombinedAccount();}
+  catch(err){console.warn('[VAANI] Account sync could not save progress:',err);}
+  return saved;
 }
 
 /* ============================================================
@@ -2614,30 +2623,15 @@ function openTopic(id){
   document.getElementById('flowStepper').innerHTML = steps.map((s,i)=>
     `<div class="flow-step ${i===0?'cur':''}" data-step="${s[0]}" onclick="jumpFlow('${s[0]}',this)"><span class="fn">${i+1}</span>${s[2]}</div>`).join('');
 
-  // ---- LEARN PANE (Concept + Rule + Exception) ----
-  let learnHtml = `<div id="fs-concept" class="explain-block reveal">${currentTopic.learn}</div>`;
-  if(currentTopic.didYouKnow){
-    learnHtml += `<div class="dyk-box reveal"><span class="dyk-icon">💡</span><div><b>DID YOU KNOW?</b>${currentTopic.didYouKnow}</div></div>`;
-  }
-  if(currentTopic.diagram){ learnHtml += renderMindmap(currentTopic.diagram); }
-  if(currentTopic.exception){
-    learnHtml += `<div id="fs-exception" class="exception-box reveal"><span class="elabel">⚠ EXCEPTION TO THE RULE</span>${currentTopic.exception}</div>`;
-  }
-  if(currentTopic.levels){
-    learnHtml += `<div id="fs-rule" class="panel-title" style="margin-top:24px"><span class="bar"></span>Explore by Depth</div>` + renderLevels(currentTopic.levels);
-  }
-  if(currentTopic.comparison){
-    learnHtml += `<div class="panel-title" style="margin-top:24px"><span class="bar"></span>Comparison Table</div>` + renderCompare(currentTopic.comparison);
-  }
-  if(currentTopic.cheatSheet){
-    learnHtml += `<div class="cheat-card reveal"><h4>📋 ${currentTopic.cheatSheet.title||'Printable Cheat Sheet'}</h4><div class="cheat-grid">
-      ${currentTopic.cheatSheet.items.map(it=>`<div class="cheat-cell"><b>${it.k}</b>${it.v}</div>`).join('')}</div></div>`;
-  }
-  if(meta.related && meta.related.length){
-    learnHtml += `<div class="reveal" style="margin-top:18px"><div class="panel-title"><span class="bar"></span>Related Topics</div>
-      <div class="tag-row">${meta.related.map(r=>`<span class="tag-chip related" onclick="jumpRelated('${r}')">${r}</span>`).join('')}</div></div>`;
-  }
-  document.getElementById('pane-learn').innerHTML = learnHtml;
+  // Plain-language explanation comes first; detailed reference stays optional.
+  const basics=(typeof GRAMMAR_BASICS!=='undefined'&&GRAMMAR_BASICS[currentTopic.id])||{plain:currentTopic.summary||currentTopic.desc||'Study the rule and examples below.',rule:'Check the role of the word or phrase in the complete sentence.',good:(currentTopic.examples&&currentTopic.examples[0]&&currentTopic.examples[0].s)||'',bad:'',why:(currentTopic.examples&&currentTopic.examples[0]&&currentTopic.examples[0].note)||''};
+  const escLesson=escapeHtmlVaani;
+  let learnHtml='<section class="lesson-start-card"><div class="lesson-start-top"><span class="lesson-kicker">START HERE · PLAIN ENGLISH</span><span class="lesson-time">'+escLesson(meta.time||'6 min')+'</span></div><h3>Understand the idea first</h3><p class="lesson-plain">'+escLesson(basics.plain)+'</p><div class="lesson-rule"><span class="lesson-mini-label">THE RULE</span><p>'+escLesson(basics.rule)+'</p></div>'+(basics.good?'<div class="lesson-example is-good"><span class="lesson-mini-label">EXAMPLE</span><p>'+escLesson(basics.good)+'</p></div>':'')+(basics.bad?'<div class="lesson-example is-watch"><span class="lesson-mini-label">WATCH OUT</span><p>'+escLesson(basics.bad)+'</p><small>'+escLesson(basics.why||'Check the rule before choosing.')+'</small></div>':'')+(!basics.bad&&basics.why?'<p class="lesson-why">'+escLesson(basics.why)+'</p>':'')+'<div class="lesson-start-actions"><button class="btn" type="button" id="lessonGoPractice">Try a question →</button><span>Detailed notes are available below when you need them.</span></div></section>';
+  learnHtml+='<details class="lesson-reference"><summary>Open detailed reference notes (optional)</summary><div class="lesson-reference-body">'+(currentTopic.learn||'')+(currentTopic.didYouKnow?'<div class="dyk-box"><span class="dyk-icon">💡</span><div><b>DID YOU KNOW?</b>'+currentTopic.didYouKnow+'</div></div>':'')+(currentTopic.diagram?renderMindmap(currentTopic.diagram):'')+(currentTopic.exception?'<div class="exception-box"><span class="elabel">⚠ EXCEPTION TO THE RULE</span>'+currentTopic.exception+'</div>':'')+(currentTopic.levels?'<div class="panel-title" style="margin-top:24px"><span class="bar"></span>Explore by Depth</div>'+renderLevels(currentTopic.levels):'')+(currentTopic.comparison?'<div class="panel-title" style="margin-top:24px"><span class="bar"></span>Comparison Table</div>'+renderCompare(currentTopic.comparison):'')+(currentTopic.cheatSheet?'<div class="cheat-card"><h4>📋 '+escLesson(currentTopic.cheatSheet.title||'Printable Cheat Sheet')+'</h4><div class="cheat-grid">'+(currentTopic.cheatSheet.items||[]).map(it=>'<div class="cheat-cell"><b>'+escLesson(it.k)+'</b>'+escLesson(it.v)+'</div>').join('')+'</div></div>':'')+'</div></details>';
+  document.getElementById('pane-learn').innerHTML=learnHtml;
+  const lessonPracticeBtn=document.getElementById('lessonGoPractice');
+  if(lessonPracticeBtn)lessonPracticeBtn.addEventListener('click',()=>{const practiceStep=document.querySelector('.flow-step[data-step="practice"]');if(practiceStep)jumpFlow('practice',practiceStep);});
+
 
   // ---- EXAMPLES PANE ----
   let exHtml = `<div id="fs-example">` + currentTopic.examples.map(e=>
@@ -2921,6 +2915,17 @@ function renderWOD(){
   document.getElementById('dashWordMeaning').textContent=v.meanEn;
 }
 
+function lookupExternalWord(){
+  const word=VOCAB_BY_ID[currentWordId],button=document.getElementById('wdDictionaryLookup'),host=document.getElementById('wdDictionaryResult');
+  if(!word||!button||!host)return;if(typeof VaaniDictionary==='undefined'){host.textContent='Online dictionary unavailable. The curated VAANI entry remains available.';return;}
+  button.disabled=true;button.textContent='Looking up…';host.textContent='Looking up an optional dictionary entry…';
+  VaaniDictionary.lookup(word.w).then(result=>{if(currentWordId!==word.id)return;host.innerHTML='';const entry=result.entry;
+    const source=document.createElement('p');source.className='dict-source';source.textContent=(result.stale?'Showing a saved entry because the service is unavailable. ':result.source==='cache'?'Showing a saved dictionary entry. ':'Online dictionary result. ')+'Supplementary data; compare with the VAANI lesson.';host.appendChild(source);
+    if(entry.phonetic){const p=document.createElement('p');p.className='dict-phonetic';p.textContent='Pronunciation: '+entry.phonetic;host.appendChild(p);}
+    entry.meanings.forEach(m=>{const group=document.createElement('div');group.className='dict-meaning';if(m.partOfSpeech){const h=document.createElement('h5');h.textContent=m.partOfSpeech;group.appendChild(h);}m.definitions.forEach(d=>{const p=document.createElement('p');p.className='dict-definition';p.textContent=d.definition;group.appendChild(p);if(d.example){const ex=document.createElement('p');ex.className='dict-example';ex.textContent='Example: '+d.example;group.appendChild(ex);}if(d.synonyms.length){const sy=document.createElement('p');sy.className='dict-related';sy.textContent='Synonyms: '+d.synonyms.join(', ');group.appendChild(sy);}if(d.antonyms.length){const an=document.createElement('p');an.className='dict-related';an.textContent='Antonyms: '+d.antonyms.join(', ');group.appendChild(an);}});host.appendChild(group);});
+    const audioUrl=entry.phonetics.map(p=>p.audio).find(url=>{try{const u=new URL(url);return u.protocol==='https:'&&(u.hostname==='ssl.gstatic.com'||u.hostname.endsWith('.dictionaryapi.dev'));}catch(e){return false;}});if(audioUrl){const audio=document.createElement('audio');audio.controls=true;audio.preload='none';audio.src=audioUrl;audio.setAttribute('aria-label','Word pronunciation audio');host.appendChild(audio);}
+  }).catch(err=>{if(currentWordId===word.id)host.textContent=(err&&err.message?err.message:'Online lookup failed.')+' Your curated VAANI entry is still available above.';}).finally(()=>{if(currentWordId===word.id){button.disabled=false;button.textContent='Refresh lookup';}});
+}
 function openWord(id){
   const v = VOCAB_BY_ID[id]; if(!v) return;
   currentWordId = id;
@@ -2954,6 +2959,8 @@ function openWord(id){
   document.getElementById('wdImportance').textContent=v.imp+' / 5';
   document.getElementById('wdYears').textContent=v.years;
   document.getElementById('wdPYQ').textContent=v.pyq;
+  const dictionaryPanel=document.getElementById('wdDictionaryResult'),dictionaryButton=document.getElementById('wdDictionaryLookup');
+  if(dictionaryPanel)dictionaryPanel.textContent='';if(dictionaryButton){dictionaryButton.disabled=false;dictionaryButton.textContent='Look up word';}
   renderWordQuiz(v);
   switchView('worddetail');
 }
