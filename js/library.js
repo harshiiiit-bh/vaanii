@@ -522,6 +522,51 @@ document.querySelectorAll('#vbv-mainnav button').forEach(btn=>{
 window.addEventListener('hashchange', navigate);
 
 /* ================= HOME ================= */
+function renderHomeCommandCenter(){
+  const books=[...DATA.ongoing,...DATA.completed];
+  const pagesToday=books.reduce((sum,b)=>sum+(b.logs||[]).filter(l=>l.date===todayStr()).reduce((n,l)=>n+Number(l.pages||0),0),0);
+  const minutesToday=books.reduce((sum,b)=>sum+(b.logs||[]).filter(l=>l.date===todayStr()).reduce((n,l)=>n+Number(l.minutes||0),0),0);
+  const current=DATA.ongoing[0]||null;
+  const next=DATA.upcoming[0]||null;
+  const activePages=current?(current.logs||[]).reduce((n,l)=>n+Number(l.pages||0),0):0;
+  const progress=current&&current.totalPages?Math.min(100,Math.round(activePages/current.totalPages*100)):null;
+  const latest=DATA.vocab.slice(0,3);
+  let out='<section class="vbv-command-center"><div class="vbv-home-section-kicker">AT A GLANCE · TODAY</div>'+
+    '<div class="vbv-command-metrics"><div><span>Pages today</span><b>'+pagesToday+'</b></div><div><span>Minutes today</span><b>'+minutesToday+'</b></div><div><span>Current books</span><b>'+DATA.ongoing.length+'</b></div><div><span>Saved vocabulary</span><b>'+DATA.vocab.length+'</b></div></div>';
+  out+='<div class="vbv-command-grid"><section class="vbv-command-card"><div class="vbv-home-section-kicker">CONTINUE READING</div>';
+  if(current){
+    out+='<div class="vbv-command-book"><span class="vbv-command-book-icon" aria-hidden="true">📖</span><div><b>'+escapeHtml(current.title)+'</b><small>'+escapeHtml(current.author||'Author not recorded')+'</small></div></div>';
+    out+='<p class="vbv-command-copy">'+activePages+' pages logged'+(progress!==null?' · '+progress+'% of the book':' · Total page count not set')+'</p>';
+    if(progress!==null)out+='<div class="vbv-command-progress"><span style="width:'+progress+'%"></span></div>';
+    out+='<a class="vbv-home-primary-link" href="#/ongoingDetail/'+encodeURIComponent(current.id)+'">Open reading desk <span aria-hidden="true">→</span></a>';
+  }else{
+    out+='<div class="vbv-command-empty"><b>No active book</b><p>Choose a queued title or add the next book you plan to read.</p><a class="vbv-inline-link" href="#/upcoming">Open reading queue →</a></div>';
+  }
+  out+='</section><section class="vbv-command-card"><div class="vbv-home-section-kicker">UP NEXT</div>';
+  if(next){
+    out+='<div class="vbv-command-book"><span class="vbv-command-book-icon" aria-hidden="true">01</span><div><b>'+escapeHtml(next.title)+'</b><small>'+escapeHtml(next.author||'Author not recorded')+'</small></div></div>';
+    out+='<p class="vbv-command-copy">The next title in your reading queue.</p><button class="vbv-btn btn-outline btn-sm" type="button" onclick="openStartModal(\''+escJs(next.id)+'\')">Start reading →</button>';
+  }else{
+    out+='<div class="vbv-command-empty"><b>Your queue is clear</b><p>Add a book whenever you find your next read.</p><a class="vbv-inline-link" href="#/upcoming">Add a book →</a></div>';
+  }
+  out+='</section></div>';
+  out+='<div class="vbv-home-tool-grid">'+[
+    ['▤','Full library','All books in one searchable place','#/library'],
+    ['▦','Reading board','Move books through each stage','#/board'],
+    ['✎','Vocab register','Save and revisit discovered words','#/vocab'],
+    ['◎','Vocab test','Practise with your own entries','#/vocabtest'],
+    ['⌁','English levels','Learn from Basic to Advanced','#/levels'],
+    ['◖','Spoken English','Listen and practise aloud','#/spoken']
+  ].map(function(x){return '<a class="vbv-home-tool" href="'+x[3]+'"><span aria-hidden="true">'+x[0]+'</span><b>'+x[1]+'</b><small>'+x[2]+'</small><em>Open →</em></a>';}).join('')+'</div>';
+  out+='<div class="vbv-home-lower"><section class="vbv-command-card"><div class="vbv-home-section-kicker">WORD OF THE DAY</div>';
+  const wod=wordOfTheDay();
+  out+='<div class="vbv-home-wod"><div><b>'+escapeHtml(wod.word)+'</b><p>'+escapeHtml(wod.meaning)+'</p></div><button class="vbv-btn btn-gold btn-sm" type="button" onclick="addWordOfDayToRegister()">＋ Save</button></div></section>';
+  out+='<section class="vbv-command-card"><div class="vbv-home-section-kicker">RECENTLY CAPTURED</div>';
+  out+=latest.length?latest.map(function(v){return '<div class="vbv-home-word-row"><span><b>'+escapeHtml(v.word)+'</b><small>'+escapeHtml(v.meaning||'Meaning not recorded')+'</small></span><em>'+escapeHtml(v.sourceLabel||v.sourceBookTitle||'Register')+'</em></div>';}).join(''):'<p class="vbv-command-copy">Your saved words and phrases will appear here.</p>';
+  out+='</section></div></section>';
+  return out;
+}
+
 function renderHome(){
   const totalPagesRead = DATA.ongoing.reduce((s,b)=> s + b.logs.reduce((a,l)=>a+Number(l.pages||0),0), 0)
     + DATA.completed.reduce((s,b)=> s + (b.logs? b.logs.reduce((a,l)=>a+Number(l.pages||0),0):0), 0);
@@ -553,6 +598,8 @@ function renderHome(){
       <div class="vbv-stat-card"><div class="num">${DATA.vocab.length}</div><div class="lbl">Words Commanded</div></div>
       <div class="vbv-stat-card"><div class="num">${totalPagesRead}</div><div class="lbl">Pages Logged</div></div>
     </div>
+
+    ${renderHomeCommandCenter()}
 
     ${(()=>{ const wod = wordOfTheDay(); return `
     <div class="wod-card">
