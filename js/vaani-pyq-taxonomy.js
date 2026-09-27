@@ -47,6 +47,11 @@
     if (!question || typeof question !== 'object') return '';
     var raw = String(question._sourceSec || question.sec || '').trim();
     if (!raw) return '';
+    var prompt = String(question.q || '').toLocaleLowerCase();
+    var asksAntonym = /\b(?:antonym|opposite in meaning|opposite meaning)\b/.test(prompt);
+    var asksSynonym = /\b(?:synonym|similar in meaning|same in meaning)\b/.test(prompt);
+    if (asksAntonym && !asksSynonym) return 'Antonyms';
+    if (asksSynonym && !asksAntonym) return 'Synonyms';
     if (raw === 'Grammar') {
       var exam = String(question._exam || 'NDA').toUpperCase();
       var key = exam + '|' + question.y + '|' + question.s + '|' + question.n;
