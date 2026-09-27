@@ -40,7 +40,7 @@ document.addEventListener('mousemove',(e)=>{
 const State = {
   name:'Cadet', xp:0, streak:0, lastActive:null,
   completedTopics:{}, quizScores:{}, vocabLearned:{}, theme:'light', missions:{},
-  dailyActivity:{}, mysteryBoxesClaimed:0, reviewQueue:[],
+  dailyActivity:{}, focusSessions:{}, mysteryBoxesClaimed:0, reviewQueue:[],
   personalBests:{ bestCombo:0, longestStreak:0, highestQuizScore:0, fastestQuizSeconds:null, fastestQuizLabel:'', totalQuizzesTaken:0 },
   pyqStats:{ attempts:{} }
 };
@@ -59,6 +59,7 @@ function normalizeState(){
   State.vocabLearned=isRecord(State.vocabLearned)?State.vocabLearned:{};
   State.missions=isRecord(State.missions)?State.missions:{};
   State.dailyActivity=isRecord(State.dailyActivity)?State.dailyActivity:{};
+  State.focusSessions=isRecord(State.focusSessions)?State.focusSessions:{};
   State.topicProgress=isRecord(State.topicProgress)?State.topicProgress:{};
   State.topicLastAttempt=isRecord(State.topicLastAttempt)?State.topicLastAttempt:{};
   State.pyqStats=isRecord(State.pyqStats)?State.pyqStats:{attempts:{}};
@@ -3487,7 +3488,70 @@ function refreshDashboard(){
   renderBadges();
   renderMysteryBox();
   renderReviewWidget();
+  renderFocusSprint();
   refreshHomeV2();
+}
+/* ---- Focus Sprint: a local, timed study session with capped XP ---- */
+let focusSprint = {minutes:15,remaining:900,running:false,endsAt:0,interval:null,task:'Grammar'};
+function focusDayKey(){return new Date().toDateString();}
+function focusFmt(seconds){const n=Math.max(0,Math.ceil(seconds));return String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0');}
+function focusSetDuration(minutes){
+  if(focusSprint.running)return;
+  focusSprint.minutes=minutes;focusSprint.remaining=minutes*60;
+  renderFocusSprint();
+}
+function focusSetTask(task){
+  if(focusSprint.running)return;
+  focusSprint.task=task;renderFocusSprint();
+}
+function focusStopTicker(){if(focusSprint.interval){clearInterval(focusSprint.interval);focusSprint.interval=null;}}
+function focusTick(){
+  focusSprint.remaining=Math.max(0,Math.ceil((focusSprint.endsAt-Date.now())/1000));
+  const timer=document.getElementById('focusSprintTimer');
+  const bar=document.getElementById('focusSprintProgress');
+  const status=document.getElementById('focusSprintStatus');
+  if(timer)timer.textContent=focusFmt(focusSprint.remaining);
+  if(bar)bar.style.width=(100*(1-focusSprint.remaining/(focusSprint.minutes*60)))+'%';
+  if(!focusSprint.remaining){
+    focusStopTicker();focusSprint.running=false;
+    const day=focusDayKey();const done=Number(State.focusSessions[day]||0)+1;State.focusSessions[day]=done;saveState();
+    if(done<=3)addXP(5,'Focus Sprint completed');
+    else{refreshDashboard();toast('Focus Sprint complete — daily XP limit reached.');}
+    focusSprint.remaining=focusSprint.minutes*60;
+    const freshStatus=document.getElementById('focusSprintStatus');
+    if(freshStatus)freshStatus.textContent=done<=3?'Sprint complete. Take a short break before the next one.':'Sprint complete. You have reached today’s 3-session XP limit.';
+    const btn=document.getElementById('focusSprintToggle');if(btn){btn.textContent='Start another sprint';btn.disabled=false;}
+    const progress=document.getElementById('focusSprintProgress');if(progress)progress.style.width='0%';
+    const timerEl=document.getElementById('focusSprintTimer');if(timerEl)timerEl.textContent=focusFmt(focusSprint.remaining);
+    return;
+  }
+}
+function focusToggleSprint(){
+  if(focusSprint.running){
+    focusSprint.remaining=Math.max(0,Math.ceil((focusSprint.endsAt-Date.now())/1000));focusStopTicker();focusSprint.running=false;
+    const b=document.getElementById('focusSprintToggle');if(b)b.textContent='Resume sprint';
+    const s=document.getElementById('focusSprintStatus');if(s)s.textContent='Paused — resume whenever you are ready.';
+    focusTick();return;
+  }
+  focusSprint.running=true;focusSprint.endsAt=Date.now()+focusSprint.remaining*1000;
+  const b=document.getElementById('focusSprintToggle');if(b)b.textContent='Pause sprint';
+  const s=document.getElementById('focusSprintStatus');if(s)s.textContent='Stay focused. Your sprint is in progress.';
+  focusSprint.interval=setInterval(focusTick,250);focusTick();
+}
+function focusResetSprint(){
+  focusStopTicker();focusSprint.running=false;focusSprint.remaining=focusSprint.minutes*60;renderFocusSprint();
+}
+function renderFocusSprint(){
+  const host=document.getElementById('focusSprintWidget');if(!host)return;
+  const today=Number(State.focusSessions[focusDayKey()]||0);
+  const tasks=['Grammar','Vocabulary','PYQ practice','Reading','Comparisons'];
+  const pct=focusSprint.running?100*(1-focusSprint.remaining/(focusSprint.minutes*60)):0;
+  host.innerHTML='<div class="vd-focus-head"><div><span class="vd-focus-kicker">DEEP WORK · LOCAL TIMER</span><h2>Focus Sprint</h2><p>Choose a task, set a short target and work without distractions.</p></div><div class="vd-focus-count"><strong>'+today+'</strong><span>completed today</span></div></div>'+
+    '<div class="vd-focus-body"><div class="vd-focus-controls"><label for="focusSprintTask">What are you working on?</label><select id="focusSprintTask" onchange="focusSetTask(this.value)" '+(focusSprint.running?'disabled':'')+'>'+tasks.map(t=>'<option value="'+t+'" '+(focusSprint.task===t?'selected':'')+'>'+t+'</option>').join('')+'</select>'+
+    '<div class="vd-focus-presets" aria-label="Sprint duration">'+[5,15,25,45].map(n=>'<button type="button" class="vd-focus-preset '+(focusSprint.minutes===n?'active':'')+'" onclick="focusSetDuration('+n+')" '+(focusSprint.running?'disabled':'')+'>'+n+' min</button>').join('')+'</div></div>'+
+    '<div class="vd-focus-clock"><div class="vd-focus-time" id="focusSprintTimer">'+focusFmt(focusSprint.remaining)+'</div><div class="vd-focus-progress"><span id="focusSprintProgress" style="width:'+pct+'%"></span></div><p id="focusSprintStatus" aria-live="polite">'+(focusSprint.running?'Stay focused. Your sprint is in progress.':'Your timer starts when you begin.')+'</p>'+
+    '<div class="vd-focus-actions"><button type="button" class="btn" id="focusSprintToggle" onclick="focusToggleSprint()">'+(focusSprint.running?'Pause sprint':'Start sprint')+'</button><button type="button" class="btn ghost" onclick="focusResetSprint()">Reset</button></div></div></div>'+
+    '<div class="vd-focus-foot">Complete a sprint to earn 5 XP · Maximum 3 rewarded sprints per day.</div>';
 }
 function checkBadges(){ refreshDashboard(); }
 

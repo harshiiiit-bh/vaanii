@@ -1,0 +1,27 @@
+/* VAANI Dashboard — interactive Focus Sprint */
+.vd-focus-sprint{margin:22px 0;padding:clamp(20px,3vw,30px);border:1px solid var(--line);border-radius:22px;background:var(--panel);box-shadow:var(--shadow-sm);position:relative;overflow:hidden}
+.vd-focus-sprint:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--gold),transparent)}
+.vd-focus-head{display:flex;justify-content:space-between;align-items:flex-start;gap:18px}
+.vd-focus-kicker{font:700 .63rem var(--mono);letter-spacing:.14em;color:var(--gold)}
+.vd-focus-head h2{font:700 clamp(1.35rem,3vw,1.8rem)/1.2 var(--display);margin:5px 0;color:var(--text)}
+.vd-focus-head p{margin:0;color:var(--muted);font-size:.84rem;line-height:1.5}
+.vd-focus-count{flex:0 0 auto;min-width:94px;padding:11px 13px;border:1px solid var(--line);border-radius:13px;background:var(--bg);text-align:center}
+.vd-focus-count strong{display:block;color:var(--text);font:700 1.35rem var(--mono)}
+.vd-focus-count span{display:block;margin-top:2px;color:var(--muted);font-size:.62rem}
+.vd-focus-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(220px,.8fr);gap:24px;align-items:center;margin-top:22px}
+.vd-focus-controls label{display:block;margin-bottom:8px;color:var(--text);font-size:.76rem;font-weight:700}
+.vd-focus-controls select{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:11px;background:var(--bg);color:var(--text);font:inherit;font-size:.84rem}
+.vd-focus-presets{display:flex;flex-wrap:wrap;gap:8px;margin-top:13px}
+.vd-focus-preset{padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:var(--bg);color:var(--muted);font:700 .72rem var(--mono);cursor:pointer;transition:background .15s,border-color .15s,color .15s}
+.vd-focus-preset:hover,.vd-focus-preset.active{border-color:var(--gold);background:color-mix(in srgb,var(--gold) 13%,var(--bg));color:var(--text)}
+.vd-focus-preset:disabled{opacity:.5;cursor:not-allowed}
+.vd-focus-clock{padding:19px;border:1px solid var(--line);border-radius:16px;background:var(--bg);text-align:center}
+.vd-focus-time{font:700 clamp(2.2rem,6vw,3.1rem)/1.1 var(--mono);letter-spacing:.04em;font-variant-numeric:tabular-nums;color:var(--text)}
+.vd-focus-progress{height:6px;margin:13px 0 9px;border-radius:999px;background:var(--line);overflow:hidden}
+.vd-focus-progress span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--gold),var(--green));transition:width .2s linear}
+.vd-focus-clock>p{min-height:2.5em;margin:0;color:var(--muted);font-size:.7rem;line-height:1.4}
+.vd-focus-actions{display:flex;gap:8px;margin-top:12px}
+.vd-focus-actions button{flex:1;justify-content:center}
+.vd-focus-foot{margin-top:15px;padding-top:12px;border-top:1px solid var(--line);color:var(--muted);font-size:.68rem}
+@media(max-width:640px){.vd-focus-body{grid-template-columns:1fr;gap:14px}.vd-focus-clock{padding:16px}.vd-focus-count{min-width:76px}.vd-focus-head p{max-width:34ch}}
+@media(prefers-reduced-motion:reduce){.vd-focus-preset,.vd-focus-progress span{transition:none}}
