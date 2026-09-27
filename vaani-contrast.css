@@ -1,0 +1,94 @@
+/* VAANI Contrast Audit — loaded last to keep all sections readable. */
+:root {
+  --muted2: #5f6a76;
+  --vx-on-ink: #ffffff;
+  --vx-on-muted: #ffffff;
+  --vx-on-ok: #0a0d11;
+  --vx-on-danger: #ffffff;
+}
+[data-theme="dark"] {
+  --muted2: #a5aeb9;
+  --g-muted2: #9ca6b2;
+  --vx-on-ink: #0a0d11;
+  --vx-on-muted: #0a0d11;
+  --vx-on-danger: #0a0d11;
+}
+body.mode-zen { --muted2: #5f6a76; }
+[data-theme="dark"] body.mode-zen { --muted2: #a5aeb9; }
+body.mode-sepia { --muted2: #6b5837; }
+
+/* The dashboard carries its own permanent dark palette. Re-apply the
+   scoped token as an actual color; otherwise headings inherit body ink
+   computed for the light theme (the low-contrast issue in the screenshot). */
+#view-dashboard {
+  color: var(--text);
+  --muted2: #a5aeb9;
+}
+#view-dashboard #continueTitle,
+#view-dashboard #recommendTitle { color: var(--text); }
+#view-dashboard #continueDesc,
+#view-dashboard #recommendDesc { color: var(--muted); }
+#view-dashboard .vd-badge-grid .badge:not(.earned) {
+  opacity: 1;
+  filter: none;
+}
+#view-dashboard .vd-badge-grid .badge:not(.earned) .bicon {
+  opacity: .65;
+  filter: grayscale(.75);
+}
+#view-dashboard .rm-node.locked .rm-dot { opacity: .72; }
+
+/* Keep locked learning destinations visibly locked without fading away
+   their labels. The badge carries the de-emphasis, not the whole node. */
+.gj-node.locked { opacity: 1; }
+.gj-node.locked .gj-node-badge { opacity: .58; filter: grayscale(.65); }
+.gj-node.locked .gj-node-label { color: var(--gt-muted); }
+.gt-root { --gt-muted2: #9aabb6; }
+
+/* Locked, unearned, and disabled states should remain readable. */
+.st-node.locked .st-node-label { color: var(--muted2); }
+.mystery-box-card.locked {
+  opacity: 1;
+  border-style: dashed;
+  cursor: default;
+}
+.sheet-menu-item.disabled {
+  opacity: 1;
+  color: var(--muted);
+  cursor: default;
+}
+.pv-nav-btn:disabled {
+  opacity: 1;
+  color: var(--muted);
+  border-style: dashed;
+  cursor: default;
+}
+#spinBtn:disabled { opacity: .78; filter: grayscale(.35); cursor: not-allowed; }
+.vd-badge-grid .badge:not(.earned) { opacity: 1; filter: none; }
+
+/* In Arena, --vx-ink is dark in light mode but light in dark mode.
+   These foreground tokens keep solid selected/status controls legible. */
+.vx-seg button[aria-pressed="true"],
+.vx-btn.primary,
+.vx-steps li::before { color: var(--vx-on-ink); }
+.vx-btn.danger { color: var(--vx-on-danger); }
+.vx-qgrid-btn.ok { color: var(--vx-on-ok); }
+.vx-qgrid-btn.skip { color: var(--vx-on-muted); }
+.vx-seg button[disabled] {
+  opacity: 1;
+  color: var(--vx-muted);
+  background: var(--vx-card);
+  border-style: dashed;
+}
+.vx-btn[disabled] { opacity: .82; }
+.vx-board-refresh:disabled { opacity: .85; }
+[data-theme="dark"] .vx-code-display { background: #0a0d11; }
+
+/* Book-reading medals keep their disabled/earned distinction without
+   applying opacity to the words printed on the card. */
+.vbv-scope .sticker.locked { opacity: 1; filter: grayscale(.65); }
+.vbv-scope .vbv-btn:disabled { opacity: .82; }
+
+@media (prefers-reduced-motion: reduce) {
+  .gj-node.locked .gj-node-badge { transition: none; }
+}
