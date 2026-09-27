@@ -1308,16 +1308,16 @@ function pvHomeHTML(){
   </div>`;
 
   const topicAcc = pyqTopicAccuracy();
-  const topicsHTML = pvTopics().map(t=>{
+  const topicList = pvTopics();
+  const topicsHTML = topicList.map(t=>{
     const count = PYQ_ALL.filter(q=>q.sec===t).length;
     const ta = topicAcc.find(x=>x.sec===t);
-    const accLabel = ta ? `${ta.acc}%` : '—';
-    return `<div class="pv-topic-card" onclick="pvLaunchTopic('${t.replace(/'/g,"\\'")}')">
-      <div class="pv-topic-emoji">${pvTopicIcon(t)}</div>
-      <div class="pv-topic-name">${t}</div>
-      <div class="pv-topic-count">${count} Qs</div>
-      <span class="pv-topic-acc ${pvAccBadgeClass(ta?ta.acc:null)}">${accLabel}</span>
-    </div>`;
+    const accLabel = ta ? `${ta.acc}%` : 'New';
+    return `<button type="button" class="pv-topic-card" data-topic="${encodeURIComponent(t)}" aria-label="Practice ${escapeHtmlVaani(t)}, ${count} questions">
+      <span class="pv-topic-emoji" aria-hidden="true">${pvTopicIcon(t)}</span>
+      <span class="pv-topic-copy"><span class="pv-topic-name">${escapeHtmlVaani(t)}</span><span class="pv-topic-count">${count} questions</span><span class="pv-topic-hint">${escapeHtmlVaani(pvTopicHint(t))}</span></span>
+      <span class="pv-topic-side"><span class="pv-topic-acc ${pvAccBadgeClass(ta?ta.acc:null)}">${accLabel}</span><span class="pv-topic-open">Practice <b aria-hidden="true">→</b></span></span>
+    </button>`;
   }).join('');
 
   const recent = st.history.slice(0,5);
@@ -1366,7 +1366,13 @@ function pvHomeHTML(){
     ${archiveGateHTML}
 
     <div class="pv-section-title"><h3><span class="bar"></span>Topic-Wise Practice</h3></div>
-    <div class="pv-topic-grid">${topicsHTML}</div>
+    <div class="pv-topic-tools">
+      <div class="pv-topic-tools-copy"><strong>Choose a skill</strong><small>Search the question bank by topic.</small></div>
+      <label class="pv-topic-search"><span class="search-mark" aria-hidden="true">⌕</span><input id="pvTopicSearch" type="search" maxlength="60" autocomplete="off" placeholder="Search topics…" aria-label="Search topic-wise practice"></label>
+      <span class="pv-topic-results" id="pvTopicResults" aria-live="polite">${topicList.length} topics</span>
+    </div>
+    <div class="pv-topic-grid" id="pvTopicGrid">${topicsHTML}</div>
+    <div class="pv-empty-note pv-topic-empty" id="pvTopicEmpty" hidden>No matching topic. Try another search.</div>
   </div>`;
 }
 
