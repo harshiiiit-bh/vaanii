@@ -3518,7 +3518,8 @@ function focusTick(){
     if(done<=3)addXP(5,'Focus Sprint completed');
     else{refreshDashboard();toast('Focus Sprint complete — daily XP limit reached.');}
     focusSprint.remaining=focusSprint.minutes*60;
-    if(status)status.textContent=done<=3?'Sprint complete. Take a short break before the next one.':'Sprint complete. You have reached today’s 3-session XP limit.';
+    const freshStatus=document.getElementById('focusSprintStatus');
+    if(freshStatus)freshStatus.textContent=done<=3?'Sprint complete. Take a short break before the next one.':'Sprint complete. You have reached today’s 3-session XP limit.';
     const btn=document.getElementById('focusSprintToggle');if(btn){btn.textContent='Start another sprint';btn.disabled=false;}
     const progress=document.getElementById('focusSprintProgress');if(progress)progress.style.width='0%';
     const timerEl=document.getElementById('focusSprintTimer');if(timerEl)timerEl.textContent=focusFmt(focusSprint.remaining);
