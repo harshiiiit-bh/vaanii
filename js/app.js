@@ -3339,9 +3339,10 @@ function refreshDashboard(){
       }).join('');
     }
   }
-  const within = State.xp%100;
-  document.getElementById('rankBar').style.width = within+'%';
-  document.getElementById('rankXPText').textContent = within+' / 100 XP to next rank';
+  const maxRankReached=lvl>=ranks.length;
+  const within=maxRankReached?100:State.xp%100;
+  document.getElementById('rankBar').style.width=within+'%';
+  document.getElementById('rankXPText').textContent=maxRankReached?'Maximum rank achieved':within+' / 100 XP to next rank';
 
   // progress tree — every topic, not just the first 10 (was GRAMMAR.slice(0,10),
   // silently hiding 24 of 34 with no indication more existed)
@@ -3845,7 +3846,7 @@ function renderCompareGrid(){
     });
   }
   const list=COMPARISONS.filter(c=>{
-    const searchable=[c.a,c.b,c.tagline,compareGroupOf(c)].join(' ').toLocaleLowerCase();
+    const searchable=[c.a,c.b,c.tagline,c.meanA,c.meanB,c.rule,compareGroupOf(c)].join(' ').replace(/<[^>]*>/g,' ').toLocaleLowerCase();
     return (compareGroup==='all'||compareGroupOf(c)===compareGroup)&&(!term||searchable.includes(term));
   });
   const counter=document.getElementById('compareResultCount');
