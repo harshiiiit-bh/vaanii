@@ -1519,6 +1519,27 @@ async function addVaaniCaptureToRegister(payload){
 window.VaaniBookRegister=window.VaaniBookRegister||{};
 window.VaaniBookRegister.add=addVaaniCaptureToRegister;
 
+function vbvCaptureButtonHtml(payload,label){
+  return '<button type="button" class="vbv-btn btn-outline btn-sm vbv-capture-action" data-vbv-register-capture="'+escapeHtml(JSON.stringify(payload||{}))+'">'+escapeHtml(label||'＋ Save to Register')+'</button>';
+}
+async function handleVbvCaptureButton(button){
+  if(!button||button.disabled)return;
+  let payload={};
+  try{payload=JSON.parse(button.getAttribute('data-vbv-register-capture')||'{}');}
+  catch(e){vbvToast('This capture could not be read. Try again.','angry');return;}
+  button.disabled=true;button.textContent='Saving…';
+  const result=await addVaaniCaptureToRegister(payload);
+  if(result&&result.ok){
+    button.textContent=result.duplicate?'✓ In Register':'✓ Saved';
+    button.classList.add('is-saved');
+    vbvToast(result.duplicate?'"'+result.word+'" is already in your register.':'Saved "'+result.word+'" to your Vocab Register.','good');
+  }else{
+    button.disabled=false;button.textContent='＋ Save to Register';
+    vbvToast((result&&result.message)||'Could not save this item.','angry');
+  }
+}
+
+
 async function attachSynonym(vocabId, word){
   const v = DATA.vocab.find(x=>x.id===vocabId);
   if(!v) { closeModal(); return; }
@@ -2581,6 +2602,7 @@ function levelVocabCardHtml(word, entry, level){
       <div class="vocab-meaning">${escapeHtml(entry.meaning)}</div>
       ${entry.example ? `<div class="review-quote">"${escapeHtml(entry.example)}"</div>` : ''}
       <div class="tag-group"><span class="lbl">Synonyms</span>${(entry.synonyms||[]).map(s=>`<span class="tag syn">${escapeHtml(s)}</span>`).join('') || '<span class="tag">none listed</span>'}</div>
+      ${vbvCaptureButtonHtml({word:word,meaning:entry.meaning,synonyms:entry.synonyms||[],example:entry.example,kind:'word',source:'Book Reading · '+LEVEL_LABEL[level]+' Vocabulary'},'＋ Save to Register')}
     </div>
   </div>`;
 }
@@ -2785,6 +2807,7 @@ function renderSpoken(){
             <button class="vbv-btn btn-outline btn-sm mic-btn" id="${micId}" onclick="practiceSpeech(PHRASES['${cat}'].items[${i}], '${micId}', '${fbId}')">🎤 Practice</button>
           </div>
           <div class="phrase-feedback" id="${fbId}"></div>
+          ${vbvCaptureButtonHtml({word:phrase,meaning:'Useful phrase for spoken English practice.',kind:'phrase',source:'Book Reading · Spoken English'},'＋ Save phrase')}
         </div>`;
       }).join('')}
     </div>
@@ -2803,6 +2826,13 @@ function setSpokenTab(cat){
    this ever runs. This just does VBV's own one-time setup, the first time the
    Book Reading tab is opened. */
 let __vbvMounted = false;
+if(!window.__vbvCaptureListenerBound){
+  window.__vbvCaptureListenerBound=true;
+  document.addEventListener('click',event=>{
+    const button=event.target&&event.target.closest?event.target.closest('[data-vbv-register-capture]'):null;
+    if(button)handleVbvCaptureButton(button);
+  });
+}
 function mountLibrarySection(){
   if(__vbvMounted) return;
   __vbvMounted = true;
