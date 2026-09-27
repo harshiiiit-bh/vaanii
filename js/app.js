@@ -3755,6 +3755,36 @@ function renderLeaderboard(){
     (nextObjective?'<div class="service-objective"><span class="service-objective-icon" aria-hidden="true">'+nextObjective.icon+'</span><span><b>Next objective · '+escapeHtmlVaani(nextObjective.name)+'</b><small>'+escapeHtmlVaani(nextObjective.hint)+'</small></span></div>':
     '<div class="service-objective"><span class="service-objective-icon" aria-hidden="true">🏆</span><span><b>All citations earned</b><small>Every current milestone is complete.</small></span></div>');
 
+  const serviceSignals=document.getElementById('serviceSkillSignals');
+  const serviceGoals=document.getElementById('serviceGoalList');
+  function serviceAverage(ids){
+    const vals=ids.map(id=>State.quizScores[id]).map(Number).filter(n=>Number.isFinite(n)&&n>=0&&n<=100);
+    return vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length):null;
+  }
+  if(serviceSignals){
+    const signals=[
+      ['Grammar',serviceAverage(GRAMMAR.map(g=>g.id))],
+      ['Comparisons',serviceAverage(COMPARISONS.map(c=>'cmp-'+c.id))],
+      ['Practice',serviceAverage(PRACTICE.map(p=>p.id))],
+      ['Reading',serviceAverage(READING.map(r=>r.id))]
+    ];
+    serviceSignals.innerHTML=signals.map(([label,value])=>{
+      const pct=value==null?0:value;
+      return '<div class="service-signal-row"><label>'+label+'</label><div class="service-signal-bar"><span style="width:'+pct+'%"></span></div><strong>'+ (value==null?'—':pct+'%') +'</strong></div>';
+    }).join('');
+  }
+  if(serviceGoals){
+    const goals=[];
+    const nextTopic=SKILL_TIERS.flatMap(t=>t.ids).map(id=>GRAMMAR.find(g=>g.id===id)).find(g=>g&&!State.completedTopics[g.id]);
+    if(nextTopic)goals.push({icon:nextTopic.icon||'📘',title:'Clear '+nextTopic.title,detail:'Next topic in your Grammar progression.'});
+    if((State.streak||0)<7)goals.push({icon:'🔥',title:'Build a 7-day streak',detail:(State.streak||0)+' consecutive day'+((State.streak||0)===1?'':'s')+' recorded so far.'});
+    const highest=pb.highestQuizScore==null?null:Number(pb.highestQuizScore);
+    if(highest==null||highest<70)goals.push({icon:'🎯',title:'Record a 70%+ quiz',detail:highest==null?'No quiz high score recorded yet.':'Current best: '+highest+'%.'});
+    if((State.xp||0)<100)goals.push({icon:'✦',title:'Reach 100 XP',detail:Math.max(0,100-(State.xp||0))+' XP remaining to the next level.'});
+    if(!goals.length)goals.push({icon:'🏅',title:'Maintain the standard',detail:'Your current baseline is established. Keep practising consistently.'});
+    serviceGoals.innerHTML=goals.slice(0,4).map(g=>'<div class="service-goal-item"><i aria-hidden="true">'+g.icon+'</i><span><b>'+escapeHtmlVaani(g.title)+'</b><small>'+escapeHtmlVaani(g.detail)+'</small></span></div>').join('');
+  }
+
   const weekHost=document.getElementById('serviceWeekWrap');
   if(weekHost){
     const days=[];
