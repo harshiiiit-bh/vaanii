@@ -263,8 +263,13 @@ function addXP(n, reason){
 }
 function toast(msg){
   const w = document.getElementById('toast-wrap');
-  const t = document.createElement('div'); t.className='toast'; t.innerHTML='⭐ '+msg;
-  w.appendChild(t); setTimeout(()=>t.remove(),3000);
+  if(!w) return;
+  const t = document.createElement('div');
+  t.className='toast';
+  t.setAttribute('role','status');
+  t.textContent='⭐ '+String(msg == null ? '' : msg);
+  w.appendChild(t);
+  setTimeout(()=>t.remove(),3000);
 }
 
 /* ============================================================
@@ -1810,11 +1815,13 @@ function pvBackToSummary(){
 
 /* ---- open a single search result as its own scoped session ---- */
 function pvOpenSearchResult(qid, term){
+  const searchInput = document.getElementById('globalSearch');
+  const searchTerm = (typeof term === 'string' ? term : (searchInput ? searchInput.value : '')).trim().toLowerCase();
   switchView('pyq');
   const q = PYQ_BY_ID[qid]; if(!q){ pvGoHome(); return; }
-  const list = PYQ_ALL.filter(x=>(x.q+' '+x.o.join(' ')+' '+x.sec+' '+x.sub).toLowerCase().includes((term||'').toLowerCase()));
+  const list = PYQ_ALL.filter(x=>(x.q+' '+x.o.join(' ')+' '+x.sec+' '+x.sub).toLowerCase().includes(searchTerm));
   const pool = list.length ? list : [q];
-  pvStartSession('section', pool, {title:`Search: "${term}"`});
+  pvStartSession('section', pool, {title:'Search results'});
   const idx = PV.session.questions.findIndex(x=>x._id===qid);
   if(idx>0){ PV.session.index = idx; pvRender(); }
 }
@@ -1866,13 +1873,27 @@ function relatedPyqHTML(lessonId){
 }
 
 /* ---- GLOBAL SEARCH ---- */
+let __gsearchReturnFocus = null;
 function openGlobalSearch(){
-  document.getElementById('gsearchOverlay').classList.add('show');
+  const overlay = document.getElementById('gsearchOverlay');
+  if(!overlay) return;
+  if(!overlay.classList.contains('show')) __gsearchReturnFocus = document.activeElement;
+  overlay.classList.add('show');
+  overlay.setAttribute('aria-hidden','false');
   const inp = document.getElementById('globalSearch');
-  inp.value=''; inp.focus();
+  if(inp){ inp.value=''; inp.focus(); }
   renderGlobalSearch();
 }
-function closeGlobalSearch(){ document.getElementById('gsearchOverlay').classList.remove('show'); }
+function closeGlobalSearch(restoreFocus){
+  const overlay = document.getElementById('gsearchOverlay');
+  if(!overlay) return;
+  const wasOpen = overlay.classList.contains('show');
+  overlay.classList.remove('show');
+  overlay.setAttribute('aria-hidden','true');
+  const target = __gsearchReturnFocus;
+  __gsearchReturnFocus = null;
+  if(restoreFocus !== false && wasOpen && target && target.isConnected && typeof target.focus === 'function') target.focus();
+}
 function renderGlobalSearch(){
   const term = (document.getElementById('globalSearch').value||'').trim().toLowerCase();
   const results = document.getElementById('gsearchResults');
@@ -1885,7 +1906,7 @@ function renderGlobalSearch(){
   const pyqs = PYQ_ALL.filter(q=>(q.q+' '+q.o.join(' ')+' '+q.sec+' '+q.sub).toLowerCase().includes(term)).slice(0,6);
 
   if(!lessons.length && !vocab.length && !practice.length && !reading.length && !pyqs.length){
-    results.innerHTML = `<div class="gsearch-empty">No matches for "${term}". Try a shorter or more general term.</div>`;
+    results.innerHTML = `<div class="gsearch-empty">No matches for "${escapeHtmlVaani(term)}". Try a shorter or more general term.</div>`;
     return;
   }
 
@@ -1900,7 +1921,7 @@ function renderGlobalSearch(){
   }
   if(pyqs.length){
     html += `<div class="gsearch-group-label">Previous Year Questions (${pyqs.length}${pyqs.length===6?'+':''})</div>` + pyqs.map(q=>
-      `<div class="gsearch-item" onclick="closeGlobalSearch();pvOpenSearchResult('${q._id}','${term.replace(/'/g,"\\'")}')"><span class="gi-title">${(PYQ_EXAM_INFO[q._exam]&&PYQ_EXAM_INFO[q._exam].short)||'NDA'} ${q.s} ${q.y} · ${q.sec}</span><span class="gi-sub">${q.q.slice(0,90)}${q.q.length>90?'…':''}</span></div>`).join('');
+      `<div class="gsearch-item" onclick="closeGlobalSearch();pvOpenSearchResult('${q._id}')"><span class="gi-title">${(PYQ_EXAM_INFO[q._exam]&&PYQ_EXAM_INFO[q._exam].short)||'NDA'} ${q.s} ${q.y} · ${q.sec}</span><span class="gi-sub">${q.q.slice(0,90)}${q.q.length>90?'…':''}</span></div>`).join('');
   }
   if(practice.length){
     html += `<div class="gsearch-group-label">Practice</div>` + practice.map(p=>
@@ -3101,8 +3122,9 @@ function refreshDashboard(){
   }
   // activity
   const feed=document.getElementById('activityFeed');
-  if(State.activity && State.activity.length){
-    feed.innerHTML = State.activity.map(a=>`<div class="activity-item"><span><b>${a.action}</b> — ${a.detail}</span><span>${a.t}</span></div>`).join('');
+  const activityItems = Array.isArray(State.activity) ? State.activity.filter(a=>a && typeof a==='object') : [];
+  if(feed && activityItems.length){
+    feed.innerHTML = activityItems.slice(0,50).map(a=>`<div class="activity-item"><span><b>${escapeHtmlVaani(a.action || 'Activity')}</b> — ${escapeHtmlVaani(a.detail || '')}</span><span>${escapeHtmlVaani(a.t || '')}</span></div>`).join('');
   }
   // missions
   const missions=[
@@ -3413,7 +3435,7 @@ const BADGES=[
   {id:'perfect',icon:'💯',name:'Perfect Score',hint:'Score 100% on any quiz',check:()=>Object.values(State.quizScores).some(s=>s===100)},
 ];
 function renderBadges(){
-  const targets=['badgeGrid','dashBadgeGrid'].map(id=>document.getElementById(id)).filter(Boolean);
+  const targets=['badgeGrid','dashBadgeGrid','profileBadgeGrid'].map(id=>document.getElementById(id)).filter(Boolean);
   if(!targets.length) return;
   targets.forEach(grid=>{
     grid.innerHTML='';
@@ -4105,15 +4127,28 @@ function applyFontSize(size){
 
 /* keyboard shortcuts */
 document.addEventListener('keydown',(e)=>{
-  if(e.target.tagName==='INPUT' || e.target.tagName==='TEXTAREA') {
-    if(e.key==='Escape') e.target.blur();
+  const key = String(e.key || '');
+  const isSearchShortcut = (e.ctrlKey || e.metaKey) && key.toLowerCase()==='k';
+  if(isSearchShortcut){
+    e.preventDefault();
+    const overlay=document.getElementById('gsearchOverlay');
+    const input=document.getElementById('globalSearch');
+    if(overlay && overlay.classList.contains('show')){
+      if(input){ input.focus(); input.select(); }
+    } else openGlobalSearch();
+    return;
+  }
+  const target=e.target;
+  const tag=target && target.tagName ? target.tagName.toUpperCase() : '';
+  if(tag==='INPUT' || tag==='TEXTAREA' || tag==='SELECT' || (target && target.isContentEditable)) {
+    if(key==='Escape' && target && typeof target.blur==='function') target.blur();
     return;
   }
   const map={'1':'dashboard','2':'grammar','3':'compare','4':'vocab','5':'practice','6':'reading','7':'tests','8':'games','9':'pyq'};
-  if(map[e.key]) switchView(map[e.key]);
-  if(e.key.toLowerCase()==='f') setDisplayMode(document.body.classList.contains('mode-focus')?'normal':'focus');
-  if(e.key==='Escape') setDisplayMode('normal');
-  if(e.key==='/'){ e.preventDefault(); openGlobalSearch(); }
+  if(map[key]) switchView(map[key]);
+  if(key.toLowerCase()==='f') setDisplayMode(document.body.classList.contains('mode-focus')?'normal':'focus');
+  if(key==='Escape') setDisplayMode('normal');
+  if(key==='/'){ e.preventDefault(); openGlobalSearch(); }
 });
 document.addEventListener('keydown',(e)=>{
   if(e.key==='Escape'){ closeGlobalSearch(); closeMoreSheet(); if(document.getElementById('gtSheetOverlay').classList.contains('open')) gtCloseSheet(); }
