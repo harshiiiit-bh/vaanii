@@ -212,7 +212,7 @@ async function persistCombinedAccount(){
   }catch(e){ console.error(e); return false; }
 }
 async function saveData(){
-  if(!ACTIVE_CODE) return;
+  if(!ACTIVE_CODE) return false;
   const newlyUnlocked = checkAndUnlockAchievements();
   const ok = await persistCombinedAccount();
   if(!ok){ vbvToast('Could not save — storage returned nothing.', 'angry'); }
@@ -220,6 +220,7 @@ async function saveData(){
     celebrate();
     newlyUnlocked.forEach((a,i)=> setTimeout(()=> vbvToast(`Medal earned: ${a.icon} ${a.title}`, 'good'), i*650));
   }
+  return ok;
 }
 
 /* ---- API key (device-level setting, not tied to any one account; only needed once this page lives outside Claude) ---- */
@@ -1427,6 +1428,37 @@ async function finalizeVocabAdd(mergeIntoId){
   vbvToast(`"${word}" added to your Vocab Register.`, 'good');
   navigate();
 }
+
+/* ---------- Cross-module capture: VAANI → Book Reading Register ----------
+   Receives curated word/phrase data from VAANI's vocabulary, daily lessons
+   and comparison pages. Saves into the same account-backed DATA.vocab list. */
+async function addVaaniCaptureToRegister(payload){
+  const item=payload&&typeof payload==='object'?payload:{};
+  const word=String(item.word||'').replace(/\s+/g,' ').trim().slice(0,120);
+  if(!word)return {ok:false,message:'Nothing to save: the item is empty.'};
+  if(!dataLoaded||!ACTIVE_CODE)return {ok:false,message:'Please sign in to VAANI before saving to your Book Reading Register.'};
+  const existing=findVocabByWord(word);
+  if(existing)return {ok:true,duplicate:true,id:existing.id,word:existing.word};
+  const cleanList=value=>Array.isArray(value)?[...new Set(value.map(v=>String(v||'').trim()).filter(Boolean))].slice(0,12):[];
+  const source=String(item.source||'VAANI Vocabulary').trim().slice(0,80);
+  const kind=String(item.kind||'word').trim().slice(0,32);
+  const entry={
+    id:uid(),word:word,meaning:String(item.meaning||'').trim().slice(0,500)||'Saved from VAANI. Add a meaning when you review this entry.',
+    synonyms:cleanList(item.synonyms),antonyms:cleanList(item.antonyms),
+    dateAdded:todayStr(),sourceBookId:null,sourceBookTitle:'',
+    sourceType:'vaani',sourceLabel:'VAANI · '+source,kind:kind,
+    example:String(item.example||'').trim().slice(0,500)
+  };
+  DATA.vocab.unshift(entry);
+  const saved=await saveData();
+  if(!saved){
+    DATA.vocab=DATA.vocab.filter(v=>v.id!==entry.id);
+    return {ok:false,message:'The register could not save this item. Check browser storage and try again.'};
+  }
+  return {ok:true,duplicate:false,id:entry.id,word:entry.word};
+}
+window.VaaniBookRegister=window.VaaniBookRegister||{};
+window.VaaniBookRegister.add=addVaaniCaptureToRegister;
 
 async function attachSynonym(vocabId, word){
   const v = DATA.vocab.find(x=>x.id===vocabId);
