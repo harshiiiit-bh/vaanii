@@ -17,6 +17,7 @@
 </head>
 <body data-theme="light">
 
+<a class="skip-link" href="#mainContent">Skip to main content</a>
 <div id="scrollProgress"></div>
 
 <!-- ===== PARALLAX BATTLEFIELD INTELLIGENCE BACKGROUND (6 layers, back to front) ===== -->
@@ -52,7 +53,7 @@
   </div>
 </div>
 <div class="grain"></div>
-<div id="toast-wrap"></div>
+<div id="toast-wrap" role="status" aria-live="polite" aria-atomic="true"></div>
 <button id="backToTop" title="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 
 <!-- ENTRY GATE -->
@@ -188,11 +189,11 @@
   <button onclick="openMoreSheet()"><span class="bn-ico">☰</span>More</button>
 </nav>
 
-<div class="gsearch-overlay" id="gsearchOverlay" onclick="if(event.target===this)closeGlobalSearch()">
+<div class="gsearch-overlay" id="gsearchOverlay" role="dialog" aria-modal="true" aria-label="Search Vaani" aria-hidden="true" onclick="if(event.target===this)closeGlobalSearch()">
   <div class="gsearch-box">
     <input id="globalSearch" placeholder="Search lessons, vocabulary, PYQs, practice sets..." autocomplete="off" oninput="renderGlobalSearch()">
-    <div class="gsearch-results" id="gsearchResults"></div>
-    <div class="gsearch-hint">↵ open first result · Esc to close</div>
+    <div class="gsearch-results" id="gsearchResults" aria-live="polite"></div>
+    <div class="gsearch-hint">↵ open first result · / or Ctrl/⌘ K to search · Esc to close</div>
   </div>
 </div>
 
@@ -233,7 +234,7 @@
   <div id="sheetBody" class="sheet-body"></div>
 </div>
 
-<main>
+<main id="mainContent" tabindex="-1">
 
 <!-- ============ DASHBOARD ============ -->
 <section class="view active vd-dash" id="view-dashboard">
@@ -994,7 +995,7 @@
 
   <div class="card vp-card reveal" style="margin-top:22px;padding:24px">
     <div class="panel-title"><span class="bar"></span>Achievements</div>
-    <div class="badge-grid" id="badgeGrid"></div>
+    <div class="badge-grid" id="profileBadgeGrid"></div>
   </div>
 </section>
 
