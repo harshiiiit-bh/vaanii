@@ -899,49 +899,87 @@
      --------------------------------------------------------- */
   function screenBriefing(w) {
     var m = S.match;
-    backBtn(w, 'Arena', 'home');
-    w.appendChild(el('h3', null, 'Before you start'));
-    w.appendChild(matchStrip(m));
+    var panel = el('section', 'vx-briefing');
+    backBtn(panel, 'Back to Arena', 'home');
+
+    var hero = el('div', 'vx-briefing-hero');
+    var eyebrow = el('div', 'vx-briefing-eyebrow');
+    eyebrow.innerHTML = '<span class="vx-briefing-live-dot"></span> MATCH BRIEFING <span class="vx-briefing-code">CODE · ' + esc(m.code || '—') + '</span>';
+    hero.appendChild(eyebrow);
+    var title = el('h2', 'vx-briefing-title', 'Your challenge starts here.');
+    hero.appendChild(title);
+    var intro = el('p', 'vx-briefing-intro', 'Review the rules, get focused, and make every answer count.');
+    hero.appendChild(intro);
+    panel.appendChild(hero);
+
+    var stats = el('div', 'vx-briefing-stats');
+    [
+      {icon:'◈',label:'QUESTIONS',value:String(m.count)},
+      {icon:'◷',label:'TIME LIMIT',value:timeLabel(m.seconds)},
+      {icon:'◎',label:'EXAM BANK',value:m.source === 'BOTH' ? 'Combined' : String(m.source || 'Mixed')},
+      {icon:'♙',label:'PLAYERS',value:'Up to ' + m.cap}
+    ].forEach(function(item){
+      var tile=el('div','vx-briefing-stat');
+      var icon=el('span','vx-briefing-stat-icon',item.icon);
+      var label=el('span','vx-briefing-stat-label',item.label);
+      var value=el('strong','vx-briefing-stat-value',item.value);
+      tile.appendChild(icon);tile.appendChild(label);tile.appendChild(value);stats.appendChild(tile);
+    });
+    panel.appendChild(stats);
 
     var prev = previousAttempt(m.code);
     if (prev) {
-      var done = el('p', 'vx-sub');
-      done.innerHTML = 'You already sat this match and scored <b>' + prev.score + '/' + m.count +
-        '</b> in ' + fmtClock(prev.seconds) + '. Only your first attempt counts.';
-      w.appendChild(done);
-      var seeBoard = el('button', 'vx-btn primary', 'See the leaderboard'); seeBoard.type = 'button';
+      var done = el('div', 'vx-briefing-notice');
+      done.innerHTML = '<span class="vx-briefing-notice-icon">✓</span><div><b>Attempt already recorded</b><p>You scored <strong>' + esc(String(prev.score)) + '/' + esc(String(m.count)) + '</strong> in ' + esc(fmtClock(prev.seconds)) + '. Only your first attempt counts.</p></div>';
+      panel.appendChild(done);
+      var seeBoard = el('button', 'vx-btn primary vx-briefing-board', 'View your result & leaderboard'); seeBoard.type = 'button';
       seeBoard.addEventListener('click', function () {
         S.result = prev;
         if (Date.now() > m.expiresAt) { S.rows = []; go('result'); }
         else loadBoard().then(function () { go('result'); });
       });
-      w.appendChild(seeBoard);
+      panel.appendChild(seeBoard);
+      w.appendChild(panel);
       return;
     }
 
     var qs = A.questionsFor(m, playerName());
     if (qs.length < m.count) {
-      var warn = el('p', 'vx-sub');
-      warn.style.color = 'var(--vx-danger)';
-      warn.textContent = 'This match needs ' + m.count + ' questions but only ' + qs.length +
-        ' are loaded on this device. Make sure you are on the same version of VAANI as the host.';
-      w.appendChild(warn);
-      if (!qs.length) return;
+      var warn = el('div', 'vx-briefing-notice warning');
+      warn.textContent = 'This match requires ' + m.count + ' questions, but only ' + qs.length + ' are available on this device. Please update VAANI or ask the host to check the question bank.';
+      panel.appendChild(warn);
+      if (!qs.length) { w.appendChild(panel); return; }
     }
 
-    var ol = el('ol', 'vx-steps');
-    ol.innerHTML =
-      '<li><b>' + m.count + ' questions, ' + timeLabel(m.seconds) + '.</b> The clock starts the moment you begin and does not pause.</li>' +
-      (m.perQSeconds ? '<li><b>' + m.perQSeconds + ' seconds per question.</b> Each question moves on by itself if you take too long — on top of the overall clock.</li>' : '') +
-      '<li><b>It submits itself at zero.</b> Anything left blank scores zero, no penalty.</li>' +
-      (m.negMark ? '<li><b>Negative marking is on:</b> a wrong answer costs ' + NEG_LABELS[m.negMark].replace('&minus;', '−') + ' mark. Blanks are still safe.</li>' : '') +
-      '<li><b>One attempt.</b> Your score and your finishing time both go on the board.</li>';
-    w.appendChild(ol);
+    var lower = el('div','vx-briefing-lower');
+    var rules = el('div','vx-briefing-rules');
+    var rulesHead = el('div','vx-briefing-section-head');
+    rulesHead.innerHTML = '<span class="vx-briefing-section-icon">≡</span><div><h3>Rules of engagement</h3><p>Know the format before you deploy.</p></div>';
+    rules.appendChild(rulesHead);
+    var list=el('ol','vx-briefing-rule-list');
+    var ruleItems=[
+      {title:m.count+' questions · '+timeLabel(m.seconds),desc:'The overall clock starts when you begin and cannot be paused.'}
+    ];
+    if(m.perQSeconds)ruleItems.push({title:m.perQSeconds+' seconds per question',desc:'Questions advance automatically when the per-question timer expires.'});
+    ruleItems.push({title:'Automatic submission',desc:'When the timer reaches zero, your answers are submitted. Unanswered questions score zero.'});
+    if(m.negMark)ruleItems.push({title:'Negative marking · '+NEG_LABELS[m.negMark].replace('&minus;','−'),desc:'Incorrect answers lose marks. Leaving a question blank carries no penalty.'});
+    ruleItems.push({title:'One official attempt',desc:'Your first attempt is recorded on the leaderboard. Your score and finish time both matter.'});
+    ruleItems.forEach(function(item,i){
+      var li=el('li','vx-briefing-rule');
+      var number=el('span','vx-briefing-rule-number',String(i+1).padStart(2,'0'));
+      var copy=el('div','vx-briefing-rule-copy');
+      var strong=el('strong',null,item.title);var desc=el('p',null,item.desc);
+      copy.appendChild(strong);copy.appendChild(desc);li.appendChild(number);li.appendChild(copy);list.appendChild(li);
+    });
+    rules.appendChild(list);lower.appendChild(rules);
 
-    var start = el('button', 'vx-btn primary', 'Begin'); start.type = 'button';
-    start.style.marginTop = '8px';
-    start.addEventListener('click', function () { beginRun(qs); });
-    w.appendChild(start);
+    var deploy=el('aside','vx-briefing-deploy');
+    deploy.innerHTML='<div class="vx-briefing-deploy-mark">VAANI <span>ARENA</span></div><div class="vx-briefing-deploy-orbit" aria-hidden="true">✦</div><div class="vx-briefing-deploy-kicker">CADET, ARE YOU READY?</div><h3>Focus. Think.<br>Execute.</h3><p>Stay calm, manage your time and trust your preparation.</p>';
+    var start=el('button','vx-btn primary vx-briefing-start','Begin match <span aria-hidden="true">→</span>');start.type='button';
+    start.addEventListener('click',function(){beginRun(qs);});
+    deploy.appendChild(start);
+    var hint=el('div','vx-briefing-hint');hint.textContent='Your timer starts immediately.';deploy.appendChild(hint);
+    lower.appendChild(deploy);panel.appendChild(lower);w.appendChild(panel);
   }
 
   /* ---------------------------------------------------------
