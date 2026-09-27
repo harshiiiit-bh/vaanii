@@ -245,6 +245,18 @@
     return v;
   }
 
+  /* Host privilege is a client-side label only — there is no server
+     auth, so it just marks "this device ran Create match for this
+     code." Anyone determined could set the same flag by hand; that's
+     an acceptable trust level for a study-group tool like this one. */
+  function markHost(code) {
+    try { localStorage.setItem('vx_arena_host_' + code, '1'); } catch (e) {}
+  }
+  function isHost(code) {
+    try { return localStorage.getItem('vx_arena_host_' + code) === '1'; }
+    catch (e) { return false; }
+  }
+
   /* =========================================================
      LEADERBOARD SYNC
      Default adapter: this device only.
@@ -397,7 +409,7 @@
           var m = A.decode(r.code);
           if (!m) { say('That code could not be read.'); return; }
           S.match = m;
-          if (expired) { S.result = null; loadBoard().then(function () { go('result'); }); }
+          if (expired) { S.result = null; S.rows = []; go('result'); }
           else go('briefing');
         });
         btnRow.appendChild(b);
@@ -694,6 +706,7 @@
         var parsed = A.decode(match.code);
         if (!parsed) { say('Could not build a code from those settings.'); return; }
         S.match = parsed;
+        markHost(parsed.code);
         rememberMatch(parsed);
         go('share');
       });
@@ -841,7 +854,9 @@
       w.appendChild(done);
       var seeBoard = el('button', 'vx-btn primary', 'See the leaderboard'); seeBoard.type = 'button';
       seeBoard.addEventListener('click', function () {
-        S.result = prev; loadBoard().then(function () { go('result'); });
+        S.result = prev;
+        if (Date.now() > m.expiresAt) { S.rows = []; go('result'); }
+        else loadBoard().then(function () { go('result'); });
       });
       w.appendChild(seeBoard);
       return;
@@ -1022,7 +1037,8 @@
       seconds: seconds, total: r.questions.length,
       at: Date.now(), auto: !!auto,
       qids: r.questions.map(function (q) { return q._id; }),
-      answers: r.answers
+      answers: r.answers,
+      expiresAt: m.expiresAt
     };
     S.result = entry;
     S.run = null;
@@ -1061,29 +1077,46 @@
     w.appendChild(matchStrip(m));
     w.appendChild(el('h3', null, 'Leaderboard'));
 
-    var board = el('div', 'vx-board');
-    board.style.marginTop = '12px';
-    if (!S.rows.length) {
-      board.appendChild(el('div', 'vx-empty', 'No attempts recorded yet.'));
+    var closed = Date.now() > m.expiresAt;
+    if (closed) {
+      var ended = el('div', 'vx-board');
+      ended.style.marginTop = '12px';
+      ended.appendChild(el('div', 'vx-empty', 'Session ended. This match closed on ' +
+        new Date(m.expiresAt).toLocaleString() + ' \u2014 the leaderboard is no longer available.'));
+      w.appendChild(ended);
     } else {
-      var me = playerId();
-      S.rows.slice(0, MAX_PLAYERS).forEach(function (row, i) {
-        var tr = el('div', 'vx-row' + (row.pid === me ? ' is-you' : '') + (i < 3 ? ' is-podium' : ''));
-        tr.innerHTML =
-          '<span class="vx-rank">' + (i + 1) + '</span>' +
-          '<span>' + esc(row.name) + (row.pid === me ? ' <span class="vx-time">you</span>' : '') + '</span>' +
-          '<span class="vx-score">' + row.score + '/' + row.total + '</span>' +
-          '<span class="vx-time">' + fmtClock(row.seconds) + '</span>';
-        board.appendChild(tr);
-      });
-    }
-    w.appendChild(board);
+      var board = el('div', 'vx-board');
+      board.style.marginTop = '12px';
+      if (!S.rows.length) {
+        board.appendChild(el('div', 'vx-empty', 'No attempts recorded yet.'));
+      } else {
+        var me = playerId();
+        S.rows.slice(0, MAX_PLAYERS).forEach(function (row, i) {
+          var tr = el('div', 'vx-row vx-row-tap' + (row.pid === me ? ' is-you' : '') + (i < 3 ? ' is-podium' : ''));
+          tr.innerHTML =
+            '<span class="vx-rank">' + (i + 1) + '</span>' +
+            '<span>' + esc(row.name) + (row.pid === me ? ' <span class="vx-time">you</span>' : '') + '</span>' +
+            '<span class="vx-score">' + row.score + '/' + row.total + '</span>' +
+            '<span class="vx-time">' + fmtClock(row.seconds) + '</span>' +
+            '<span class="vx-row-chevron" aria-hidden="true">&rsaquo;</span>';
+          tr.setAttribute('role', 'button');
+          tr.tabIndex = 0;
+          tr.setAttribute('aria-label', row.name + ', rank ' + (i + 1) + ', ' + row.score + ' out of ' + row.total + '. View details.');
+          tr.addEventListener('click', function () { openPlayerSheet(row, i + 1); });
+          tr.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openPlayerSheet(row, i + 1); }
+          });
+          board.appendChild(tr);
+        });
+      }
+      w.appendChild(board);
 
-    if (!A.sync.live) {
-      var note = el('p', 'vx-sub');
-      note.style.marginTop = '14px';
-      note.textContent = 'This board covers attempts made on this device. Connect a database to see every player here.';
-      w.appendChild(note);
+      if (!A.sync.live) {
+        var note = el('p', 'vx-sub');
+        note.style.marginTop = '14px';
+        note.textContent = 'This board covers attempts made on this device. Connect a database to see every player here.';
+        w.appendChild(note);
+      }
     }
 
     var again = el('button', 'vx-btn ghost', 'Back to Arena');
@@ -1102,6 +1135,135 @@
   function sharedById() {
     try { return (typeof PYQ_BY_ID !== 'undefined') ? PYQ_BY_ID : {}; }
     catch (e) { return {}; }
+  }
+
+  /* The picked question SET for a match depends only on match.seed —
+     shuffleOrder + playerName only ever re-sort that same set, they
+     never change which questions are in it. So any name works here;
+     we only want the set, to grade against. */
+  function matchQuestions() {
+    return A.questionsFor(S.match, '');
+  }
+
+  /* Correct / incorrect / skipped for one row, derived client-side
+     from its synced answers map against the shared question bank —
+     works even though the score itself carries fractional negative
+     marking. Returns null when no answer record reached the board
+     (e.g. an attempt submitted before this synced answers at all). */
+  function gradeRow(row) {
+    if (!row.answers) return null;
+    var qs = matchQuestions();
+    if (!qs.length) return null;
+    var correct = 0, incorrect = 0, skipped = 0;
+    qs.forEach(function (q) {
+      var given = row.answers[q._id];
+      if (given === undefined) skipped++;
+      else if (given === q.ans) correct++;
+      else incorrect++;
+    });
+    return { correct: correct, incorrect: incorrect, skipped: skipped };
+  }
+
+  /* ---------------------------------------------------------
+     PLAYER DETAIL SHEET
+     Any attempter tapping a name gets a time + correct/incorrect/
+     skipped summary. Whoever hosted the match (this device only —
+     see isHost) additionally gets the full question-by-question
+     breakdown for that person, same colouring as "View answers".
+     --------------------------------------------------------- */
+  function openPlayerSheet(row, rank) {
+    var scrim = el('div', 'vx-scrim');
+    scrim.setAttribute('role', 'dialog');
+    scrim.setAttribute('aria-modal', 'true');
+    scrim.setAttribute('aria-label', row.name + (String(row.name).slice(-1) === 's' ? '\u2019' : '\u2019s') + ' attempt');
+
+    var sheet = el('div', 'vx-sheet');
+    scrim.appendChild(sheet);
+
+    function teardown() {
+      document.removeEventListener('keydown', onKey);
+      scrim.remove();
+    }
+    function close() { teardown(); }
+    function onKey(e) { if (e.key === 'Escape') close(); }
+    scrim.addEventListener('mousedown', function (e) { if (e.target === scrim) close(); });
+    document.addEventListener('keydown', onKey);
+
+    if (isHost(S.match.code)) renderPlayerBreakdown(sheet, row, rank, close);
+    else renderPlayerSummary(sheet, row, rank, close);
+
+    document.body.appendChild(scrim);
+    var first = sheet.querySelector('button');
+    if (first) first.focus();
+  }
+
+  function sheetHeader(sheet, row, rank) {
+    sheet.appendChild(el('h3', null, esc(row.name)));
+    sheet.appendChild(el('p', 'vx-sub',
+      'Rank #' + rank + ' &middot; ' + row.score + '/' + row.total + ' &middot; finished in ' + fmtClock(row.seconds)));
+  }
+
+  function closeButton(close) {
+    var actions = el('div', 'vx-actions'); actions.style.marginTop = '18px';
+    var btn = el('button', 'vx-btn ghost', 'Close'); btn.type = 'button';
+    btn.addEventListener('click', close);
+    actions.appendChild(btn);
+    return actions;
+  }
+
+  function renderPlayerSummary(sheet, row, rank, close) {
+    sheetHeader(sheet, row, rank);
+    var stats = gradeRow(row);
+    if (stats) {
+      var read = el('div', 'vx-readout');
+      read.innerHTML =
+        '<span><b style="color:var(--vx-ok)">' + stats.correct + '</b> correct</span>' +
+        '<span><b style="color:var(--vx-danger)">' + stats.incorrect + '</b> incorrect</span>' +
+        '<span><b style="color:var(--vx-muted)">' + stats.skipped + '</b> skipped</span>';
+      sheet.appendChild(read);
+    } else {
+      sheet.appendChild(el('p', 'vx-sub', 'A detailed breakdown is not available for this attempt.'));
+    }
+    sheet.appendChild(closeButton(close));
+  }
+
+  function renderPlayerBreakdown(sheet, row, rank, close) {
+    sheetHeader(sheet, row, rank);
+    var qs = matchQuestions();
+    if (!qs.length || !row.answers) {
+      sheet.appendChild(el('p', 'vx-sub', 'A detailed breakdown is not available for this attempt.'));
+      sheet.appendChild(closeButton(close));
+      return;
+    }
+    sheet.appendChild(el('p', 'vx-sub', 'Green is correct. Red is what they picked and got wrong — the correct option is marked separately. Grey means they left it blank.'));
+    var list = el('div');
+    list.style.cssText = 'display:flex;flex-direction:column;gap:16px;margin-top:6px';
+    qs.forEach(function (q, i) {
+      var given = row.answers[q._id];
+      var card = el('div', 'vx-tile');
+      card.style.cursor = 'default';
+      card.innerHTML =
+        '<p style="font-size:.78rem;color:var(--vx-muted);margin:0 0 8px">Question ' + (i + 1) + (q.sec ? ' &middot; ' + esc(q.sec) : '') + '</p>' +
+        (q.passage ? '<div class="pv-passage"><div class="pv-passage-label">Passage</div><div class="pv-passage-text">' + esc(q.passage) + '</div></div>' : '') +
+        '<p style="font-size:1rem;line-height:1.6;color:var(--vx-ink);margin:0 0 14px">' +
+        (q.keyword ? '<b>' + esc(q.keyword) + '</b> &mdash; ' : '') +
+        (typeof pyqHi === 'function' ? pyqHi(q) : esc(q.q)) + '</p>';
+      var opts = el('div', 'vx-seg');
+      opts.style.flexDirection = 'column';
+      (q.o || []).forEach(function (text, oi) {
+        var cls = '';
+        if (oi === q.ans) cls = ' correct';
+        else if (oi === given) cls = ' wrong';
+        var b = el('div', 'opt-btn' + cls, esc(text));
+        b.style.cursor = 'default';
+        opts.appendChild(b);
+      });
+      card.appendChild(opts);
+      if (given === undefined) card.appendChild(el('p', 'vx-hint', 'Left blank &mdash; no penalty.'));
+      list.appendChild(card);
+    });
+    sheet.appendChild(list);
+    sheet.appendChild(closeButton(close));
   }
 
   /* ---------------------------------------------------------
@@ -1209,6 +1371,10 @@
       if (m) { S.match = m; S.screen = 'briefing'; rememberMatch(m); }
     }
     if (host() && host().offsetParent !== null) render();
+    // once per page load: ask the sync adapter to drop rows for matches
+    // whose deadline has already passed, so Supabase storage doesn't
+    // just grow forever. Fire-and-forget — never blocks the page.
+    if (A.sync.cleanupExpired) A.sync.cleanupExpired();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
@@ -1228,13 +1394,28 @@
             seconds int not null,
             total int not null,
             at bigint not null,
+            answers jsonb,
+            expires_at bigint,
             unique (code, pid)
           );
           alter table arena_scores enable row level security;
           create policy "read"   on arena_scores for select using (true);
           create policy "insert" on arena_scores for insert with check (true);
+          -- Rows can only ever be deleted once their own match has
+          -- closed (expires_at in the past). The anon key is public
+          -- in this file, so this keeps that key from being able to
+          -- wipe a leaderboard that's still live, on purpose or not —
+          -- it can only ever clear out matches that already ended.
+          create policy "cleanup_expired" on arena_scores for delete
+            using (expires_at is not null and expires_at < (extract(epoch from now()) * 1000));
      3. Paste your project URL and anon key below and call:
           VX.arena.useSync(VX.arena.supabaseAdapter(URL, ANON_KEY));
+
+     Already have the table from before this comment was updated? Run
+     just this once to catch it up:
+          alter table arena_scores add column expires_at bigint;
+          create policy "cleanup_expired" on arena_scores for delete
+            using (expires_at is not null and expires_at < (extract(epoch from now()) * 1000));
      ========================================================= */
   A.supabaseAdapter = function (url, anonKey) {
     var base = url.replace(/\/$/, '') + '/rest/v1/arena_scores';
@@ -1267,7 +1448,9 @@
       score: e.score,
       seconds: e.seconds,
       total: e.total,
-      at: e.at
+      at: e.at,
+      answers: e.answers || {},
+      expires_at: e.expiresAt || null
     })
   }).then(function (r) {
     return r.text().then(function (body) {
@@ -1304,6 +1487,18 @@ fetch: function (code) {
            return JSON.parse(body);
     });
   });
+},
+
+/* Storage-saving sweep: deletes every row, across every match code,
+   whose own expires_at has already passed. RLS (see the SQL above)
+   enforces the "already expired" part server-side too, so this can
+   only ever remove sessions that have already ended. Silent on
+   failure — a missed sweep just means the next visit tries again. */
+cleanupExpired: function () {
+  return fetch(base + '?expires_at=lt.' + Date.now(), {
+    method: 'DELETE',
+    headers: headers
+  }).catch(function () {});
 }
     };
   };
