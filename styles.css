@@ -1598,8 +1598,12 @@ body.mode-sepia main{line-height:1.8}
 
 .pv-qgrid-wrap{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:20px}
 .pv-qgrid-title{font-family:var(--mono);font-size:.66rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;text-align:center}
-.pv-qgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
-.pv-qgrid button{aspect-ratio:1;border-radius:9px;border:1px solid var(--line);background:var(--panel2);color:var(--muted);
+/* Fixed-size tiles that wrap, instead of a 6/10-column grid whose cells
+   (aspect-ratio:1 on a 1fr column) ballooned to ~140px on a wide screen —
+   the more questions in a paper, the worse that got. Tiles stay a
+   constant, thumb-friendly size no matter how many questions there are. */
+.pv-qgrid{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.pv-qgrid button{width:34px;height:34px;border-radius:9px;border:1px solid var(--line);background:var(--panel2);color:var(--muted);
   font-family:var(--mono);font-size:.7rem;cursor:pointer;transition:.15s}
 .pv-qgrid button.solved{background:rgba(73,209,134,.14);border-color:rgba(73,209,134,.4);color:var(--green)}
 .pv-qgrid button.incorrect{background:rgba(226,87,90,.14);border-color:rgba(226,87,90,.4);color:var(--red)}
@@ -1775,13 +1779,9 @@ body.mode-sepia main{line-height:1.8}
   .ma-year-grid{grid-template-columns:repeat(4,1fr)}
 }
 
-@media(max-width:420px){
-  .pv-qgrid{grid-template-columns:repeat(5,1fr)}
-}
 @media(min-width:760px){
   .pv-modes-grid{grid-template-columns:repeat(4,1fr)}
   .pv-topic-grid{grid-template-columns:repeat(5,1fr)}
-  .pv-qgrid{grid-template-columns:repeat(10,1fr)}
 }
 
 /* ===== GLOBAL SEARCH ===== */

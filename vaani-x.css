@@ -303,10 +303,14 @@
 }
 .vx-back:hover{ color:var(--vx-ink); }
 
-/* question navigator grid (Arena run screen) */
-.vx-qgrid-wrap{ margin:0 0 18px; }
+/* question navigator grid (Arena run screen) — sits at the bottom of the
+   run screen now, below Previous/Skip/Submit, same spot as the PYQ Test
+   Kit's grid. Sized medium: bigger than the old top-of-page pill row
+   (34px) since it's no longer competing with the question for space, but
+   well under the Test Kit's oversized tiles. */
+.vx-qgrid-wrap{ margin:22px 0 0; }
 .vx-qgrid-legend{
-  display:flex; flex-wrap:wrap; gap:14px; margin-bottom:10px;
+  display:flex; flex-wrap:wrap; gap:14px; margin-bottom:12px;
   font-size:.74rem; color:var(--vx-muted);
 }
 .vx-qgrid-legend span{ display:inline-flex; align-items:center; gap:6px; }
@@ -315,12 +319,12 @@
 .vx-qdot.skip{ background:var(--vx-muted); }
 .vx-qdot.none{ background:var(--vx-danger); }
 .vx-qgrid{
-  display:flex; flex-wrap:wrap; gap:8px;
+  display:flex; flex-wrap:wrap; gap:9px;
 }
 .vx-qgrid-btn{
-  width:34px; height:34px; border-radius:9px;
+  width:40px; height:40px; border-radius:10px;
   border:1px solid var(--vx-line); background:var(--vx-card);
-  color:var(--vx-ink); font:inherit; font-weight:700; font-size:.78rem;
+  color:var(--vx-ink); font:inherit; font-weight:700; font-size:.8rem;
   cursor:pointer; display:grid; place-items:center;
   font-variant-numeric:tabular-nums;
   transition:transform .15s var(--ease-out), box-shadow .15s;
