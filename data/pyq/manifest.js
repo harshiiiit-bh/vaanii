@@ -12,7 +12,7 @@
      - `var PYQ_<year>_<session> = [...]`      -> NDA (default)
      - `var PYQ_CDS_<year>_<session> = [...]`  -> CDS
    For human clarity, name CDS files `cds-<year>-<session>.js` (e.g.
-   "cds-2020-I"), but still just list the filename below like every
+   "cds-2024-I"), but still just list the filename below like every
    other entry — everything else (archive, counts, era grouping) picks
    it up automatically from the variable name. */
 var PYQ_PAPER_FILES = [
@@ -34,22 +34,6 @@ var PYQ_PAPER_FILES = [
   "2024-I","2024-II",
   "2025-I","2025-II",
 
-  // --- CDS ---
-  "cds-2009-I","cds-2009-II",
-  "cds-2010-I","cds-2010-II",
-  "cds-2011-I","cds-2011-II",
-  "cds-2012-I","cds-2012-II",
-  "cds-2013-I","cds-2013-II",
-  "cds-2014-I","cds-2014-II",
-  "cds-2015-I","cds-2015-II",
-  "cds-2016-I","cds-2016-II",
-  "cds-2017-I","cds-2017-II",
-  "cds-2018-I","cds-2018-II",
-  "cds-2019-I","cds-2019-II",
-  "cds-2020-I","cds-2020-II",
-  "cds-2021-I","cds-2021-II",
-  "cds-2022-I","cds-2022-II",
-  "cds-2023-I","cds-2023-II",
-  "cds-2024-I","cds-2024-II",
-  "cds-2025-I",
+  // Only CDS papers whose source files are present in this repository.
+  "cds-2024-I","cds-2024-II","cds-2025-I",
 ];

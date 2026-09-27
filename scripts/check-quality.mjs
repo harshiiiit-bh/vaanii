@@ -115,3 +115,60 @@ try {
   console.error('Contrast validation failed:', error.message);
   process.exitCode = 1;
 }
+
+/* PYQ manifest, answer-index, taxonomy and target-word regression audit. */
+try {
+  const manifestContext = Object.create(null);
+  vm.runInNewContext(readFileSync('data/pyq/manifest.js', 'utf8'), manifestContext, { timeout: 1000 });
+  const paperNames = manifestContext.PYQ_PAPER_FILES;
+  if (!Array.isArray(paperNames) || !paperNames.length) throw new Error('PYQ manifest is missing or empty.');
+
+  const taxonomyContext = { window: {} };
+  vm.runInNewContext(readFileSync('js/vaani-pyq-taxonomy.js', 'utf8'), taxonomyContext, { timeout: 1000 });
+  const taxonomy = taxonomyContext.window.VaaniPyqTaxonomy;
+  if (!taxonomy || typeof taxonomy.topic !== 'function' || typeof taxonomy.keyword !== 'function') throw new Error('PYQ taxonomy helper is missing.');
+
+  const ids = new Set();
+  const topicCounts = new Map();
+  let questionCount = 0;
+  for (const filename of paperNames) {
+    const path = 'data/pyq/' + filename + '.js';
+    if (!existsSync(path)) throw new Error('PYQ manifest points to a missing paper: ' + path);
+    const context = Object.create(null);
+    vm.runInNewContext(readFileSync(path, 'utf8'), context, { timeout: 1500 });
+    const variable = Object.keys(context).find((key) => /^PYQ_(?:CDS_)?\d{4}_(?:I|II)$/.test(key));
+    if (!variable || !Array.isArray(context[variable])) throw new Error('No PYQ question array found in ' + path);
+    const exam = filename.startsWith('cds-') ? 'CDS' : 'NDA';
+    for (const [index, q] of context[variable].entries()) {
+      const at = path + ' question ' + (q && q.n ? q.n : index + 1);
+      if (!q || typeof q.q !== 'string' || !q.q.trim() || !Array.isArray(q.o) || q.o.length < 2 || !Number.isInteger(q.ans) || q.ans < 0 || q.ans >= q.o.length) {
+        throw new Error('Invalid question or answer index: ' + at);
+      }
+      if (typeof q.sec !== 'string' || !q.sec.trim()) throw new Error('Missing topic tag: ' + at);
+      const id = exam + '-' + q.y + '-' + q.s + '-' + q.n;
+      if (ids.has(id)) throw new Error('Duplicate PYQ question ID: ' + id);
+      ids.add(id);
+      const tag = taxonomy.topic({ ...q, _exam: exam });
+      if (!tag || tag === 'Grammar' || tag === 'Grammar (Mixed)') throw new Error('Unresolved question type tag: ' + at + ' (' + q.sec + ')');
+      topicCounts.set(tag, (topicCounts.get(tag) || 0) + 1);
+      const prompt = q.q.toLocaleLowerCase();
+      const asksAntonym = /\b(?:antonym|opposite in meaning|opposite meaning)\b/.test(prompt);
+      const asksSynonym = /\b(?:synonym|similar in meaning|same in meaning)\b/.test(prompt);
+      if (asksAntonym && !asksSynonym && tag !== 'Antonyms') throw new Error('Question asks for an antonym but is tagged ' + tag + ': ' + at);
+      if (asksSynonym && !asksAntonym && tag !== 'Synonyms') throw new Error('Question asks for a synonym but is tagged ' + tag + ': ' + at);
+      if (q.sec === 'Synonyms' || q.sec === 'Antonyms' || tag === 'Synonyms' || tag === 'Antonyms') {
+        const keyword = taxonomy.keyword(q);
+        if (!keyword || !prompt.includes(keyword.toLocaleLowerCase())) {
+          throw new Error('Synonym/antonym target word missing or not present in question: ' + at);
+        }
+      }
+    }
+    questionCount += context[variable].length;
+  }
+  const forbidden = ['Comprehension', 'Word Classes', 'Parts of Speech', 'Active and Passive Voice', 'Active/Passive Voice', 'Homonyms/Homophones', 'Homophones'];
+  for (const label of forbidden) if (topicCounts.has(label)) throw new Error('Duplicate/legacy topic label remains: ' + label);
+  console.log('PYQ audit: ' + paperNames.length + ' papers, ' + questionCount + ' questions, ' + topicCounts.size + ' normalized topics validated');
+} catch (error) {
+  console.error('PYQ audit failed:', error.message);
+  process.exitCode = 1;
+}

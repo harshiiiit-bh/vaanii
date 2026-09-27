@@ -808,28 +808,27 @@ const PYQ_PAPERS = getSortedPYQPapers();
 // enough on its own to guarantee no collision with NDA even if a future
 // exam ever shares a year+session+question-number with an NDA paper.
 function _pyqQuestionId(exam, q){ return (exam && exam!=='NDA' ? exam+'-' : '') + `${q.y}-${q.s}-${q.n}`; }
-const PYQ_ALL = PYQ_PAPERS.flatMap(p=>p.data.map(q=>({...q, _id:_pyqQuestionId(p.exam,q), _exam:p.exam})));
+const PYQ_ALL = PYQ_PAPERS.flatMap(p=>p.data.map(q=>{
+  const item={...q,_id:_pyqQuestionId(p.exam,q),_exam:p.exam,_sourceSec:q.sec};
+  if(window.VaaniPyqTaxonomy&&typeof window.VaaniPyqTaxonomy.topic==='function') item.sec=window.VaaniPyqTaxonomy.topic(item);
+  return item;
+}));
 const PYQ_BY_ID = {}; PYQ_ALL.forEach(q=>PYQ_BY_ID[q._id]=q);
 
-/* ---- highlight the tested word inside a PYQ question string —
-   ONLY for questions belonging to the Vocabulary module (sec === 'Vocabulary').
-   Grammar, Reading Comprehension, Spotting Errors, Sentence Improvement,
-   Cloze/Fill-in-Blanks, PQRS, etc. are left untouched even if a keyword exists. ---- */
+/* Highlight the explicit target keyword safely across PYQ types. */
 function pyqHi(q){
-  if(!q || !q.q) return q ? q.q : '';
-  const text = q.q;
-  if(q.sec !== 'Vocabulary') return text;
-  const kw = q.keyword;
-  if(!kw) return text;
-  const esc = kw.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
-  let re;
-  try{ re = new RegExp('\\b'+esc+'\\b','i'); }catch(e){ re = null; }
-  let m = re ? text.match(re) : null;
-  if(!m){
-    try{ re = new RegExp(esc,'i'); m = text.match(re); }catch(e){ m = null; }
-  }
-  if(!m) return text;
-  return text.slice(0,m.index) + '<span class="pyq-vocab-hi">' + m[0] + '</span>' + text.slice(m.index+m[0].length);
+  if(!q||typeof q.q!=='string')return '';
+  const text=q.q;
+  const keyword=window.VaaniPyqTaxonomy&&typeof window.VaaniPyqTaxonomy.keyword==='function'?window.VaaniPyqTaxonomy.keyword(q):String(q.keyword||'').trim();
+  const safe=value=>escapeHtmlVaani(String(value)).replace(/\r\n?/g,'\n');
+  if(!keyword)return safe(text);
+  const specials=['.','*','+','?','^','$','{','}','(',')','|','[',']','\\'];
+  let esc='';for(const ch of keyword)esc+=specials.includes(ch)?'\\'+ch:ch;
+  let match=null;try{match=text.match(new RegExp('\\b'+esc+'\\b','iu'));}catch(e){}
+  if(!match){try{match=text.match(new RegExp(esc,'iu'));}catch(e){}}
+  if(!match)return safe(text);
+  const start=match.index,end=start+match[0].length;
+  return safe(text.slice(0,start))+'<mark class="pyq-vocab-hi pyq-keyword-highlight">'+safe(match[0])+'</mark>'+safe(text.slice(end));
 }
 
 /* ---- stats (persisted in State.pyqStats) ---- */
@@ -962,7 +961,39 @@ function pvRingSVG(pct, size, stroke, colorVar, extraClass){
       stroke-dasharray="${c.toFixed(2)}" stroke-dashoffset="${off.toFixed(2)}" transform="rotate(-90 ${size/2} ${size/2})" class="pv-ring-fill"/>
   </svg>`;
 }
-function pvTopicIcon(sec){ return TOPIC_ICONS[sec] || '📘'; }
+const PV_TOPIC_ICONS={
+  'Synonyms':'🔗','Antonyms':'↔️','Spotting Errors':'🔎','Reading Comprehension':'📖',
+  'Sentence Arrangement (PQRS)':'🧩','Fill in the Blanks':'✍️','Grammar':'📐',
+  'Sentence Improvement':'📝','Sentence Correction':'🛠️','Selecting Words':'🧠',
+  'Ordering of Sentences':'🧩','Ordering of Words in a Sentence':'🔤',
+  'Idioms and Phrases':'💬','Usage of Paired Words':'🔀','Cloze Test':'📄',
+  'Sentence Completion':'📝','Parts of Speech & Word Classes':'🏷️',
+  'Prepositions and Determiners':'📍','Correlating Sentences':'🔗','Matching List':'🧩',
+  'Adaptation of Borrowed Words':'🌐','Use of Phrasal Verbs':'⚡','Commonly Used Words':'📚',
+  'Word Meanings':'📖','Active & Passive Voice':'🔄','Direct/Indirect Speech':'🗣️',
+  'Discourse Markers':'🧭','Vocabulary':'🅰️','Homonyms & Homophones':'🔊','Word Usage':'✅'
+};
+function pvTopicIcon(sec){ return PV_TOPIC_ICONS[sec] || TOPIC_ICONS[sec] || '📘'; }
+function pvTopicHint(sec){
+  const hints={
+    'Synonyms':'Choose words with similar meanings.','Antonyms':'Choose words with opposite meanings.',
+    'Spotting Errors':'Find the incorrect part of a sentence.','Reading Comprehension':'Answer questions using the passage.',
+    'Sentence Arrangement (PQRS)':'Put sentence parts in a logical order.','Fill in the Blanks':'Complete the sentence using context.',
+    'Sentence Improvement':'Improve the marked part without changing meaning.','Sentence Correction':'Select the grammatically correct sentence.',
+    'Selecting Words':'Choose the word that best fits the context.','Ordering of Sentences':'Arrange sentences into a clear passage.',
+    'Ordering of Words in a Sentence':'Put words in the correct order.','Idioms and Phrases':'Understand fixed expressions and their meanings.',
+    'Usage of Paired Words':'Choose the correct word from a pair.','Cloze Test':'Complete a passage using context clues.',
+    'Sentence Completion':'Finish the sentence logically and grammatically.','Parts of Speech & Word Classes':'Identify how words function in a sentence.',
+    'Prepositions and Determiners':'Practise prepositions and noun determiners.','Correlating Sentences':'Match sentences that belong together.',
+    'Matching List':'Match each item with its correct partner.','Adaptation of Borrowed Words':'Practise words adopted from other languages.',
+    'Use of Phrasal Verbs':'Choose the correct verb-particle combination.','Commonly Used Words':'Build accuracy with everyday English.',
+    'Word Meanings':'Choose the meaning that fits the context.','Active & Passive Voice':'Change the focus while preserving meaning.',
+    'Direct/Indirect Speech':'Report spoken words accurately.','Discourse Markers':'Connect ideas with the right linking expressions.',
+    'Vocabulary':'Practise precise word meaning and usage.','Homonyms & Homophones':'Distinguish words that sound alike or share forms.',
+    'Word Usage':'Choose the correct word or expression.'
+  };
+  return hints[sec]||'Practise questions from this skill.';
+}
 function pvAccBadgeClass(acc){ if(acc===null) return 'mid'; return acc>=70?'strong':(acc<45?'weak':'mid'); }
 
 /* ---- persistence for "Continue where you left off" ---- */
@@ -1073,7 +1104,16 @@ function pvEraGroups(exam){
 function renderPyqView(){ pvRender(); }
 function pvRender(){
   const root = document.getElementById('pvApp'); if(!root) return;
-  if(PV.screen==='home') root.innerHTML = pvHomeHTML();
+  if(PV.screen==='home') {
+    root.innerHTML = pvHomeHTML();
+    const topicGrid=root.querySelector('#pvTopicGrid');
+    if(topicGrid)topicGrid.addEventListener('click',event=>{
+      const card=event.target.closest('.pv-topic-card');
+      if(card&&topicGrid.contains(card))pvLaunchTopic(decodeURIComponent(card.dataset.topic||''));
+    });
+    const topicSearch=root.querySelector('#pvTopicSearch');
+    if(topicSearch)topicSearch.addEventListener('input',()=>pvFilterTopicCards(topicSearch.value));
+  }
   else if(PV.screen==='examtype') root.innerHTML = pvExamTypeHTML();
   else if(PV.screen==='archive') root.innerHTML = pvArchiveHTML();
   else if(PV.screen==='archiveSessions') root.innerHTML = pvArchiveSessionsHTML();
@@ -1309,16 +1349,16 @@ function pvHomeHTML(){
   </div>`;
 
   const topicAcc = pyqTopicAccuracy();
-  const topicsHTML = pvTopics().map(t=>{
+  const topicList = pvTopics();
+  const topicsHTML = topicList.map(t=>{
     const count = PYQ_ALL.filter(q=>q.sec===t).length;
     const ta = topicAcc.find(x=>x.sec===t);
-    const accLabel = ta ? `${ta.acc}%` : '—';
-    return `<div class="pv-topic-card" onclick="pvLaunchTopic('${t.replace(/'/g,"\\'")}')">
-      <div class="pv-topic-emoji">${pvTopicIcon(t)}</div>
-      <div class="pv-topic-name">${t}</div>
-      <div class="pv-topic-count">${count} Qs</div>
-      <span class="pv-topic-acc ${pvAccBadgeClass(ta?ta.acc:null)}">${accLabel}</span>
-    </div>`;
+    const accLabel = ta ? `${ta.acc}%` : 'New';
+    return `<button type="button" class="pv-topic-card" data-topic="${encodeURIComponent(t)}" aria-label="Practice ${escapeHtmlVaani(t)}, ${count} questions">
+      <span class="pv-topic-emoji" aria-hidden="true">${pvTopicIcon(t)}</span>
+      <span class="pv-topic-copy"><span class="pv-topic-name">${escapeHtmlVaani(t)}</span><span class="pv-topic-count">${count} questions</span><span class="pv-topic-hint">${escapeHtmlVaani(pvTopicHint(t))}</span></span>
+      <span class="pv-topic-side"><span class="pv-topic-acc ${pvAccBadgeClass(ta?ta.acc:null)}">${accLabel}</span><span class="pv-topic-open">Practice <b aria-hidden="true">→</b></span></span>
+    </button>`;
   }).join('');
 
   const recent = st.history.slice(0,5);
@@ -1367,10 +1407,28 @@ function pvHomeHTML(){
     ${archiveGateHTML}
 
     <div class="pv-section-title"><h3><span class="bar"></span>Topic-Wise Practice</h3></div>
-    <div class="pv-topic-grid">${topicsHTML}</div>
+    <div class="pv-topic-tools">
+      <div class="pv-topic-tools-copy"><strong>Choose a skill</strong><small>Search the question bank by topic.</small></div>
+      <label class="pv-topic-search"><span class="search-mark" aria-hidden="true">⌕</span><input id="pvTopicSearch" type="search" maxlength="60" autocomplete="off" placeholder="Search topics…" aria-label="Search topic-wise practice"></label>
+      <span class="pv-topic-results" id="pvTopicResults" aria-live="polite">${topicList.length} topics</span>
+    </div>
+    <div class="pv-topic-grid" id="pvTopicGrid">${topicsHTML}</div>
+    <div class="pv-empty-note pv-topic-empty" id="pvTopicEmpty" hidden>No matching topic. Try another search.</div>
   </div>`;
 }
 
+function pvFilterTopicCards(value){
+  const grid=document.getElementById('pvTopicGrid');if(!grid)return;
+  const term=String(value||'').trim().toLocaleLowerCase();
+  const cards=Array.from(grid.querySelectorAll('.pv-topic-card'));let visible=0;
+  cards.forEach(card=>{
+    const topic=String(card.dataset.topic||'').toLocaleLowerCase();
+    const show=!term||topic.includes(term);card.hidden=!show;if(show)visible++;
+  });
+  const results=document.getElementById('pvTopicResults');
+  if(results)results.textContent=term?(visible+' of '+cards.length+' topics'):(cards.length+' topics');
+  const empty=document.getElementById('pvTopicEmpty');if(empty)empty.hidden=visible>0;
+}
 function pvLaunchTopic(sec){
   const list = PYQ_ALL.filter(q=>q.sec===sec);
   pvStartSession('section', list, {title:sec});
@@ -1685,18 +1743,9 @@ function pvSessionHTML(){
     }).join('');
   }
 
+  // Answer correctness is already shown by the option states and the explanation panel.
+  // Keep the question area clean instead of repeating a banner after every answer.
   let feedbackHTML = '';
-  if(showResult){
-    if(isRevisionLike){
-      feedbackHTML = '';
-    } else if(answer.choice===-1){
-      feedbackHTML = `<div class="pv-feedback wrong">⏱ Time's up — the correct answer will be available in your review.</div>`;
-    } else if(answer.correct){
-      feedbackHTML = `<div class="pv-feedback correct">✓ Correct. ${escapeHtmlVaani(q.exp||'You selected the right answer.')}</div>`;
-    } else {
-      feedbackHTML = `<div class="pv-feedback wrong">✕ Not quite. ${escapeHtmlVaani(q.exp||'Review the correct answer below.')}</div>`;
-    }
-  }
   let explainHTML = '';
   if(showResult || isRevisionLike){
     const extraNotes = `${q.exp?`<div><b>Why:</b> ${escapeHtmlVaani(q.exp)}</div>`:''}${q.rule?`<div style="margin-top:8px"><b>📐 Rule:</b> ${escapeHtmlVaani(q.rule)}</div>`:''}${q.shortcut?`<div style="margin-top:8px">⚡ ${escapeHtmlVaani(q.shortcut)}</div>`:''}${q.correctionNote?`<div style="margin-top:8px;color:var(--red)">⚠ <b>Answer-key note:</b> ${escapeHtmlVaani(q.correctionNote)}</div>`:''}`;
@@ -1736,6 +1785,7 @@ function pvSessionHTML(){
       </div>
       ${q.passage ? `<div class="pv-passage"><div class="pv-passage-label">Passage</div><div class="pv-passage-text">${escapeHtmlVaani(q.passage)}</div></div>` : ''}
       <div class="pv-qtext">${pyqHi(q)}</div>
+      <div class="pv-answer-hint" ${answer||isRevisionLike?'hidden':''}>Select one option to continue.</div>
       <div class="pv-options">${optsHTML}</div>
       ${feedbackHTML}
       ${explainHTML}
