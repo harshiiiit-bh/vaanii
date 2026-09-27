@@ -961,7 +961,39 @@ function pvRingSVG(pct, size, stroke, colorVar, extraClass){
       stroke-dasharray="${c.toFixed(2)}" stroke-dashoffset="${off.toFixed(2)}" transform="rotate(-90 ${size/2} ${size/2})" class="pv-ring-fill"/>
   </svg>`;
 }
-function pvTopicIcon(sec){ return TOPIC_ICONS[sec] || '📘'; }
+const PV_TOPIC_ICONS={
+  'Synonyms':'🔗','Antonyms':'↔️','Spotting Errors':'🔎','Reading Comprehension':'📖',
+  'Sentence Arrangement (PQRS)':'🧩','Fill in the Blanks':'✍️','Grammar':'📐',
+  'Sentence Improvement':'📝','Sentence Correction':'🛠️','Selecting Words':'🧠',
+  'Ordering of Sentences':'🧩','Ordering of Words in a Sentence':'🔤',
+  'Idioms and Phrases':'💬','Usage of Paired Words':'🔀','Cloze Test':'📄',
+  'Sentence Completion':'📝','Parts of Speech & Word Classes':'🏷️',
+  'Prepositions and Determiners':'📍','Correlating Sentences':'🔗','Matching List':'🧩',
+  'Adaptation of Borrowed Words':'🌐','Use of Phrasal Verbs':'⚡','Commonly Used Words':'📚',
+  'Word Meanings':'📖','Active & Passive Voice':'🔄','Direct/Indirect Speech':'🗣️',
+  'Discourse Markers':'🧭','Vocabulary':'🅰️','Homonyms & Homophones':'🔊','Word Usage':'✅'
+};
+function pvTopicIcon(sec){ return PV_TOPIC_ICONS[sec] || TOPIC_ICONS[sec] || '📘'; }
+function pvTopicHint(sec){
+  const hints={
+    'Synonyms':'Choose words with similar meanings.','Antonyms':'Choose words with opposite meanings.',
+    'Spotting Errors':'Find the incorrect part of a sentence.','Reading Comprehension':'Answer questions using the passage.',
+    'Sentence Arrangement (PQRS)':'Put sentence parts in a logical order.','Fill in the Blanks':'Complete the sentence using context.',
+    'Sentence Improvement':'Improve the marked part without changing meaning.','Sentence Correction':'Select the grammatically correct sentence.',
+    'Selecting Words':'Choose the word that best fits the context.','Ordering of Sentences':'Arrange sentences into a clear passage.',
+    'Ordering of Words in a Sentence':'Put words in the correct order.','Idioms and Phrases':'Understand fixed expressions and their meanings.',
+    'Usage of Paired Words':'Choose the correct word from a pair.','Cloze Test':'Complete a passage using context clues.',
+    'Sentence Completion':'Finish the sentence logically and grammatically.','Parts of Speech & Word Classes':'Identify how words function in a sentence.',
+    'Prepositions and Determiners':'Practise prepositions and noun determiners.','Correlating Sentences':'Match sentences that belong together.',
+    'Matching List':'Match each item with its correct partner.','Adaptation of Borrowed Words':'Practise words adopted from other languages.',
+    'Use of Phrasal Verbs':'Choose the correct verb-particle combination.','Commonly Used Words':'Build accuracy with everyday English.',
+    'Word Meanings':'Choose the meaning that fits the context.','Active & Passive Voice':'Change the focus while preserving meaning.',
+    'Direct/Indirect Speech':'Report spoken words accurately.','Discourse Markers':'Connect ideas with the right linking expressions.',
+    'Vocabulary':'Practise precise word meaning and usage.','Homonyms & Homophones':'Distinguish words that sound alike or share forms.',
+    'Word Usage':'Choose the correct word or expression.'
+  };
+  return hints[sec]||'Practise questions from this skill.';
+}
 function pvAccBadgeClass(acc){ if(acc===null) return 'mid'; return acc>=70?'strong':(acc<45?'weak':'mid'); }
 
 /* ---- persistence for "Continue where you left off" ---- */
