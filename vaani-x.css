@@ -302,3 +302,30 @@
   margin-bottom:16px;
 }
 .vx-back:hover{ color:var(--vx-ink); }
+
+/* question navigator grid (Arena run screen) */
+.vx-qgrid-wrap{ margin:0 0 18px; }
+.vx-qgrid-legend{
+  display:flex; flex-wrap:wrap; gap:14px; margin-bottom:10px;
+  font-size:.74rem; color:var(--vx-muted);
+}
+.vx-qgrid-legend span{ display:inline-flex; align-items:center; gap:6px; }
+.vx-qdot{ width:9px; height:9px; border-radius:50%; display:inline-block; }
+.vx-qdot.ok{ background:var(--vx-ok); }
+.vx-qdot.skip{ background:var(--vx-muted); }
+.vx-qdot.none{ background:var(--vx-danger); }
+.vx-qgrid{
+  display:flex; flex-wrap:wrap; gap:8px;
+}
+.vx-qgrid-btn{
+  width:34px; height:34px; border-radius:9px;
+  border:1px solid var(--vx-line); background:var(--vx-card);
+  color:var(--vx-ink); font:inherit; font-weight:700; font-size:.78rem;
+  cursor:pointer; display:grid; place-items:center;
+  font-variant-numeric:tabular-nums;
+  transition:transform .15s var(--ease-out), box-shadow .15s;
+}
+.vx-qgrid-btn.ok{ background:var(--vx-ok); border-color:var(--vx-ok); color:#fff; }
+.vx-qgrid-btn.skip{ background:var(--vx-muted); border-color:var(--vx-muted); color:#fff; }
+.vx-qgrid-btn.none{ background:transparent; border-color:var(--vx-danger); color:var(--vx-danger); }
+.vx-qgrid-btn.current{ box-shadow:0 0 0 2px var(--vx-gold); transform:scale(1.06); }

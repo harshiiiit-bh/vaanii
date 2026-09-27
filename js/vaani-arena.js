@@ -22,7 +22,7 @@
   var A = VX.arena = {};
 
   var MAX_PLAYERS = 100;
-  var CODE_VERSION = 3;
+  var CODE_VERSION = 2;
   var EPOCH = Date.UTC(2024, 0, 1) / 60000; // minutes since 2024-01-01, keeps codes short
   var NEG_MARKS = [0, -1 / 3, -1 / 2, -1]; // index stored in the code -> fraction lost per wrong answer
   var NEG_LABELS = ['No penalty', '&minus;1/3', '&minus;1/2', '&minus;1'];
@@ -96,14 +96,12 @@
     return b36(h % 1296, 2);
   }
 
-  /* layout (v3): v(1) src(1) count(2) secs(3) cap(2) seed(6) exp(7)
-                  type(2) paper(3) perQ(2) neg(1) reading(2) check(2)  =  34 chars
+  /* layout (v2): v(1) src(1) count(2) secs(3) cap(2) seed(6) exp(7)
+                  type(2) paper(3) perQ(2) neg(1) check(2)  =  32 chars
      type/paper are 1-based indices into typesFor(source)/papersFor(source);
      0 means "no filter" (Mixed types / Any paper). Those lists come from
      the bundled question data, which is identical on every device — same
-     assumption the seeded shuffle already relies on.
-     reading = seconds of read-only time before the exam clock starts,
-     0 disables it (host's own on/off toggle). */
+     assumption the seeded shuffle already relies on. */
   A.encode = function (m) {
     var srcIdx = SRC_CODES.indexOf(m.source);
     if (srcIdx < 0) srcIdx = SRC_CODES.indexOf('BOTH');
@@ -127,16 +125,15 @@
       b36(typeIdx, 2) +
       b36(paperIdx, 3) +
       b36(m.perQSeconds || 0, 2) +
-      b36(m.negMark || 0, 1) +
-      b36(m.readingSeconds || 0, 2);
+      b36(m.negMark || 0, 1);
     return body + checksum(body);
   };
 
   A.decode = function (raw) {
     var code = String(raw || '').toUpperCase().replace(/[^0-9A-Z]/g, '');
-    if (code.length !== 34) return null;
-    var body = code.slice(0, 32);
-    if (checksum(body) !== code.slice(32)) return null;
+    if (code.length !== 32) return null;
+    var body = code.slice(0, 30);
+    if (checksum(body) !== code.slice(30)) return null;
     var v = unb36(body.slice(0, 1));
     if (v !== CODE_VERSION) return null;
     var srcIdx = unb36(body.slice(1, 2));
@@ -158,8 +155,7 @@
       type: typeIdx > 0 ? (types[typeIdx - 1] || null) : null,
       paperKey: paperIdx > 0 ? ((papers[paperIdx - 1] || {}).key || null) : null,
       perQSeconds: unb36(body.slice(27, 29)),
-      negMark: unb36(body.slice(29, 30)),
-      readingSeconds: unb36(body.slice(30, 32))
+      negMark: unb36(body.slice(29, 30))
     };
     if (!m.count || !m.seconds) return null;
     return m;
@@ -284,7 +280,7 @@
   /* =========================================================
      VIEW STATE
      ========================================================= */
-  var S = { screen: 'home', match: null, draft: null, run: null, reading: null, result: null, rows: [] };
+  var S = { screen: 'home', match: null, draft: null, run: null, result: null, rows: [] };
 
   function host() { return document.getElementById('view-games'); }
 
@@ -301,7 +297,7 @@
     h.appendChild(wrap);
     ({
       home: screenHome, create: screenCreate, share: screenShare,
-      join: screenJoin, briefing: screenBriefing, run: screenRun, reading: screenReading,
+      join: screenJoin, briefing: screenBriefing, run: screenRun,
       result: screenResult, review: screenReview, help: screenHelp
     }[S.screen] || screenHome)(wrap);
     // guarded: scrollIntoView is universal in real browsers, but costs
@@ -457,7 +453,6 @@
       type: null,       // null = Mixed (every type)
       paperKey: null,   // null = Any paper
       perQOn: false, perQSeconds: 30,
-      readingOn: false, readingSeconds: 60,
       negMark: 0        // 0 = no penalty, index into NEG_MARKS
     };
   }
@@ -634,24 +629,6 @@
       }
       form.appendChild(f2);
 
-      /* reading time */
-      var fR = field('Reading time<span class="vx-hint">Optional. Before the clock starts, players can look over every question but cannot select any answer yet.</span>');
-      var readToggle = seg([false, true], d.readingOn, function (v) { return v ? 'On' : 'Off'; },
-        function (v) { d.readingOn = v; draw(); });
-      if (d.readingOn) readToggle.style.marginBottom = '10px';
-      fR.appendChild(readToggle);
-      if (d.readingOn) {
-        fR.appendChild(seg([30, 60, 120, 180, 300, 600], d.readingSeconds, function (v) { return timeLabel(v); },
-          function (v) { d.readingSeconds = v; draw(); }));
-        var rdIn = el('input', 'vx-num'); rdIn.type = 'number'; rdIn.min = 5; rdIn.max = 1295; rdIn.value = d.readingSeconds;
-        rdIn.setAttribute('aria-label', 'Custom reading time in seconds'); rdIn.style.marginTop = '10px';
-        rdIn.addEventListener('change', function () {
-          d.readingSeconds = Math.max(5, Math.min(1295, parseInt(rdIn.value, 10) || 5)); draw();
-        });
-        fR.appendChild(rdIn);
-      }
-      form.appendChild(fR);
-
       /* per-question timer */
       var fQ = field('Time per question<span class="vx-hint">Optional. Each question gets its own countdown and auto-advances at zero — on top of the overall clock above.</span>');
       var perQToggle = seg([false, true], d.perQOn, function (v) { return v ? 'On' : 'Off'; },
@@ -710,7 +687,6 @@
           seed: Math.floor(Math.random() * 2176782335), expiresAt: expiresAt,
           type: d.type, paperKey: d.paperKey,
           perQSeconds: d.perQOn ? d.perQSeconds : 0,
-          readingSeconds: d.readingOn ? d.readingSeconds : 0,
           negMark: d.negMark
         };
         match.code = A.encode(match);
@@ -801,7 +777,6 @@
     strip.innerHTML =
       '<span class="vx-chip">' + m.count + ' questions</span>' +
       '<span class="vx-chip">' + timeLabel(m.seconds) + '</span>' +
-      (m.readingSeconds ? '<span class="vx-chip">' + timeLabel(m.readingSeconds) + ' reading time</span>' : '') +
       '<span class="vx-chip">' + (m.source === 'BOTH' ? 'Combined bank' : m.source) + '</span>' +
       (m.paperKey ? '<span class="vx-chip">' + esc(paperLabel(m)) + '</span>' : '') +
       (m.type ? '<span class="vx-chip">' + esc(m.type) + '</span>' : '') +
@@ -884,8 +859,7 @@
 
     var ol = el('ol', 'vx-steps');
     ol.innerHTML =
-      (m.readingSeconds ? '<li><b>' + timeLabel(m.readingSeconds) + ' of reading time first.</b> You can look over every question, but answering is locked until it ends.</li>' : '') +
-      '<li><b>' + m.count + ' questions, ' + timeLabel(m.seconds) + '.</b> The clock starts the moment reading time ends (or right away, if there is none) and does not pause.</li>' +
+      '<li><b>' + m.count + ' questions, ' + timeLabel(m.seconds) + '.</b> The clock starts the moment you begin and does not pause.</li>' +
       (m.perQSeconds ? '<li><b>' + m.perQSeconds + ' seconds per question.</b> Each question moves on by itself if you take too long — on top of the overall clock.</li>' : '') +
       '<li><b>It submits itself at zero.</b> Anything left blank scores zero, no penalty.</li>' +
       (m.negMark ? '<li><b>Negative marking is on:</b> a wrong answer costs ' + NEG_LABELS[m.negMark].replace('&minus;', '−') + ' mark. Blanks are still safe.</li>' : '') +
@@ -899,23 +873,10 @@
   }
 
   /* ---------------------------------------------------------
-     READING TIME  (optional, host-controlled)
-     Players can see the full paper but cannot select any answer
-     until this countdown ends — then the timed exam starts itself.
+     RUN
      --------------------------------------------------------- */
   function beginRun(questions) {
-    S.run = { questions: questions, index: 0, answers: {}, skipped: {}, startedAt: null };
-    if (S.match.readingSeconds > 0) {
-      S.reading = { questions: questions, deadline: Date.now() + S.match.readingSeconds * 1000 };
-      go('reading');
-    } else {
-      startExamClock();
-    }
-  }
-
-  function startExamClock() {
-    S.reading = null;
-    S.run.startedAt = Date.now();
+    S.run = { questions: questions, index: 0, answers: {}, skipped: {}, startedAt: Date.now() };
     go('run');
     if (VX.timer) {
       VX.timer.start({
@@ -924,49 +885,6 @@
         onEnd: function () { say('Time up — your answers were submitted.'); finishRun(true); }
       });
     }
-  }
-
-  function screenReading(w) {
-    var rd = S.reading;
-    if (!rd) return go('home');
-
-    w.appendChild(el('h3', null, 'Reading time'));
-    var chip = el('div', 'vx-meta-strip');
-    var timeSpan = el('span', 'vx-chip warn', '');
-    chip.appendChild(timeSpan);
-    w.appendChild(chip);
-    w.appendChild(el('p', 'vx-sub', 'Look over the paper below. Answering is locked until the clock above runs out — then the timed exam begins on its own.'));
-
-    var list = el('div');
-    list.style.cssText = 'display:flex;flex-direction:column;gap:16px;margin-top:14px';
-    rd.questions.forEach(function (q, i) {
-      var card = el('div', 'vx-tile');
-      card.style.cursor = 'default';
-      var body =
-        '<p style="font-size:.78rem;color:var(--vx-muted);margin:0 0 8px">Question ' + (i + 1) + '</p>' +
-        (q.passage ? '<div class="pv-passage"><div class="pv-passage-label">Passage</div><div class="pv-passage-text">' + esc(q.passage) + '</div></div>' : '') +
-        '<p style="font-size:1rem;line-height:1.6;color:var(--vx-ink);margin:0 0 12px">' +
-        (q.keyword ? '<b>' + esc(q.keyword) + '</b> — ' : '') + esc(q.q) + '</p>';
-      card.innerHTML = body;
-      var opts = el('div', 'vx-seg');
-      opts.style.flexDirection = 'column';
-      opts.style.opacity = '.55';
-      opts.style.pointerEvents = 'none';
-      (q.o || []).forEach(function (text) {
-        opts.appendChild(el('div', 'opt-btn', esc(text)));
-      });
-      card.appendChild(opts);
-      list.appendChild(card);
-    });
-    w.appendChild(list);
-
-    function tick() {
-      var left = Math.max(0, Math.ceil((rd.deadline - Date.now()) / 1000));
-      timeSpan.textContent = fmtClock(left) + ' left to read';
-      if (left <= 0) { clearQTimer(); startExamClock(); }
-    }
-    tick();
-    S._qTimerHandle = setInterval(tick, 250);
   }
 
   /* Jump-to-question grid: green = attempted, grey = explicitly skipped,
