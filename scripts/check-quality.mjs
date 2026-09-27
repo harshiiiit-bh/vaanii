@@ -151,12 +151,16 @@ try {
       const tag = taxonomy.topic({ ...q, _exam: exam });
       if (!tag || tag === 'Grammar' || tag === 'Grammar (Mixed)') throw new Error('Unresolved question type tag: ' + at + ' (' + q.sec + ')');
       topicCounts.set(tag, (topicCounts.get(tag) || 0) + 1);
-      if (q.sec === 'Synonyms' || q.sec === 'Antonyms') {
+      const prompt = q.q.toLocaleLowerCase();
+      const asksAntonym = /\b(?:antonym|opposite in meaning|opposite meaning)\b/.test(prompt);
+      const asksSynonym = /\b(?:synonym|similar in meaning|same in meaning)\b/.test(prompt);
+      if (asksAntonym && !asksSynonym && tag !== 'Antonyms') throw new Error('Question asks for an antonym but is tagged ' + tag + ': ' + at);
+      if (asksSynonym && !asksAntonym && tag !== 'Synonyms') throw new Error('Question asks for a synonym but is tagged ' + tag + ': ' + at);
+      if (q.sec === 'Synonyms' || q.sec === 'Antonyms' || tag === 'Synonyms' || tag === 'Antonyms') {
         const keyword = taxonomy.keyword(q);
-        if (!keyword || !q.q.toLocaleLowerCase().includes(keyword.toLocaleLowerCase())) {
+        if (!keyword || !prompt.includes(keyword.toLocaleLowerCase())) {
           throw new Error('Synonym/antonym target word missing or not present in question: ' + at);
         }
-        if (tag !== q.sec) throw new Error('Synonym/antonym tag changed unexpectedly: ' + at);
       }
     }
     questionCount += context[variable].length;
