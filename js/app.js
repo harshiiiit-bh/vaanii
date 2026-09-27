@@ -2743,64 +2743,30 @@ function recordQuizCompletion(pct, elapsedSec, label){
   saveState();
 }
 function renderQuizPane(id, quiz){
-  const pane = document.getElementById('pane-quiz');
-  let idx=0, correctCount=0, qTimer=null, quizStartTs=null;
-  function render(){
-    if(idx===0) comboCount=0;
-    if(idx===0 && quizStartTs===null) quizStartTs = Date.now();
-    if(idx>=quiz.length){
-      const pct = Math.round((correctCount/quiz.length)*100);
-      State.quizScores[id]=pct;
-      State.topicLastAttempt = State.topicLastAttempt || {};
-      State.topicLastAttempt[id] = Date.now();
-      saveState();
-      recordQuizCompletion(pct, quizStartTs?(Date.now()-quizStartTs)/1000:null, (currentTopic?currentTopic.title:id));
-      pane.innerHTML = `<div class="quiz-card" style="text-align:center">
-        <h3 style="margin-bottom:10px">Quiz Complete</h3>
-        <div class="num serif" style="font-size:2.4rem;color:var(--gold)">${pct}%</div>
-        <p style="color:var(--muted);margin:10px 0">${correctCount} of ${quiz.length} correct${comboBest>=3?` · Best combo ×${comboBest}`:''}</p>
-        <button class="btn" onclick="renderQuizPane('${id}', GRAMMAR.find(g=>g.id==='${id}').quiz)">Retry Quiz</button></div>`;
-      addXP(Math.max(5,Math.round(pct/10)),'Quiz score on '+ (currentTopic?currentTopic.title:'topic'));
-      launchConfettiIf(pct>=70);
-      return;
-    }
-    const item = quiz[idx];
-    pane.innerHTML = `<div class="quiz-card">
-      <div class="qhead-row">
-        <div class="quiz-progress">QUESTION ${idx+1} / ${quiz.length} <span class="combo-badge${comboCount>=2?' show':''}" id="qComboBadge">🔥 ×${comboCount}</span></div>
-        <div class="qtimer-ring" id="qTimerRing"><svg viewBox="0 0 40 40"><circle class="qt-bg" cx="20" cy="20" r="16"></circle><circle class="qt-fg" cx="20" cy="20" r="16"></circle></svg><div class="qt-num">15</div></div>
-      </div>
-      <div class="quiz-q">${item.q}</div>
-      <div id="optsWrap"></div>
-      <div class="quiz-feedback" id="qFeedback"></div>
-      <button class="btn quiz-nextbtn" id="nextBtn" style="display:none" onclick="advanceQuiz()">Next →</button>
-    </div>`;
-    const cardEl = pane.querySelector('.quiz-card');
-    qTimer = startQTimer(document.getElementById('qTimerRing'));
-    const wrap = document.getElementById('optsWrap');
-    item.opts.forEach((o,i)=>{
-      const b=document.createElement('button'); b.className='opt-btn'; b.textContent=o;
-      b.onclick=()=>{
-        if(qTimer) qTimer.stop();
-        document.querySelectorAll('.opt-btn').forEach(x=>x.disabled=true);
-        const fb = document.getElementById('qFeedback');
-        if(i===item.ans){
-          b.classList.add('correct');correctCount++;
-          handleQuizCorrect(b, cardEl);
-          if(qElapsedSeconds(qTimer)<=5){ addXP(2,'Quick answer'); fb.insertAdjacentHTML('afterend','<span class="speed-tag">⚡ Quick answer +2 XP</span>'); }
-        } else {
-          b.classList.add('wrong');document.querySelectorAll('.opt-btn')[item.ans].classList.add('correct');
-          handleQuizWrong(cardEl);
-        }
-        document.getElementById('nextBtn').style.display='inline-flex';
-      };
-      wrap.appendChild(b);
-    });
+  const pane=document.getElementById('pane-quiz');if(!pane)return;
+  const questions=Array.isArray(quiz)?quiz:[];let idx=0,correctCount=0,qTimer=null,started=null,finished=false;
+  function finish(){
+    if(finished)return;finished=true;if(qTimer){qTimer.stop();qTimer=null;}
+    const pct=questions.length?Math.round(correctCount/questions.length*100):0;State.quizScores[id]=pct;State.topicLastAttempt=State.topicLastAttempt||{};State.topicLastAttempt[id]=Date.now();saveState();
+    recordQuizCompletion(pct,started?(Date.now()-started)/1000:null,((GRAMMAR.find(g=>g.id===id)||{}).title)||id);
+    pane.innerHTML='<div class="quiz-card quiz-complete-card" role="status"><span class="lesson-kicker">TOPIC CHECK COMPLETE</span><h3>Your result</h3><div class="quiz-result-score">'+pct+'%</div><p>'+correctCount+' of '+questions.length+' answers correct</p><div class="quiz-result-track"><div style="width:'+pct+'%"></div></div><div class="quiz-result-actions"><button class="btn" type="button" id="quizRetry">Try again</button><button class="btn ghost" type="button" id="quizBack">Review lesson</button></div></div>';
+    pane.querySelector('#quizRetry').addEventListener('click',()=>renderQuizPane(id,questions));pane.querySelector('#quizBack').addEventListener('click',()=>{const b=document.querySelector('.tab-btn[data-tab="learn"]');if(b)b.click();});
+    addXP(Math.max(5,Math.round(pct/10)),'Quiz score on '+(((GRAMMAR.find(g=>g.id===id)||{}).title)||'topic'));launchConfettiIf(pct>=70);
   }
-  window.advanceQuiz=()=>{idx++;render();};
-  render();
+  function draw(){
+    if(qTimer){qTimer.stop();qTimer=null;}if(!questions.length){pane.innerHTML='<div class="quiz-card"><h3>Practice coming soon</h3><p>No questions are available for this topic yet.</p></div>';return;}if(idx>=questions.length){finish();return;}
+    if(idx===0)comboCount=0;if(started===null)started=Date.now();const item=questions[idx]||{};
+    pane.innerHTML='<div class="quiz-card quiz-live-card"><div class="quiz-headline"><div><span class="lesson-kicker">CHECK YOUR UNDERSTANDING</span><div class="quiz-progress" id="grammarQuizProgress"></div></div><div class="qtimer-ring" id="qTimerRing"><svg viewBox="0 0 40 40"><circle class="qt-bg" cx="20" cy="20" r="16"></circle><circle class="qt-fg" cx="20" cy="20" r="16"></circle></svg><div class="qt-num">15</div></div></div><div class="quiz-progress-track" role="progressbar" aria-label="Quiz progress" aria-valuemin="0" aria-valuemax="'+questions.length+'" aria-valuenow="'+(idx+1)+'"><div class="quiz-progress-fill" style="width:'+((idx+1)/questions.length*100)+'%"></div></div><div class="quiz-q" id="grammarQuizQuestion"></div><div class="quiz-options" id="optsWrap"></div><div class="quiz-feedback" id="qFeedback" role="status" aria-live="polite"></div><button class="btn quiz-nextbtn" id="nextBtn" type="button" disabled>'+(idx===questions.length-1?'View result':'Next question →')+'</button></div>';
+    pane.querySelector('#grammarQuizProgress').textContent='Question '+(idx+1)+' of '+questions.length;pane.querySelector('#grammarQuizQuestion').textContent=String(item.q||'Read the question carefully.');
+    const card=pane.querySelector('.quiz-card'),wrap=pane.querySelector('#optsWrap');qTimer=startQTimer(pane.querySelector('#qTimerRing'));
+    (Array.isArray(item.opts)?item.opts:[]).forEach((option,i)=>{const b=document.createElement('button');b.type='button';b.className='opt-btn quiz-option';b.setAttribute('aria-pressed','false');const letter=document.createElement('span');letter.className='quiz-option-letter';letter.textContent=String.fromCharCode(65+i);const label=document.createElement('span');label.className='quiz-option-text';label.textContent=String(option);b.append(letter,label);b.addEventListener('click',()=>{if(b.disabled)return;const elapsed=qElapsedSeconds(qTimer);if(qTimer){qTimer.stop();qTimer=null;}wrap.querySelectorAll('button').forEach(x=>{x.disabled=true;x.setAttribute('aria-pressed','false');});b.setAttribute('aria-pressed','true');const fb=pane.querySelector('#qFeedback');
+      if(i===item.ans){correctCount++;b.classList.add('correct');handleQuizCorrect(b,card);fb.className='quiz-feedback is-correct';fb.textContent='Correct. '+String(item.exp||'You selected the right answer.');if(elapsed<=5){addXP(2,'Quick answer');const speed=document.createElement('span');speed.className='speed-tag';speed.textContent='⚡ Quick answer +2 XP';fb.appendChild(speed);}}
+      else{b.classList.add('wrong');const right=wrap.querySelectorAll('button')[item.ans];if(right)right.classList.add('correct');handleQuizWrong(card);fb.className='quiz-feedback is-wrong';fb.textContent='Not quite. Correct answer: '+String((item.opts||[])[item.ans]||'the highlighted option')+'. '+String(item.exp||'Review the rule and try again.');}
+      const next=pane.querySelector('#nextBtn');next.disabled=false;next.focus();});wrap.appendChild(b);});
+    const next=pane.querySelector('#nextBtn');next.addEventListener('click',()=>{if(!next.disabled){idx++;draw();}});
+    if(!item.opts||item.opts.length<2||!Number.isInteger(item.ans)||item.ans<0||item.ans>=item.opts.length){next.disabled=true;pane.querySelector('#qFeedback').textContent='This question needs correction before it can be answered.';if(qTimer){qTimer.stop();qTimer=null;}}
+  }draw();
 }
-
 /* ============================================================
    VOCAB RENDER — Mastery Hub
 =============================================================*/
