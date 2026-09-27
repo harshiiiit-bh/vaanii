@@ -1,0 +1,236 @@
+/* VAANI Grammar UX: clear topic browsing, calm roadmap and readable type. */
+
+/* A stable typography floor for the grammar surfaces. These pages use a
+   dedicated dark palette, so keep their muted text independent of app theme. */
+#view-grammar,#view-journey{
+  color:var(--gt-text);
+  font-family:var(--body,'Inter',sans-serif);
+  font-size:15px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+#view-grammar .gt-eyebrow,
+#view-grammar .gt-sub,
+#view-grammar .gt-chip-lbl,
+#view-grammar .gt-card-lbl,
+#view-grammar .gt-progress-sub,
+#view-grammar .gt-power-sub,
+#view-grammar .gt-stat-line,
+#view-grammar .gt-donut-legend,
+#view-grammar .gt-fruit-pct,
+#view-journey .gj-eyebrow,
+#view-journey .gj-stat-lbl,
+#view-journey .gj-cadet-sub,
+#view-journey .gj-legend{
+  color:#a9bac5;
+}
+#view-grammar .gt-title,
+#view-journey .gj-title{
+  color:#f3f6f8;
+  background:none;
+  -webkit-text-fill-color:#f3f6f8;
+}
+#view-grammar .gt-chip-lbl,
+#view-grammar .gt-card-lbl,
+#view-journey .gj-stat-lbl{
+  font-size:.68rem;
+}
+#view-grammar .gt-chip-num{color:#8ff4e7}
+#view-grammar .gt-stat-line b,
+#view-grammar .gt-ring-num,
+#view-journey .gj-stat-num{color:#f3f6f8}
+#view-grammar .gt-donut-legend,
+#view-grammar .gt-progress-sub,
+#view-grammar .gt-power-sub,
+#view-journey .gj-cadet-sub{font-size:.76rem;line-height:1.55}
+
+/* Main Grammar topic browser — replaces the fixed-ratio, overlapping tree. */
+#view-grammar .gt-tree-wrap{align-items:stretch;min-width:0}
+#view-grammar .gt-tree-canvas{
+  position:relative;width:100%;max-width:none;aspect-ratio:auto;height:auto;
+  margin:0;display:flex;flex-direction:column;gap:14px;overflow:visible;
+}
+#view-grammar .gt-tree-svg,
+#view-grammar .gt-fruit{display:none!important}
+.gt-topic-browser{position:relative;z-index:2;display:flex;flex-direction:column;gap:14px;width:100%;min-width:0}
+.gt-browser-intro{
+  padding:18px 20px;border:1px solid rgba(123,240,224,.22);border-radius:16px;
+  background:linear-gradient(125deg,rgba(47,215,196,.09),rgba(217,169,65,.065) 70%,rgba(16,26,38,.55));
+}
+.gt-browser-kicker{display:block;font:700 .65rem/1.4 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:#86e9db}
+.gt-browser-intro h3{margin:5px 0 5px;color:#f3f6f8;font:600 1.18rem/1.35 var(--serif);letter-spacing:.02em}
+.gt-browser-intro p{margin:0;color:#b7c4cd;font-size:.8rem;line-height:1.65;max-width:72ch}
+.gt-browser-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.gt-browser-search{
+  display:flex;align-items:center;gap:9px;flex:1 1 230px;min-width:180px;
+  padding:0 13px;background:#0a121c;border:1px solid rgba(160,200,215,.22);border-radius:11px;
+  color:#9aabb6;transition:border-color .16s,box-shadow .16s;
+}
+.gt-browser-search:focus-within{border-color:#7bf0e0;box-shadow:0 0 0 3px rgba(47,215,196,.12)}
+.gt-browser-search .search-icon{font-size:1rem;color:#7bf0e0}
+.gt-browser-search input{
+  width:100%;min-width:0;border:0;outline:0;background:transparent;color:#eef4f7;
+  padding:11px 0;font:500 .8rem/1.4 var(--body);font-size:16px;
+}
+.gt-browser-search input::placeholder{color:#9aabb6;opacity:1}
+.gt-browser-count{font:600 .66rem/1.4 var(--mono);color:#b7c4cd;white-space:nowrap}
+.gt-browser-filters{display:flex;flex-wrap:wrap;gap:7px}
+.gt-browser-filter{
+  min-height:36px;padding:7px 11px;border-radius:999px;border:1px solid rgba(160,200,215,.20);
+  background:rgba(10,18,28,.75);color:#c5d0d7;font:600 .68rem/1.3 var(--body);cursor:pointer;
+  transition:background .16s,border-color .16s,color .16s;
+}
+.gt-browser-filter:hover{border-color:rgba(123,240,224,.5);color:#f3f6f8}
+.gt-browser-filter[aria-pressed="true"]{background:rgba(47,215,196,.14);border-color:#2fd7c4;color:#9af3e8}
+.gt-topic-groups{display:flex;flex-direction:column;gap:10px}
+.gt-topic-group{
+  border:1px solid rgba(160,200,215,.17);border-radius:15px;overflow:hidden;
+  background:linear-gradient(145deg,rgba(16,26,38,.86),rgba(10,18,28,.86));
+  box-shadow:0 4px 18px rgba(0,0,0,.10);
+}
+.gt-topic-group[hidden]{display:none!important}
+.gt-topic-group summary{
+  display:flex;align-items:center;gap:12px;min-height:62px;padding:12px 16px;cursor:pointer;list-style:none;
+  background:rgba(255,255,255,.018);color:#f0f4f6;
+}
+.gt-topic-group summary::-webkit-details-marker{display:none}
+.gt-topic-group summary::after{content:"＋";margin-left:auto;color:#87e9dc;font:700 1rem/1 var(--mono)}
+.gt-topic-group[open] summary::after{content:"−"}
+.gt-topic-group summary:focus-visible{outline:3px solid #7bf0e0;outline-offset:-3px}
+.gt-tier-index{
+  width:34px;height:34px;display:grid;place-items:center;flex:none;border-radius:10px;
+  background:rgba(47,215,196,.11);border:1px solid rgba(47,215,196,.25);
+  color:#9af3e8;font:700 .65rem/1 var(--mono);
+}
+.gt-tier-copy{display:flex;flex-direction:column;gap:2px;min-width:0}
+.gt-tier-title{font:600 .87rem/1.35 var(--serif);letter-spacing:.02em;color:#f0f4f6}
+.gt-tier-subtitle{font-size:.69rem;line-height:1.4;color:#a9bac5}
+.gt-tier-count{margin-left:auto;font:600 .65rem/1.4 var(--mono);color:#b7c4cd;white-space:nowrap}
+.gt-tier-progress{height:3px;background:rgba(255,255,255,.07)}
+.gt-tier-progress-fill{height:100%;background:linear-gradient(90deg,#2fd7c4,#d9a941);transition:width .3s ease}
+.gt-topic-grid{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:12px;
+}
+.gt-topic-card{
+  appearance:none;min-width:0;width:100%;display:grid;grid-template-columns:38px minmax(0,1fr) auto;
+  align-items:start;gap:10px;padding:12px;text-align:left;border:1px solid rgba(160,200,215,.17);
+  border-radius:12px;background:rgba(4,10,16,.44);color:#edf3f6;cursor:pointer;
+  transition:transform .16s ease,border-color .16s ease,background .16s ease,box-shadow .16s ease;
+}
+.gt-topic-card:hover{transform:translateY(-2px);border-color:rgba(123,240,224,.52);background:rgba(47,215,196,.055);box-shadow:0 8px 18px rgba(0,0,0,.16)}
+.gt-topic-card:focus-visible{outline:3px solid #7bf0e0;outline-offset:2px}
+.gt-topic-card[hidden]{display:none!important}
+.gt-topic-icon{
+  display:grid;place-items:center;width:38px;height:38px;border-radius:11px;
+  background:linear-gradient(145deg,rgba(47,215,196,.13),rgba(217,169,65,.10));
+  border:1px solid rgba(123,240,224,.16);font-size:1.1rem;
+}
+.gt-topic-copy{display:flex;flex-direction:column;gap:4px;min-width:0}
+.gt-topic-title{font:600 .81rem/1.35 var(--serif);letter-spacing:.015em;color:#f2f5f7;overflow-wrap:anywhere}
+.gt-topic-desc{font-size:.69rem;line-height:1.5;color:#adbdc7;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.gt-topic-meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:3px}
+.gt-topic-status{display:inline-flex;align-items:center;gap:5px;font:700 .58rem/1.4 var(--mono);letter-spacing:.025em;color:#b7c4cd}
+.gt-topic-status::before{content:"";width:7px;height:7px;border-radius:50%;background:#92a2ad;flex:none}
+.gt-topic-card[data-status="completed"] .gt-topic-status{color:#7ce5a8}
+.gt-topic-card[data-status="completed"] .gt-topic-status::before{background:#3fe08a;box-shadow:0 0 7px rgba(63,224,138,.5)}
+.gt-topic-card[data-status="progress"] .gt-topic-status{color:#f0c874}
+.gt-topic-card[data-status="progress"] .gt-topic-status::before{background:#e8b13d}
+.gt-topic-card[data-status="current"] .gt-topic-status{color:#8ff4e7}
+.gt-topic-card[data-status="current"] .gt-topic-status::before{background:#2fd7c4;box-shadow:0 0 7px rgba(47,215,196,.5)}
+.gt-topic-pct{font:600 .6rem/1.4 var(--mono);color:#a9bac5;white-space:nowrap}
+.gt-topic-mini-progress{height:3px;width:100%;margin-top:7px;border-radius:99px;overflow:hidden;background:rgba(255,255,255,.08)}
+.gt-topic-mini-progress span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#2fd7c4,#d9a941)}
+.gt-topic-open{align-self:center;color:#7bf0e0;font-size:1rem;line-height:1}
+.gt-browser-empty{padding:24px;text-align:center;color:#bdc8cf;border:1px dashed rgba(160,200,215,.28);border-radius:12px;font-size:.8rem}
+.gt-browser-empty[hidden]{display:none!important}
+
+/* Journey: use roomy, expandable skill tiers rather than a narrow winding
+   line of overlapping abbreviations. The five curriculum stages are retained. */
+#view-journey .gj-pathwrap{
+  position:relative;width:100%;max-width:none;height:auto!important;margin:0 auto;
+  display:flex;flex-direction:column;gap:12px;touch-action:auto;overflow:visible;
+}
+#view-journey .gj-svg{display:none!important}
+.gj-roadmap{display:flex;flex-direction:column;gap:12px}
+.gj-roadmap-stage{
+  overflow:hidden;border:1px solid rgba(160,200,215,.17);border-radius:16px;
+  background:linear-gradient(145deg,rgba(16,26,38,.88),rgba(10,18,28,.88));
+  box-shadow:0 5px 20px rgba(0,0,0,.12);
+}
+.gj-roadmap-stage[hidden]{display:none!important}
+.gj-roadmap-stage summary{
+  display:flex;align-items:center;gap:12px;min-height:66px;padding:12px 16px;cursor:pointer;list-style:none;color:#f0f4f6;
+}
+.gj-roadmap-stage summary::-webkit-details-marker{display:none}
+.gj-roadmap-stage summary::after{content:"＋";margin-left:4px;color:#87e9dc;font:700 1rem/1 var(--mono)}
+.gj-roadmap-stage[open] summary::after{content:"−"}
+.gj-roadmap-stage summary:focus-visible{outline:3px solid #7bf0e0;outline-offset:-3px}
+.gj-stage-num{
+  width:38px;height:38px;border-radius:11px;display:grid;place-items:center;flex:none;
+  color:#9af3e8;background:rgba(47,215,196,.11);border:1px solid rgba(47,215,196,.23);
+  font:700 .68rem/1 var(--mono);
+}
+.gj-stage-copy{display:flex;flex-direction:column;gap:2px;min-width:0}
+.gj-stage-title{font:600 .9rem/1.3 var(--serif);color:#f1f5f7;letter-spacing:.025em}
+.gj-stage-desc{font-size:.69rem;line-height:1.45;color:#a9bac5}
+.gj-stage-count{margin-left:auto;font:600 .65rem/1.4 var(--mono);color:#bdc8cf;white-space:nowrap}
+.gj-stage-progress{height:3px;background:rgba(255,255,255,.07)}
+.gj-stage-progress span{display:block;height:100%;background:linear-gradient(90deg,#2fd7c4,#d9a941)}
+.gj-stage-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:12px;border-top:1px solid rgba(160,200,215,.12)}
+.gj-roadmap-card{
+  min-width:0;display:grid;grid-template-columns:38px minmax(0,1fr) auto;align-items:center;gap:10px;
+  width:100%;padding:12px;text-align:left;border:1px solid rgba(160,200,215,.18);border-radius:12px;
+  background:rgba(4,10,16,.42);color:#eef3f6;cursor:pointer;
+  transition:transform .16s ease,border-color .16s ease,background .16s ease;
+}
+.gj-roadmap-card:hover:not(.is-locked){transform:translateY(-2px);border-color:rgba(123,240,224,.48);background:rgba(47,215,196,.055)}
+.gj-roadmap-card:focus-visible{outline:3px solid #7bf0e0;outline-offset:2px}
+.gj-roadmap-card.is-locked{cursor:not-allowed;border-style:dashed;border-color:rgba(160,200,215,.14);background:rgba(4,10,16,.23)}
+.gj-roadmap-card[hidden]{display:none!important}
+.gj-roadmap-icon{width:38px;height:38px;display:grid;place-items:center;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(160,200,215,.16);font-size:1.05rem}
+.gj-roadmap-card.is-current .gj-roadmap-icon{border-color:#d9a941;background:rgba(217,169,65,.11)}
+.gj-roadmap-card.is-done .gj-roadmap-icon{border-color:rgba(63,224,138,.45);background:rgba(63,224,138,.10)}
+.gj-roadmap-copy{display:flex;flex-direction:column;gap:4px;min-width:0}
+.gj-roadmap-name{font:600 .79rem/1.35 var(--serif);color:#f1f5f7;overflow-wrap:anywhere}
+.gj-roadmap-desc{font-size:.67rem;line-height:1.45;color:#a9bac5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.gj-roadmap-state{display:inline-flex;align-items:center;gap:5px;font:700 .57rem/1.4 var(--mono);color:#bdc8cf}
+.gj-roadmap-state::before{content:"";width:7px;height:7px;border-radius:50%;background:#81919d;flex:none}
+.gj-roadmap-card.is-current .gj-roadmap-state{color:#f0c874}
+.gj-roadmap-card.is-current .gj-roadmap-state::before{background:#e8b13d}
+.gj-roadmap-card.is-done .gj-roadmap-state{color:#7ce5a8}
+.gj-roadmap-card.is-done .gj-roadmap-state::before{background:#3fe08a}
+.gj-roadmap-card.is-available .gj-roadmap-state{color:#8ff4e7}
+.gj-roadmap-card.is-available .gj-roadmap-state::before{background:#2fd7c4}
+.gj-roadmap-action{font:700 .78rem/1 var(--mono);color:#8ff4e7}
+.gj-roadmap-card.is-locked .gj-roadmap-action{color:#9aabb6}
+.gj-endcard{color:#d3dde3;line-height:1.7}
+.gj-endcard span{color:#b8c5ce}
+.gj-endcard b{color:#f0c874}
+@media(max-width:860px){
+  .gt-topic-grid,.gj-stage-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:560px){
+  #view-grammar .gt-tree-wrap{width:100%}
+  .gt-topic-grid,.gj-stage-grid{grid-template-columns:1fr}
+  .gt-browser-toolbar{align-items:stretch}
+  .gt-browser-search{flex-basis:100%;max-width:none}
+  .gt-browser-count{margin-left:4px}
+  .gt-topic-card,.gj-roadmap-card{padding:12px}
+  .gj-cadetcard{align-items:flex-start}
+  .gj-stage-count{font-size:.58rem}
+}
+@media(prefers-reduced-motion:reduce){
+  .gt-topic-card,.gj-roadmap-card,.gt-tier-progress-fill,.gj-stage-progress span{transition:none}
+}
+
+/* A persistent credit in the app's shared shell, not just on the login screen. */
+.vaani-author-credit{
+  position:relative;display:flex;justify-content:center;align-items:center;flex-wrap:wrap;
+  gap:6px;margin:26px auto 18px;padding:12px 16px;width:min(100%,680px);
+  color:#a9bac5;text-align:center;font:500 .69rem/1.5 var(--body);
+  border-top:1px solid rgba(160,200,215,.18);
+}
+.vaani-author-credit strong{color:#f0c874;font-weight:800;letter-spacing:.025em}
+.vaani-author-credit .credit-separator{color:#60717e}
+@media(max-width:560px){.vaani-author-credit{margin:20px auto 14px;font-size:.66rem}}
