@@ -22,7 +22,7 @@
   var A = VX.arena = {};
 
   var MAX_PLAYERS = 100;
-  var CODE_VERSION = 2;
+  var CODE_VERSION = 3;
   var EPOCH = Date.UTC(2024, 0, 1) / 60000; // minutes since 2024-01-01, keeps codes short
   var NEG_MARKS = [0, -1 / 3, -1 / 2, -1]; // index stored in the code -> fraction lost per wrong answer
   var NEG_LABELS = ['No penalty', '&minus;1/3', '&minus;1/2', '&minus;1'];
@@ -78,9 +78,11 @@
   /* ---------------------------------------------------------
      MATCH CODE  ·  encode / decode
      layout: v(1) src(1) count(2) secs(3) cap(2) seed(6) exp(7) check(2)
-     src 0=NDA 1=CDS 2=BOTH  (+3 means "shuffle the order per player")
+     src is an index into SRC_CODES; adding SRC_CODES.length to it means
+     "shuffle the order per player". New exams just get appended to
+     SRC_CODES — nothing else about the layout needs to change.
      --------------------------------------------------------- */
-  var SRC_CODES = ['NDA', 'CDS', 'BOTH'];
+  var SRC_CODES = ['NDA', 'CDS', 'AFCAT', 'BOTH'];
 
   /* Two-character FNV-1a check. One mistyped character must never
      decode into a different but valid match — that would quietly put
@@ -94,16 +96,18 @@
     return b36(h % 1296, 2);
   }
 
-  /* layout (v2): v(1) src(1) count(2) secs(3) cap(2) seed(6) exp(7)
-                  type(2) paper(3) perQ(2) neg(1) check(2)  =  32 chars
+  /* layout (v3): v(1) src(1) count(2) secs(3) cap(2) seed(6) exp(7)
+                  type(2) paper(3) perQ(2) neg(1) reading(2) check(2)  =  34 chars
      type/paper are 1-based indices into typesFor(source)/papersFor(source);
      0 means "no filter" (Mixed types / Any paper). Those lists come from
      the bundled question data, which is identical on every device — same
-     assumption the seeded shuffle already relies on. */
+     assumption the seeded shuffle already relies on.
+     reading = seconds of read-only time before the exam clock starts,
+     0 disables it (host's own on/off toggle). */
   A.encode = function (m) {
     var srcIdx = SRC_CODES.indexOf(m.source);
-    if (srcIdx < 0) srcIdx = 2;
-    if (m.shuffleOrder) srcIdx += 3;
+    if (srcIdx < 0) srcIdx = SRC_CODES.indexOf('BOTH');
+    if (m.shuffleOrder) srcIdx += SRC_CODES.length;
     var typeIdx = 0;
     if (m.type) { var ti = typesFor(m.source).indexOf(m.type); typeIdx = ti >= 0 ? ti + 1 : 0; }
     var paperIdx = 0;
@@ -123,20 +127,21 @@
       b36(typeIdx, 2) +
       b36(paperIdx, 3) +
       b36(m.perQSeconds || 0, 2) +
-      b36(m.negMark || 0, 1);
+      b36(m.negMark || 0, 1) +
+      b36(m.readingSeconds || 0, 2);
     return body + checksum(body);
   };
 
   A.decode = function (raw) {
     var code = String(raw || '').toUpperCase().replace(/[^0-9A-Z]/g, '');
-    if (code.length !== 32) return null;
-    var body = code.slice(0, 30);
-    if (checksum(body) !== code.slice(30)) return null;
+    if (code.length !== 34) return null;
+    var body = code.slice(0, 32);
+    if (checksum(body) !== code.slice(32)) return null;
     var v = unb36(body.slice(0, 1));
     if (v !== CODE_VERSION) return null;
     var srcIdx = unb36(body.slice(1, 2));
-    var shuffleOrder = srcIdx >= 3;
-    if (shuffleOrder) srcIdx -= 3;
+    var shuffleOrder = srcIdx >= SRC_CODES.length;
+    if (shuffleOrder) srcIdx -= SRC_CODES.length;
     var source = SRC_CODES[srcIdx] || 'BOTH';
     var typeIdx = unb36(body.slice(22, 24));
     var paperIdx = unb36(body.slice(24, 27));
@@ -153,7 +158,8 @@
       type: typeIdx > 0 ? (types[typeIdx - 1] || null) : null,
       paperKey: paperIdx > 0 ? ((papers[paperIdx - 1] || {}).key || null) : null,
       perQSeconds: unb36(body.slice(27, 29)),
-      negMark: unb36(body.slice(29, 30))
+      negMark: unb36(body.slice(29, 30)),
+      readingSeconds: unb36(body.slice(30, 32))
     };
     if (!m.count || !m.seconds) return null;
     return m;
@@ -278,7 +284,7 @@
   /* =========================================================
      VIEW STATE
      ========================================================= */
-  var S = { screen: 'home', match: null, draft: null, run: null, result: null, rows: [] };
+  var S = { screen: 'home', match: null, draft: null, run: null, reading: null, result: null, rows: [] };
 
   function host() { return document.getElementById('view-games'); }
 
@@ -295,8 +301,8 @@
     h.appendChild(wrap);
     ({
       home: screenHome, create: screenCreate, share: screenShare,
-      join: screenJoin, briefing: screenBriefing, run: screenRun,
-      result: screenResult, help: screenHelp
+      join: screenJoin, briefing: screenBriefing, run: screenRun, reading: screenReading,
+      result: screenResult, review: screenReview, help: screenHelp
     }[S.screen] || screenHome)(wrap);
     // guarded: scrollIntoView is universal in real browsers, but costs
     // nothing to check first rather than assume
@@ -375,6 +381,19 @@
             (expired ? ' &middot; closed' : ' &middot; open until ' + new Date(r.expiresAt).toLocaleString()) +
           '</span></span>' +
           '<span class="vx-score">' + (r.myScore != null ? r.myScore + '/' + r.count : '—') + '</span>';
+        var btnRow = el('div'); btnRow.style.cssText = 'display:flex;gap:8px;';
+        if (!expired) {
+          var shareBtn = el('button', 'vx-btn ghost', 'Share');
+          shareBtn.type = 'button';
+          shareBtn.style.padding = '7px 14px';
+          shareBtn.addEventListener('click', function () {
+            var sm = A.decode(r.code);
+            if (!sm) { say('That code could not be read.'); return; }
+            S.match = sm;
+            go('share');
+          });
+          btnRow.appendChild(shareBtn);
+        }
         var b = el('button', 'vx-btn ghost', expired ? 'Board' : 'Open');
         b.type = 'button';
         b.style.padding = '7px 14px';
@@ -385,7 +404,8 @@
           if (expired) { S.result = null; loadBoard().then(function () { go('result'); }); }
           else go('briefing');
         });
-        row.appendChild(b);
+        btnRow.appendChild(b);
+        row.appendChild(btnRow);
         board.appendChild(row);
       });
       w.appendChild(board);
@@ -406,7 +426,7 @@
     w.appendChild(el('h3', null, 'How Arena works'));
     var ol = el('ol', 'vx-steps');
     ol.innerHTML =
-      '<li><b>The host sets the test.</b> Question bank (NDA, CDS or both), how many questions, the time limit, how many players can join, and the date the code closes.</li>' +
+      '<li><b>The host sets the test.</b> Question bank (NDA, CDS, AFCAT or a combined mix), how many questions, the time limit, how many players can join, and the date the code closes.</li>' +
       '<li><b>A code is generated.</b> Share it however you like. The code carries the settings, so nothing needs to be uploaded anywhere.</li>' +
       '<li><b>Everyone gets the same questions.</b> Up to ' + MAX_PLAYERS + ' players can use one code. The question set is identical for all of them — only the order changes, and only if the host asked for that.</li>' +
       '<li><b>Play whenever you like, before the deadline.</b> Players do not have to start together. Once the closing time passes, the code stops working and no new attempts are accepted.</li>' +
@@ -437,6 +457,7 @@
       type: null,       // null = Mixed (every type)
       paperKey: null,   // null = Any paper
       perQOn: false, perQSeconds: 30,
+      readingOn: false, readingSeconds: 60,
       negMark: 0        // 0 = no penalty, index into NEG_MARKS
     };
   }
@@ -500,9 +521,8 @@
 
     function draw() {
       form.innerHTML = '';
-      var nda = VX.poolFor ? VX.poolFor('NDA').length : 0;
-      var cds = VX.poolFor ? VX.poolFor('CDS').length : 0;
-      // a paper/type pick made under one bank may not exist under another
+      var avail = VX.availableSources ? VX.availableSources() : [];
+      var totalAll = avail.reduce(function (sum, a) { return sum + a.count; }, 0);
       var typeOptsRaw = typesFor(d.source);
       if (d.type && typeOptsRaw.indexOf(d.type) < 0) d.type = null;
       var paperOptsRaw = papersFor(d.source);
@@ -513,15 +533,14 @@
 
       /* bank */
       var f0 = field('Question bank<span class="vx-hint">Questions are drawn at random from whichever bank you pick.</span>');
-      var choices = [];
-      if (nda) choices.push('NDA');
-      if (cds) choices.push('CDS');
-      if (nda && cds) choices.push('BOTH');
+      var choices = avail.map(function (a) { return a.code; });
+      if (avail.length > 1) choices.push('BOTH');
       if (!choices.length) choices = ['NDA'];
       f0.appendChild(seg(choices, d.source, function (v) {
-        return v === 'BOTH' ? 'Both (' + (nda + cds) + ')' : v + ' (' + (v === 'NDA' ? nda : cds) + ')';
+        if (v === 'BOTH') return 'Both (' + totalAll + ')';
+        var match = avail.filter(function (a) { return a.code === v; })[0];
+        return v + ' (' + (match ? match.count : 0) + ')';
       }, function (v) { d.source = v; draw(); }));
-      if (!cds) f0.appendChild(el('span', 'vx-hint', 'CDS papers are not loaded yet. Drop them into data/pyq/ and this option appears on its own.'));
       form.appendChild(f0);
 
       /* paper */
@@ -615,6 +634,24 @@
       }
       form.appendChild(f2);
 
+      /* reading time */
+      var fR = field('Reading time<span class="vx-hint">Optional. Before the clock starts, players can look over every question but cannot select any answer yet.</span>');
+      var readToggle = seg([false, true], d.readingOn, function (v) { return v ? 'On' : 'Off'; },
+        function (v) { d.readingOn = v; draw(); });
+      if (d.readingOn) readToggle.style.marginBottom = '10px';
+      fR.appendChild(readToggle);
+      if (d.readingOn) {
+        fR.appendChild(seg([30, 60, 120, 180, 300, 600], d.readingSeconds, function (v) { return timeLabel(v); },
+          function (v) { d.readingSeconds = v; draw(); }));
+        var rdIn = el('input', 'vx-num'); rdIn.type = 'number'; rdIn.min = 5; rdIn.max = 1295; rdIn.value = d.readingSeconds;
+        rdIn.setAttribute('aria-label', 'Custom reading time in seconds'); rdIn.style.marginTop = '10px';
+        rdIn.addEventListener('change', function () {
+          d.readingSeconds = Math.max(5, Math.min(1295, parseInt(rdIn.value, 10) || 5)); draw();
+        });
+        fR.appendChild(rdIn);
+      }
+      form.appendChild(fR);
+
       /* per-question timer */
       var fQ = field('Time per question<span class="vx-hint">Optional. Each question gets its own countdown and auto-advances at zero — on top of the overall clock above.</span>');
       var perQToggle = seg([false, true], d.perQOn, function (v) { return v ? 'On' : 'Off'; },
@@ -673,6 +710,7 @@
           seed: Math.floor(Math.random() * 2176782335), expiresAt: expiresAt,
           type: d.type, paperKey: d.paperKey,
           perQSeconds: d.perQOn ? d.perQSeconds : 0,
+          readingSeconds: d.readingOn ? d.readingSeconds : 0,
           negMark: d.negMark
         };
         match.code = A.encode(match);
@@ -763,7 +801,8 @@
     strip.innerHTML =
       '<span class="vx-chip">' + m.count + ' questions</span>' +
       '<span class="vx-chip">' + timeLabel(m.seconds) + '</span>' +
-      '<span class="vx-chip">' + (m.source === 'BOTH' ? 'NDA + CDS' : m.source) + '</span>' +
+      (m.readingSeconds ? '<span class="vx-chip">' + timeLabel(m.readingSeconds) + ' reading time</span>' : '') +
+      '<span class="vx-chip">' + (m.source === 'BOTH' ? 'Combined bank' : m.source) + '</span>' +
       (m.paperKey ? '<span class="vx-chip">' + esc(paperLabel(m)) + '</span>' : '') +
       (m.type ? '<span class="vx-chip">' + esc(m.type) + '</span>' : '') +
       (m.perQSeconds ? '<span class="vx-chip">' + m.perQSeconds + 's / question</span>' : '') +
@@ -845,7 +884,8 @@
 
     var ol = el('ol', 'vx-steps');
     ol.innerHTML =
-      '<li><b>' + m.count + ' questions, ' + timeLabel(m.seconds) + '.</b> The clock starts the moment you begin and does not pause.</li>' +
+      (m.readingSeconds ? '<li><b>' + timeLabel(m.readingSeconds) + ' of reading time first.</b> You can look over every question, but answering is locked until it ends.</li>' : '') +
+      '<li><b>' + m.count + ' questions, ' + timeLabel(m.seconds) + '.</b> The clock starts the moment reading time ends (or right away, if there is none) and does not pause.</li>' +
       (m.perQSeconds ? '<li><b>' + m.perQSeconds + ' seconds per question.</b> Each question moves on by itself if you take too long — on top of the overall clock.</li>' : '') +
       '<li><b>It submits itself at zero.</b> Anything left blank scores zero, no penalty.</li>' +
       (m.negMark ? '<li><b>Negative marking is on:</b> a wrong answer costs ' + NEG_LABELS[m.negMark].replace('&minus;', '−') + ' mark. Blanks are still safe.</li>' : '') +
@@ -859,10 +899,23 @@
   }
 
   /* ---------------------------------------------------------
-     RUN
+     READING TIME  (optional, host-controlled)
+     Players can see the full paper but cannot select any answer
+     until this countdown ends — then the timed exam starts itself.
      --------------------------------------------------------- */
   function beginRun(questions) {
-    S.run = { questions: questions, index: 0, answers: {}, startedAt: Date.now() };
+    S.run = { questions: questions, index: 0, answers: {}, skipped: {}, startedAt: null };
+    if (S.match.readingSeconds > 0) {
+      S.reading = { questions: questions, deadline: Date.now() + S.match.readingSeconds * 1000 };
+      go('reading');
+    } else {
+      startExamClock();
+    }
+  }
+
+  function startExamClock() {
+    S.reading = null;
+    S.run.startedAt = Date.now();
     go('run');
     if (VX.timer) {
       VX.timer.start({
@@ -871,6 +924,74 @@
         onEnd: function () { say('Time up — your answers were submitted.'); finishRun(true); }
       });
     }
+  }
+
+  function screenReading(w) {
+    var rd = S.reading;
+    if (!rd) return go('home');
+
+    w.appendChild(el('h3', null, 'Reading time'));
+    var chip = el('div', 'vx-meta-strip');
+    var timeSpan = el('span', 'vx-chip warn', '');
+    chip.appendChild(timeSpan);
+    w.appendChild(chip);
+    w.appendChild(el('p', 'vx-sub', 'Look over the paper below. Answering is locked until the clock above runs out — then the timed exam begins on its own.'));
+
+    var list = el('div');
+    list.style.cssText = 'display:flex;flex-direction:column;gap:16px;margin-top:14px';
+    rd.questions.forEach(function (q, i) {
+      var card = el('div', 'vx-tile');
+      card.style.cursor = 'default';
+      var body =
+        '<p style="font-size:.78rem;color:var(--vx-muted);margin:0 0 8px">Question ' + (i + 1) + '</p>' +
+        (q.passage ? '<div class="pv-passage"><div class="pv-passage-label">Passage</div><div class="pv-passage-text">' + esc(q.passage) + '</div></div>' : '') +
+        '<p style="font-size:1rem;line-height:1.6;color:var(--vx-ink);margin:0 0 12px">' +
+        (q.keyword ? '<b>' + esc(q.keyword) + '</b> — ' : '') + esc(q.q) + '</p>';
+      card.innerHTML = body;
+      var opts = el('div', 'vx-seg');
+      opts.style.flexDirection = 'column';
+      opts.style.opacity = '.55';
+      opts.style.pointerEvents = 'none';
+      (q.o || []).forEach(function (text) {
+        opts.appendChild(el('div', 'opt-btn', esc(text)));
+      });
+      card.appendChild(opts);
+      list.appendChild(card);
+    });
+    w.appendChild(list);
+
+    function tick() {
+      var left = Math.max(0, Math.ceil((rd.deadline - Date.now()) / 1000));
+      timeSpan.textContent = fmtClock(left) + ' left to read';
+      if (left <= 0) { clearQTimer(); startExamClock(); }
+    }
+    tick();
+    S._qTimerHandle = setInterval(tick, 250);
+  }
+
+  /* Jump-to-question grid: green = attempted, grey = explicitly skipped,
+     red = not attempted yet. Clicking a tile jumps straight to it. */
+  function questionGridHTML(r) {
+    var wrap = el('div', 'vx-qgrid-wrap');
+    var legend = el('div', 'vx-qgrid-legend');
+    legend.innerHTML =
+      '<span><i class="vx-qdot ok"></i>Attempted</span>' +
+      '<span><i class="vx-qdot skip"></i>Skipped</span>' +
+      '<span><i class="vx-qdot none"></i>Not attempted</span>';
+    wrap.appendChild(legend);
+    var grid = el('div', 'vx-qgrid');
+    r.questions.forEach(function (q, i) {
+      var state = r.answers[q._id] !== undefined ? 'ok' : (r.skipped[q._id] ? 'skip' : 'none');
+      var b = el('button', 'vx-qgrid-btn ' + state, String(i + 1));
+      b.type = 'button';
+      if (i === r.index) b.classList.add('current');
+      b.setAttribute('aria-label', 'Question ' + (i + 1) + ' — ' +
+        (state === 'ok' ? 'attempted' : state === 'skip' ? 'skipped' : 'not attempted'));
+      b.addEventListener('click', function () { r.index = i; render(); });
+      grid.appendChild(b);
+    });
+    wrap.appendChild(grid);
+    return wrap;
   }
 
   function screenRun(w) {
@@ -884,6 +1005,8 @@
       '<span class="vx-chip">' + esc(q.sec || '') + '</span>' +
       '<span class="vx-chip">' + esc(q._exam || 'NDA') + ' ' + esc(q.s || '') + ' ' + esc(q.y || '') + '</span>';
     w.appendChild(top);
+
+    w.appendChild(questionGridHTML(r));
 
     /* optional per-question countdown — fresh every time a question is
        shown; auto-advances (or submits, if this is the last one) at zero */
@@ -922,6 +1045,7 @@
       b.setAttribute('aria-pressed', String(r.answers[q._id] === i));
       b.addEventListener('click', function () {
         r.answers[q._id] = i;
+        delete r.skipped[q._id];
         if (r.index < r.questions.length - 1) { r.index++; render(); }
         else render();
       });
@@ -937,7 +1061,10 @@
     prev.addEventListener('click', function () { r.index--; render(); });
     var next = el('button', 'vx-btn ghost', 'Skip'); next.type = 'button';
     next.disabled = r.index >= r.questions.length - 1;
-    next.addEventListener('click', function () { r.index++; render(); });
+    next.addEventListener('click', function () {
+      if (r.answers[q._id] === undefined) r.skipped[q._id] = true;
+      r.index++; render();
+    });
     nav.appendChild(prev); nav.appendChild(next);
     w.appendChild(nav);
 
@@ -971,7 +1098,9 @@
     var entry = {
       pid: playerId(), name: playerName(), score: score,
       seconds: seconds, total: r.questions.length,
-      at: Date.now(), auto: !!auto
+      at: Date.now(), auto: !!auto,
+      qids: r.questions.map(function (q) { return q._id; }),
+      answers: r.answers
     };
     S.result = entry;
     S.run = null;
@@ -1038,7 +1167,76 @@
     var again = el('button', 'vx-btn ghost', 'Back to Arena');
     again.type = 'button'; again.style.marginTop = '18px';
     again.addEventListener('click', function () { go('home'); });
+
+    if (res && res.qids && res.qids.length) {
+      var review = el('button', 'vx-btn ghost', 'View answers');
+      review.type = 'button'; review.style.marginTop = '18px'; review.style.marginRight = '10px';
+      review.addEventListener('click', function () { go('review'); });
+      w.appendChild(review);
+    }
     w.appendChild(again);
+  }
+
+  function sharedById() {
+    try { return (typeof PYQ_BY_ID !== 'undefined') ? PYQ_BY_ID : {}; }
+    catch (e) { return {}; }
+  }
+
+  /* ---------------------------------------------------------
+     REVIEW  ·  question-by-question right/wrong after submission
+     --------------------------------------------------------- */
+  function screenReview(w) {
+    var res = S.result;
+    backBtn(w, 'Result', 'result');
+    w.appendChild(el('h3', null, 'View answers'));
+    if (!res || !res.qids || !res.qids.length) {
+      w.appendChild(el('p', 'vx-sub', 'No answer record is available for this attempt.'));
+      return;
+    }
+    w.appendChild(el('p', 'vx-sub', 'Green is what you picked and correct. Red is what you picked and wrong — the correct option is marked separately. Grey means you left it blank.'));
+
+    var byId = sharedById();
+    var list = el('div');
+    list.style.cssText = 'display:flex;flex-direction:column;gap:16px;margin-top:16px';
+    res.qids.forEach(function (qid, i) {
+      var q = byId[qid];
+      var card = el('div', 'vx-tile');
+      card.style.cursor = 'default';
+      if (!q) {
+        card.innerHTML = '<p class="vx-sub">Question ' + (i + 1) + ' is no longer available on this device.</p>';
+        list.appendChild(card);
+        return;
+      }
+      var given = res.answers ? res.answers[qid] : undefined;
+      var body =
+        '<p style="font-size:.78rem;color:var(--vx-muted);margin:0 0 8px">Question ' + (i + 1) + (q.sec ? ' · ' + esc(q.sec) : '') + '</p>' +
+        (q.passage ? '<div class="pv-passage"><div class="pv-passage-label">Passage</div><div class="pv-passage-text">' + esc(q.passage) + '</div></div>' : '') +
+        '<p style="font-size:1rem;line-height:1.6;color:var(--vx-ink);margin:0 0 14px">' +
+        (q.keyword ? '<b>' + esc(q.keyword) + '</b> — ' : '') +
+        (typeof pyqHi === 'function' ? pyqHi(q) : esc(q.q)) + '</p>';
+      card.innerHTML = body;
+      var opts = el('div', 'vx-seg');
+      opts.style.flexDirection = 'column';
+      (q.o || []).forEach(function (text, oi) {
+        var cls = '';
+        if (oi === q.ans) cls = ' correct';
+        else if (oi === given) cls = ' wrong';
+        var b = el('div', 'opt-btn' + cls, esc(text));
+        b.style.cursor = 'default';
+        opts.appendChild(b);
+      });
+      card.appendChild(opts);
+      if (given === undefined) {
+        card.appendChild(el('p', 'vx-hint', 'You left this blank — no penalty.'));
+      }
+      list.appendChild(card);
+    });
+    w.appendChild(list);
+
+    var back = el('button', 'vx-btn ghost', 'Back to result');
+    back.type = 'button'; back.style.marginTop = '18px';
+    back.addEventListener('click', function () { go('result'); });
+    w.appendChild(back);
   }
 
   /* ---------------------------------------------------------
