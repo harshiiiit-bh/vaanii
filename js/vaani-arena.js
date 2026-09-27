@@ -373,28 +373,44 @@
 
     w.appendChild(actions);
 
-    /* recent matches on this device — most recent 3 only */
-    var recent = loadRecent().slice(0, 3);
+    /* Recent matches and activity summary: only real local records are shown. */
+    var recentAll = loadRecent().slice(0, 20);
+    var recent = recentAll.slice(0, 3);
+    var openCount = recentAll.filter(function (r) { return Date.now() < Number(r.expiresAt); }).length;
+    var attemptedCount = recentAll.filter(function (r) { return r.myScore != null; }).length;
+    var homeMetrics = el('div', 'vx-home-metrics');
+    [
+      { label: 'Recent matches', value: recentAll.length, detail: 'On this device' },
+      { label: 'Open codes', value: openCount, detail: 'Still available' },
+      { label: 'Your submissions', value: attemptedCount, detail: 'First attempts only' }
+    ].forEach(function (item) {
+      var metric = el('div', 'vx-home-metric');
+      metric.innerHTML = '<span>' + esc(item.label) + '</span><strong>' + esc(String(item.value)) + '</strong><small>' + esc(item.detail) + '</small>';
+      homeMetrics.appendChild(metric);
+    });
+    w.appendChild(homeMetrics);
+
+    var recentSection = el('section', 'vx-recent-section');
+    var recentHeading = el('div', 'vx-section-heading');
+    recentHeading.innerHTML = '<div><span class="vx-section-kicker">MATCH HISTORY</span><h3>Your recent matches</h3><p>Quick access to codes you created or joined on this device.</p></div><span class="vx-section-count">' + recent.length + ' shown</span>';
+    recentSection.appendChild(recentHeading);
     if (recent.length) {
-      w.appendChild(el('h3', null, 'Your recent matches'));
-      var board = el('div', 'vx-board');
-      board.style.marginTop = '12px';
+      var board = el('div', 'vx-board vx-recent-board');
       recent.forEach(function (r) {
-        var row = el('div', 'vx-row');
-        row.style.marginBottom = '10px';
-        var expired = Date.now() > r.expiresAt;
+        var row = el('div', 'vx-row vx-recent-row');
+        var expired = Date.now() >= Number(r.expiresAt);
+        var score = r.myScore != null ? r.myScore + '/' + r.count : '—';
         row.innerHTML =
-          '<span class="vx-rank">' + (expired ? '&times;' : '&bull;') + '</span>' +
-          '<span>' + esc(A.prettyCode(r.code)) + '<br><span class="vx-time">' +
-            r.count + ' questions &middot; ' + r.source +
-            (expired ? ' &middot; closed' : ' &middot; open until ' + new Date(r.expiresAt).toLocaleString()) +
-          '</span></span>' +
-          '<span class="vx-score">' + (r.myScore != null ? r.myScore + '/' + r.count : '—') + '</span>';
-        var btnRow = el('div'); btnRow.style.cssText = 'display:flex;gap:8px;';
+          '<span class="vx-rank ' + (expired ? 'is-closed' : 'is-open') + '">' + (expired ? '&times;' : '&bull;') + '</span>' +
+          '<span class="vx-recent-main"><strong class="vx-recent-code">' + esc(A.prettyCode(r.code)) + '</strong><small class="vx-recent-meta">' +
+            esc(String(r.count)) + ' questions · ' + esc(String(r.source)) +
+            (expired ? ' · Closed' : ' · Open until ' + esc(new Date(r.expiresAt).toLocaleString())) +
+          '</small></span>' +
+          '<span class="vx-score">' + esc(score) + '</span>';
+        var btnRow = el('div', 'vx-recent-actions');
         if (!expired) {
           var shareBtn = el('button', 'vx-btn ghost', 'Share');
           shareBtn.type = 'button';
-          shareBtn.style.padding = '7px 14px';
           shareBtn.addEventListener('click', function () {
             var sm = A.decode(r.code);
             if (!sm) { say('That code could not be read.'); return; }
@@ -405,7 +421,6 @@
         }
         var b = el('button', 'vx-btn ghost', expired ? 'Board' : 'Open');
         b.type = 'button';
-        b.style.padding = '7px 14px';
         b.addEventListener('click', function () {
           var m = A.decode(r.code);
           if (!m) { say('That code could not be read.'); return; }
@@ -417,8 +432,12 @@
         row.appendChild(btnRow);
         board.appendChild(row);
       });
-      w.appendChild(board);
+      recentSection.appendChild(board);
+    } else {
+      var noRecent = el('div', 'vx-empty vx-recent-empty', 'Your match history will appear here after you create or join a match.');
+      recentSection.appendChild(noRecent);
     }
+    w.appendChild(recentSection);
 
     var help = el('button', 'vx-btn ghost', 'How Arena works');
     help.type = 'button';
@@ -1147,8 +1166,26 @@
       return;
     }
 
-    w.appendChild(el('h3', null, 'Leaderboard'));
     var entries = S.rows.slice(0, MAX_PLAYERS).map(function (row, i) { return { row: row, rank: i + 1 }; });
+    var myRank = entries.findIndex(function (entry) { return entry.row.pid === playerId(); }) + 1;
+    var topScore = entries.length ? String(entries[0].row.score) + '/' + String(entries[0].row.total) : '—';
+    var boardHeading = el('div', 'vx-board-heading');
+    boardHeading.innerHTML =
+      '<div><span class="vx-section-kicker">MATCH STANDINGS</span><h3>Leaderboard</h3>' +
+      '<p>Ranked by score, with completion time as the tie-breaker.</p></div>' +
+      '<span class="vx-board-live">' + (A.sync.live ? '● Shared live' : '● This device') + '</span>';
+    w.appendChild(boardHeading);
+    var boardSummary = el('div', 'vx-board-summary');
+    [
+      {label:'Attempts',value:String(entries.length)},
+      {label:'Top score',value:topScore},
+      {label:'Your position',value:myRank>0?'#'+myRank:'—'}
+    ].forEach(function (item) {
+      var card=el('div','vx-board-summary-card');
+      card.innerHTML='<span>'+esc(item.label)+'</span><strong>'+esc(item.value)+'</strong>';
+      boardSummary.appendChild(card);
+    });
+    w.appendChild(boardSummary);
     var toolbar = el('div', 'vx-board-toolbar');
     var search = el('input', 'vx-board-search');
     search.type = 'search';
