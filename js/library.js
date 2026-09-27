@@ -2367,67 +2367,95 @@ function allBooksWithStatus(){
     ...DATA.upcoming.map(b=>({...b, status:'upcoming'})),
   ];
 }
+let libraryStatusFilter='All';
+let librarySortMode='recent';
 function libraryBookGridHtml(filter){
-  const all = allBooksWithStatus();
-  const filtered = filter==='All' ? all : filter==='Uncategorized' ? all.filter(b=>!b.category) : all.filter(b=>b.category===filter);
-  if(!filtered.length) return `<div class="vbv-empty-state" style="grid-column:1/-1;"><h4>No books here</h4><p>Nothing filed under this category yet.</p></div>`;
-  return filtered.map(b=> b.status==='completed' ? completedCardHtml(b) : b.status==='ongoing' ? ongoingCardHtml(b) : upcomingCardHtml(b)).join('');
+  const all=allBooksWithStatus();
+  const filtered=filter==='All'?all:filter==='Uncategorized'?all.filter(b=>!b.category):all.filter(b=>b.category===filter);
+  if(!filtered.length)return '<div class="vbv-empty-state" style="grid-column:1/-1;"><h4>No books here</h4><p>Nothing filed under this category yet.</p></div>';
+  return filtered.map(b=>b.status==='completed'?completedCardHtml(b):b.status==='ongoing'?ongoingCardHtml(b):upcomingCardHtml(b)).join('');
 }
-function setLibraryFilter(el){
-  const row = el.parentElement;
-  [...row.children].forEach(c=>c.classList.remove('active'));
-  el.classList.add('active');
-  document.getElementById('library-book-grid').innerHTML = libraryBookGridHtml(el.dataset.val);
+function setLibraryFilter(button){
+  if(!button)return;
+  const row=button.parentElement;
+  if(row)row.querySelectorAll('[data-val]').forEach(item=>item.classList.toggle('active',item===button));
+  filterLibraryBooks();
+}
+function setLibraryStatus(button){
+  if(!button)return;
+  libraryStatusFilter=button.dataset.status||'All';
+  const row=button.parentElement;
+  if(row)row.querySelectorAll('[data-status]').forEach(item=>{
+    const active=item===button;item.classList.toggle('active',active);item.setAttribute('aria-pressed',String(active));
+  });
+  filterLibraryBooks();
+}
+function sortLibraryBooks(mode){
+  librarySortMode=['recent','title','pages'].includes(mode)?mode:'recent';
+  filterLibraryBooks();
+}
+function filterLibraryBooks(){
+  const grid=document.getElementById('library-book-grid');if(!grid)return;
+  const category=document.querySelector('#lib-filter-row .active')?.dataset.val||'All';
+  const term=String(document.getElementById('lib-search')?.value||'').trim().toLocaleLowerCase();
+  const all=allBooksWithStatus();
+  let list=all.filter(book=>{
+    const catOk=category==='All'||(category==='Uncategorized'?!book.category:book.category===category);
+    const statusOk=libraryStatusFilter==='All'||book.status===libraryStatusFilter;
+    const search=[book.title,book.author,book.category,book.status].join(' ').toLocaleLowerCase().includes(term);
+    return catOk&&statusOk&&(!term||search);
+  });
+  if(librarySortMode==='title')list.sort((a,b)=>String(a.title||'').localeCompare(String(b.title||''),undefined,{sensitivity:'base'}));
+  else if(librarySortMode==='pages')list.sort((a,b)=>{
+    const pages=book=>(book.logs||[]).reduce((n,l)=>n+Number(l.pages||0),0);
+    return pages(b)-pages(a)||String(a.title||'').localeCompare(String(b.title||''));
+  });
+  else list.sort((a,b)=>{
+    const date=book=>book.endAt||book.endDate||book.startAt||book.addedAt||'';
+    return String(date(b)).localeCompare(String(date(a)));
+  });
+  grid.innerHTML=list.length?list.map(book=>book.status==='completed'?completedCardHtml(book):book.status==='ongoing'?ongoingCardHtml(book):upcomingCardHtml(book)).join(''):'<div class="vbv-empty-state" style="grid-column:1/-1;"><h4>No matching books</h4><p>Try another title, category or reading status.</p></div>';
+  const count=document.getElementById('lib-result-count');
+  if(count)count.textContent=list.length+' of '+all.length+' books';
 }
 function renderLibrary(){
-  const all = allBooksWithStatus();
-  const counts = {};
-  BOOK_CATEGORIES.forEach(c=> counts[c]=0);
-  let uncategorized = 0;
-  all.forEach(b=>{ if(b.category && counts[b.category]!==undefined) counts[b.category]++; else uncategorized++; });
-  const maxCount = Math.max(1, ...Object.values(counts), uncategorized);
-  const totalPagesByCat = {};
-  BOOK_CATEGORIES.forEach(c=> totalPagesByCat[c]=0);
+  libraryStatusFilter='All';librarySortMode='recent';
+  const all=allBooksWithStatus();
+  const counts={};BOOK_CATEGORIES.forEach(c=>counts[c]=0);
+  let uncategorized=0;
+  all.forEach(b=>{if(b.category&&counts[b.category]!==undefined)counts[b.category]++;else uncategorized++;});
+  const maxCount=Math.max(1,...Object.values(counts),uncategorized);
+  const totalPagesByCat={};BOOK_CATEGORIES.forEach(c=>totalPagesByCat[c]=0);
   DATA.completed.forEach(b=>{
-    const p = (b.logs||[]).reduce((a,l)=>a+Number(l.pages||0),0);
-    if(b.category && totalPagesByCat[b.category]!==undefined) totalPagesByCat[b.category]+=p;
+    const p=(b.logs||[]).reduce((a,l)=>a+Number(l.pages||0),0);
+    if(b.category&&totalPagesByCat[b.category]!==undefined)totalPagesByCat[b.category]+=p;
   });
-  const topCategory = Object.entries(counts).sort((a,b)=>b[1]-a[1])[0];
-  return `
-  <div class="page">
-    <div class="page-head with-bg" style="background-image:url('${IMG.officers_march}')">
-      <div class="page-eyebrow">Full Library</div>
-      <h2>Your Reading Library</h2>
-      <p>Every book across every stage, organized by category — a wider view than Ongoing, Completed, or Upcoming alone.</p>
-    </div>
-
-    <div class="panel">
-      <h3 style="margin-bottom:14px;">By Category</h3>
-      ${BOOK_CATEGORIES.map(c=>`
-        <div class="cat-bar-row">
-          <span class="cat-bar-label">${c}</span>
-          <div class="cat-bar-track"><div class="cat-bar-fill" style="width:${Math.round(100*counts[c]/maxCount)}%"></div></div>
-          <span class="cat-bar-count">${counts[c]}</span>
-        </div>`).join('')}
-      ${uncategorized ? `
-        <div class="cat-bar-row">
-          <span class="cat-bar-label">Uncategorized</span>
-          <div class="cat-bar-track"><div class="cat-bar-fill" style="width:${Math.round(100*uncategorized/maxCount)}%; background:var(--navy-soft);"></div></div>
-          <span class="cat-bar-count">${uncategorized}</span>
-        </div>` : ''}
-      ${topCategory && topCategory[1]>0 ? `<p style="font-size:12.5px; color:var(--navy-soft); margin-top:12px;">Your most-stocked shelf: <strong>${topCategory[0]}</strong> (${topCategory[1]} book${topCategory[1]>1?'s':''}).</p>` : ''}
-    </div>
-
-    <div class="section-title-row" style="margin-top:26px;"><h3>Browse</h3></div>
-    <div class="chip-row" id="lib-filter-row">
-      <button class="vbv-chip active" data-val="All" onclick="setLibraryFilter(this)">All (${all.length})</button>
-      ${BOOK_CATEGORIES.map(c=>`<button class="vbv-chip" data-val="${c}" onclick="setLibraryFilter(this)">${c} (${counts[c]})</button>`).join('')}
-      ${uncategorized ? `<button class="vbv-chip" data-val="Uncategorized" onclick="setLibraryFilter(this)">Uncategorized (${uncategorized})</button>` : ''}
-    </div>
-    <div class="book-grid" id="library-book-grid">${libraryBookGridHtml('All')}</div>
-  </div>`;
+  const topCategory=Object.entries(counts).sort((a,b)=>b[1]-a[1])[0];
+  return [
+    '<div class="page">',
+    '<div class="page-head with-bg" style="background-image:url(\\''+IMG.officers_march+'\\')">',
+    '<div class="page-eyebrow">Full Library</div><h2>Your Reading Library</h2>',
+    '<p>Every title across your reading journey. Search, filter by stage, or sort the shelves to find a book quickly.</p></div>',
+    '<div class="panel vbv-library-browser"><div class="vbv-library-toolbar">',
+    '<label class="vbv-register-search"><span aria-hidden="true">⌕</span><input id="lib-search" type="search" maxlength="80" placeholder="Search titles, authors and categories…" oninput="filterLibraryBooks()" aria-label="Search the full book library"></label>',
+    '<label class="vbv-library-sort"><span>Sort</span><select id="lib-sort" onchange="sortLibraryBooks(this.value)"><option value="recent">Recently active</option><option value="title">Title A–Z</option><option value="pages">Most pages read</option></select></label>',
+    '</div><div class="vbv-library-status" id="lib-status-row" role="group" aria-label="Filter by reading stage">',
+    '<button type="button" class="active" data-status="All" aria-pressed="true" onclick="setLibraryStatus(this)">All stages</button>',
+    '<button type="button" data-status="ongoing" aria-pressed="false" onclick="setLibraryStatus(this)">Reading</button>',
+    '<button type="button" data-status="upcoming" aria-pressed="false" onclick="setLibraryStatus(this)">Upcoming</button>',
+    '<button type="button" data-status="completed" aria-pressed="false" onclick="setLibraryStatus(this)">Completed</button>',
+    '</div><div class="vbv-library-count" id="lib-result-count">'+all.length+' of '+all.length+' books</div></div>',
+    '<div class="panel"><h3 style="margin-bottom:14px;">By Category</h3>',
+    BOOK_CATEGORIES.map(c=>'<div class="cat-bar-row"><span class="cat-bar-label">'+escapeHtml(c)+'</span><div class="cat-bar-track"><div class="cat-bar-fill" style="width:'+Math.round(100*counts[c]/maxCount)+'%"></div></div><span class="cat-bar-count">'+counts[c]+'</span></div>').join(''),
+    uncategorized?'<div class="cat-bar-row"><span class="cat-bar-label">Uncategorized</span><div class="cat-bar-track"><div class="cat-bar-fill" style="width:'+Math.round(100*uncategorized/maxCount)+'%;background:var(--navy-soft)"></div></div><span class="cat-bar-count">'+uncategorized+'</span></div>':'',
+    topCategory&&topCategory[1]>0?'<p style="font-size:12.5px;color:var(--navy-soft);margin-top:12px;">Most-stocked shelf: <strong>'+escapeHtml(topCategory[0])+'</strong> ('+topCategory[1]+' book'+(topCategory[1]>1?'s':'')+').</p>':'',
+    '</div><div class="section-title-row" style="margin-top:26px;"><h3>Browse by category</h3></div>',
+    '<div class="chip-row" id="lib-filter-row"><button type="button" class="vbv-chip active" data-val="All" onclick="setLibraryFilter(this)">All ('+all.length+')</button>',
+    BOOK_CATEGORIES.map(c=>'<button type="button" class="vbv-chip" data-val="'+escapeHtml(c)+'" onclick="setLibraryFilter(this)">'+escapeHtml(c)+' ('+counts[c]+')</button>').join(''),
+    uncategorized?'<button type="button" class="vbv-chip" data-val="Uncategorized" onclick="setLibraryFilter(this)">Uncategorized ('+uncategorized+')</button>':'',
+    '</div><div class="book-grid" id="library-book-grid">'+libraryBookGridHtml('All')+'</div></div>'
+  ].join('');
 }
-
 /* ================= WORD OF THE DAY ================= */
 function wordOfTheDay(){
   const keys = Object.keys(OFFLINE_DICT);
