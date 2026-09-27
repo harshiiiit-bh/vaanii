@@ -2571,98 +2571,81 @@ function gjFrontierIndex(order){
 }
 let gjResizeBound = false;
 function renderGrammarJourney(){
-  const wrap = document.getElementById('gjPathWrap');
-  if(!wrap) return;
-  const order = gjOrder();
-  const total = order.length;
-  const cleared = order.filter(id=>State.completedTopics[id]).length;
-  const frontier = gjFrontierIndex(order);
-  const overallPct = total ? Math.round((cleared/total)*100) : 0;
+  const wrap=document.getElementById('gjPathWrap');
+  if(!wrap)return;
+  const order=gjOrder(),total=order.length;
+  const cleared=order.filter(id=>State.completedTopics[id]).length;
+  const frontier=gjFrontierIndex(order);
+  const overallPct=total?Math.round(cleared/total*100):0;
 
-  /* ---- header stats ---- */
-  const rankChip = document.getElementById('gjRankChip'); if(rankChip) rankChip.textContent = 'Rank: '+(gjRankLabel(cleared,total));
-  const elOverall = document.getElementById('gjStatOverall'); if(elOverall) elOverall.textContent = overallPct+'%';
-  const elCompleted = document.getElementById('gjStatCompleted'); if(elCompleted) elCompleted.textContent = cleared+'/'+total;
-  const frontierTopic = order[frontier] ? GRAMMAR.find(g=>g.id===order[frontier]) : null;
-  const elCurrent = document.getElementById('gjStatCurrent'); if(elCurrent) elCurrent.textContent = frontierTopic ? (GJ_SHORT[frontierTopic.id]||frontierTopic.title) : 'Done';
-  const elStreak = document.getElementById('gjStatStreak'); if(elStreak) elStreak.textContent = (State.personalBests && State.personalBests.longestStreak) || 0;
-  const cadetLine = document.getElementById('gjCadetLine');
-  const cadetSub = document.getElementById('gjCadetSub');
-  const cadetBar = document.getElementById('gjCadetBarFill');
-  if(cadetLine) cadetLine.textContent = frontierTopic ? ('Next up: '+frontierTopic.title) : 'Every topic cleared, Cadet!';
-  if(cadetSub) cadetSub.textContent = frontierTopic ? 'Keep going — every level makes you stronger.' : 'Time to hunt for a perfect quiz streak.';
-  if(cadetBar) cadetBar.style.width = overallPct+'%';
+  const rankChip=document.getElementById('gjRankChip');if(rankChip)rankChip.textContent='Rank: '+gjRankLabel(cleared,total);
+  const elOverall=document.getElementById('gjStatOverall');if(elOverall)elOverall.textContent=overallPct+'%';
+  const elCompleted=document.getElementById('gjStatCompleted');if(elCompleted)elCompleted.textContent=cleared+'/'+total;
+  const frontierTopic=order[frontier]?GRAMMAR.find(g=>g.id===order[frontier]):null;
+  const elCurrent=document.getElementById('gjStatCurrent');if(elCurrent)elCurrent.textContent=frontierTopic?(GJ_SHORT[frontierTopic.id]||frontierTopic.title):'Done';
+  const elStreak=document.getElementById('gjStatStreak');if(elStreak)elStreak.textContent=(State.personalBests&&State.personalBests.longestStreak)||0;
+  const cadetLine=document.getElementById('gjCadetLine');
+  const cadetSub=document.getElementById('gjCadetSub');
+  const cadetBar=document.getElementById('gjCadetBarFill');
+  if(cadetLine)cadetLine.textContent=frontierTopic?('Next up: '+frontierTopic.title):'Every topic cleared, Cadet!';
+  if(cadetSub)cadetSub.textContent=frontierTopic?'Follow the stages below. Each card opens a topic with its lesson, notes and practice.':'All grammar topics are complete. Revisit any stage to revise.';
+  if(cadetBar)cadetBar.style.width=overallPct+'%';
 
-  /* ---- layout math ---- */
-  const width = wrap.clientWidth || 340;
-  const step = width < 380 ? 120 : 140;
-  const amp = Math.min(width*0.27, 120);
-  const centerX = width/2;
-  const topPad = 50;
-  const points = order.map((id,i)=>({
-    id, x: centerX + amp*Math.sin(i*0.9), y: topPad + i*step
-  }));
-  const totalHeight = topPad*2 + (total-1)*step;
-  wrap.style.height = totalHeight+'px';
-
-  /* ---- svg connectors ---- */
-  const svg = document.getElementById('gjSvg');
-  if(svg){
-    svg.setAttribute('viewBox','0 0 '+width+' '+totalHeight);
-    svg.setAttribute('width', width);
-    svg.setAttribute('height', totalHeight);
-    let clearedPath = 'M'+points[0].x+','+points[0].y;
-    let lockedPath = '';
-    for(let i=1;i<points.length;i++){
-      const p0=points[i-1], p1=points[i];
-      const midY=(p0.y+p1.y)/2;
-      const seg = ' C'+p0.x+','+midY+' '+p1.x+','+midY+' '+p1.x+','+p1.y;
-      if(i<=frontier) clearedPath += seg;
-      else { if(!lockedPath) lockedPath='M'+p0.x+','+p0.y; lockedPath += seg; }
-    }
-    const defs = svg.querySelector('defs') ? svg.querySelector('defs').outerHTML : '';
-    svg.innerHTML = defs
-      + (lockedPath ? `<path d="${lockedPath}" class="gj-connector-locked"/>` : '')
-      + `<path d="${clearedPath}" class="gj-connector"/>`;
-  }
-
-  /* ---- nodes ---- */
-  let nodesHTML = '';
-  points.forEach((p,i)=>{
-    const id = p.id;
-    const g = GRAMMAR.find(x=>x.id===id); if(!g) return;
-    const done = !!State.completedTopics[id];
-    const isCurrent = i===frontier;
-    const started = State.quizScores[id]!=null || (State.topicProgress && State.topicProgress[id]);
-    let stateClass = 'locked';
-    if(done) stateClass='completed';
-    else if(isCurrent) stateClass='current';
-    else if(i<frontier || started) stateClass='available';
-    nodesHTML += `<button class="gj-node ${stateClass}" data-id="${id}" data-locked="${i>frontier?'1':'0'}"
-        style="left:${p.x}px;top:${p.y}px">
-      <span class="gj-node-badge">${g.icon}${done?'<span class=\"gj-node-check\">✓</span>':''}</span>
-      <span class="gj-node-label">${GJ_SHORT[id]||g.title}</span>
-      <span class="gj-node-num">${i+1}</span>
-    </button>`;
-  });
-  /* cadet marker sits at the frontier node (or last node if all cleared) */
-  const markerPt = points[Math.min(frontier, points.length-1)];
-  if(markerPt){
-    nodesHTML += `<div class="gj-cadetmarker" style="left:${markerPt.x+46}px;top:${markerPt.y-10}px">🎖️</div>`;
-  }
-  /* wipe old nodes/marker but keep the svg element (rebuilt above) */
-  wrap.querySelectorAll('.gj-node,.gj-cadetmarker').forEach(n=>n.remove());
-  wrap.insertAdjacentHTML('beforeend', nodesHTML);
-  wrap.querySelectorAll('.gj-node').forEach(btn=>{
-    btn.addEventListener('click',()=>{
-      const id = btn.dataset.id;
-      if(btn.dataset.locked==='1'){
-        toast('Clear the levels above this one first, Cadet.');
-        return;
-      }
-      gtOpenSheet(id);
+  const descriptions=[
+    'Start here: learn the basic parts of a sentence.',
+    'Build control over verbs, time and sentence links.',
+    'Put ideas together and understand sentence patterns.',
+    'Improve clarity, correctness and written form.',
+    'Practise the question styles used in competitive exams.'
+  ];
+  const roadmap=document.createElement('div');roadmap.className='gj-roadmap';
+  SKILL_TIERS.forEach((tier,tierIndex)=>{
+    const ids=tier.ids.filter(id=>GRAMMAR.some(g=>g.id===id));if(!ids.length)return;
+    const doneCount=ids.filter(id=>State.completedTopics[id]).length;
+    const tierPct=Math.round(doneCount/ids.length*100);
+    const containsFrontier=frontier<total&&ids.includes(order[frontier]);
+    const isDefault=containsFrontier||(frontier>=total&&tierIndex===SKILL_TIERS.length-1);
+    const stage=document.createElement('details');stage.className='gj-roadmap-stage';stage.dataset.tier=String(tierIndex);stage.open=isDefault;
+    const summary=document.createElement('summary');
+    const num=document.createElement('span');num.className='gj-stage-num';num.textContent=String(tierIndex+1).padStart(2,'0');
+    const copy=document.createElement('span');copy.className='gj-stage-copy';
+    const title=document.createElement('span');title.className='gj-stage-title';title.textContent=tier.label.replace(/^Tier [IVX]+\s*·\s*/,'');
+    const desc=document.createElement('span');desc.className='gj-stage-desc';desc.textContent=descriptions[tierIndex]||'Keep moving through the grammar curriculum.';
+    copy.append(title,desc);
+    const count=document.createElement('span');count.className='gj-stage-count';count.textContent=doneCount+'/'+ids.length+' cleared';
+    summary.append(num,copy,count);stage.appendChild(summary);
+    const progress=document.createElement('div');progress.className='gj-stage-progress';progress.setAttribute('aria-hidden','true');
+    const fill=document.createElement('span');fill.style.width=tierPct+'%';progress.appendChild(fill);stage.appendChild(progress);
+    const grid=document.createElement('div');grid.className='gj-stage-grid';
+    ids.forEach(id=>{
+      const g=GRAMMAR.find(x=>x.id===id);if(!g)return;
+      const index=order.indexOf(id),done=!!State.completedTopics[id],locked=index>frontier;
+      const state=done?'is-done':index===frontier?'is-current':locked?'is-locked':'is-available';
+      const label=done?'Completed':index===frontier?'Next up':locked?'Locked':'Available';
+      const card=document.createElement('button');card.type='button';card.className='gj-roadmap-card '+state;card.dataset.id=id;card.dataset.locked=locked?'1':'0';
+      card.setAttribute('aria-label',g.title+'. '+label+(locked?'. Clear the earlier topics first.':'. Open topic.'));
+      const icon=document.createElement('span');icon.className='gj-roadmap-icon';icon.setAttribute('aria-hidden','true');icon.textContent=g.icon||'📘';
+      const body=document.createElement('span');body.className='gj-roadmap-copy';
+      const name=document.createElement('span');name.className='gj-roadmap-name';name.textContent=g.title;
+      const short=document.createElement('span');short.className='gj-roadmap-desc';short.textContent=g.desc||'Open the topic to study its rules and examples.';
+      const status=document.createElement('span');status.className='gj-roadmap-state';status.textContent=label;
+      body.append(name,short,status);
+      const action=document.createElement('span');action.className='gj-roadmap-action';action.setAttribute('aria-hidden','true');action.textContent=locked?'🔒':'→';
+      card.append(icon,body,action);grid.appendChild(card);
     });
+    stage.appendChild(grid);roadmap.appendChild(stage);
   });
+  wrap.style.removeProperty('height');
+  wrap.replaceChildren(roadmap);
+  if(wrap.dataset.eventsBound!=='1'){
+    wrap.dataset.eventsBound='1';
+    wrap.addEventListener('click',event=>{
+      const card=event.target.closest('.gj-roadmap-card');
+      if(!card||!wrap.contains(card))return;
+      if(card.dataset.locked==='1'){toast('Clear the levels above this one first, Cadet.');return;}
+      gtOpenSheet(card.dataset.id);
+    });
+  }
 }
 function gjRankLabel(cleared,total){
   if(!total) return 'Recruit';
