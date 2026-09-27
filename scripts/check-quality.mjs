@@ -199,3 +199,60 @@ try {
   console.error('Grammar UX validation failed:', error.message);
   process.exitCode = 1;
 }
+
+/* Site refresh: comparison bank, daily rotation, section wiring and removed drill. */
+try {
+  const appSource = readFileSync('js/app.js', 'utf8');
+  const pageSource = readFileSync('index.html', 'utf8');
+  const arenaSource = readFileSync('js/vaani-arena.js', 'utf8');
+  const siteCss = readFileSync('vaani-site-refresh.css', 'utf8');
+  const extrasContext = { window: {} };
+  vm.runInNewContext(readFileSync('data/comparisons-extra.js', 'utf8'), extrasContext, { timeout: 1500 });
+  const extras = extrasContext.window.VAANI_COMPARISON_EXTRA;
+  if (!Array.isArray(extras) || extras.length !== 72) throw new Error('Expected 72 curated additional comparison pairs.');
+
+  const start = appSource.indexOf('const COMPARISONS = [');
+  const end = appSource.indexOf('\n].concat(Array.isArray(window.VAANI_COMPARISON_EXTRA)', start);
+  if (start < 0 || end < 0) throw new Error('Comparison bank is not connected to the extra comparison data.');
+  const base = ['who-whom', 'its-its-apostrophe', 'affect-effect'];
+  for (const id of base) if (!appSource.includes("id:'" + id + "'") && !appSource.includes('id:"' + id + '"')) throw new Error('Original comparison was lost: ' + id);
+  const ids = new Set(base);
+  for (const [index, pair] of extras.entries()) {
+    const at = 'additional comparison #' + (index + 1);
+    for (const field of ['id', 'a', 'b', 'group', 'meanA', 'meanB', 'rule', 'trick', 'officerTip']) {
+      if (typeof pair[field] !== 'string' || !pair[field].trim()) throw new Error(at + ' is missing ' + field);
+    }
+    if (ids.has(pair.id)) throw new Error('Duplicate comparison ID: ' + pair.id);
+    ids.add(pair.id);
+    if (!Array.isArray(pair.examples) || !pair.examples.length || !Array.isArray(pair.exceptions) || !pair.exceptions.length) throw new Error(at + ' needs examples and a usage note.');
+    if (!Array.isArray(pair.pyq) || !pair.pyq.length) throw new Error(at + ' needs a practice question.');
+    for (const [qIndex, q] of pair.pyq.entries()) {
+      if (!q.q || !Array.isArray(q.opts) || q.opts.length < 2 || !Number.isInteger(q.ans) || q.ans < 0 || q.ans >= q.opts.length) {
+        throw new Error(at + ' has an invalid practice question #' + (qIndex + 1));
+      }
+      if (q.pyq === true) throw new Error(at + ' incorrectly labels authored practice as an official PYQ.');
+    }
+  }
+  if (ids.size !== 75) throw new Error('Expected 75 comparisons total, found ' + ids.size + '.');
+  if (!pageSource.includes('data/comparisons-extra.js') || pageSource.indexOf('data/comparisons-extra.js') > pageSource.indexOf('js/app.js')) {
+    throw new Error('Additional comparisons must load before the main app.');
+  }
+  if (!pageSource.includes('href="vaani-site-refresh.css"')) throw new Error('Site refresh stylesheet is not linked.');
+  if (pageSource.includes('id="flashCard"') || pageSource.includes('Flashcard Drill')) throw new Error('The Vocabulary Flashcard Drill UI is still present.');
+  for (const id of ['vpProfileAvatar', 'vpOverviewStats', 'vpActivityList', 'serviceMetrics', 'serviceWeekWrap', 'fieldLogFilters', 'compareFilters', 'compareResultCount']) {
+    if (!pageSource.includes('id="' + id + '"')) throw new Error('Missing redesigned UI container: ' + id);
+  }
+  for (const required of ['function pickDaily(', 'vaani_daily_rotation_v3_', 'recentIds.add(id)', 'function renderProfileSnapshot(', 'function compareGroupOf(', 'let serviceBadgeFilter=']) {
+    if (!appSource.includes(required)) throw new Error('Site refresh behavior missing: ' + required);
+  }
+  for (const required of ['vx-home-metrics', 'vx-board-summary', 'vx-board-heading']) {
+    if (!arenaSource.includes(required)) throw new Error('Arena refresh markup missing: ' + required);
+  }
+  for (const required of ['.cmp-hero', '.vp-profile-hero', '.service-hero', '.vx-home-metrics', '.vx-board-summary']) {
+    if (!siteCss.includes(required)) throw new Error('Site refresh styles missing: ' + required);
+  }
+  console.log('Site refresh: ' + ids.size + ' comparison pairs, daily anti-repeat, Arena, Profile, Service Record and removed Flashcard Drill validated');
+} catch (error) {
+  console.error('Site refresh validation failed:', error.message);
+  process.exitCode = 1;
+}
