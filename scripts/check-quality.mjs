@@ -261,6 +261,8 @@ try {
 
 /* Book Reading and cross-module vocabulary integration checks. */
 try {
+  const appSource = readFileSync('js/app.js', 'utf8');
+  const pageSource = readFileSync('index.html', 'utf8');
   const librarySource = readFileSync('js/library.js', 'utf8');
   const bookCss = readFileSync('vaani-bookreading.css', 'utf8');
   const readmeSource = readFileSync('README.md', 'utf8');
