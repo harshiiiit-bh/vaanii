@@ -3239,7 +3239,31 @@ function logActivity(action,detail){
   State.activity = State.activity.slice(0,8);
   saveState();
 }
+function renderProfileSnapshot(){
+  const name=String(State.name||'Cadet').trim()||'Cadet';
+  const initials=name.split(/\s+/).filter(Boolean).slice(0,2).map(part=>part.charAt(0).toUpperCase()).join('')||'C';
+  const avatar=document.getElementById('vpProfileAvatar');if(avatar)avatar.textContent=initials;
+  const completed=GRAMMAR.filter(g=>!!State.completedTopics[g.id]).length;
+  const scores=Object.values(State.quizScores).map(Number).filter(n=>Number.isFinite(n)&&n>=0&&n<=100);
+  const avg=scores.length?Math.round(scores.reduce((sum,n)=>sum+n,0)/scores.length):null;
+  const level=Math.floor(State.xp/100)+1;
+  const ranks=['Recruit','Cadet','Lance Naik','Naik','Havildar','Subedar','Lieutenant','Captain','Major','Colonel'];
+  const rank=ranks[Math.min(level-1,ranks.length-1)];
+  const rankEl=document.getElementById('vpProfileRank');if(rankEl)rankEl.textContent=rank;
+  const host=document.getElementById('vpOverviewStats');
+  if(host)host.innerHTML=[
+    ['Total XP',String(State.xp||0),'✦'],
+    ['Current streak',(State.streak||0)+' days','🔥'],
+    ['Grammar topics',completed+'/'+GRAMMAR.length,'📘'],
+    ['Average quiz score',avg==null?'—':avg+'%','◎']
+  ].map(item=>'<div class="vp-overview-card"><span class="vp-overview-icon" aria-hidden="true">'+item[2]+'</span><span class="vp-overview-label">'+item[0]+'</span><strong>'+item[1]+'</strong></div>').join('');
+  const feed=document.getElementById('vpActivityList');if(feed){
+    const activity=Array.isArray(State.activity)?State.activity.filter(a=>a&&typeof a==='object').slice(0,6):[];
+    feed.innerHTML=activity.length?activity.map(a=>'<div class="vp-activity-item"><span class="vp-activity-dot" aria-hidden="true"></span><span class="vp-activity-copy"><b>'+escapeHtmlVaani(a.action||'Learning activity')+'</b><span>'+escapeHtmlVaani(a.detail||'')+'</span></span><time>'+escapeHtmlVaani(a.t||'')+'</time></div>').join(''):'<div class="vp-activity-empty">No activity has been recorded yet. Complete a lesson or quiz to start your learning log.</div>';
+  }
+}
 function refreshDashboard(){
+  renderProfileSnapshot();
   document.getElementById('dashName').textContent = State.name;
   document.getElementById('profName').textContent = State.name+"'s Service File";
   countUp('statXP', State.xp);
@@ -3773,20 +3797,62 @@ function refreshAll(){
 /* ============================================================
    COMPARISONS — render + quiz logic
 =============================================================*/
+let compareGroup='all';
+function compareGroupOf(c){
+  if(c.group)return c.group;
+  if(c.id==='who-whom')return 'Grammar';
+  if(c.id==='its-its-apostrophe')return 'Spelling';
+  return 'Word choice';
+}
 function renderCompareGrid(){
-  const grid = document.getElementById('compareGrid'); if(!grid) return;
-  const term = (document.getElementById('compareSearch')?.value||'').toLowerCase();
-  let list = COMPARISONS.filter(c => !term || c.a.toLowerCase().includes(term) || c.b.toLowerCase().includes(term) || c.tagline.toLowerCase().includes(term));
+  const grid=document.getElementById('compareGrid');if(!grid)return;
+  const search=document.getElementById('compareSearch');
+  const term=String(search&&search.value||'').trim().toLocaleLowerCase();
+  const groups=Array.from(new Set(COMPARISONS.map(compareGroupOf))).sort((a,b)=>a.localeCompare(b));
+  const filters=document.getElementById('compareFilters');
+  if(filters){
+    filters.innerHTML='';
+    [['all','All pairs']].concat(groups.map(group=>[group,group])).forEach(([value,label])=>{
+      const button=document.createElement('button');button.type='button';
+      button.className='cmp-filter'+(compareGroup===value?' active':'');
+      button.dataset.group=value;button.setAttribute('aria-pressed',String(compareGroup===value));
+      button.textContent=label+(value==='all'?' ('+COMPARISONS.length+')':' ('+COMPARISONS.filter(c=>compareGroupOf(c)===value).length+')');
+      button.addEventListener('click',()=>{compareGroup=value;renderCompareGrid();});
+      filters.appendChild(button);
+    });
+  }
+  const list=COMPARISONS.filter(c=>{
+    const searchable=[c.a,c.b,c.tagline,compareGroupOf(c)].join(' ').toLocaleLowerCase();
+    return (compareGroup==='all'||compareGroupOf(c)===compareGroup)&&(!term||searchable.includes(term));
+  });
+  const counter=document.getElementById('compareResultCount');
+  if(counter)counter.textContent=list.length+' of '+COMPARISONS.length+' pairs';
+  const total=document.getElementById('compareTotal');if(total)total.textContent=COMPARISONS.length;
   grid.innerHTML='';
-  if(!list.length){ grid.innerHTML='<div class="empty-state">No pairs match your search.</div>'; return; }
+  if(!list.length){const empty=document.createElement('div');empty.className='cmp-empty';empty.textContent='No pairs match this search and category. Try another word or choose All pairs.';grid.appendChild(empty);return;}
   list.forEach(c=>{
-    const done = State.quizScores['cmp-'+c.id]!==undefined;
-    const div=document.createElement('div'); div.className='card cmp-card';
-    div.innerHTML = `<div class="cmp-pair-row">${c.a} <span class="cmp-vs">VS</span> ${c.b}</div>
-      <p class="cmp-desc">${c.tagline}</p>
-      <div class="cmp-progress-chip">${done? '✓ Drilled · '+State.quizScores['cmp-'+c.id]+'%' : 'Not attempted yet'}</div>`;
-    div.onclick = ()=>openCompare(c.id);
-    grid.appendChild(div);
+    const score=State.quizScores['cmp-'+c.id];
+    const done=score!==undefined;
+    const button=document.createElement('button');button.type='button';button.className='card cmp-card';
+    button.setAttribute('aria-label','Study '+c.a+' versus '+c.b+(done?'. Last drill score '+score+' percent.':'. Not yet practised.'));
+    const meta=document.createElement('span');meta.className='cmp-card-top';
+    const category=document.createElement('span');category.className='cmp-card-category';category.textContent=compareGroupOf(c);
+    const priority=document.createElement('span');priority.className='cmp-card-priority';priority.textContent=c.priority||'Core';
+    meta.append(category,priority);
+    const pair=document.createElement('span');pair.className='cmp-pair-row';
+    const left=document.createElement('span');left.textContent=c.a;
+    const vs=document.createElement('span');vs.className='cmp-vs';vs.textContent='VS';
+    const right=document.createElement('span');right.textContent=c.b;
+    pair.append(left,vs,right);
+    const desc=document.createElement('span');desc.className='cmp-desc';desc.textContent=c.tagline;
+    const footer=document.createElement('span');footer.className='cmp-card-foot';
+    const progress=document.createElement('span');progress.className='cmp-progress-chip'+(done?' done':'');
+    progress.textContent=done?'✓ Practised · '+score+'%':'Not practised yet';
+    const action=document.createElement('span');action.className='cmp-card-action';action.textContent='Study pair →';
+    footer.append(progress,action);
+    button.append(meta,pair,desc,footer);
+    button.addEventListener('click',()=>openCompare(c.id));
+    grid.appendChild(button);
   });
 }
 let currentCompare = null;
