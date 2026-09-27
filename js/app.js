@@ -808,28 +808,27 @@ const PYQ_PAPERS = getSortedPYQPapers();
 // enough on its own to guarantee no collision with NDA even if a future
 // exam ever shares a year+session+question-number with an NDA paper.
 function _pyqQuestionId(exam, q){ return (exam && exam!=='NDA' ? exam+'-' : '') + `${q.y}-${q.s}-${q.n}`; }
-const PYQ_ALL = PYQ_PAPERS.flatMap(p=>p.data.map(q=>({...q, _id:_pyqQuestionId(p.exam,q), _exam:p.exam})));
+const PYQ_ALL = PYQ_PAPERS.flatMap(p=>p.data.map(q=>{
+  const item={...q,_id:_pyqQuestionId(p.exam,q),_exam:p.exam,_sourceSec:q.sec};
+  if(window.VaaniPyqTaxonomy&&typeof window.VaaniPyqTaxonomy.topic==='function') item.sec=window.VaaniPyqTaxonomy.topic(item);
+  return item;
+}));
 const PYQ_BY_ID = {}; PYQ_ALL.forEach(q=>PYQ_BY_ID[q._id]=q);
 
-/* ---- highlight the tested word inside a PYQ question string —
-   ONLY for questions belonging to the Vocabulary module (sec === 'Vocabulary').
-   Grammar, Reading Comprehension, Spotting Errors, Sentence Improvement,
-   Cloze/Fill-in-Blanks, PQRS, etc. are left untouched even if a keyword exists. ---- */
+/* Highlight the explicit target keyword safely across PYQ types. */
 function pyqHi(q){
-  if(!q || !q.q) return q ? q.q : '';
-  const text = q.q;
-  if(q.sec !== 'Vocabulary') return text;
-  const kw = q.keyword;
-  if(!kw) return text;
-  const esc = kw.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
-  let re;
-  try{ re = new RegExp('\\b'+esc+'\\b','i'); }catch(e){ re = null; }
-  let m = re ? text.match(re) : null;
-  if(!m){
-    try{ re = new RegExp(esc,'i'); m = text.match(re); }catch(e){ m = null; }
-  }
-  if(!m) return text;
-  return text.slice(0,m.index) + '<span class="pyq-vocab-hi">' + m[0] + '</span>' + text.slice(m.index+m[0].length);
+  if(!q||typeof q.q!=='string')return '';
+  const text=q.q;
+  const keyword=window.VaaniPyqTaxonomy&&typeof window.VaaniPyqTaxonomy.keyword==='function'?window.VaaniPyqTaxonomy.keyword(q):String(q.keyword||'').trim();
+  const safe=value=>escapeHtmlVaani(String(value)).replace(/\r\n?/g,'\n');
+  if(!keyword)return safe(text);
+  const specials=['.','*','+','?','^','$','{','}','(',')','|','[',']','\\'];
+  let esc='';for(const ch of keyword)esc+=specials.includes(ch)?'\\'+ch:ch;
+  let match=null;try{match=text.match(new RegExp('\\b'+esc+'\\b','iu'));}catch(e){}
+  if(!match){try{match=text.match(new RegExp(esc,'iu'));}catch(e){}}
+  if(!match)return safe(text);
+  const start=match.index,end=start+match[0].length;
+  return safe(text.slice(0,start))+'<mark class="pyq-vocab-hi pyq-keyword-highlight">'+safe(match[0])+'</mark>'+safe(text.slice(end));
 }
 
 /* ---- stats (persisted in State.pyqStats) ---- */
