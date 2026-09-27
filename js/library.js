@@ -2444,7 +2444,7 @@ function renderLibrary(){
   const topCategory=Object.entries(counts).sort((a,b)=>b[1]-a[1])[0];
   return [
     '<div class="page">',
-    '<div class="page-head with-bg" style="background-image:url(\\''+IMG.officers_march+'\\')">',
+    '<div class="page-head with-bg" style="background-image:url('+IMG.officers_march+')">',
     '<div class="page-eyebrow">Full Library</div><h2>Your Reading Library</h2>',
     '<p>Every title across your reading journey. Search, filter by stage, or sort the shelves to find a book quickly.</p></div>',
     '<div class="panel vbv-library-browser"><div class="vbv-library-toolbar">',
