@@ -17,6 +17,7 @@
 <link rel="stylesheet" href="vaani-contrast.css">
 <link rel="stylesheet" href="vaani-pyq-polish.css">
 <link rel="stylesheet" href="vaani-grammar-ux.css">
+<link rel="stylesheet" href="vaani-site-refresh.css">
 </head>
 <body data-theme="light">
 
@@ -677,11 +678,28 @@
 
 <!-- ============ COMPARISONS ============ -->
 <section class="view" id="view-compare">
-  <div class="section-head"><div><span class="eyebrow">Module 02</span><h2>Confusable Pairs Lab</h2></div>
-    <div class="search-box"><input id="compareSearch" placeholder="Search pairs..." oninput="renderCompareGrid()"></div>
+  <div class="cmp-hero">
+    <span class="cmp-hero-kicker">Module 02 · English precision</span>
+    <h2>Confusable Pairs Lab</h2>
+    <p>Learn the difference, see it in context, then test yourself. The bank includes everyday word choices, spelling traps and grammar distinctions.</p>
+    <p class="cmp-source-note">Pair lessons and quick checks are curated practice. Only questions explicitly marked PYQ are historical exam questions.</p>
+    <div class="cmp-hero-stat"><strong id="compareTotal">75</strong><span>curated pairs</span><i aria-hidden="true"></i><strong id="comparePractised">0</strong><span>already practised</span></div>
   </div>
-  <p class="section-desc">The word-pairs that decide NDA error-spotting marks. Each pair gets a full breakdown: meaning, the actual difference, a side-by-side table, the rule, exceptions, right-vs-wrong examples, a memory trick, and a PYQ-tagged practice set.</p>
-  <div class="grid-3" id="compareGrid"></div>
+  <div class="cmp-library-strip" aria-label="Comparison library summary">
+    <div class="cmp-library-stat"><span>Comparison library</span><strong>75</strong> distinctions</div>
+    <div class="cmp-library-stat"><span>Grammar &amp; spelling traps</span><strong>High frequency</strong></div>
+    <div class="cmp-library-stat"><span>Study format</span><strong>Learn → compare → drill</strong></div>
+    <div class="cmp-library-stat"><span>Coverage</span><strong>Word choice · forms · grammar</strong></div>
+  </div>
+  <div class="cmp-spotlight"><strong>Start with the distinctions you actually meet in competitive English.</strong><span>Use the search for a word you keep confusing, or browse the categories to build the full set systematically.</span></div>
+  <div class="cmp-explorer">
+    <div class="cmp-explorer-top">
+      <div><b>Find your next distinction</b><span>Search by either word or the skill group.</span></div>
+      <label class="cmp-search"><span aria-hidden="true">⌕</span><input id="compareSearch" type="search" maxlength="60" placeholder="Search pairs (e.g. affect, advice)…" oninput="renderCompareGrid()" aria-label="Search comparisons"></label>
+    </div>
+    <div class="cmp-filter-row"><div class="cmp-filters" id="compareFilters" role="group" aria-label="Filter comparison categories"></div><span id="compareResultCount" class="cmp-result-count" aria-live="polite">75 pairs</span></div>
+  </div>
+  <div class="grid-3 cmp-grid" id="compareGrid"></div>
 </section>
 
 <section class="view" id="view-compare-detail">
@@ -758,28 +776,14 @@
   <div class="grid-3 vv-word-grid" id="vocabGrid"></div>
 
   <!-- DAILY 5x5 TABS -->
-  <div class="panel-title"><span class="bar"></span>Today's Daily Sets</div>
+  <div class="daily-heading-row"><div class="panel-title"><span class="bar"></span>Today's Daily Sets</div><button type="button" class="daily-refresh-btn" id="dailyShuffleBtn">↻ Shuffle today's rotation</button></div>
+  <div class="daily-refresh-note"><span>Curated sets refresh at local midnight.</span><span id="dailyRotationStatus">Recent items are avoided where the bank allows.</span></div>
   <div class="daily-tabs" id="dailySetTabs"></div>
   <div class="grid-3 vv-word-grid" id="dailySetGrid"></div>
 
   <!-- DAILY SINGLES STRIP -->
-  <div class="panel-title" style="margin-top:34px"><span class="bar"></span>Daily Micro-Lessons</div>
+  <div class="daily-heading-row"><div class="panel-title"><span class="bar"></span>Daily Micro-Lessons</div></div>
   <div class="singles-strip" id="dailySinglesStrip"></div>
-
-  <!-- FLASHCARD DRILL -->
-  <div class="panel-title"><span class="bar"></span>Flashcard Drill</div>
-  <div class="flash-card-wrap">
-    <div class="flash-card" id="flashCard" onclick="flipCard()">
-      <div class="flash-face flash-front"><div style="font-family:var(--serif);font-size:1.5rem" id="flashFront">—</div></div>
-      <div class="flash-face flash-back"><div id="flashBack" style="font-size:.95rem;line-height:1.6"></div></div>
-    </div>
-  </div>
-  <div class="flash-progress" id="flashProgress">Card 1 of —</div>
-  <div class="flash-controls">
-    <button class="btn ghost" onclick="prevFlash()">◀ Prev</button>
-    <button class="btn ghost" onclick="flipCard()">Flip</button>
-    <button class="btn" onclick="nextFlash()">Next ▶</button>
-  </div>
 
   <!-- CONFUSING PAIRS -->
   <div class="panel-title" style="margin-top:34px"><span class="bar"></span>Commonly Confused Words</div>
@@ -906,7 +910,6 @@
       <button data-route="upcoming">Upcoming</button>
       <button data-route="vocab">Vocab Register</button>
       <button data-route="vocabtest">Vocab Test</button>
-      <button data-route="flashcards">Flashcards</button>
       <button data-route="levels">Levels</button>
       <button data-route="spoken">Spoken English</button>
       <button data-route="achievements">Medals</button>
@@ -957,50 +960,108 @@
 
 <!-- ============ LEADERBOARD ============ -->
 <section class="view" id="view-leaderboard">
-  <div class="section-head"><div><span class="eyebrow">Dossier</span><h2>Service Record</h2></div></div>
-  <div class="grid-2">
-    <div class="card" style="padding:24px">
-      <div class="panel-title"><span class="bar"></span>Your Personal Bests</div>
+  <div class="service-hero">
+    <span class="service-kicker">Personal performance dossier</span>
+    <h2>Service Record</h2>
+    <p>Your verified learning record: milestones, personal bests, consistency and earned citations. This is your record, not a public ranking.</p>
+    <div class="service-metrics" id="serviceMetrics" aria-label="Personal performance summary"></div>
+  </div>
+  <div class="service-grid">
+    <div class="card service-card">
+      <div class="panel-title"><span class="bar"></span>Personal Bests</div>
+      <p class="service-card-sub">Your highest recorded results so far.</p>
       <div id="personalBestsWrap"></div>
     </div>
-    <div class="card" style="padding:24px">
+    <div class="card service-card">
       <div class="panel-title"><span class="bar"></span>Rank &amp; Next Objective</div>
       <div id="rankObjectiveWrap"></div>
     </div>
   </div>
-  <div class="card" style="padding:24px;margin-top:20px">
-    <div class="panel-title"><span class="bar"></span>Field Log — Citations Earned</div>
-    <p style="color:var(--muted);font-size:.76rem;margin-bottom:12px">Every citation below is unlocked by something you actually did — no illustrative rivals, just your own record.</p>
+  <div class="service-signal-grid">
+    <div class="card service-card service-signal-card">
+      <div class="panel-title"><span class="bar"></span>Performance signal</div>
+      <p class="service-card-sub">A simple view of where your recorded scores are strongest and where more practice is logged.</p>
+      <div id="serviceSkillSignals" class="service-signal-list"></div>
+    </div>
+    <div class="card service-card service-goal-card">
+      <div class="panel-title"><span class="bar"></span>Next missions</div>
+      <p class="service-card-sub">Small targets generated from your real progress.</p>
+      <div id="serviceGoalList" class="service-goal-list"></div>
+    </div>
+  </div>
+  <div class="card service-card service-week">
+    <div class="panel-title"><span class="bar"></span>Seven-day activity</div>
+    <p class="service-card-sub">XP recorded on this account; no activity is invented.</p>
+    <div id="serviceWeekWrap"></div>
+  </div>
+  <div class="card service-card service-fieldlog">
+    <div class="panel-title"><span class="bar"></span>Field Log — Earned Citations</div>
+    <p class="service-card-sub">Earned milestones are marked clearly. Locked citations show what is required to unlock them.</p>
+    <div class="service-filter-row" id="fieldLogFilters" role="group" aria-label="Filter citations">
+      <button type="button" class="service-filter active" data-filter="all" aria-pressed="true">All</button>
+      <button type="button" class="service-filter" data-filter="earned" aria-pressed="false">Earned</button>
+      <button type="button" class="service-filter" data-filter="locked" aria-pressed="false">Locked</button>
+    </div>
     <div id="fieldLogWrap"></div>
   </div>
 </section>
 
 <!-- ============ PROFILE ============ -->
 <section class="view vd-profile" id="view-profile">
-  <div class="section-head"><div><span class="eyebrow">Service File</span><h2 id="profName">Cadet</h2></div></div>
-
-  <div class="grid-2">
-    <div class="card vp-card reveal" style="padding:24px">
+  <div class="vp-profile-hero">
+    <div class="vp-profile-avatar" id="vpProfileAvatar" aria-hidden="true">HC</div>
+    <div class="vp-profile-copy">
+      <span class="vp-profile-kicker">Personal learning dossier</span>
+      <h2 id="profName">Cadet</h2>
+      <p>One account. Your real progress. Every milestone earned.</p>
+    </div>
+    <span class="vp-profile-rank" id="vpProfileRank">Recruit</span>
+  </div>
+  <div class="vp-overview" id="vpOverviewStats" aria-label="Learning overview"></div>
+  <div class="vp-profile-grid">
+    <div class="card vp-card vp-path-card reveal">
       <div class="panel-title"><span class="bar"></span>Learning Path</div>
+      <p class="vp-card-sub">All 34 grammar topics, with completed and pending status.</p>
       <div class="prog-tree vp-prog-tree" id="progTree"></div>
     </div>
-    <div class="card vp-card reveal" style="padding:24px">
+    <div class="card vp-card vp-rank-card reveal">
       <div class="panel-title"><span class="bar"></span>Rank Progress</div>
-      <div style="text-align:center;padding:14px 0">
+      <div class="vp-rank-content">
         <svg class="vp-rank-badge" id="rankBadge" data-rank-level="1" viewBox="0 0 100 100" aria-hidden="true">
           <circle cx="50" cy="50" r="46" class="vp-rank-ring"/>
           <g class="vp-rank-chevrons" id="vpChevrons"></g>
         </svg>
-        <div class="num serif" style="font-size:2.4rem;color:var(--gold)" id="rankTitle">Recruit</div>
-        <div class="bar-wrap" style="margin-top:14px"><div class="bar-fill" id="rankBar" style="width:0%"></div></div>
-        <div style="color:var(--muted);font-size:.78rem;margin-top:8px"><span id="rankXPText">0 / 100 XP to next rank</span></div>
+        <div class="vp-rank-title num serif" id="rankTitle">Recruit</div>
+        <div class="vp-rank-bar bar-wrap"><div class="bar-fill" id="rankBar" style="width:0%"></div></div>
+        <p class="vp-rank-hint" id="rankXPText">0 / 100 XP to next rank</p>
       </div>
-      <button class="btn ghost" style="width:100%;justify-content:center;margin-top:10px" onclick="resetProgress()">Reset Progress</button>
+      <button class="btn ghost vp-reset" onclick="resetProgress()">Reset Progress</button>
+    </div>
+    <div class="card vp-card vp-activity-card reveal">
+      <div class="panel-title"><span class="bar"></span>Recent Activity</div>
+      <p class="vp-card-sub">Your latest recorded learning actions.</p>
+      <div class="vp-activity-list" id="vpActivityList"></div>
     </div>
   </div>
-
-  <div class="card vp-card reveal" style="margin-top:22px;padding:24px">
-    <div class="panel-title"><span class="bar"></span>Achievements</div>
+  <div class="vp-focus-grid">
+  <div class="card vp-card vp-focus-card reveal">
+    <div class="panel-title"><span class="bar"></span>Current mission</div>
+    <div id="vpFocusMission"></div>
+  </div>
+  <div class="card vp-card vp-focus-card reveal">
+    <div class="panel-title"><span class="bar"></span>Skill signal</div>
+    <div id="vpSkillSignals" class="vp-skill-signal-list"></div>
+  </div>
+</div>
+<div class="card vp-card vp-focus-card vp-rhythm reveal">
+  <div class="panel-title"><span class="bar"></span>14-day learning rhythm</div>
+  <p class="vp-card-sub">Recorded XP by day. Empty cells are simply days with no recorded activity.</p>
+  <div id="vpRhythmGrid" class="vp-rhythm-grid" aria-label="14-day learning activity"></div>
+  <div id="vpRhythmNote" class="vp-rhythm-note"></div>
+</div>
+<div class="card vp-card vp-achievements reveal">
+    <div class="panel-title"><span class="bar"></span>Achievements &amp; Citations</div>
+    <p class="vp-card-sub">Badges unlock from progress and quiz records, not placeholders.</p>
     <div class="badge-grid" id="profileBadgeGrid"></div>
   </div>
 </section>
@@ -1011,6 +1072,7 @@
 <script src="data/grammar.js"></script>
 <script src="data/grammar-basics.js"></script>
 <script src="data/vocab.js"></script>
+<script src="data/comparisons-extra.js"></script>
 <script src="data/pyq/manifest.js"></script>
 <script>
   /* Writes out a normal <script src> tag for every paper listed in the

@@ -469,7 +469,7 @@ const COMPARISONS = [
     {q:'Fill the blank: "The new CEO plans to ___ several changes."',opts:['affect','effect','affects','effecting'],ans:1,exp:'Rare verb sense of "effect" — to bring about/cause — fits here, not "affect" (influence).'}
   ]
 },
-];
+].concat(Array.isArray(window.VAANI_COMPARISON_EXTRA)?window.VAANI_COMPARISON_EXTRA:[]);
 
 /* ============================================================
    VOCAB DATA — full mastery schema
@@ -2898,13 +2898,129 @@ function renderQuizPane(id, quiz){
 /* ============================================================
    VOCAB RENDER — Mastery Hub
 =============================================================*/
-let vocabCat='all', vocabDiff='all', flashIdx=0, currentWordId=null;
+let vocabCat='all', vocabDiff='all', currentWordId=null;
 const VOCAB_BY_ID = {}; VOCAB.forEach(v=>VOCAB_BY_ID[v.id]=v);
-function dayIndex(){ const d=new Date(); return Math.floor(d.getTime()/86400000); }
-function pickDaily(arr,n,offset){ const len=arr.length; const out=[]; for(let i=0;i<n;i++){ out.push(arr[(dayIndex()+offset+i)%len]); } return out; }
+function getDailyRotationSalt(){
+  const key='vaani_daily_rotation_salt_v1';
+  try{
+    let value=localStorage.getItem(key);
+    if(!value){value=Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem(key,value);}
+    return value;
+  }catch(e){return 'session-'+Date.now();}
+}
+function shuffleDailyContent(){
+  const key='vaani_daily_rotation_salt_v1';
+  const salt=Math.random().toString(36).slice(2)+Date.now().toString(36);
+  try{localStorage.setItem(key,salt);}catch(e){}
+  renderDailySetTabs();
+  renderDailySingles();
+  const note=document.getElementById('dailyRotationStatus');
+  if(note)note.innerHTML='<strong>Today’s rotation refreshed.</strong> New items were selected while recent repeats were avoided where possible.';
+  toast('Today’s learning rotation shuffled.');
+}
+function dailyDateKey(date){
+  const d=date||new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function dailyHash(text){
+  let h=2166136261;
+  for(let i=0;i<text.length;i++){h^=text.charCodeAt(i);h=Math.imul(h,16777619);}
+  return h>>>0;
+}
+function dailyShuffle(items,seed){
+  let state=seed||0x6D2B79F5;
+  function random(){
+    state=(state+0x6D2B79F5)|0;
+    let t=state;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);
+    return ((t^(t>>>14))>>>0)/4294967296;
+  }
+  const out=items.slice();
+  for(let i=out.length-1;i>0;i--){const j=Math.floor(random()*(i+1));[out[i],out[j]]=[out[j],out[i]];}
+  return out;
+}
+function dailyItemId(item,index){
+  let raw=item&& (item.id||item.t||item.w||item.word||item.phrase||item.q);
+  if(raw==null||raw===''){try{raw=JSON.stringify(item);}catch(e){raw='item';}}
+  return String(raw).trim().toLocaleLowerCase()+'#'+index;
+}
+function pickDaily(arr,n,offset){
+  const items=Array.isArray(arr)?arr.filter(item=>item!=null):[];
+  const wanted=Math.max(0,Math.min(items.length,Math.floor(Number(n)||0)));
+  if(!wanted)return [];
+  const indexed=items.map((item,index)=>({id:dailyItemId(item,index),item:item}));
+  const byId=new Map(indexed.map(entry=>[entry.id,entry.item]));
+  const rotationSalt=getDailyRotationSalt();
+  const fingerprint=String(offset||0)+'|'+indexed.map(entry=>entry.id).join('|');
+  const storageKey='vaani_daily_rotation_v3_'+dailyHash(fingerprint).toString(36);
+  const today=dailyDateKey();
+  let stored=null;
+  try{stored=JSON.parse(localStorage.getItem(storageKey)||'null');}catch(e){}
+  let history=stored&&Array.isArray(stored.history)?stored.history:[];
+  let orderIds=stored&&stored.date===today&&stored.salt===rotationSalt&&Array.isArray(stored.order)?stored.order.filter(id=>byId.has(id)):[];
+  if(orderIds.length!==items.length){
+    const shuffled=dailyShuffle(indexed,dailyHash(today+'|'+fingerprint+'|'+rotationSalt));
+    const cutoff=new Date();cutoff.setDate(cutoff.getDate()-7);const cutoffKey=dailyDateKey(cutoff);
+    const recentIds=new Set();
+    history.filter(entry=>entry&&typeof entry.date==='string'&&entry.date<today&&entry.date>=cutoffKey)
+      .forEach(entry=>(Array.isArray(entry.ids)?entry.ids:[]).forEach(id=>recentIds.add(id)));
+    const fresh=shuffled.filter(entry=>!recentIds.has(entry.id));
+    const repeats=shuffled.filter(entry=>recentIds.has(entry.id));
+    orderIds=fresh.concat(repeats).map(entry=>entry.id);
+  }
+  const selectedIds=orderIds.slice(0,wanted);
+  const previous=history.filter(entry=>entry&&entry.date!==today);
+  previous.push({date:today,ids:selectedIds});
+  try{
+    localStorage.setItem(storageKey,JSON.stringify({date:today,salt:rotationSalt,order:orderIds,history:previous.slice(-15)}));
+  }catch(e){}
+  return selectedIds.map(id=>byId.get(id)).filter(item=>item!==undefined);
+}
 
 function setVocabCat(c){vocabCat=c;document.querySelectorAll('#vocabCatChips .chip').forEach(ch=>ch.classList.toggle('active',ch.dataset.cat===c));renderVocabGrid();}
 function setVocabDiff(d){vocabDiff=d;document.querySelectorAll('#vocabDiffChips .chip').forEach(ch=>ch.classList.toggle('active',ch.dataset.diff===d));renderVocabGrid();}
+
+async function addVaaniItemToBookRegister(payload,button){
+  const item=payload&&typeof payload==='object'?payload:{};
+  const word=String(item.word||'').replace(/\s+/g,' ').trim();
+  if(!word){toast('This item has no word or phrase to save.');return false;}
+  if(button){button.disabled=true;button.dataset.saving='1';button.textContent='Saving…';}
+  try{
+    const bridge=window.VaaniBookRegister;
+    if(!bridge||typeof bridge.add!=='function'){
+      toast('Book Reading register is not ready yet. Open Book Reading once, then try again.');
+      if(button){button.disabled=false;button.textContent='Add to Book Register';delete button.dataset.saving;}
+      return false;
+    }
+    const result=await bridge.add({
+      word,meaning:String(item.meaning||'').trim(),
+      synonyms:Array.isArray(item.synonyms)?item.synonyms:[],
+      antonyms:Array.isArray(item.antonyms)?item.antonyms:[],
+      example:String(item.example||'').trim(),
+      kind:String(item.kind||'word'),
+      source:String(item.source||'VAANI Vocabulary')
+    });
+    if(!result||!result.ok){
+      toast((result&&result.message)||'Could not save this item. Check your account and try again.');
+      if(button){button.disabled=false;button.textContent='Add to Book Register';delete button.dataset.saving;}
+      return false;
+    }
+    if(button){button.textContent=result.duplicate?'✓ In Register':'✓ Added to Register';button.classList.add('is-saved');button.setAttribute('aria-label',word+(result.duplicate?' is already in the Book Reading Register':' added to the Book Reading Register'));}
+    toast(result.duplicate?'"'+word+'" is already in your Book Reading Register.':'Saved "'+word+'" to your Book Reading Register.');
+    return true;
+  }catch(error){
+    console.error('[VAANI → Book Register]',error);
+    toast('Could not reach the Book Reading register. Your current page is unchanged.');
+    if(button){button.disabled=false;button.textContent='Add to Book Register';delete button.dataset.saving;}
+    return false;
+  }
+}
+function makeBookRegisterButton(payload,label){
+  const button=document.createElement('button');
+  button.type='button';button.className='btn ghost v-book-capture';
+  button.textContent=label||'Add to Book Register';
+  button.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();addVaaniItemToBookRegister(payload,button);});
+  return button;
+}
 
 function renderVocabGrid(){
   const grid = document.getElementById('vocabGrid'); if(!grid) return; grid.innerHTML='';
@@ -2919,18 +3035,24 @@ function renderVocabGrid(){
       <p class="wc-mean">${v.meanEn}</p>
       <div class="wc-tags"><span class="wc-tag wc-stars">${'★'.repeat(v.diff)}${'☆'.repeat(3-v.diff)}</span>${v.cat.map(c=>`<span class="wc-tag">${c}</span>`).join('')}</div>`;
     div.onclick=()=>openWord(v.id);
+    div.appendChild(makeBookRegisterButton({word:v.w,meaning:v.meanEn,synonyms:v.syn,antonyms:v.ant,example:v.exEasy,kind:'word',source:'VAANI Vocabulary'},'＋ Book Register'));
     grid.appendChild(div);
   });
 }
 
 function renderDailySetTabs(){
+  const shuffleBtn=document.getElementById('dailyShuffleBtn');
+  if(shuffleBtn&&shuffleBtn.dataset.bound!=='1'){
+    shuffleBtn.dataset.bound='1';
+    shuffleBtn.addEventListener('click',shuffleDailyContent);
+  }
   const sets=[
-    {key:'wod',label:'Words of the Day',cat:null},
-    {key:'advanced',label:'Advanced Words',cat:'advanced'},
-    {key:'nda',label:'NDA Frequent',cat:'nda'},
-    {key:'editorial',label:'Editorial Words',cat:'editorial'},
-    {key:'military',label:'Military Vocabulary',cat:'military'},
-    {key:'foreign',label:'Foreign Phrases',cat:'foreign'}
+    {key:'wod',label:'Words of the Day',cat:null,offset:0},
+    {key:'advanced',label:'Advanced Words',cat:'advanced',offset:1},
+    {key:'nda',label:'NDA Frequent',cat:'nda',offset:2},
+    {key:'editorial',label:'Editorial Words',cat:'editorial',offset:3},
+    {key:'military',label:'Military Vocabulary',cat:'military',offset:4},
+    {key:'foreign',label:'Foreign Phrases',cat:'foreign',offset:5}
   ];
   const tabs=document.getElementById('dailySetTabs'); tabs.innerHTML='';
   sets.forEach((s,i)=>{
@@ -2943,39 +3065,42 @@ function renderDailySetTabs(){
 function renderDailySetGrid(setDef){
   const grid=document.getElementById('dailySetGrid'); grid.innerHTML='';
   if(setDef.key==='foreign'){
-    const picks = pickDaily(FOREIGN_PHRASES,5,0);
+    const picks = pickDaily(FOREIGN_PHRASES,5,setDef.offset);
     picks.forEach(p=>{
       const div=document.createElement('div'); div.className='card word-card'; div.style.cursor='default';
       div.innerHTML=`<h3>${p.t}</h3><div class="wc-pos">${p.lang}</div><p class="wc-mean">${p.mean}</p><div class="example-box" style="margin-top:8px">"${p.ex}"</div>`;
+      div.appendChild(makeBookRegisterButton({word:p.t,meaning:p.mean,example:p.ex,kind:'phrase',source:'VAANI Foreign Phrases'},'＋ Book Register'));
       grid.appendChild(div);
     });
     return;
   }
   const pool = setDef.cat ? VOCAB.filter(v=>v.cat.includes(setDef.cat)) : VOCAB;
-  const picks = pickDaily(pool,5,setDef.key.length);
+  const picks = pickDaily(pool,5,setDef.offset);
   picks.forEach(v=>{
     const div=document.createElement('div'); div.className='card word-card';
     div.innerHTML=`<div class="wc-top"><h3>${v.w}</h3><div class="wc-imp" title="Exam importance ${v.imp}/5">${'●'.repeat(v.imp)}${'○'.repeat(5-v.imp)}</div></div><div class="wc-pos">${v.pos}</div><p class="wc-mean">${v.meanEn}</p>`;
     div.onclick=()=>openWord(v.id);
+    div.appendChild(makeBookRegisterButton({word:v.w,meaning:v.meanEn,synonyms:v.syn,antonyms:v.ant,example:v.exEasy,kind:'word',source:'VAANI Daily Vocabulary'},'＋ Book Register'));
     grid.appendChild(div);
   });
 }
 
 function renderDailySingles(){
-  const strip=document.getElementById('dailySinglesStrip'); strip.innerHTML='';
+  const strip=document.getElementById('dailySinglesStrip'); if(!strip)return; strip.innerHTML='';
   const items=[
-    {label:'Idiom of the Day',tag:'IDM',d:pickDaily(DAILY_IDIOMS,1,1)[0]},
-    {label:'Phrase of the Day',tag:'PHR',d:pickDaily(DAILY_PHRASES,1,2)[0]},
-    {label:'Proverb of the Day',tag:'PRV',d:pickDaily(DAILY_PROVERBS,1,3)[0]},
-    {label:'Phrasal Verb of the Day',tag:'P·V',d:pickDaily(DAILY_PHRASAL_VERBS,1,4)[0]},
-    {label:'Collocation of the Day',tag:'COL',d:pickDaily(DAILY_COLLOCATIONS,1,5)[0]},
-    {label:'Prefix of the Day',tag:'PRE',d:pickDaily(DAILY_PREFIXES,1,6)[0]},
-    {label:'Suffix of the Day',tag:'SUF',d:pickDaily(DAILY_SUFFIXES,1,7)[0]},
-    {label:'Root Word of the Day',tag:'ROOT',d:pickDaily(DAILY_ROOTS,1,8)[0]}
+    {label:'Idiom of the Day',tag:'IDM',d:pickDaily(DAILY_IDIOMS,1,6)[0]},
+    {label:'Phrase of the Day',tag:'PHR',d:pickDaily(DAILY_PHRASES,1,7)[0]},
+    {label:'Proverb of the Day',tag:'PRV',d:pickDaily(DAILY_PROVERBS,1,8)[0]},
+    {label:'Phrasal Verb of the Day',tag:'P·V',d:pickDaily(DAILY_PHRASAL_VERBS,1,9)[0]},
+    {label:'Collocation of the Day',tag:'COL',d:pickDaily(DAILY_COLLOCATIONS,1,10)[0]},
+    {label:'Prefix of the Day',tag:'PRE',d:pickDaily(DAILY_PREFIXES,1,11)[0]},
+    {label:'Suffix of the Day',tag:'SUF',d:pickDaily(DAILY_SUFFIXES,1,12)[0]},
+    {label:'Root Word of the Day',tag:'ROOT',d:pickDaily(DAILY_ROOTS,1,13)[0]}
   ];
   items.forEach(it=>{
     const div=document.createElement('div'); div.className='single-card';
     div.innerHTML=`<div class="sc-badge">${it.tag}</div><div class="sc-label">${it.label.toUpperCase()}</div><div class="sc-word">${it.d.t}</div><div class="sc-mean">${it.d.mean}</div>`;
+    div.appendChild(makeBookRegisterButton({word:it.d.t,meaning:it.d.mean,example:it.d.ex,kind:it.label.toLowerCase().replace(/ of the day$/,''),source:'VAANI '+it.label},'＋ Book Register'));
     strip.appendChild(div);
   });
 }
@@ -2995,17 +3120,6 @@ function renderConfuseTable(){
   });
 }
 
-function flipCard(){document.getElementById('flashCard').classList.toggle('flip');}
-function renderFlash(){
-  const v = VOCAB[flashIdx];
-  document.getElementById('flashFront').textContent=v.w;
-  document.getElementById('flashBack').innerHTML=`<b style="color:var(--gold)">${v.pos}</b><br>${v.meanEn}<br><br><i>"${v.exMed}"</i>`;
-  document.getElementById('flashCard').classList.remove('flip');
-  const prog = document.getElementById('flashProgress');
-  if(prog) prog.textContent = `Card ${flashIdx+1} of ${VOCAB.length}`;
-}
-function nextFlash(){flashIdx=(flashIdx+1)%VOCAB.length;renderFlash();}
-function prevFlash(){flashIdx=(flashIdx-1+VOCAB.length)%VOCAB.length;renderFlash();}
 
 function markWordLearned(){
   const today=new Date().toDateString();
@@ -3017,6 +3131,8 @@ function renderWOD(){
   const v = pickDaily(VOCAB,1,0)[0];
   document.getElementById('dashWord').textContent=v.w;
   document.getElementById('dashWordMeaning').textContent=v.meanEn;
+  const capture=document.getElementById('dashWordToBook');
+  if(capture)capture.onclick=()=>addVaaniItemToBookRegister({word:v.w,meaning:v.meanEn,synonyms:v.syn,antonyms:v.ant,example:v.exEasy,kind:'word',source:'VAANI Word of the Day'},capture);
 }
 
 function lookupExternalWord(){
@@ -3070,6 +3186,11 @@ function openWord(id){
   document.getElementById('wdImportance').textContent=v.imp+' / 5';
   document.getElementById('wdYears').textContent=v.years;
   document.getElementById('wdPYQ').textContent=v.pyq;
+  const capture=document.getElementById('wdAddToBookRegister');
+  if(capture){
+    capture.disabled=false;capture.textContent='＋ Add to Book Register';capture.classList.remove('is-saved');
+    capture.onclick=()=>addVaaniItemToBookRegister({word:v.w,meaning:v.meanEn,synonyms:v.syn,antonyms:v.ant,example:v.exEasy,kind:'word',source:'VAANI Vocabulary'},capture);
+  }
   const dictionaryPanel=document.getElementById('wdDictionaryResult'),dictionaryButton=document.getElementById('wdDictionaryLookup');
   if(dictionaryPanel)dictionaryPanel.textContent='';if(dictionaryButton){dictionaryButton.disabled=false;dictionaryButton.textContent='Look up word';}
   renderWordQuiz(v);
@@ -3104,25 +3225,31 @@ function renderWordQuiz(v){
    PRACTICE / READING / TESTS RENDER
 =============================================================*/
 function renderPracticeGrid(){
-  const grid=document.getElementById('practiceGrid'); grid.innerHTML='';
-  PRACTICE.forEach(p=>{
+  const grid=document.getElementById('practiceGrid'); if(!grid)return; grid.innerHTML='';
+  const randomized = (typeof pvShuffle==='function' ? pvShuffle(PRACTICE) : PRACTICE.slice());
+  randomized.forEach(p=>{
     const div=document.createElement('div'); div.className='card topic-card';
-    div.innerHTML=`<div class="icon">${p.icon}</div><h3>${p.title}</h3><p>${p.desc}</p>
-      <div class="topic-meta"><span>${p.q.length} drill${p.q.length>1?'s':''}</span><span>Open ›</span></div>`;
+    div.innerHTML=`<div class="icon">${p.icon}</div><span class="vaani-mini-kicker">Randomized drill</span><h3>${p.title}</h3><p>${p.desc}</p>
+      <div class="topic-meta"><span>${p.q.length} question${p.q.length>1?'s':''}</span><span>Open ›</span></div>`;
     div.onclick=()=>openPractice(p);
     grid.appendChild(div);
   });
 }
 function openPractice(p){
-  document.getElementById('topicEyebrow').textContent='Sentence Practice';
+  document.getElementById('topicEyebrow').textContent='Sentence Practice · Randomized set';
   document.getElementById('topicTitle').textContent=p.title;
   document.getElementById('topicStamp').style.display='none';
   document.querySelectorAll('.tab-btn').forEach((b,i)=>b.style.display = b.dataset.tab==='quiz'?'block':'none');
   document.querySelectorAll('.tab-btn')[3].classList.add('active');
   document.querySelectorAll('.tab-pane').forEach(x=>x.classList.remove('active'));
   document.getElementById('pane-quiz').classList.add('active');
-  const quiz = p.q.map(item=>{
-    if(item.opts) return {q:item.s,opts:item.opts,ans:item.ans,exp:item.exp};
+  const rawQuestions = (typeof pvShuffle==='function' ? pvShuffle(p.q) : p.q.slice());
+  const quiz = rawQuestions.map(item=>{
+    if(item.opts){
+      const indexed=item.opts.map((text,index)=>({text,index}));
+      const shuffledOpts=typeof pvShuffle==='function'?pvShuffle(indexed):indexed;
+      return {q:item.s,opts:shuffledOpts.map(o=>o.text),ans:shuffledOpts.findIndex(o=>o.index===item.ans),exp:item.exp};
+    }
     return {q:item.s+' — which part has the error?',opts:['A','B','C','D'],ans:['A','B','C','D'].indexOf(item.ans),exp:item.exp};
   });
   currentTopic={id:p.id,title:p.title};
@@ -3196,7 +3323,77 @@ function logActivity(action,detail){
   State.activity = State.activity.slice(0,8);
   saveState();
 }
+function renderProfileSnapshot(){
+  const name=String(State.name||'Cadet').trim()||'Cadet';
+  const initials=name.split(/\s+/).filter(Boolean).slice(0,2).map(part=>part.charAt(0).toUpperCase()).join('')||'C';
+  const avatar=document.getElementById('vpProfileAvatar');if(avatar)avatar.textContent=initials;
+  const completed=GRAMMAR.filter(g=>!!State.completedTopics[g.id]).length;
+  const scores=Object.values(State.quizScores).map(Number).filter(n=>Number.isFinite(n)&&n>=0&&n<=100);
+  const avg=scores.length?Math.round(scores.reduce((sum,n)=>sum+n,0)/scores.length):null;
+  const level=Math.floor(State.xp/100)+1;
+  const ranks=['Recruit','Cadet','Lance Naik','Naik','Havildar','Subedar','Lieutenant','Captain','Major','Colonel'];
+  const rank=ranks[Math.min(level-1,ranks.length-1)];
+  const rankEl=document.getElementById('vpProfileRank');if(rankEl)rankEl.textContent=rank;
+  const host=document.getElementById('vpOverviewStats');
+  if(host)host.innerHTML=[
+    ['Total XP',String(State.xp||0),'✦'],['Current streak',(State.streak||0)+' days','🔥'],
+    ['Grammar topics',completed+'/'+GRAMMAR.length,'📘'],['Average quiz score',avg==null?'—':avg+'%','◎']
+  ].map(item=>'<div class="vp-overview-card"><span class="vp-overview-icon" aria-hidden="true">'+item[2]+'</span><span class="vp-overview-label">'+item[0]+'</span><strong>'+item[1]+'</strong></div>').join('');
+
+  const order=SKILL_TIERS.flatMap(t=>t.ids).filter(id=>GRAMMAR.some(g=>g.id===id));
+  const nextId=order.find(id=>!State.completedTopics[id]);
+  const nextTopic=nextId?GRAMMAR.find(g=>g.id===nextId):null;
+  const mission=document.getElementById('vpFocusMission');
+  if(mission){
+    if(nextTopic){
+      mission.innerHTML='<div class="vp-focus-mission"><div class="vp-focus-icon" aria-hidden="true">'+(nextTopic.icon||'📘')+'</div><div><b>'+escapeHtmlVaani(nextTopic.title)+'</b><span>'+escapeHtmlVaani(nextTopic.desc||'Continue your Grammar journey one topic at a time.')+'</span></div></div><button type="button" class="btn vp-focus-action" onclick="openTopic(\''+String(nextTopic.id).replace(/'/g,"\\\\'")+'\')">Open next topic →</button>';
+    }else{
+      mission.innerHTML='<div class="vp-focus-mission"><div class="vp-focus-icon" aria-hidden="true">🏁</div><div><b>Grammar curriculum cleared</b><span>Revisit any topic to strengthen retention, or keep building vocabulary and comparisons.</span></div></div>';
+    }
+  }
+
+  function familyAverage(ids){
+    const values=ids.map(id=>State.quizScores[id]).map(Number).filter(n=>Number.isFinite(n)&&n>=0&&n<=100);
+    return values.length?Math.round(values.reduce((a,b)=>a+b,0)/values.length):null;
+  }
+  const grammarAvg=familyAverage(GRAMMAR.map(g=>g.id));
+  const compareAvg=familyAverage(COMPARISONS.map(c=>'cmp-'+c.id));
+  const practiceAvg=familyAverage(PRACTICE.map(p=>p.id));
+  const readingAvg=familyAverage(READING.map(r=>r.id));
+  const signals=[['Grammar',grammarAvg],['Comparisons',compareAvg],['Practice',practiceAvg],['Reading',readingAvg]];
+  const signalHost=document.getElementById('vpSkillSignals');
+  if(signalHost){
+    signalHost.innerHTML=signals.map(([label,val])=>{
+      const value=val==null?0:val;
+      return '<div class="vp-skill-signal"><label>'+label+'</label><div class="bar"><span style="width:'+value+'%"></span></div><strong>'+ (val==null?'—':value+'%') +'</strong></div>';
+    }).join('');
+  }
+
+  const feed=document.getElementById('vpActivityList');if(feed){
+    const activity=Array.isArray(State.activity)?State.activity.filter(a=>a&&typeof a==='object').slice(0,6):[];
+    feed.innerHTML=activity.length?activity.map(a=>'<div class="vp-activity-item"><span class="vp-activity-dot" aria-hidden="true"></span><span class="vp-activity-copy"><b>'+escapeHtmlVaani(a.action||'Learning activity')+'</b><span>'+escapeHtmlVaani(a.detail||'')+'</span></span><time>'+escapeHtmlVaani(a.t||'')+'</time></div>').join(''):'<div class="vp-activity-empty">No activity has been recorded yet. Complete a lesson or quiz to start your learning log.</div>';
+  }
+
+  const rhythm=document.getElementById('vpRhythmGrid');
+  const rhythmNote=document.getElementById('vpRhythmNote');
+  if(rhythm){
+    rhythm.innerHTML='';
+    const days=[];
+    for(let i=13;i>=0;i--){
+      const d=new Date();d.setHours(12,0,0,0);d.setDate(d.getDate()-i);
+      const xp=Math.max(0,Number(State.dailyActivity&&State.dailyActivity[d.toDateString()])||0);
+      days.push({date:d,xp});
+      let level=0;if(xp>0)level=1;if(xp>=10)level=2;if(xp>=25)level=3;if(xp>=50)level=4;
+      const cell=document.createElement('span');cell.className='vp-rhythm-cell'+(level?' l'+level:'');cell.title=d.toLocaleDateString(undefined,{month:'short',day:'numeric'})+' · '+xp+' XP';rhythm.appendChild(cell);
+    }
+    if(rhythmNote){
+      const active=days.filter(d=>d.xp>0).length,totalXp=days.reduce((sum,d)=>sum+d.xp,0);
+      rhythmNote.innerHTML='<span>'+active+' active day'+(active===1?'':'s')+'</span><span>'+totalXp+' XP in 14 days</span>';
+    }
+  }
+}
 function refreshDashboard(){
+  renderProfileSnapshot();
   document.getElementById('dashName').textContent = State.name;
   document.getElementById('profName').textContent = State.name+"'s Service File";
   countUp('statXP', State.xp);
@@ -3272,9 +3469,10 @@ function refreshDashboard(){
       }).join('');
     }
   }
-  const within = State.xp%100;
-  document.getElementById('rankBar').style.width = within+'%';
-  document.getElementById('rankXPText').textContent = within+' / 100 XP to next rank';
+  const maxRankReached=lvl>=ranks.length;
+  const within=maxRankReached?100:State.xp%100;
+  document.getElementById('rankBar').style.width=within+'%';
+  document.getElementById('rankXPText').textContent=maxRankReached?'Maximum rank achieved':within+' / 100 XP to next rank';
 
   // progress tree — every topic, not just the first 10 (was GRAMMAR.slice(0,10),
   // silently hiding 24 of 34 with no indication more existed)
@@ -3569,61 +3767,114 @@ function renderBadges(){
 /* ============================================================
    PHASE 7: SERVICE RECORD (personal bests + real rank + earned citations)
 =============================================================*/
+let serviceBadgeFilter='all';
 function renderLeaderboard(){
-  const pbHost = document.getElementById('personalBestsWrap');
-  const rankHost = document.getElementById('rankObjectiveWrap');
-  const logHost = document.getElementById('fieldLogWrap');
-  if(!pbHost || !rankHost || !logHost) return;
-  const pb = State.personalBests || {};
-  const rows = [
-    {label:'Best Combo', value: pb.bestCombo ? `×${pb.bestCombo}` : '—'},
-    {label:'Longest Streak', value: pb.longestStreak ? `${pb.longestStreak} days` : '—'},
-    {label:'Highest Quiz Score', value: pb.highestQuizScore ? `${pb.highestQuizScore}%` : '—'},
-    {label:'Fastest Quiz Clear', value: pb.fastestQuizSeconds!=null ? `${pb.fastestQuizSeconds}s — ${pb.fastestQuizLabel||''}` : '—'},
-    {label:'Quizzes Attempted', value: pb.totalQuizzesTaken || 0},
+  const pbHost=document.getElementById('personalBestsWrap');
+  const rankHost=document.getElementById('rankObjectiveWrap');
+  const logHost=document.getElementById('fieldLogWrap');
+  if(!pbHost||!rankHost||!logHost)return;
+  const pb=State.personalBests||{};
+  const completed=GRAMMAR.filter(g=>!!State.completedTopics[g.id]).length;
+  const scoreValues=Object.values(State.quizScores).map(Number).filter(n=>Number.isFinite(n)&&n>=0&&n<=100);
+  const average=scoreValues.length?Math.round(scoreValues.reduce((sum,n)=>sum+n,0)/scoreValues.length):null;
+  const metrics=document.getElementById('serviceMetrics');
+  if(metrics){
+    const data=[
+      {label:'Total XP',value:String(State.xp||0),hint:'Lifetime earned'},
+      {label:'Current streak',value:String(State.streak||0),hint:'Consecutive days'},
+      {label:'Topics cleared',value:completed+'/'+GRAMMAR.length,hint:'Grammar curriculum'},
+      {label:'Quiz average',value:average==null?'—':average+'%',hint:scoreValues.length+' recorded scores'}
+    ];
+    metrics.innerHTML=data.map(item=>'<div class="service-metric"><span>'+item.label+'</span><strong>'+item.value+'</strong><small>'+item.hint+'</small></div>').join('');
+  }
+  const rows=[
+    {label:'Best Combo',value:pb.bestCombo?'×'+pb.bestCombo:'—'},
+    {label:'Longest Streak',value:pb.longestStreak?pb.longestStreak+' days':'—'},
+    {label:'Highest Quiz Score',value:pb.highestQuizScore!=null?pb.highestQuizScore+'%':'—'},
+    {label:'Fastest Quiz Clear',value:pb.fastestQuizSeconds!=null?pb.fastestQuizSeconds+'s · '+(pb.fastestQuizLabel||'Quiz'):'—'},
+    {label:'Quizzes Attempted',value:pb.totalQuizzesTaken||0}
   ];
-  pbHost.innerHTML = rows.map(r=>`<div class="mastery-row"><span style="width:auto;flex:1;color:var(--muted)">${r.label}</span><b style="color:var(--gold)">${r.value}</b></div>`).join('');
+  pbHost.innerHTML=rows.map(r=>'<div class="service-record-row"><span>'+r.label+'</span><b>'+r.value+'</b></div>').join('');
 
-  // real rank ladder — same source of truth as the Profile view
   const ranks=['Recruit','Cadet','Lance Naik','Naik','Havildar','Subedar','Lieutenant','Captain','Major','Colonel'];
-  const lvl = Math.floor(State.xp/100)+1;
-  const rankName = ranks[Math.min(lvl-1, ranks.length-1)];
-  const nextRankName = ranks[Math.min(lvl, ranks.length-1)];
-  const within = State.xp % 100;
-  const nextObjective = BADGES.find(b=>!b.check());
+  const lvl=Math.floor((State.xp||0)/100)+1;
+  const rankName=ranks[Math.min(lvl-1,ranks.length-1)];
+  const nextRankName=ranks[Math.min(lvl,ranks.length-1)];
+  const within=(State.xp||0)%100;
+  const nextObjective=BADGES.find(b=>!b.check());
+  rankHost.innerHTML=
+    '<div class="service-rank-display"><div class="service-rank-kicker">CURRENT RANK</div><div class="service-rank-name">'+rankName+'</div>'+
+    '<div class="service-rank-track" role="progressbar" aria-label="Progress toward next rank" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+within+'"><span style="width:'+within+'%"></span></div>'+
+    '<div class="service-rank-copy">'+within+' / 100 XP toward <b>'+nextRankName+'</b></div></div>'+
+    (nextObjective?'<div class="service-objective"><span class="service-objective-icon" aria-hidden="true">'+nextObjective.icon+'</span><span><b>Next objective · '+escapeHtmlVaani(nextObjective.name)+'</b><small>'+escapeHtmlVaani(nextObjective.hint)+'</small></span></div>':
+    '<div class="service-objective"><span class="service-objective-icon" aria-hidden="true">🏆</span><span><b>All citations earned</b><small>Every current milestone is complete.</small></span></div>');
 
-  rankHost.innerHTML = `
-    <div style="text-align:center;padding:6px 0 14px">
-      <div class="num serif" style="font-size:2rem;color:var(--gold)">${rankName}</div>
-      <div class="bar-wrap" style="margin-top:12px"><div class="bar-fill" style="width:${within}%"></div></div>
-      <div style="color:var(--muted);font-size:.76rem;margin-top:8px">${within} / 100 XP toward <b style="color:var(--text)">${nextRankName}</b></div>
-    </div>
-    ${nextObjective ? `
-    <div class="mastery-row" style="background:rgba(201,162,75,.1);border-radius:8px;align-items:flex-start">
-      <span style="width:34px;flex:none;font-size:1.2rem">${nextObjective.icon}</span>
-      <span style="width:auto;flex:1">
-        <b style="display:block;color:var(--gold)">Next Objective — ${nextObjective.name}</b>
-        <span style="color:var(--muted);font-size:.76rem">${nextObjective.hint}</span>
-      </span>
-    </div>` : `
-    <div class="mastery-row" style="background:rgba(201,162,75,.1);border-radius:8px">
-      <span style="width:34px;flex:none;font-size:1.2rem">🏆</span>
-      <span style="width:auto;flex:1;color:var(--gold);font-weight:600">All citations earned. Standing by for new orders.</span>
-    </div>`}`;
+  const serviceSignals=document.getElementById('serviceSkillSignals');
+  const serviceGoals=document.getElementById('serviceGoalList');
+  function serviceAverage(ids){
+    const vals=ids.map(id=>State.quizScores[id]).map(Number).filter(n=>Number.isFinite(n)&&n>=0&&n<=100);
+    return vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length):null;
+  }
+  if(serviceSignals){
+    const signals=[
+      ['Grammar',serviceAverage(GRAMMAR.map(g=>g.id))],
+      ['Comparisons',serviceAverage(COMPARISONS.map(c=>'cmp-'+c.id))],
+      ['Practice',serviceAverage(PRACTICE.map(p=>p.id))],
+      ['Reading',serviceAverage(READING.map(r=>r.id))]
+    ];
+    serviceSignals.innerHTML=signals.map(([label,value])=>{
+      const pct=value==null?0:value;
+      return '<div class="service-signal-row"><label>'+label+'</label><div class="service-signal-bar"><span style="width:'+pct+'%"></span></div><strong>'+ (value==null?'—':pct+'%') +'</strong></div>';
+    }).join('');
+  }
+  if(serviceGoals){
+    const goals=[];
+    const nextTopic=SKILL_TIERS.flatMap(t=>t.ids).map(id=>GRAMMAR.find(g=>g.id===id)).find(g=>g&&!State.completedTopics[g.id]);
+    if(nextTopic)goals.push({icon:nextTopic.icon||'📘',title:'Clear '+nextTopic.title,detail:'Next topic in your Grammar progression.'});
+    if((State.streak||0)<7)goals.push({icon:'🔥',title:'Build a 7-day streak',detail:(State.streak||0)+' consecutive day'+((State.streak||0)===1?'':'s')+' recorded so far.'});
+    const highest=pb.highestQuizScore==null?null:Number(pb.highestQuizScore);
+    if(highest==null||highest<70)goals.push({icon:'🎯',title:'Record a 70%+ quiz',detail:highest==null?'No quiz high score recorded yet.':'Current best: '+highest+'%.'});
+    if((State.xp||0)<100)goals.push({icon:'✦',title:'Reach 100 XP',detail:Math.max(0,100-(State.xp||0))+' XP remaining to the next level.'});
+    if(!goals.length)goals.push({icon:'🏅',title:'Maintain the standard',detail:'Your current baseline is established. Keep practising consistently.'});
+    serviceGoals.innerHTML=goals.slice(0,4).map(g=>'<div class="service-goal-item"><i aria-hidden="true">'+g.icon+'</i><span><b>'+escapeHtmlVaani(g.title)+'</b><small>'+escapeHtmlVaani(g.detail)+'</small></span></div>').join('');
+  }
 
-  logHost.innerHTML = BADGES.map(b=>{
-    const earned = b.check();
-    return `<div class="mastery-row"${earned?' style="background:rgba(201,162,75,.08);border-radius:8px"':''}>
-      <span style="width:34px;flex:none;font-size:1.15rem;${earned?'':'filter:grayscale(1);opacity:.45'}">${b.icon}</span>
-      <span style="width:auto;flex:1">
-        <b style="${earned?'color:var(--gold)':'color:var(--muted)'}">${b.name}</b>
-        <span style="display:block;color:var(--muted2);font-size:.72rem">${b.hint}</span>
-      </span>
-      <b style="font-family:var(--mono);font-size:.72rem;color:${earned?'var(--green)':'var(--muted2)'}">${earned?'EARNED':'LOCKED'}</b>
-    </div>`;
-  }).join('');
+  const weekHost=document.getElementById('serviceWeekWrap');
+  if(weekHost){
+    const days=[];
+    for(let i=6;i>=0;i--){
+      const date=new Date();date.setHours(12,0,0,0);date.setDate(date.getDate()-i);
+      const key=date.toDateString();
+      const xp=Math.max(0,Number(State.dailyActivity&&State.dailyActivity[key])||0);
+      days.push({label:date.toLocaleDateString(undefined,{weekday:'short'}),date:date.toLocaleDateString(undefined,{month:'short',day:'numeric'}),xp:xp,today:i===0});
+    }
+    const max=Math.max(1,...days.map(d=>d.xp));
+    weekHost.innerHTML='<div class="service-week-bars">'+days.map(d=>'<div class="service-week-day'+(d.today?' today':'')+'" title="'+d.date+': '+d.xp+' XP"><div class="service-week-track"><span style="height:'+Math.max(d.xp?6:2,Math.round(d.xp/max*100))+'%"></span></div><b>'+d.xp+'</b><small>'+d.label+'</small></div>').join('')+'</div>'+
+      '<div class="service-week-note">'+days.filter(d=>d.xp>0).length+' active day'+(days.filter(d=>d.xp>0).length===1?'':'s')+' · '+days.reduce((sum,d)=>sum+d.xp,0)+' XP in the last 7 days</div>';
+  }
+
+  const filters=document.getElementById('fieldLogFilters');
+  if(filters&&filters.dataset.bound!=='1'){
+    filters.dataset.bound='1';
+    filters.addEventListener('click',event=>{
+      const button=event.target.closest('[data-filter]');
+      if(!button||!filters.contains(button))return;
+      serviceBadgeFilter=button.dataset.filter||'all';
+      filters.querySelectorAll('[data-filter]').forEach(el=>{
+        const active=el===button;el.classList.toggle('active',active);el.setAttribute('aria-pressed',String(active));
+      });
+      renderLeaderboard();
+    });
+  }
+  const badgeRows=BADGES.map(b=>({badge:b,earned:!!b.check()})).filter(row=>
+    serviceBadgeFilter==='all'||(serviceBadgeFilter==='earned'?row.earned:!row.earned)
+  );
+  logHost.innerHTML=badgeRows.map(({badge:b,earned})=>
+    '<div class="service-citation'+(earned?' earned':' locked')+'"><span class="service-citation-icon" aria-hidden="true">'+b.icon+'</span>'+
+    '<span class="service-citation-copy"><b>'+escapeHtmlVaani(b.name)+'</b><small>'+escapeHtmlVaani(b.hint)+'</small></span>'+
+    '<span class="service-citation-status">'+(earned?'EARNED':'LOCKED')+'</span></div>'
+  ).join('')||'<div class="service-week-note">No citations in this view.</div>';
 }
-
 /* ============================================================
    MATCH GAME
 =============================================================*/
@@ -3730,20 +3981,64 @@ function refreshAll(){
 /* ============================================================
    COMPARISONS — render + quiz logic
 =============================================================*/
+let compareGroup='all';
+function compareGroupOf(c){
+  if(c.group)return c.group;
+  if(c.id==='who-whom')return 'Grammar';
+  if(c.id==='its-its-apostrophe')return 'Spelling';
+  return 'Word choice';
+}
 function renderCompareGrid(){
-  const grid = document.getElementById('compareGrid'); if(!grid) return;
-  const term = (document.getElementById('compareSearch')?.value||'').toLowerCase();
-  let list = COMPARISONS.filter(c => !term || c.a.toLowerCase().includes(term) || c.b.toLowerCase().includes(term) || c.tagline.toLowerCase().includes(term));
+  const grid=document.getElementById('compareGrid');if(!grid)return;
+  const search=document.getElementById('compareSearch');
+  const term=String(search&&search.value||'').trim().toLocaleLowerCase();
+  const groups=Array.from(new Set(COMPARISONS.map(compareGroupOf))).sort((a,b)=>a.localeCompare(b));
+  const filters=document.getElementById('compareFilters');
+  if(filters){
+    filters.innerHTML='';
+    [['all','All pairs']].concat(groups.map(group=>[group,group])).forEach(([value,label])=>{
+      const button=document.createElement('button');button.type='button';
+      button.className='cmp-filter'+(compareGroup===value?' active':'');
+      button.dataset.group=value;button.setAttribute('aria-pressed',String(compareGroup===value));
+      button.textContent=label+(value==='all'?' ('+COMPARISONS.length+')':' ('+COMPARISONS.filter(c=>compareGroupOf(c)===value).length+')');
+      button.addEventListener('click',()=>{compareGroup=value;renderCompareGrid();});
+      filters.appendChild(button);
+    });
+  }
+  const list=COMPARISONS.filter(c=>{
+    const searchable=[c.a,c.b,c.tagline,c.meanA,c.meanB,c.rule,compareGroupOf(c)].join(' ').replace(/<[^>]*>/g,' ').toLocaleLowerCase();
+    return (compareGroup==='all'||compareGroupOf(c)===compareGroup)&&(!term||searchable.includes(term));
+  });
+  const counter=document.getElementById('compareResultCount');
+  if(counter)counter.textContent=list.length+' of '+COMPARISONS.length+' pairs';
+  const total=document.getElementById('compareTotal');if(total)total.textContent=COMPARISONS.length;
+  const practised=document.getElementById('comparePractised');
+  if(practised)practised.textContent=COMPARISONS.filter(c=>State.quizScores['cmp-'+c.id]!=null).length;
   grid.innerHTML='';
-  if(!list.length){ grid.innerHTML='<div class="empty-state">No pairs match your search.</div>'; return; }
+  if(!list.length){const empty=document.createElement('div');empty.className='cmp-empty';empty.textContent='No pairs match this search and category. Try another word or choose All pairs.';grid.appendChild(empty);return;}
   list.forEach(c=>{
-    const done = State.quizScores['cmp-'+c.id]!==undefined;
-    const div=document.createElement('div'); div.className='card cmp-card';
-    div.innerHTML = `<div class="cmp-pair-row">${c.a} <span class="cmp-vs">VS</span> ${c.b}</div>
-      <p class="cmp-desc">${c.tagline}</p>
-      <div class="cmp-progress-chip">${done? '✓ Drilled · '+State.quizScores['cmp-'+c.id]+'%' : 'Not attempted yet'}</div>`;
-    div.onclick = ()=>openCompare(c.id);
-    grid.appendChild(div);
+    const score=State.quizScores['cmp-'+c.id];
+    const done=score!==undefined;
+    const button=document.createElement('button');button.type='button';button.className='card cmp-card';
+    button.setAttribute('aria-label','Study '+c.a+' versus '+c.b+(done?'. Last drill score '+score+' percent.':'. Not yet practised.'));
+    const meta=document.createElement('span');meta.className='cmp-card-top';
+    const category=document.createElement('span');category.className='cmp-card-category';category.textContent=compareGroupOf(c);
+    const priority=document.createElement('span');priority.className='cmp-card-priority';priority.textContent=c.priority||'Core';
+    meta.append(category,priority);
+    const pair=document.createElement('span');pair.className='cmp-pair-row';
+    const left=document.createElement('span');left.textContent=c.a;
+    const vs=document.createElement('span');vs.className='cmp-vs';vs.textContent='VS';
+    const right=document.createElement('span');right.textContent=c.b;
+    pair.append(left,vs,right);
+    const desc=document.createElement('span');desc.className='cmp-desc';desc.textContent=c.tagline;
+    const footer=document.createElement('span');footer.className='cmp-card-foot';
+    const progress=document.createElement('span');progress.className='cmp-progress-chip'+(done?' done':'');
+    progress.textContent=done?'✓ Practised · '+score+'%':'Not practised yet';
+    const action=document.createElement('span');action.className='cmp-card-action';action.textContent='Study pair →';
+    footer.append(progress,action);
+    button.append(meta,pair,desc,footer);
+    button.addEventListener('click',()=>openCompare(c.id));
+    grid.appendChild(button);
   });
 }
 let currentCompare = null;
@@ -3757,6 +4052,8 @@ function openCompare(id){
   document.getElementById('cmpMeanA').innerHTML = `<h3>${c.a}</h3><p>${c.meanA}</p>`;
   document.getElementById('cmpMeanB').dataset.letter = c.b[0];
   document.getElementById('cmpMeanB').innerHTML = `<h3>${c.b}</h3><p>${c.meanB}</p>`;
+  document.getElementById('cmpMeanA').appendChild(makeBookRegisterButton({word:c.a,meaning:c.meanA,kind:'word',source:'VAANI Comparisons'},'＋ Save to Book Register'));
+  document.getElementById('cmpMeanB').appendChild(makeBookRegisterButton({word:c.b,meaning:c.meanB,kind:'word',source:'VAANI Comparisons'},'＋ Save to Book Register'));
   document.getElementById('cmpDifference').innerHTML = c.difference;
   document.getElementById('cmpRule').innerHTML = c.rule;
   document.getElementById('cmpExceptions').innerHTML = c.exceptions.map(e=>`<li>${e}</li>`).join('');
