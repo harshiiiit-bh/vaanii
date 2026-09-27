@@ -397,6 +397,7 @@
         <div class="wod-word" id="dashWord">—</div>
         <div class="wod-mean" id="dashWordMeaning">—</div>
         <button class="btn ghost" style="margin-top:14px;width:100%;justify-content:center" onclick="switchView('vocab')">Open Vocabulary Vault</button>
+        <button class="btn ghost" style="margin-top:8px;width:100%;justify-content:center" id="dashWordToBook" type="button">＋ Save to Book Reading Register</button>
       </div>
       <div style="padding:22px 26px">
         <div class="panel-title"><span class="bar"></span>Daily Missions</div>
@@ -800,7 +801,7 @@
     <div class="wd-ipa" id="wdIpa">—</div>
     <div class="wd-pos" id="wdPos">—</div>
     <div class="wd-meta-row" id="wdMetaRow"></div>
-    <button class="btn" style="margin-top:16px" onclick="markWordLearned()">Mark Learned +10 XP</button>
+    <div class="wd-cross-actions"><button class="btn ghost" type="button" id="wdAddToBookRegister">＋ Add to Book Register</button><button class="btn" style="margin-top:16px" onclick="markWordLearned()">Mark Learned +10 XP</button></div>
   </div>
 
   <div class="wd-grid-2">
