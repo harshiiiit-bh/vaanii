@@ -2209,67 +2209,162 @@ function renderGrammarTree(retryCount){
     canvas.dataset.building = '';
   }
 }
-function renderGrammarTreeInner(canvas){
-  const cleared = Object.keys(State.completedTopics).length;
-  const total = GRAMMAR.length;
-  const overallPct = total ? Math.round((cleared/total)*100) : 0;
-  const scores = Object.values(State.quizScores);
-  const avgScore = scores.length ? Math.round(scores.reduce((a,b)=>a+b,0)/scores.length) : null;
+function gtTopicStatus(id,order,frontier){
+  if(State.completedTopics[id])return 'completed';
+  if(order.indexOf(id)===frontier)return 'current';
+  if(State.quizScores[id]!=null||(State.topicProgress&&State.topicProgress[id]))return 'progress';
+  return 'upcoming';
+}
+function gtTopicBrowserHTML(order,frontier,query,filter){
+  const tierDescriptions=[
+    'Begin with the building blocks of English.',
+    'Learn how verbs, time and sentence links work.',
+    'Connect ideas and build more complex sentences.',
+    'Make your written English more precise.',
+    'Apply grammar skills to exam-style questions.'
+  ];
+  const openTier=frontier>=order.length?SKILL_TIERS.length-1:Math.max(0,SKILL_TIERS.findIndex(t=>t.ids.includes(order[frontier])));
+  const browser=document.createElement('div');browser.className='gt-topic-browser';
+  const intro=document.createElement('div');intro.className='gt-browser-intro';
+  const kicker=document.createElement('span');kicker.className='gt-browser-kicker';kicker.textContent='A clearer way to learn';
+  const heading=document.createElement('h3');heading.textContent='Choose one topic at a time';
+  const help=document.createElement('p');help.textContent='Start with the next topic, or open any section to explore. Every card shows what the topic covers and how far you have progressed.';
+  intro.append(kicker,heading,help);browser.appendChild(intro);
 
-  const elTopics = document.getElementById('gtChipTopics'); if(elTopics) elTopics.textContent = total;
-  const elCovered = document.getElementById('gtChipCovered'); if(elCovered) elCovered.textContent = overallPct+'%';
-  const elScore = document.getElementById('gtChipScore'); if(elScore) elScore.textContent = avgScore!=null ? avgScore+'%' : '--';
+  const toolbar=document.createElement('div');toolbar.className='gt-browser-toolbar';
+  const label=document.createElement('label');label.className='gt-browser-search';
+  const icon=document.createElement('span');icon.className='search-icon';icon.setAttribute('aria-hidden','true');icon.textContent='⌕';
+  const input=document.createElement('input');input.id='gtTopicSearch';input.type='search';input.maxLength=70;input.autocomplete='off';input.placeholder='Search grammar topics…';input.setAttribute('aria-label','Search grammar topics');input.value=query;
+  label.append(icon,input);
+  const count=document.createElement('span');count.className='gt-browser-count';count.id='gtBrowserCount';count.setAttribute('aria-live','polite');count.textContent=order.length+' topics';
+  toolbar.append(label,count);browser.appendChild(toolbar);
 
-  const ringWrap = document.getElementById('gtOverallRing');
-  if(ringWrap) ringWrap.innerHTML = gtRingSVG(overallPct,'var(--gt-teal)') + `<div class="gt-ring-num">${overallPct}%</div>`;
-  const progSub = document.getElementById('gtProgressSub'); if(progSub) progSub.textContent = cleared+' of '+total+' topics complete';
+  const filters=document.createElement('div');filters.className='gt-browser-filters';filters.setAttribute('role','group');filters.setAttribute('aria-label','Filter grammar topics');
+  [['all','All'],['current','Next up'],['progress','In progress'],['completed','Completed']].forEach(([value,text])=>{
+    const button=document.createElement('button');button.type='button';button.className='gt-browser-filter';button.dataset.gtFilter=value;button.textContent=text;button.setAttribute('aria-pressed',String(filter===value));filters.appendChild(button);
+  });
+  browser.appendChild(filters);
 
-  const power = cleared*15 + (avgScore||0);
-  const powerNum = document.getElementById('gtPowerNum'); if(powerNum) powerNum.textContent = power;
-  const powerSub = document.getElementById('gtPowerSub');
-  if(powerSub) powerSub.textContent = power===0 ? 'Begin the journey' : (power<100 ? 'Building momentum' : 'Command-level grasp');
-
-  const statCompleted = document.getElementById('gtStatCompleted'); if(statCompleted) statCompleted.textContent = cleared+' / '+total;
-  const statTests = document.getElementById('gtStatTests');
-  if(statTests) statTests.textContent = (State.personalBests && State.personalBests.totalQuizzesTaken) || 0;
-
-  const donut = document.getElementById('gtDonut');
-  if(donut && !donut.dataset.built){
-    donut.style.background = 'conic-gradient(var(--gt-red) 0% 45%, var(--gt-gold) 45% 75%, var(--gt-teal) 75% 100%)';
-    donut.innerHTML = `<div class="gt-donut-hole"><b>20–25%</b><span>in English</span></div>`;
-    donut.dataset.built = '1';
-  }
-
-  if(!canvas.dataset.built){
-    const fruitsHTML = TREE_TOPICS.map(n=>{
-      const g = GRAMMAR.find(x=>x.id===n.id); if(!g) return '';
-      return `<button class="gt-fruit" data-id="${n.id}" data-apex="${n.apex?'1':'0'}" style="left:${(n.x/460*100).toFixed(2)}%;top:${(n.y/960*100).toFixed(2)}%">
-        <span class="gt-fruit-ring"><svg viewBox="0 0 80 80"><circle class="gt-fr-bg" cx="40" cy="40" r="34"></circle><circle class="gt-fr-fg" cx="40" cy="40" r="34"></circle></svg></span>
-        <span class="gt-fruit-icon">${g.icon}</span>
-        <span class="gt-fruit-label">${g.title}</span>
-        <span class="gt-fruit-pct">0%</span>
-      </button>`;
-    }).join('');
-    canvas.innerHTML = gtTreeSVGMarkup() + fruitsHTML;
-    canvas.dataset.built = '1';
-    canvas.querySelectorAll('.gt-fruit').forEach(btn=>{
-      btn.addEventListener('click',(e)=>{
-        gtRipple(btn,e);
-        gtOpenSheet(btn.dataset.id);
-      });
+  const groups=document.createElement('div');groups.className='gt-topic-groups';
+  SKILL_TIERS.forEach((tier,tierIndex)=>{
+    const ids=tier.ids.filter(id=>GRAMMAR.some(g=>g.id===id));if(!ids.length)return;
+    const completed=ids.filter(id=>State.completedTopics[id]).length,pct=Math.round(completed/ids.length*100);
+    const details=document.createElement('details');details.className='gt-topic-group';details.dataset.tier=String(tierIndex);
+    details.dataset.defaultOpen=String(openTier===tierIndex);details.open=openTier===tierIndex;
+    const summary=document.createElement('summary');
+    const number=document.createElement('span');number.className='gt-tier-index';number.textContent=String(tierIndex+1).padStart(2,'0');
+    const copy=document.createElement('span');copy.className='gt-tier-copy';
+    const title=document.createElement('span');title.className='gt-tier-title';title.textContent=tier.label.replace(/^Tier [IVX]+\s*·\s*/,'');
+    const subtitle=document.createElement('span');subtitle.className='gt-tier-subtitle';subtitle.textContent=tierDescriptions[tierIndex]||'Continue through the grammar curriculum.';
+    copy.append(title,subtitle);
+    const countLabel=document.createElement('span');countLabel.className='gt-tier-count';countLabel.textContent=completed+'/'+ids.length+' complete';
+    summary.append(number,copy,countLabel);details.appendChild(summary);
+    const progress=document.createElement('div');progress.className='gt-tier-progress';progress.setAttribute('aria-hidden','true');
+    const fill=document.createElement('div');fill.className='gt-tier-progress-fill';fill.style.width=pct+'%';progress.appendChild(fill);details.appendChild(progress);
+    const grid=document.createElement('div');grid.className='gt-topic-grid';
+    ids.forEach(id=>{
+      const g=GRAMMAR.find(x=>x.id===id);if(!g)return;
+      const status=gtTopicStatus(id,order,frontier),pctValue=gtProgress(id).pct||0;
+      const statusLabel=status==='completed'?'Completed':status==='current'?'Next up':status==='progress'?'In progress':'Not started';
+      const card=document.createElement('button');card.type='button';card.className='gt-topic-card';card.dataset.id=id;card.dataset.status=status;
+      card.setAttribute('aria-label','Open '+g.title+'. '+statusLabel+'.');
+      const topicIcon=document.createElement('span');topicIcon.className='gt-topic-icon';topicIcon.setAttribute('aria-hidden','true');topicIcon.textContent=g.icon||'📘';
+      const body=document.createElement('span');body.className='gt-topic-copy';
+      const topicTitle=document.createElement('span');topicTitle.className='gt-topic-title';topicTitle.textContent=g.title;
+      const desc=document.createElement('span');desc.className='gt-topic-desc';desc.textContent=g.desc||'Open this topic to study its rules and examples.';
+      const metaRow=document.createElement('span');metaRow.className='gt-topic-meta';
+      const statusText=document.createElement('span');statusText.className='gt-topic-status';statusText.textContent=statusLabel;
+      const percent=document.createElement('span');percent.className='gt-topic-pct';percent.textContent=pctValue+'%';
+      metaRow.append(statusText,percent);
+      const mini=document.createElement('span');mini.className='gt-topic-mini-progress';mini.setAttribute('aria-hidden','true');
+      const miniFill=document.createElement('span');miniFill.style.width=pctValue+'%';mini.appendChild(miniFill);
+      body.append(topicTitle,desc,metaRow,mini);
+      const open=document.createElement('span');open.className='gt-topic-open';open.setAttribute('aria-hidden','true');open.textContent='›';
+      card.append(topicIcon,body,open);grid.appendChild(card);
     });
-  }
-  TREE_TOPICS.forEach(n=>{
-    const btn = canvas.querySelector(`.gt-fruit[data-id="${n.id}"]`); if(!btn) return;
-    const {pct,state} = gtProgress(n.id);
-    btn.classList.remove('is-completed','is-progress','is-empty');
-    btn.classList.add(state==='completed'?'is-completed':state==='progress'?'is-progress':'is-empty');
-    const c = Math.PI*2*34;
-    const fg = btn.querySelector('.gt-fr-fg');
-    if(fg){ fg.style.strokeDasharray = c; fg.style.strokeDashoffset = c-(pct/100)*c; }
-    const pctEl = btn.querySelector('.gt-fruit-pct'); if(pctEl) pctEl.textContent = pct+'%';
+    details.appendChild(grid);groups.appendChild(details);
+  });
+  browser.appendChild(groups);
+  const empty=document.createElement('div');empty.className='gt-browser-empty';empty.id='gtBrowserEmpty';empty.hidden=true;empty.textContent='No topics match this search or filter. Try another term or choose All.';browser.appendChild(empty);
+  return browser;
+}
+function gtApplyBrowserFilters(canvas){
+  const term=String(canvas.dataset.topicSearch||'').trim().toLocaleLowerCase();
+  const filter=canvas.dataset.topicFilter||'all';
+  let visible=0,total=0;
+  canvas.querySelectorAll('.gt-topic-group').forEach(group=>{
+    let groupVisible=0;
+    group.querySelectorAll('.gt-topic-card').forEach(card=>{
+      total++;
+      const title=card.querySelector('.gt-topic-title')?.textContent||'';
+      const desc=card.querySelector('.gt-topic-desc')?.textContent||'';
+      const matchesText=!term||(title+' '+desc).toLocaleLowerCase().includes(term);
+      const matchesFilter=filter==='all'||card.dataset.status===filter;
+      const show=matchesText&&matchesFilter;card.hidden=!show;
+      if(show){groupVisible++;visible++;}
+    });
+    group.hidden=groupVisible===0;
+    if(term||filter!=='all')group.open=groupVisible>0;
+    else group.open=group.dataset.defaultOpen==='true';
+  });
+  const count=canvas.querySelector('#gtBrowserCount');
+  if(count)count.textContent=(term||filter!=='all')?visible+' of '+total+' topics':visible+' topics';
+  const empty=canvas.querySelector('#gtBrowserEmpty');if(empty)empty.hidden=visible>0;
+}
+function gtBindTopicBrowser(canvas){
+  if(canvas.dataset.eventsBound==='1')return;
+  canvas.dataset.eventsBound='1';
+  canvas.addEventListener('input',event=>{
+    if(event.target&&event.target.id==='gtTopicSearch'){
+      canvas.dataset.topicSearch=event.target.value;gtApplyBrowserFilters(canvas);
+    }
+  });
+  canvas.addEventListener('click',event=>{
+    const filter=event.target.closest('[data-gt-filter]');
+    if(filter&&canvas.contains(filter)){
+      canvas.dataset.topicFilter=filter.dataset.gtFilter||'all';
+      canvas.querySelectorAll('[data-gt-filter]').forEach(btn=>btn.setAttribute('aria-pressed',String(btn===filter)));
+      gtApplyBrowserFilters(canvas);return;
+    }
+    const card=event.target.closest('.gt-topic-card');
+    if(card&&canvas.contains(card))gtOpenSheet(card.dataset.id);
   });
 }
+function renderGrammarTreeInner(canvas){
+  const cleared=Object.keys(State.completedTopics).filter(id=>GRAMMAR.some(g=>g.id===id)).length;
+  const total=GRAMMAR.length;
+  const overallPct=total?Math.round((cleared/total)*100):0;
+  const scores=Object.values(State.quizScores);
+  const avgScore=scores.length?Math.round(scores.reduce((a,b)=>a+b,0)/scores.length):null;
+  const elTopics=document.getElementById('gtChipTopics');if(elTopics)elTopics.textContent=total;
+  const elCovered=document.getElementById('gtChipCovered');if(elCovered)elCovered.textContent=overallPct+'%';
+  const elScore=document.getElementById('gtChipScore');if(elScore)elScore.textContent=avgScore!=null?avgScore+'%':'--';
+  const ringWrap=document.getElementById('gtOverallRing');
+  if(ringWrap)ringWrap.innerHTML=gtRingSVG(overallPct,'var(--gt-teal)')+'<div class="gt-ring-num">'+overallPct+'%</div>';
+  const progSub=document.getElementById('gtProgressSub');if(progSub)progSub.textContent=cleared+' of '+total+' topics complete';
+  const power=cleared*15+(avgScore||0);
+  const powerNum=document.getElementById('gtPowerNum');if(powerNum)powerNum.textContent=power;
+  const powerSub=document.getElementById('gtPowerSub');
+  if(powerSub)powerSub.textContent=power===0?'Begin the journey':(power<100?'Building momentum':'Command-level grasp');
+  const statCompleted=document.getElementById('gtStatCompleted');if(statCompleted)statCompleted.textContent=cleared+' / '+total;
+  const statTests=document.getElementById('gtStatTests');
+  if(statTests)statTests.textContent=(State.personalBests&&State.personalBests.totalQuizzesTaken)||0;
+  const donut=document.getElementById('gtDonut');
+  if(donut&&!donut.dataset.built){
+    donut.style.background='conic-gradient(var(--gt-red) 0% 45%,var(--gt-gold) 45% 75%,var(--gt-teal) 75% 100%)';
+    donut.innerHTML='<div class="gt-donut-hole"><b>20–25%</b><span>in English</span></div>';
+    donut.dataset.built='1';
+  }
+  const order=SKILL_TIERS.flatMap(t=>t.ids).filter(id=>GRAMMAR.some(g=>g.id===id));
+  const frontier=order.findIndex(id=>!State.completedTopics[id]);
+  const query=canvas.dataset.topicSearch||'',filter=canvas.dataset.topicFilter||'all';
+  const browser=gtTopicBrowserHTML(order,frontier===-1?order.length:frontier,query,filter);
+  canvas.replaceChildren(browser);
+  canvas.dataset.built='1';
+  gtBindTopicBrowser(canvas);
+  gtApplyBrowserFilters(canvas);
+}
+
 function gtRipple(btn,e){
   const r = document.createElement('span'); r.className='gt-fruit-ripple';
   const rect = btn.getBoundingClientRect();
