@@ -1569,6 +1569,7 @@ function setVbvRegisterFilter(button){
 }
 
 function renderVocab(){
+  vbvRegisterFilter='all';
   const groups = {};
   [...DATA.vocab].sort((a,b)=>b.dateAdded.localeCompare(a.dateAdded)).forEach(v=>{
     groups[v.dateAdded] = groups[v.dateAdded] || [];
@@ -1595,13 +1596,13 @@ function renderVocab(){
     <div class="vbv-register-tools">
       <label class="vbv-register-search"><span aria-hidden="true">⌕</span><input id="vbv-register-search" type="search" maxlength="80" placeholder="Search saved words, meanings or sources…" oninput="filterVbvRegister()" aria-label="Search your vocabulary register"></label>
       <div class="vbv-register-filters" role="group" aria-label="Filter vocabulary origin">
-        <button type="button" class="active" data-vbv-filter="all" aria-pressed="true" onclick="setVbvRegisterFilter(this)">All</button>
+          <button type="button" class="active" data-vbv-filter="all" aria-pressed="true" onclick="setVbvRegisterFilter(this)">All</button>
         <button type="button" data-vbv-filter="book" aria-pressed="false" onclick="setVbvRegisterFilter(this)">From books</button>
         <button type="button" data-vbv-filter="vaani" aria-pressed="false" onclick="setVbvRegisterFilter(this)">From VAANI</button>
+        <button type="button" data-vbv-filter="bookreading" aria-pressed="false" onclick="setVbvRegisterFilter(this)">Book Reading</button>
         <button type="button" data-vbv-filter="manual" aria-pressed="false" onclick="setVbvRegisterFilter(this)">Manual</button>
       </div>
       <span class="vbv-register-count" id="vbv-register-count">Saved entries</span>
-    </div>
     </div>
     ${DATA.vocab.length >= 4 ? `
     <div class="panel" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
@@ -1625,6 +1626,7 @@ function vocabCardHtml(v){
     </div>
     <div class="vocab-body">
       <div class="vocab-meaning">${escapeHtml(v.meaning)}</div>
+      ${v.example?'<div class="vbv-entry-example"><b>Example</b><span>'+escapeHtml(v.example)+'</span></div>':''}
       <div class="tag-group"><span class="lbl">Synonyms</span>${(v.synonyms||[]).map(s=>`<span class="tag syn">${escapeHtml(s)}</span>`).join('') || '<span class="tag">none found</span>'}</div>
       <div class="tag-group"><span class="lbl">Antonyms</span>${(v.antonyms||[]).map(s=>`<span class="tag ant">${escapeHtml(s)}</span>`).join('') || '<span class="tag">none found</span>'}</div>
       <button class="vbv-btn btn-outline btn-sm" style="margin-top:8px;" onclick="openDeleteVocabModal('${v.id}')">Remove Word</button>
