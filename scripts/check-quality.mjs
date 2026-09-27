@@ -206,7 +206,6 @@ try {
   const pageSource = readFileSync('index.html', 'utf8');
   const arenaSource = readFileSync('js/vaani-arena.js', 'utf8');
   const siteCss = readFileSync('vaani-site-refresh.css', 'utf8');
-  const reconstructionCss = readFileSync('vaani-reconstruction.css', 'utf8');
   const extrasContext = { window: {} };
   vm.runInNewContext(readFileSync('data/comparisons-extra.js', 'utf8'), extrasContext, { timeout: 1500 });
   const extras = extrasContext.window.VAANI_COMPARISON_EXTRA;
@@ -239,7 +238,6 @@ try {
     throw new Error('Additional comparisons must load before the main app.');
   }
   if (!pageSource.includes('href="vaani-site-refresh.css"')) throw new Error('Site refresh stylesheet is not linked.');
-  if (!pageSource.includes('href="vaani-reconstruction.css"')) throw new Error('Reconstruction stylesheet is not linked.');
   if (pageSource.includes('id="flashCard"') || pageSource.includes('Flashcard Drill') || pageSource.includes('data-route="flashcards"')) throw new Error('The Vocabulary Flashcard Drill UI is still present.');
   for (const id of ['vpProfileAvatar', 'vpOverviewStats', 'vpActivityList', 'vpFocusMission', 'vpSkillSignals', 'vpRhythmGrid', 'serviceMetrics', 'serviceWeekWrap', 'serviceSkillSignals', 'serviceGoalList', 'fieldLogFilters', 'compareFilters', 'compareResultCount', 'dailyShuffleBtn']) {
     if (!pageSource.includes('id="' + id + '"')) throw new Error('Missing redesigned UI container: ' + id);
@@ -250,7 +248,7 @@ try {
   for (const required of ['vx-home-metrics', 'vx-mode-grid', 'vx-arena-brief', 'vx-board-summary', 'vx-board-heading']) {
     if (!arenaSource.includes(required)) throw new Error('Arena refresh markup missing: ' + required);
   }
-  const allRefreshCss = siteCss + '\n' + reconstructionCss;
+  const allRefreshCss = siteCss;
   for (const required of ['.cmp-hero', '.vp-profile-hero', '.service-hero', '.vx-home-metrics', '.vx-mode-grid', '.service-signal-grid', '.vp-focus-grid', '.daily-refresh-btn']) {
     if (!allRefreshCss.includes(required)) throw new Error('Site refresh styles missing: ' + required);
   }
