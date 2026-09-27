@@ -234,3 +234,49 @@
 .vaani-author-credit strong{color:#f0c874;font-weight:800;letter-spacing:.025em}
 .vaani-author-credit .credit-separator{color:#60717e}
 @media(max-width:560px){.vaani-author-credit{margin:20px auto 14px;font-size:.66rem}}
+
+
+/* The topic dossier and notes modal sit beside #view-grammar in the DOM,
+   so they must own their palette instead of relying on inherited tokens. */
+.gt-sheet-overlay,.gt-notes-overlay{
+  --gt-bg0:#060a10;--gt-bg1:#0a121c;--gt-bg2:#0d1826;
+  --gt-panel:rgba(16,26,38,.92);--gt-panel-b:rgba(120,170,190,.28);--gt-line:rgba(160,200,215,.22);
+  --gt-gold:#d9a941;--gt-gold-l:#f0c874;--gt-gold-d:#8a6d2e;
+  --gt-teal:#2fd7c4;--gt-teal-l:#7bf0e0;--gt-teal-d:#12796d;
+  --gt-green:#3fe08a;--gt-amber:#e8b13d;--gt-grey:#5b6b78;--gt-red:#e2575a;
+  --gt-text:#eaf2f5;--gt-muted:#b0c0ca;--gt-muted2:#9eafb9;
+  color:var(--gt-text);
+}
+.gt-sheet .gt-dossier-tag{color:#f0c874}
+.gt-sheet .gt-dossier-eyebrow,
+.gt-sheet .gt-dossier-stat-lbl,
+.gt-sheet .gt-sheet-stat-lbl{color:#b7c6cf}
+.gt-sheet .gt-sheet-progress-xp{color:#c0cbd2}
+.gt-sheet .gt-sheet-stat-val{color:#f4f7f9}
+.gt-sheet .gt-dossier-pill{color:#f0e5c7}
+.gt-sheet .gt-dossier-pill.locked{color:#bdcbd3}
+.gt-sheet .gt-sheet-progress-status{color:#8ff4e7}
+.gt-sheet .gt-sheet-progress-status.completed{color:#7ce5a8}
+.gt-sheet .gt-sheet-progress-status.progress{color:#f0c874}
+.gt-notes-modal .gt-card-lbl{color:#c1cdd4}
+.gt-notes-modal textarea{color:#f0f4f6}
+.gt-notes-modal textarea::placeholder{color:#a9bac5;opacity:1}
+
+/* Bring metadata up to a comfortable reading size. */
+.gt-tier-count,.gj-stage-count{font-size:.7rem}
+.gt-browser-count{font-size:.7rem}
+.gt-browser-filter{font-size:.72rem}
+.gt-topic-status,.gj-roadmap-state{font-size:.62rem}
+.gt-topic-pct{font-size:.65rem}
+.gt-topic-desc,.gj-roadmap-desc{font-size:.71rem;line-height:1.55}
+.gj-stage-desc,.gt-tier-subtitle{font-size:.72rem;line-height:1.55}
+#view-grammar .gt-tree-wrap{padding-bottom:4px}
+@media(max-width:1023px){
+  #view-grammar .gt-tree-wrap{order:1}
+  #view-grammar .gt-sidebar{order:2;width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+  #view-grammar .gt-weightage-card{grid-column:1/-1}
+}
+@media(max-width:520px){
+  #view-grammar .gt-sidebar{grid-template-columns:1fr}
+  #view-grammar .gt-weightage-card{grid-column:auto}
+}
