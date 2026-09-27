@@ -469,7 +469,7 @@ const COMPARISONS = [
     {q:'Fill the blank: "The new CEO plans to ___ several changes."',opts:['affect','effect','affects','effecting'],ans:1,exp:'Rare verb sense of "effect" — to bring about/cause — fits here, not "affect" (influence).'}
   ]
 },
-];
+].concat(Array.isArray(window.VAANI_COMPARISON_EXTRA)?window.VAANI_COMPARISON_EXTRA:[]);
 
 /* ============================================================
    VOCAB DATA — full mastery schema
@@ -2898,10 +2898,64 @@ function renderQuizPane(id, quiz){
 /* ============================================================
    VOCAB RENDER — Mastery Hub
 =============================================================*/
-let vocabCat='all', vocabDiff='all', flashIdx=0, currentWordId=null;
+let vocabCat='all', vocabDiff='all', currentWordId=null;
 const VOCAB_BY_ID = {}; VOCAB.forEach(v=>VOCAB_BY_ID[v.id]=v);
-function dayIndex(){ const d=new Date(); return Math.floor(d.getTime()/86400000); }
-function pickDaily(arr,n,offset){ const len=arr.length; const out=[]; for(let i=0;i<n;i++){ out.push(arr[(dayIndex()+offset+i)%len]); } return out; }
+function dailyDateKey(date){
+  const d=date||new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function dailyHash(text){
+  let h=2166136261;
+  for(let i=0;i<text.length;i++){h^=text.charCodeAt(i);h=Math.imul(h,16777619);}
+  return h>>>0;
+}
+function dailyShuffle(items,seed){
+  let state=seed||0x6D2B79F5;
+  function random(){
+    state=(state+0x6D2B79F5)|0;
+    let t=state;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);
+    return ((t^(t>>>14))>>>0)/4294967296;
+  }
+  const out=items.slice();
+  for(let i=out.length-1;i>0;i--){const j=Math.floor(random()*(i+1));[out[i],out[j]]=[out[j],out[i]];}
+  return out;
+}
+function dailyItemId(item,index){
+  let raw=item&& (item.id||item.t||item.w||item.word||item.phrase||item.q);
+  if(raw==null||raw===''){try{raw=JSON.stringify(item);}catch(e){raw='item';}}
+  return String(raw).trim().toLocaleLowerCase()+'#'+index;
+}
+function pickDaily(arr,n,offset){
+  const items=Array.isArray(arr)?arr.filter(item=>item!=null):[];
+  const wanted=Math.max(0,Math.min(items.length,Math.floor(Number(n)||0)));
+  if(!wanted)return [];
+  const indexed=items.map((item,index)=>({id:dailyItemId(item,index),item:item}));
+  const byId=new Map(indexed.map(entry=>[entry.id,entry.item]));
+  const fingerprint=String(offset||0)+'|'+indexed.map(entry=>entry.id).join('|');
+  const storageKey='vaani_daily_rotation_v3_'+dailyHash(fingerprint).toString(36);
+  const today=dailyDateKey();
+  let stored=null;
+  try{stored=JSON.parse(localStorage.getItem(storageKey)||'null');}catch(e){}
+  let history=stored&&Array.isArray(stored.history)?stored.history:[];
+  let orderIds=stored&&stored.date===today&&Array.isArray(stored.order)?stored.order.filter(id=>byId.has(id)):[];
+  if(orderIds.length!==items.length){
+    const shuffled=dailyShuffle(indexed,dailyHash(today+'|'+fingerprint));
+    const cutoff=new Date();cutoff.setDate(cutoff.getDate()-7);const cutoffKey=dailyDateKey(cutoff);
+    const recentIds=new Set();
+    history.filter(entry=>entry&&typeof entry.date==='string'&&entry.date<today&&entry.date>=cutoffKey)
+      .forEach(entry=>(Array.isArray(entry.ids)?entry.ids:[]).forEach(id=>recentIds.add(id)));
+    const fresh=shuffled.filter(entry=>!recentIds.has(entry.id));
+    const repeats=shuffled.filter(entry=>recentIds.has(entry.id));
+    orderIds=fresh.concat(repeats).map(entry=>entry.id);
+  }
+  const selectedIds=orderIds.slice(0,wanted);
+  const previous=history.filter(entry=>entry&&entry.date!==today);
+  previous.push({date:today,ids:selectedIds});
+  try{
+    localStorage.setItem(storageKey,JSON.stringify({date:today,order:orderIds,history:previous.slice(-15)}));
+  }catch(e){}
+  return selectedIds.map(id=>byId.get(id)).filter(item=>item!==undefined);
+}
 
 function setVocabCat(c){vocabCat=c;document.querySelectorAll('#vocabCatChips .chip').forEach(ch=>ch.classList.toggle('active',ch.dataset.cat===c));renderVocabGrid();}
 function setVocabDiff(d){vocabDiff=d;document.querySelectorAll('#vocabDiffChips .chip').forEach(ch=>ch.classList.toggle('active',ch.dataset.diff===d));renderVocabGrid();}
@@ -2925,12 +2979,12 @@ function renderVocabGrid(){
 
 function renderDailySetTabs(){
   const sets=[
-    {key:'wod',label:'Words of the Day',cat:null},
-    {key:'advanced',label:'Advanced Words',cat:'advanced'},
-    {key:'nda',label:'NDA Frequent',cat:'nda'},
-    {key:'editorial',label:'Editorial Words',cat:'editorial'},
-    {key:'military',label:'Military Vocabulary',cat:'military'},
-    {key:'foreign',label:'Foreign Phrases',cat:'foreign'}
+    {key:'wod',label:'Words of the Day',cat:null,offset:0},
+    {key:'advanced',label:'Advanced Words',cat:'advanced',offset:1},
+    {key:'nda',label:'NDA Frequent',cat:'nda',offset:2},
+    {key:'editorial',label:'Editorial Words',cat:'editorial',offset:3},
+    {key:'military',label:'Military Vocabulary',cat:'military',offset:4},
+    {key:'foreign',label:'Foreign Phrases',cat:'foreign',offset:5}
   ];
   const tabs=document.getElementById('dailySetTabs'); tabs.innerHTML='';
   sets.forEach((s,i)=>{
@@ -2943,7 +2997,7 @@ function renderDailySetTabs(){
 function renderDailySetGrid(setDef){
   const grid=document.getElementById('dailySetGrid'); grid.innerHTML='';
   if(setDef.key==='foreign'){
-    const picks = pickDaily(FOREIGN_PHRASES,5,0);
+    const picks = pickDaily(FOREIGN_PHRASES,5,setDef.offset);
     picks.forEach(p=>{
       const div=document.createElement('div'); div.className='card word-card'; div.style.cursor='default';
       div.innerHTML=`<h3>${p.t}</h3><div class="wc-pos">${p.lang}</div><p class="wc-mean">${p.mean}</p><div class="example-box" style="margin-top:8px">"${p.ex}"</div>`;
@@ -2952,7 +3006,7 @@ function renderDailySetGrid(setDef){
     return;
   }
   const pool = setDef.cat ? VOCAB.filter(v=>v.cat.includes(setDef.cat)) : VOCAB;
-  const picks = pickDaily(pool,5,setDef.key.length);
+  const picks = pickDaily(pool,5,setDef.offset);
   picks.forEach(v=>{
     const div=document.createElement('div'); div.className='card word-card';
     div.innerHTML=`<div class="wc-top"><h3>${v.w}</h3><div class="wc-imp" title="Exam importance ${v.imp}/5">${'●'.repeat(v.imp)}${'○'.repeat(5-v.imp)}</div></div><div class="wc-pos">${v.pos}</div><p class="wc-mean">${v.meanEn}</p>`;
@@ -2964,14 +3018,14 @@ function renderDailySetGrid(setDef){
 function renderDailySingles(){
   const strip=document.getElementById('dailySinglesStrip'); strip.innerHTML='';
   const items=[
-    {label:'Idiom of the Day',tag:'IDM',d:pickDaily(DAILY_IDIOMS,1,1)[0]},
-    {label:'Phrase of the Day',tag:'PHR',d:pickDaily(DAILY_PHRASES,1,2)[0]},
-    {label:'Proverb of the Day',tag:'PRV',d:pickDaily(DAILY_PROVERBS,1,3)[0]},
-    {label:'Phrasal Verb of the Day',tag:'P·V',d:pickDaily(DAILY_PHRASAL_VERBS,1,4)[0]},
-    {label:'Collocation of the Day',tag:'COL',d:pickDaily(DAILY_COLLOCATIONS,1,5)[0]},
-    {label:'Prefix of the Day',tag:'PRE',d:pickDaily(DAILY_PREFIXES,1,6)[0]},
-    {label:'Suffix of the Day',tag:'SUF',d:pickDaily(DAILY_SUFFIXES,1,7)[0]},
-    {label:'Root Word of the Day',tag:'ROOT',d:pickDaily(DAILY_ROOTS,1,8)[0]}
+    {label:'Idiom of the Day',tag:'IDM',d:pickDaily(DAILY_IDIOMS,1,6)[0]},
+    {label:'Phrase of the Day',tag:'PHR',d:pickDaily(DAILY_PHRASES,1,7)[0]},
+    {label:'Proverb of the Day',tag:'PRV',d:pickDaily(DAILY_PROVERBS,1,8)[0]},
+    {label:'Phrasal Verb of the Day',tag:'P·V',d:pickDaily(DAILY_PHRASAL_VERBS,1,9)[0]},
+    {label:'Collocation of the Day',tag:'COL',d:pickDaily(DAILY_COLLOCATIONS,1,10)[0]},
+    {label:'Prefix of the Day',tag:'PRE',d:pickDaily(DAILY_PREFIXES,1,11)[0]},
+    {label:'Suffix of the Day',tag:'SUF',d:pickDaily(DAILY_SUFFIXES,1,12)[0]},
+    {label:'Root Word of the Day',tag:'ROOT',d:pickDaily(DAILY_ROOTS,1,13)[0]}
   ];
   items.forEach(it=>{
     const div=document.createElement('div'); div.className='single-card';
@@ -2995,17 +3049,6 @@ function renderConfuseTable(){
   });
 }
 
-function flipCard(){document.getElementById('flashCard').classList.toggle('flip');}
-function renderFlash(){
-  const v = VOCAB[flashIdx];
-  document.getElementById('flashFront').textContent=v.w;
-  document.getElementById('flashBack').innerHTML=`<b style="color:var(--gold)">${v.pos}</b><br>${v.meanEn}<br><br><i>"${v.exMed}"</i>`;
-  document.getElementById('flashCard').classList.remove('flip');
-  const prog = document.getElementById('flashProgress');
-  if(prog) prog.textContent = `Card ${flashIdx+1} of ${VOCAB.length}`;
-}
-function nextFlash(){flashIdx=(flashIdx+1)%VOCAB.length;renderFlash();}
-function prevFlash(){flashIdx=(flashIdx-1+VOCAB.length)%VOCAB.length;renderFlash();}
 
 function markWordLearned(){
   const today=new Date().toDateString();
