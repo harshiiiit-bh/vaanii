@@ -3636,61 +3636,84 @@ function renderBadges(){
 /* ============================================================
    PHASE 7: SERVICE RECORD (personal bests + real rank + earned citations)
 =============================================================*/
+let serviceBadgeFilter='all';
 function renderLeaderboard(){
-  const pbHost = document.getElementById('personalBestsWrap');
-  const rankHost = document.getElementById('rankObjectiveWrap');
-  const logHost = document.getElementById('fieldLogWrap');
-  if(!pbHost || !rankHost || !logHost) return;
-  const pb = State.personalBests || {};
-  const rows = [
-    {label:'Best Combo', value: pb.bestCombo ? `×${pb.bestCombo}` : '—'},
-    {label:'Longest Streak', value: pb.longestStreak ? `${pb.longestStreak} days` : '—'},
-    {label:'Highest Quiz Score', value: pb.highestQuizScore ? `${pb.highestQuizScore}%` : '—'},
-    {label:'Fastest Quiz Clear', value: pb.fastestQuizSeconds!=null ? `${pb.fastestQuizSeconds}s — ${pb.fastestQuizLabel||''}` : '—'},
-    {label:'Quizzes Attempted', value: pb.totalQuizzesTaken || 0},
+  const pbHost=document.getElementById('personalBestsWrap');
+  const rankHost=document.getElementById('rankObjectiveWrap');
+  const logHost=document.getElementById('fieldLogWrap');
+  if(!pbHost||!rankHost||!logHost)return;
+  const pb=State.personalBests||{};
+  const completed=GRAMMAR.filter(g=>!!State.completedTopics[g.id]).length;
+  const scoreValues=Object.values(State.quizScores).map(Number).filter(n=>Number.isFinite(n)&&n>=0&&n<=100);
+  const average=scoreValues.length?Math.round(scoreValues.reduce((sum,n)=>sum+n,0)/scoreValues.length):null;
+  const metrics=document.getElementById('serviceMetrics');
+  if(metrics){
+    const data=[
+      {label:'Total XP',value:String(State.xp||0),hint:'Lifetime earned'},
+      {label:'Current streak',value:String(State.streak||0),hint:'Consecutive days'},
+      {label:'Topics cleared',value:completed+'/'+GRAMMAR.length,hint:'Grammar curriculum'},
+      {label:'Quiz average',value:average==null?'—':average+'%',hint:scoreValues.length+' recorded scores'}
+    ];
+    metrics.innerHTML=data.map(item=>'<div class="service-metric"><span>'+item.label+'</span><strong>'+item.value+'</strong><small>'+item.hint+'</small></div>').join('');
+  }
+  const rows=[
+    {label:'Best Combo',value:pb.bestCombo?'×'+pb.bestCombo:'—'},
+    {label:'Longest Streak',value:pb.longestStreak?pb.longestStreak+' days':'—'},
+    {label:'Highest Quiz Score',value:pb.highestQuizScore!=null?pb.highestQuizScore+'%':'—'},
+    {label:'Fastest Quiz Clear',value:pb.fastestQuizSeconds!=null?pb.fastestQuizSeconds+'s · '+(pb.fastestQuizLabel||'Quiz'):'—'},
+    {label:'Quizzes Attempted',value:pb.totalQuizzesTaken||0}
   ];
-  pbHost.innerHTML = rows.map(r=>`<div class="mastery-row"><span style="width:auto;flex:1;color:var(--muted)">${r.label}</span><b style="color:var(--gold)">${r.value}</b></div>`).join('');
+  pbHost.innerHTML=rows.map(r=>'<div class="service-record-row"><span>'+r.label+'</span><b>'+r.value+'</b></div>').join('');
 
-  // real rank ladder — same source of truth as the Profile view
   const ranks=['Recruit','Cadet','Lance Naik','Naik','Havildar','Subedar','Lieutenant','Captain','Major','Colonel'];
-  const lvl = Math.floor(State.xp/100)+1;
-  const rankName = ranks[Math.min(lvl-1, ranks.length-1)];
-  const nextRankName = ranks[Math.min(lvl, ranks.length-1)];
-  const within = State.xp % 100;
-  const nextObjective = BADGES.find(b=>!b.check());
+  const lvl=Math.floor((State.xp||0)/100)+1;
+  const rankName=ranks[Math.min(lvl-1,ranks.length-1)];
+  const nextRankName=ranks[Math.min(lvl,ranks.length-1)];
+  const within=(State.xp||0)%100;
+  const nextObjective=BADGES.find(b=>!b.check());
+  rankHost.innerHTML=
+    '<div class="service-rank-display"><div class="service-rank-kicker">CURRENT RANK</div><div class="service-rank-name">'+rankName+'</div>'+
+    '<div class="service-rank-track" role="progressbar" aria-label="Progress toward next rank" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+within+'"><span style="width:'+within+'%"></span></div>'+
+    '<div class="service-rank-copy">'+within+' / 100 XP toward <b>'+nextRankName+'</b></div></div>'+
+    (nextObjective?'<div class="service-objective"><span class="service-objective-icon" aria-hidden="true">'+nextObjective.icon+'</span><span><b>Next objective · '+escapeHtmlVaani(nextObjective.name)+'</b><small>'+escapeHtmlVaani(nextObjective.hint)+'</small></span></div>':
+    '<div class="service-objective"><span class="service-objective-icon" aria-hidden="true">🏆</span><span><b>All citations earned</b><small>Every current milestone is complete.</small></span></div>');
 
-  rankHost.innerHTML = `
-    <div style="text-align:center;padding:6px 0 14px">
-      <div class="num serif" style="font-size:2rem;color:var(--gold)">${rankName}</div>
-      <div class="bar-wrap" style="margin-top:12px"><div class="bar-fill" style="width:${within}%"></div></div>
-      <div style="color:var(--muted);font-size:.76rem;margin-top:8px">${within} / 100 XP toward <b style="color:var(--text)">${nextRankName}</b></div>
-    </div>
-    ${nextObjective ? `
-    <div class="mastery-row" style="background:rgba(201,162,75,.1);border-radius:8px;align-items:flex-start">
-      <span style="width:34px;flex:none;font-size:1.2rem">${nextObjective.icon}</span>
-      <span style="width:auto;flex:1">
-        <b style="display:block;color:var(--gold)">Next Objective — ${nextObjective.name}</b>
-        <span style="color:var(--muted);font-size:.76rem">${nextObjective.hint}</span>
-      </span>
-    </div>` : `
-    <div class="mastery-row" style="background:rgba(201,162,75,.1);border-radius:8px">
-      <span style="width:34px;flex:none;font-size:1.2rem">🏆</span>
-      <span style="width:auto;flex:1;color:var(--gold);font-weight:600">All citations earned. Standing by for new orders.</span>
-    </div>`}`;
+  const weekHost=document.getElementById('serviceWeekWrap');
+  if(weekHost){
+    const days=[];
+    for(let i=6;i>=0;i--){
+      const date=new Date();date.setHours(12,0,0,0);date.setDate(date.getDate()-i);
+      const key=date.toDateString();
+      const xp=Math.max(0,Number(State.dailyActivity&&State.dailyActivity[key])||0);
+      days.push({label:date.toLocaleDateString(undefined,{weekday:'short'}),date:date.toLocaleDateString(undefined,{month:'short',day:'numeric'}),xp:xp,today:i===0});
+    }
+    const max=Math.max(1,...days.map(d=>d.xp));
+    weekHost.innerHTML='<div class="service-week-bars">'+days.map(d=>'<div class="service-week-day'+(d.today?' today':'')+'" title="'+d.date+': '+d.xp+' XP"><div class="service-week-track"><span style="height:'+Math.max(d.xp?6:2,Math.round(d.xp/max*100))+'%"></span></div><b>'+d.xp+'</b><small>'+d.label+'</small></div>').join('')+'</div>'+
+      '<div class="service-week-note">'+days.filter(d=>d.xp>0).length+' active day'+(days.filter(d=>d.xp>0).length===1?'':'s')+' · '+days.reduce((sum,d)=>sum+d.xp,0)+' XP in the last 7 days</div>';
+  }
 
-  logHost.innerHTML = BADGES.map(b=>{
-    const earned = b.check();
-    return `<div class="mastery-row"${earned?' style="background:rgba(201,162,75,.08);border-radius:8px"':''}>
-      <span style="width:34px;flex:none;font-size:1.15rem;${earned?'':'filter:grayscale(1);opacity:.45'}">${b.icon}</span>
-      <span style="width:auto;flex:1">
-        <b style="${earned?'color:var(--gold)':'color:var(--muted)'}">${b.name}</b>
-        <span style="display:block;color:var(--muted2);font-size:.72rem">${b.hint}</span>
-      </span>
-      <b style="font-family:var(--mono);font-size:.72rem;color:${earned?'var(--green)':'var(--muted2)'}">${earned?'EARNED':'LOCKED'}</b>
-    </div>`;
-  }).join('');
+  const filters=document.getElementById('fieldLogFilters');
+  if(filters&&filters.dataset.bound!=='1'){
+    filters.dataset.bound='1';
+    filters.addEventListener('click',event=>{
+      const button=event.target.closest('[data-filter]');
+      if(!button||!filters.contains(button))return;
+      serviceBadgeFilter=button.dataset.filter||'all';
+      filters.querySelectorAll('[data-filter]').forEach(el=>{
+        const active=el===button;el.classList.toggle('active',active);el.setAttribute('aria-pressed',String(active));
+      });
+      renderLeaderboard();
+    });
+  }
+  const badgeRows=BADGES.map(b=>({badge:b,earned:!!b.check()})).filter(row=>
+    serviceBadgeFilter==='all'||(serviceBadgeFilter==='earned'?row.earned:!row.earned)
+  );
+  logHost.innerHTML=badgeRows.map(({badge:b,earned})=>
+    '<div class="service-citation'+(earned?' earned':' locked')+'"><span class="service-citation-icon" aria-hidden="true">'+b.icon+'</span>'+
+    '<span class="service-citation-copy"><b>'+escapeHtmlVaani(b.name)+'</b><small>'+escapeHtmlVaani(b.hint)+'</small></span>'+
+    '<span class="service-citation-status">'+(earned?'EARNED':'LOCKED')+'</span></div>'
+  ).join('')||'<div class="service-week-note">No citations in this view.</div>';
 }
-
 /* ============================================================
    MATCH GAME
 =============================================================*/
