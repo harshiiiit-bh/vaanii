@@ -302,6 +302,7 @@
 
   function render() {
     clearQTimer(); // any per-question countdown belongs to the screen being replaced
+    if (S._expiryTimer) { clearTimeout(S._expiryTimer); S._expiryTimer = null; }
     var h = host();
     if (!h) return;
     h.innerHTML = '';
@@ -1045,79 +1046,223 @@
     recordAttempt(m.code, entry);
     if (typeof global.addXP === 'function') global.addXP(score * 2, 'Arena match');
     A.sync.submit(m.code, entry).then(loadBoard).then(function () { go('result'); },
-      function () { go('result'); });
+      function () { S._boardError = true; go('result'); });
   }
 
   /* ---------------------------------------------------------
      RESULT + BOARD
      --------------------------------------------------------- */
   function loadBoard() {
-    return Promise.resolve(A.sync.fetch(S.match.code)).then(function (rows) {
-      S.rows = rankRows(rows || []);
+    if (!S.match) { S.rows = []; S._boardError = true; return Promise.resolve(S.rows); }
+    S._boardError = false;
+    return Promise.resolve().then(function () { return A.sync.fetch(S.match.code); }).then(function (rows) {
+      S.rows = rankRows(Array.isArray(rows) ? rows : []);
       return S.rows;
-    }, function () { S.rows = []; return S.rows; });
+    }, function () { S.rows = []; S._boardError = true; return S.rows; });
+  }
+
+  function scheduleResultExpiry(match) {
+    if (S._expiryTimer) clearTimeout(S._expiryTimer);
+    function checkExpiry() {
+      S._expiryTimer = null;
+      if (S.screen !== 'result' || !S.match || S.match.code !== match.code) return;
+      var remaining = Number(match.expiresAt) - Date.now();
+      if (remaining <= 0) { go('result'); return; }
+      S._expiryTimer = setTimeout(checkExpiry, Math.min(remaining + 25, 2147483647));
+    }
+    var delay = Math.max(0, Number(match.expiresAt) - Date.now() + 25);
+    S._expiryTimer = setTimeout(checkExpiry, Math.min(delay, 2147483647));
   }
 
   function screenResult(w) {
     var m = S.match, res = S.result;
     backBtn(w, 'Arena', 'home');
-    w.appendChild(el('h3', null, 'Result'));
+    w.appendChild(el('h3', null, 'Match result'));
+    if (!m) {
+      w.appendChild(el('div', 'vx-empty', 'No active match was found. Return to the Arena to start or join a match.'));
+      return;
+    }
 
+    var closed = Date.now() >= Number(m.expiresAt);
     if (res) {
-      var hero = el('div', 'vx-arena-hero');
-      hero.style.padding = '30px';
-      var pct = Math.round((res.score / res.total) * 100);
-      hero.innerHTML =
-        '<h2 style="font-size:2.6rem;margin-bottom:4px">' + res.score + '<span style="opacity:.5;font-size:1.3rem">/' + res.total + '</span></h2>' +
-        '<p>' + pct + '% correct, finished in ' + fmtClock(res.seconds) +
-        (res.auto ? '. The clock ran out before you submitted.' : '.') + '</p>';
-      w.appendChild(hero);
+      var total = Math.max(0, Number(res.total) || 0);
+      var stats = gradeRow(res);
+      var accuracy = (stats && total) ? Math.round(stats.correct / total * 100) : null;
+      var rawScore = Number(res.score);
+      var scoreLabel = Number.isFinite(rawScore) ? String(Math.round(rawScore * 100) / 100) : '0';
+      var rank = S.rows.findIndex(function (row) { return row.pid === res.pid; }) + 1;
+
+      var summary = el('div', 'vx-result-summary');
+      var ring = el('div', 'vx-result-ring');
+      ring.style.setProperty('--vx-accuracy', (accuracy == null ? 0 : Math.max(0, Math.min(100, accuracy))) + '%');
+      ring.setAttribute('role', 'img');
+      ring.setAttribute('aria-label', accuracy == null ? 'Accuracy unavailable' : accuracy + ' percent accuracy');
+      ring.innerHTML = '<div class="vx-result-ring-inner"><strong>' + (accuracy == null ? '—' : accuracy + '%') +
+        '</strong><span>accuracy</span></div>';
+      summary.appendChild(ring);
+
+      var copy = el('div', 'vx-result-copy');
+      copy.innerHTML =
+        '<div class="vx-result-kicker">MATCH COMPLETE</div>' +
+        '<h2>Your performance</h2>' +
+        '<div class="vx-result-scoreline"><span>Score</span><strong>' + esc(scoreLabel) + '<small> / ' + total + '</small></strong></div>' +
+        '<p>' + (res.auto ? 'The clock ran out before you submitted.' : 'Your answers have been submitted.') +
+        ' Finished in ' + esc(fmtClock(res.seconds)) + '.</p>' +
+        '<div class="vx-result-rank"><span>Leaderboard rank</span><strong>' + (rank > 0 ? '#' + rank : '—') + '</strong></div>';
+      summary.appendChild(copy);
+      w.appendChild(summary);
+
+      var statsGrid = el('div', 'vx-result-stats');
+      function addStat(label, value, tone) {
+        var stat = el('div', 'vx-result-stat' + (tone ? ' ' + tone : ''));
+        stat.innerHTML = '<span>' + label + '</span><strong>' + value + '</strong>';
+        statsGrid.appendChild(stat);
+      }
+      addStat('Correct', stats ? stats.correct : '—', 'is-correct');
+      addStat('Incorrect', stats ? stats.incorrect : '—', 'is-wrong');
+      addStat('Skipped', stats ? stats.skipped : '—', 'is-skipped');
+      addStat('Time taken', esc(fmtClock(res.seconds)), 'is-time');
+      w.appendChild(statsGrid);
     }
 
     w.appendChild(matchStrip(m));
-    w.appendChild(el('h3', null, 'Leaderboard'));
-
-    var closed = Date.now() > m.expiresAt;
     if (closed) {
-      var ended = el('div', 'vx-board');
-      ended.style.marginTop = '12px';
-      ended.appendChild(el('div', 'vx-empty', 'Session ended. This match closed on ' +
-        new Date(m.expiresAt).toLocaleString() + ' \u2014 the leaderboard is no longer available.'));
-      w.appendChild(ended);
-    } else {
-      var board = el('div', 'vx-board');
-      board.style.marginTop = '12px';
-      if (!S.rows.length) {
-        board.appendChild(el('div', 'vx-empty', 'No attempts recorded yet.'));
+      var scrim = el('div', 'vx-expired-scrim');
+      scrim.setAttribute('role', 'dialog');
+      scrim.setAttribute('aria-modal', 'true');
+      scrim.setAttribute('aria-labelledby', 'vxExpiredTitle');
+      var dialog = el('div', 'vx-expired-dialog');
+      dialog.innerHTML =
+        '<div class="vx-expired-icon" aria-hidden="true">⌛</div>' +
+        '<h2 id="vxExpiredTitle">Session expired</h2>' +
+        '<p>This match closed on ' + esc(new Date(m.expiresAt).toLocaleString()) +
+        '. The leaderboard is no longer available.</p>';
+      var returnBtn = el('button', 'vx-btn primary', 'Back to Arena');
+      returnBtn.type = 'button';
+      returnBtn.addEventListener('click', function () { go('home'); });
+      dialog.appendChild(returnBtn);
+      scrim.appendChild(dialog);
+      w.appendChild(scrim);
+      returnBtn.focus();
+      return;
+    }
+
+    w.appendChild(el('h3', null, 'Leaderboard'));
+    var entries = S.rows.slice(0, MAX_PLAYERS).map(function (row, i) { return { row: row, rank: i + 1 }; });
+    var toolbar = el('div', 'vx-board-toolbar');
+    var search = el('input', 'vx-board-search');
+    search.type = 'search';
+    search.placeholder = 'Search players…';
+    search.setAttribute('aria-label', 'Search leaderboard players');
+    search.autocomplete = 'off';
+    var filters = el('div', 'vx-board-filters');
+    var activeFilter = 'all';
+    var filterDefs = [
+      { id: 'all', label: 'All' },
+      { id: 'top3', label: 'Top 3' },
+      { id: 'mine', label: 'My rank' }
+    ];
+    var filterButtons = {};
+    filterDefs.forEach(function (def) {
+      var b = el('button', 'vx-board-filter', def.label);
+      b.type = 'button';
+      b.setAttribute('aria-pressed', String(def.id === activeFilter));
+      b.addEventListener('click', function () {
+        activeFilter = def.id;
+        Object.keys(filterButtons).forEach(function (id) {
+          filterButtons[id].setAttribute('aria-pressed', String(id === activeFilter));
+        });
+        drawBoard();
+      });
+      filterButtons[def.id] = b;
+      filters.appendChild(b);
+    });
+    var refresh = el('button', 'vx-btn ghost vx-board-refresh', '↻ Refresh board');
+    refresh.type = 'button';
+    refresh.addEventListener('click', function () {
+      if (refresh.disabled || Date.now() >= Number(m.expiresAt)) { if (Date.now() >= Number(m.expiresAt)) go('result'); return; }
+      refresh.disabled = true;
+      refresh.textContent = 'Refreshing…';
+      loadBoard().then(function () {
+        if (S.screen !== 'result' || !S.match || S.match.code !== m.code) return;
+        if (Date.now() >= Number(m.expiresAt)) { go('result'); return; }
+        refresh.disabled = false;
+        refresh.textContent = '↻ Refresh board';
+        drawBoard();
+      });
+    });
+    toolbar.appendChild(search);
+    toolbar.appendChild(filters);
+    toolbar.appendChild(refresh);
+    w.appendChild(toolbar);
+
+    var podium = el('div', 'vx-podium');
+    var board = el('div', 'vx-board');
+    var status = el('p', 'vx-board-status');
+    status.setAttribute('aria-live', 'polite');
+    w.appendChild(podium);
+    w.appendChild(board);
+    w.appendChild(status);
+
+    function drawBoard() {
+      podium.innerHTML = '';
+      board.innerHTML = '';
+      var query = String(search.value || '').trim().toLowerCase();
+      var visible = entries.filter(function (entry) {
+        var name = String(entry.row.name || 'Cadet').toLowerCase();
+        if (query && !name.includes(query)) return false;
+        if (activeFilter === 'top3' && entry.rank > 3) return false;
+        if (activeFilter === 'mine' && entry.row.pid !== playerId()) return false;
+        return true;
+      });
+
+      var podiumEntries = visible.filter(function (entry) { return entry.rank <= 3; });
+      podium.hidden = podiumEntries.length === 0;
+      podiumEntries.forEach(function (entry) {
+        var medals = { 1: '🥇', 2: '🥈', 3: '🥉' };
+        var card = el('button', 'vx-podium-card rank-' + entry.rank);
+        card.type = 'button';
+        card.innerHTML =
+          '<span class="vx-podium-medal" aria-hidden="true">' + medals[entry.rank] + '</span>' +
+          '<span class="vx-podium-rank">#' + entry.rank + '</span>' +
+          '<strong class="vx-podium-name">' + esc(entry.row.name || 'Cadet') + '</strong>' +
+          '<span class="vx-podium-score">' + esc(String(entry.row.score)) + ' / ' + esc(String(entry.row.total)) + '</span>';
+        card.setAttribute('aria-label', (entry.row.name || 'Cadet') + ', rank ' + entry.rank + '. View details.');
+        card.addEventListener('click', function () { openPlayerSheet(entry.row, entry.rank); });
+        podium.appendChild(card);
+      });
+
+      if (!visible.length) {
+        var empty = S._boardError
+          ? 'Could not load the leaderboard. Select Refresh board to try again.'
+          : (activeFilter === 'mine' ? 'Your attempt is not on this leaderboard yet.'
+          : (query ? 'No players match this search.' : 'No attempts recorded yet.'));
+        board.appendChild(el('div', 'vx-empty', empty));
       } else {
-        var me = playerId();
-        S.rows.slice(0, MAX_PLAYERS).forEach(function (row, i) {
-          var tr = el('div', 'vx-row vx-row-tap' + (row.pid === me ? ' is-you' : '') + (i < 3 ? ' is-podium' : ''));
+        visible.forEach(function (entry) {
+          var row = entry.row, rank = entry.rank;
+          var tr = el('div', 'vx-row vx-row-tap' + (row.pid === playerId() ? ' is-you' : '') + (rank <= 3 ? ' is-podium' : ''));
           tr.innerHTML =
-            '<span class="vx-rank">' + (i + 1) + '</span>' +
-            '<span>' + esc(row.name) + (row.pid === me ? ' <span class="vx-time">you</span>' : '') + '</span>' +
-            '<span class="vx-score">' + row.score + '/' + row.total + '</span>' +
-            '<span class="vx-time">' + fmtClock(row.seconds) + '</span>' +
+            '<span class="vx-rank">' + rank + '</span>' +
+            '<span class="vx-player-name">' + esc(row.name || 'Cadet') + (row.pid === playerId() ? ' <span class="vx-time">you</span>' : '') + '</span>' +
+            '<span class="vx-score">' + esc(String(row.score)) + '/' + esc(String(row.total)) + '</span>' +
+            '<span class="vx-time">' + esc(fmtClock(row.seconds)) + '</span>' +
             '<span class="vx-row-chevron" aria-hidden="true">&rsaquo;</span>';
           tr.setAttribute('role', 'button');
           tr.tabIndex = 0;
-          tr.setAttribute('aria-label', row.name + ', rank ' + (i + 1) + ', ' + row.score + ' out of ' + row.total + '. View details.');
-          tr.addEventListener('click', function () { openPlayerSheet(row, i + 1); });
+          tr.setAttribute('aria-label', row.name + ', rank ' + rank + ', ' + row.score + ' out of ' + row.total + '. View details.');
+          tr.addEventListener('click', function () { openPlayerSheet(row, rank); });
           tr.addEventListener('keydown', function (e) {
-            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openPlayerSheet(row, i + 1); }
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openPlayerSheet(row, rank); }
           });
           board.appendChild(tr);
         });
       }
-      w.appendChild(board);
-
-      if (!A.sync.live) {
-        var note = el('p', 'vx-sub');
-        note.style.marginTop = '14px';
-        note.textContent = 'This board covers attempts made on this device. Connect a database to see every player here.';
-        w.appendChild(note);
-      }
+      status.textContent = visible.length + ' player' + (visible.length === 1 ? '' : 's') + ' shown';
     }
+    search.addEventListener('input', drawBoard);
+    drawBoard();
+    scheduleResultExpiry(m);
 
     var again = el('button', 'vx-btn ghost', 'Back to Arena');
     again.type = 'button'; again.style.marginTop = '18px';
