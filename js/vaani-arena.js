@@ -390,6 +390,43 @@
     });
     w.appendChild(homeMetrics);
 
+    /* Quick-start templates make the Arena feel like a command centre rather
+       than an empty waiting room. Each template still opens the normal
+       settings screen, so the existing match rules and validation remain in charge. */
+    var modes = el('section', 'vx-mode-section');
+    var modeHead = el('div', 'vx-section-heading');
+    modeHead.innerHTML = '<div><span class="vx-section-kicker">QUICK DEPLOY</span><h3>Choose a match format</h3><p>Start from a preset, then change any setting before you create the code.</p></div><span class="vx-section-count">4 presets</span>';
+    modes.appendChild(modeHead);
+    var modeGrid = el('div', 'vx-mode-grid');
+    var presets = [
+      {icon:'⚡',title:'Rapid Duel',desc:'10 mixed PYQs with a tight clock. Good for a fast accuracy check.',meta:'10 Q · 7 MIN',count:10,time:7,cap:8,shuffle:true},
+      {icon:'🎯',title:'NDA Sprint',desc:'20 mixed questions built for an exam-style session with enough time to think.',meta:'20 Q · 20 MIN',count:20,time:20,cap:10,shuffle:true},
+      {icon:'🛡️',title:'Long Run',desc:'40-question endurance round for concentration and consistency.',meta:'40 Q · 40 MIN',count:40,time:40,cap:15,shuffle:true},
+      {icon:'🔭',title:'Open Challenge',desc:'Start from a balanced mixed bank and customise everything yourself.',meta:'CUSTOMISE ALL',count:30,time:25,cap:10,shuffle:false}
+    ];
+    presets.forEach(function(preset){
+      var card=el('button','vx-mode-card');
+      card.type='button';
+      card.innerHTML='<span class="vx-mode-icon" aria-hidden="true">'+preset.icon+'</span><span class="vx-mode-title">'+esc(preset.title)+'</span><span class="vx-mode-desc">'+esc(preset.desc)+'</span><span class="vx-mode-meta">'+esc(preset.meta)+'</span>';
+      card.addEventListener('click',function(){
+        var d=defaultDraft();
+        d.count=preset.count;d.timeUnit='min';d.timeValue=preset.time;d.timeM=preset.time;d.timeH=0;d.timeS=0;d.cap=preset.cap;d.shuffleOrder=!!preset.shuffle;
+        S.draft=d;go('create');
+      });
+      modeGrid.appendChild(card);
+    });
+    modes.appendChild(modeGrid);
+    w.appendChild(modes);
+
+    var brief=el('section','vx-arena-brief');
+    var briefCard=el('div','vx-brief-card');
+    briefCard.innerHTML='<h4>How a VAANI Arena match works</h4><p>You create a code with locked settings. Every player who joins gets the same question set and the result board stays tied to that match code until it expires.</p><div class="vx-steps-mini"><div class="vx-step-mini"><b>01 · SET</b><span>Pick bank, count, clock and expiry.</span></div><div class="vx-step-mini"><b>02 · SHARE</b><span>Send the compact code or link.</span></div><div class="vx-step-mini"><b>03 · COMPARE</b><span>Review score, time and standings.</span></div></div>';
+    brief.appendChild(briefCard);
+    var standards=el('div','vx-brief-card');
+    standards.innerHTML='<h4>Match standards</h4><p>Designed to keep shared matches fair and easy to understand.</p><div class="vx-standards"><span class="vx-standard-pill">Same question set</span><span class="vx-standard-pill">Locked settings</span><span class="vx-standard-pill">Seeded shuffle</span><span class="vx-standard-pill">Expiry aware</span><span class="vx-standard-pill">Review mode</span></div>';
+    brief.appendChild(standards);
+    w.appendChild(brief);
+
     var recentSection = el('section', 'vx-recent-section');
     var recentHeading = el('div', 'vx-section-heading');
     recentHeading.innerHTML = '<div><span class="vx-section-kicker">MATCH HISTORY</span><h3>Your recent matches</h3><p>Quick access to codes you created or joined on this device.</p></div><span class="vx-section-count">' + recent.length + ' shown</span>';
