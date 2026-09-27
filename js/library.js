@@ -525,13 +525,15 @@ function renderHomeCommandCenter(){
   const books=[...DATA.ongoing,...DATA.completed];
   const pagesToday=books.reduce((sum,b)=>sum+(b.logs||[]).filter(l=>l.date===todayStr()).reduce((n,l)=>n+Number(l.pages||0),0),0);
   const minutesToday=books.reduce((sum,b)=>sum+(b.logs||[]).filter(l=>l.date===todayStr()).reduce((n,l)=>n+Number(l.minutes||0),0),0);
+  const totalMinutes=books.reduce((sum,b)=>sum+(b.logs||[]).reduce((n,l)=>n+Number(l.minutes||0),0),0);
+  const totalTimeLabel=Math.floor(totalMinutes/60)+'h '+(totalMinutes%60)+'m';
   const current=DATA.ongoing[0]||null;
   const next=DATA.upcoming[0]||null;
   const activePages=current?(current.logs||[]).reduce((n,l)=>n+Number(l.pages||0),0):0;
   const progress=current&&current.totalPages?Math.min(100,Math.round(activePages/current.totalPages*100)):null;
   const latest=DATA.vocab.slice(0,3);
   let out='<section class="vbv-command-center"><div class="vbv-home-section-kicker">AT A GLANCE · TODAY</div>'+
-    '<div class="vbv-command-metrics"><div><span>Pages today</span><b>'+pagesToday+'</b></div><div><span>Minutes today</span><b>'+minutesToday+'</b></div><div><span>Reading streak</span><b>'+computeStreaks().current+' days</b></div><div><span>All-time pages</span><b>'+books.reduce((n,b)=>n+(b.logs||[]).reduce((a,l)=>a+Number(l.pages||0),0),0)+'</b></div></div>';
+    '<div class="vbv-command-metrics"><div><span>Pages today</span><b>'+pagesToday+'</b></div><div><span>Minutes today</span><b>'+minutesToday+'</b></div><div><span>Reading streak</span><b>'+computeStreaks().current+' days</b></div><div><span>Total reading time</span><b>'+totalTimeLabel+'</b></div></div>';
   out+='<div class="vbv-command-grid"><section class="vbv-command-card"><div class="vbv-home-section-kicker">CONTINUE READING</div>';
   if(current){
     out+='<div class="vbv-command-book"><span class="vbv-command-book-icon" aria-hidden="true">📖</span><div><b>'+escapeHtml(current.title)+'</b><small>'+escapeHtml(current.author||'Author not recorded')+'</small></div></div>';
@@ -1558,6 +1560,8 @@ function filterVbvRegister(){
   });
   const count=document.getElementById('vbv-register-count');
   if(count)count.textContent=(term||vbvRegisterFilter!=='all')?visible+' of '+total+' entries':total+' entries';
+  const empty=document.getElementById('vbv-register-filter-empty');
+  if(empty)empty.hidden=visible>0||total===0;
 }
 function setVbvRegisterFilter(button){
   if(!button)return;
@@ -1616,6 +1620,7 @@ function renderVocab(){
         ${groups[d].map(vocabCardHtml).join('')}
       </div>
     `).join('') : `<div class="vbv-empty-state"><h4>Register is empty</h4><p>Open any ongoing book and add a word — it will appear here.</p></div>`}
+    <div class="vbv-empty-state" id="vbv-register-filter-empty" hidden><h4>No matching entries</h4><p>Try another search term or change the origin filter.</p></div>
   </div>`;
 }
 function vocabCardHtml(v){
@@ -2422,7 +2427,11 @@ function filterLibraryBooks(){
     return pages(b)-pages(a)||String(a.title||'').localeCompare(String(b.title||''));
   });
   else list.sort((a,b)=>{
-    const date=book=>book.endAt||book.endDate||book.startAt||book.addedAt||'';
+    const date=book=>{
+      const logs=Array.isArray(book.logs)?book.logs:[];
+      const latest=logs.map(log=>String(log.date||'')).sort().pop()||'';
+      return latest||book.completedDate||book.endDate||book.startDate||book.createdAt||book.addedAt||'';
+    };
     return String(date(b)).localeCompare(String(date(a)));
   });
   grid.innerHTML=list.length?list.map(book=>book.status==='completed'?completedCardHtml(book):book.status==='ongoing'?ongoingCardHtml(book):upcomingCardHtml(book)).join(''):'<div class="vbv-empty-state" style="grid-column:1/-1;"><h4>No matching books</h4><p>Try another title, category or reading status.</p></div>';
