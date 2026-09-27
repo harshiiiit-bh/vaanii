@@ -1,7 +1,7 @@
 var PYQ_2018_I = [
   {
     y: 2018, s: 'I', n: 1,
-    sec: 'Vocabulary',
+    sec: 'Synonyms',
     q: 'I do not want you to lead a life of sycophancy as you did during the foreign rule.',
     o: ['admiration', 'love', 'appreciation', 'flattery'],
     ans: 3,
@@ -9,7 +9,7 @@ var PYQ_2018_I = [
   },
   {
     y: 2018, s: 'I', n: 2,
-    sec: 'Vocabulary',
+    sec: 'Synonyms',
     q: 'In India, it has become easy to attack cultural artefacts these days.',
     o: ['beckon', 'assault', 'belch', 'appreciate'],
     ans: 1,
@@ -17,7 +17,7 @@ var PYQ_2018_I = [
   },
   {
     y: 2018, s: 'I', n: 3,
-    sec: 'Vocabulary',
+    sec: 'Synonyms',
     q: 'A local court granted bail to the criminal on Thursday.',
     o: ['confessed', 'donated', 'allowed', 'yielded'],
     ans: 2,
@@ -25,7 +25,7 @@ var PYQ_2018_I = [
   },
   {
     y: 2018, s: 'I', n: 4,
-    sec: 'Vocabulary',
+    sec: 'Synonyms',
     q: 'The judge told that he would analyze the evidence and then deliver the verdict.',
     o: ['liberate', 'surrender', 'transfer', 'pronounce'],
     ans: 3,
@@ -33,7 +33,7 @@ var PYQ_2018_I = [
   },
   {
     y: 2018, s: 'I', n: 5,
-    sec: 'Vocabulary',
+    sec: 'Synonyms',
     q: 'The growth and development of the peasant movement was indissolubly linked with the national struggle for freedom.',
     o: ['firmly', 'vaguely', 'individually', 'steadily'],
     ans: 0,
@@ -41,7 +41,7 @@ var PYQ_2018_I = [
   },
   {
     y: 2018, s: 'I', n: 6,
-    sec: 'Vocabulary',
+    sec: 'Synonyms',
     q: 'Weather conditions have been improving over the past few days.',
     o: ['mending', 'amending', 'becoming better', 'advancing'],
     ans: 2,
@@ -49,14 +49,14 @@ var PYQ_2018_I = [
   },
   {
     y: 2018, s: 'I', n: 7,
-    sec: 'Vocabulary',
+    sec: 'Idioms and Phrases',
     q: 'The confusion on the interlocutor\'s face was gratifying.',
     o: ['government officer', 'party worker', 'dialogist', 'revolutionary'],
     ans: 2
   },
   {
     y: 2018, s: 'I', n: 8,
-    sec: 'Vocabulary',
+    sec: 'Synonyms',
     q: 'He spends his money lavishly.',
     o: ['hesitatingly', 'generously', 'foolishly', 'carefully'],
     ans: 1,
@@ -64,7 +64,7 @@ var PYQ_2018_I = [
   },
   {
     y: 2018, s: 'I', n: 9,
-    sec: 'Vocabulary',
+    sec: 'Synonyms',
     q: 'The government\'s new policies will come into force from the next fiscal year.',
     o: ['calendar', 'academic', 'financial', 'leap'],
     ans: 2,
@@ -72,7 +72,7 @@ var PYQ_2018_I = [
   },
   {
     y: 2018, s: 'I', n: 10,
-    sec: 'Vocabulary',
+    sec: 'Synonyms',
     q: 'Abundant food was available for the soldiers in the mess.',
     o: ['little', 'plentiful', 'delicious', 'wholesome'],
     ans: 1,
@@ -80,14 +80,14 @@ var PYQ_2018_I = [
   },
   {
     y: 2018, s: 'I', n: 11,
-    sec: 'Vocabulary',
+    sec: 'Idioms and Phrases',
     q: 'The country\'s economy must be geared to wartime requirements.',
     o: ['subordinated to', 'related to', 'adjusted to', 'unlinked to'],
     ans: 3
   },
   {
     y: 2018, s: 'I', n: 12,
-    sec: 'Vocabulary',
+    sec: 'Antonyms',
     q: 'Why does fire attract insects?',
     o: ['discharge', 'destroy', 'repel', 'remove'],
     ans: 2,
@@ -95,7 +95,7 @@ var PYQ_2018_I = [
   },
   {
     y: 2018, s: 'I', n: 13,
-    sec: 'Vocabulary',
+    sec: 'Antonyms',
     q: 'The party was excellent, and I would like to thank all the people concerned.',
     o: ['cared', 'attentive', 'dependable', 'uninvolved'],
     ans: 3,
@@ -103,7 +103,7 @@ var PYQ_2018_I = [
   },
   {
     y: 2018, s: 'I', n: 14,
-    sec: 'Vocabulary',
+    sec: 'Antonyms',
     q: 'He is very serious by temperament.',
     o: ['grave', 'trivial', 'sober', 'stupid'],
     ans: 1,
@@ -111,7 +111,7 @@ var PYQ_2018_I = [
   },
   {
     y: 2018, s: 'I', n: 15,
-    sec: 'Vocabulary',
+    sec: 'Antonyms',
     q: 'There are a few miscellaneous items to discuss in this meeting.',
     o: ['pure', 'mixed', 'homogenous', 'discordant'],
     ans: 2,
@@ -119,7 +119,7 @@ var PYQ_2018_I = [
   },
   {
     y: 2018, s: 'I', n: 16,
-    sec: 'Vocabulary',
+    sec: 'Antonyms',
     q: 'Due to the postal strike, the outgoing mail got delayed.',
     o: ['urgent', 'incoming', 'ordinary', 'speedy'],
     ans: 1,
@@ -127,7 +127,7 @@ var PYQ_2018_I = [
   },
   {
     y: 2018, s: 'I', n: 17,
-    sec: 'Vocabulary',
+    sec: 'Antonyms',
     q: 'He had a fine ear for music.',
     o: ['small', 'close', 'coarse', 'smooth'],
     ans: 2,
@@ -135,7 +135,7 @@ var PYQ_2018_I = [
   },
   {
     y: 2018, s: 'I', n: 18,
-    sec: 'Vocabulary',
+    sec: 'Antonyms',
     q: 'There is no likeness between him and his brother.',
     o: ['unlikeliness', 'unlikelihood', 'dissimilarity', 'disaffinity'],
     ans: 2,
@@ -143,7 +143,7 @@ var PYQ_2018_I = [
   },
   {
     y: 2018, s: 'I', n: 19,
-    sec: 'Vocabulary',
+    sec: 'Antonyms',
     q: 'Cultural diversity in the working place is good for business.',
     o: ['uniformity', 'conformity', 'identify', 'similarity'],
     ans: 0,
@@ -151,7 +151,7 @@ var PYQ_2018_I = [
   },
   {
     y: 2018, s: 'I', n: 20,
-    sec: 'Vocabulary',
+    sec: 'Antonyms',
     q: 'The company was liquidated within five years.',
     o: ['bankrupt', 'closed down', 'flourishing', 'privatised'],
     ans: 2,
@@ -194,35 +194,35 @@ var PYQ_2018_I = [
   },
   {
     y: 2018, s: 'I', n: 26,
-    sec: 'Vocabulary',
+    sec: 'Idioms and Phrases',
     q: 'Cry over spilt milk',
     o: ['Complaining about a loss in the past', 'Too much inquisitive about something', 'When something is done badly to save money', 'Dealing with a problem only in an emergency situation'],
     ans: 0
   },
   {
     y: 2018, s: 'I', n: 27,
-    sec: 'Vocabulary',
+    sec: 'Idioms and Phrases',
     q: 'Cut the mustard',
     o: ['Prepare spices out of mustard seeds', 'To come up to expectations', 'Making absurd expectations', 'Very enthusiastic'],
     ans: 1
   },
   {
     y: 2018, s: 'I', n: 28,
-    sec: 'Vocabulary',
+    sec: 'Idioms and Phrases',
     q: 'Devil\'s advocate',
     o: ['A dangerous person', 'To present a counter argument', 'Very argumentative person', 'Creating an unpleasant situation'],
     ans: 1
   },
   {
     y: 2018, s: 'I', n: 29,
-    sec: 'Vocabulary',
+    sec: 'Idioms and Phrases',
     q: 'Don\'t count your chickens before the eggs have hatched',
     o: ['If you are not good at something, better to avoid that', 'Don\'t make plans for something that might not happen', 'Not to come up to expectations', 'Don\'t put all your resources in one possibility'],
     ans: 1
   },
   {
     y: 2018, s: 'I', n: 30,
-    sec: 'Vocabulary',
+    sec: 'Idioms and Phrases',
     q: 'Give the benefit of doubt',
     o: ['To be partial to someone', 'To be judgemental', 'Regard someone as innocent until proven otherwise', 'Say something exactly right'],
     ans: 2
@@ -344,35 +344,35 @@ var PYQ_2018_I = [
   },
   {
     y: 2018, s: 'I', n: 46,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'The tired traveller ______ on in the hope of finding some resting place.',
     o: ['strolled', 'scurried', 'paraded', 'plodded'],
     ans: 3
   },
   {
     y: 2018, s: 'I', n: 47,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'The car was damaged beyond repair in the ______ accident.',
     o: ['outrageous', 'ghastly', 'nasty', 'heinous'],
     ans: 2
   },
   {
     y: 2018, s: 'I', n: 48,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'They gave a ______ dinner to celebrate the occasion, which impressed every guest.',
     o: ['austere', 'public', 'sumptuous', 'summary'],
     ans: 2
   },
   {
     y: 2018, s: 'I', n: 49,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'Once the ______ manuscript is received by the publishers, it is typed in double space.',
     o: ['total', 'full', 'complete', 'filled'],
     ans: 2
   },
   {
     y: 2018, s: 'I', n: 50,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'I am used to ______ in queues.',
     o: ['stand', 'standing', 'stand up', 'standing still'],
     ans: 1

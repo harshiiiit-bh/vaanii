@@ -201,61 +201,61 @@ var PYQ_2011_I = [
 
   // ---------- Vocabulary: Synonyms (Q31-40) ----------
   {
-    y: 2011, s: 'I', n: 31, sec: 'Vocabulary',
+    y: 2011, s: 'I', n: 31, sec: 'Synonyms',
     q: 'The song had a SOPORIFIC effect on the child.',
     o: ['soothing', 'terrific', 'supreme', 'sleep-inducing'],
     ans: 3, keyword: 'SOPORIFIC'
   },
   {
-    y: 2011, s: 'I', n: 32, sec: 'Vocabulary',
+    y: 2011, s: 'I', n: 32, sec: 'Synonyms',
     q: 'His ALLEGIANCE to the party was suspect from the very beginning.',
     o: ['servility', 'obedience', 'loyalty', 'passivity'],
     ans: 2, keyword: 'ALLEGIANCE'
   },
   {
-    y: 2011, s: 'I', n: 33, sec: 'Vocabulary',
+    y: 2011, s: 'I', n: 33, sec: 'Synonyms',
     q: 'Sympathetic criticism has a SALUTARY effect.',
     o: ['premature', 'terrible', 'disastrous', 'beneficial'],
     ans: 3, keyword: 'SALUTARY'
   },
   {
-    y: 2011, s: 'I', n: 34, sec: 'Vocabulary',
+    y: 2011, s: 'I', n: 34, sec: 'Synonyms',
     q: 'His bad behaviour EVOKED punishment.',
     o: ['escaped', 'called for', 'produced', 'summoned'],
     ans: 1, keyword: 'EVOKED'
   },
   {
-    y: 2011, s: 'I', n: 35, sec: 'Vocabulary',
+    y: 2011, s: 'I', n: 35, sec: 'Synonyms',
     q: 'Please do not give any more FLIMSY pretexts for not having done the work.',
     o: ['weak', 'strong', 'justified', 'impulsive'],
     ans: 0, keyword: 'FLIMSY'
   },
   {
-    y: 2011, s: 'I', n: 36, sec: 'Vocabulary',
+    y: 2011, s: 'I', n: 36, sec: 'Synonyms',
     q: 'He was the court appointed lawyer for fifty-six INDIGENT defendants.',
     o: ['Indian men', 'poor', 'guilty', 'untried'],
     ans: 1, keyword: 'INDIGENT'
   },
   {
-    y: 2011, s: 'I', n: 37, sec: 'Vocabulary',
+    y: 2011, s: 'I', n: 37, sec: 'Synonyms',
     q: 'The boy said that pain had ABATED.',
     o: ['reduced', 'vanished', 'increased', 'stabilized'],
     ans: 0, keyword: 'ABATED'
   },
   {
-    y: 2011, s: 'I', n: 38, sec: 'Vocabulary',
+    y: 2011, s: 'I', n: 38, sec: 'Synonyms',
     q: 'He became known as an IMPLACABLE foe of fundamentalism.',
     o: ['relentless', 'pleasing', 'dangerous', 'courageous'],
     ans: 0, keyword: 'IMPLACABLE'
   },
   {
-    y: 2011, s: 'I', n: 39, sec: 'Vocabulary',
+    y: 2011, s: 'I', n: 39, sec: 'Synonyms',
     q: 'The queen was aware of the INSOLENT behaviour of the lords.',
     o: ['violent', 'polite', 'insulting', 'frivolous'],
     ans: 2, keyword: 'INSOLENT'
   },
   {
-    y: 2011, s: 'I', n: 40, sec: 'Vocabulary',
+    y: 2011, s: 'I', n: 40, sec: 'Synonyms',
     q: 'Modern man is PRAGMATIC in his dealings.',
     o: ['practical', 'playful', 'causal', 'clever'],
     ans: 0, keyword: 'PRAGMATIC'
@@ -263,61 +263,61 @@ var PYQ_2011_I = [
 
   // ---------- Vocabulary: Antonyms (Q41-50) ----------
   {
-    y: 2011, s: 'I', n: 41, sec: 'Vocabulary',
+    y: 2011, s: 'I', n: 41, sec: 'Antonyms',
     q: 'All care is FUTILE in a cureless case.',
     o: ['waste', 'expensive', 'useful', 'cheap'],
     ans: 2, keyword: 'FUTILE'
   },
   {
-    y: 2011, s: 'I', n: 42, sec: 'Vocabulary',
+    y: 2011, s: 'I', n: 42, sec: 'Antonyms',
     q: 'REVELATION of facts became very easy when I investigated the case.',
     o: ['rejection', 'elimination', 'concealment', 'introduction'],
     ans: 2, keyword: 'REVELATION'
   },
   {
-    y: 2011, s: 'I', n: 43, sec: 'Vocabulary',
+    y: 2011, s: 'I', n: 43, sec: 'Antonyms',
     q: 'The story you have just told is INCREDIBLE.',
     o: ['credible', 'fantastic', 'probable', 'believable'],
     ans: 3, keyword: 'INCREDIBLE'
   },
   {
-    y: 2011, s: 'I', n: 44, sec: 'Vocabulary',
+    y: 2011, s: 'I', n: 44, sec: 'Antonyms',
     q: 'His assignments have taken him to many EXOTIC locations around the world.',
     o: ['wonderful', 'cosmopolitan', 'irrelevant', 'common'],
     ans: 3, keyword: 'EXOTIC'
   },
   {
-    y: 2011, s: 'I', n: 45, sec: 'Vocabulary',
+    y: 2011, s: 'I', n: 45, sec: 'Antonyms',
     q: 'He has given up his VICIOUS habits.',
     o: ['godly', 'virtuous', 'sublime', 'friendly'],
     ans: 1, keyword: 'VICIOUS'
   },
   {
-    y: 2011, s: 'I', n: 46, sec: 'Vocabulary',
+    y: 2011, s: 'I', n: 46, sec: 'Antonyms',
     q: 'The doctor found the patient INERT.',
     o: ['active', 'lazy', 'strong', 'resolute'],
     ans: 0, keyword: 'INERT'
   },
   {
-    y: 2011, s: 'I', n: 47, sec: 'Vocabulary',
+    y: 2011, s: 'I', n: 47, sec: 'Antonyms',
     q: 'The issue was raised TANGENTIALLY in the negotiations.',
     o: ['partly', 'forcefully', 'candidly', 'fitfully'],
     ans: 2, keyword: 'TANGENTIALLY'
   },
   {
-    y: 2011, s: 'I', n: 48, sec: 'Vocabulary',
+    y: 2011, s: 'I', n: 48, sec: 'Antonyms',
     q: 'ESCALATING prices are causing hardship to the poor.',
     o: ['fixed', 'fluctuating', 'falling', 'reasonable'],
     ans: 2, keyword: 'ESCALATING'
   },
   {
-    y: 2011, s: 'I', n: 49, sec: 'Vocabulary',
+    y: 2011, s: 'I', n: 49, sec: 'Antonyms',
     q: 'I have MALICE towards none.',
     o: ['sympathy', 'goodwill', 'friendship', 'attraction'],
     ans: 1, keyword: 'MALICE'
   },
   {
-    y: 2011, s: 'I', n: 50, sec: 'Vocabulary',
+    y: 2011, s: 'I', n: 50, sec: 'Antonyms',
     q: 'The boy comes of an AFFLUENT family.',
     o: ['poor', 'ordinary', 'infamous', 'backward'],
     ans: 0, keyword: 'AFFLUENT'

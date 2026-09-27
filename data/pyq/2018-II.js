@@ -36,7 +36,7 @@ var PYQ_2018_II = [
   },
   {
     y: 2018, s: 'II', n: 6,
-    sec: 'Vocabulary',
+    sec: 'Synonyms',
     q: 'The Industrial Revolution saw a massive rise in the population of Europe.',
     o: ['enormous', 'erroneous', 'hazardous', 'perilous'],
     ans: 0,
@@ -44,7 +44,7 @@ var PYQ_2018_II = [
   },
   {
     y: 2018, s: 'II', n: 7,
-    sec: 'Vocabulary',
+    sec: 'Synonyms',
     q: 'I had some deepest convictions reflected in my work.',
     o: ['ideas and opinions', 'firm beliefs', 'prejudices', 'biases'],
     ans: 1,
@@ -52,7 +52,7 @@ var PYQ_2018_II = [
   },
   {
     y: 2018, s: 'II', n: 8,
-    sec: 'Vocabulary',
+    sec: 'Synonyms',
     q: 'This boy is very timid.',
     o: ['courageous', 'shy', 'clever', 'dull'],
     ans: 1,
@@ -60,7 +60,7 @@ var PYQ_2018_II = [
   },
   {
     y: 2018, s: 'II', n: 9,
-    sec: 'Vocabulary',
+    sec: 'Synonyms',
     q: 'My friend is as stubborn as a mule.',
     o: ['observant', 'obnoxious', 'obstinate', 'corpulent'],
     ans: 2,
@@ -68,7 +68,7 @@ var PYQ_2018_II = [
   },
   {
     y: 2018, s: 'II', n: 10,
-    sec: 'Vocabulary',
+    sec: 'Synonyms',
     q: 'His behaviour was deliberately provocative.',
     o: ['exciting desire', 'infuriating', 'pitiable', 'creating frustration'],
     ans: 1,
@@ -76,7 +76,7 @@ var PYQ_2018_II = [
   },
   {
     y: 2018, s: 'II', n: 11,
-    sec: 'Vocabulary',
+    sec: 'Antonyms',
     q: 'Too many cooks spoil the broth.',
     o: ['tarnish', 'wreck', 'embellish', 'upset'],
     ans: 2,
@@ -84,7 +84,7 @@ var PYQ_2018_II = [
   },
   {
     y: 2018, s: 'II', n: 12,
-    sec: 'Vocabulary',
+    sec: 'Antonyms',
     q: 'He is biased against the students from cities.',
     o: ['open', 'prejudiced', 'liked', 'impartial'],
     ans: 3,
@@ -92,7 +92,7 @@ var PYQ_2018_II = [
   },
   {
     y: 2018, s: 'II', n: 13,
-    sec: 'Vocabulary',
+    sec: 'Antonyms',
     q: 'It is easy to be an orthodox.',
     o: ['idolatrous', 'intelligent', 'malignant', 'heterodox'],
     ans: 3,
@@ -100,7 +100,7 @@ var PYQ_2018_II = [
   },
   {
     y: 2018, s: 'II', n: 14,
-    sec: 'Vocabulary',
+    sec: 'Antonyms',
     q: 'Permit me to present you with a book.',
     o: ['allow', 'enclose', 'prohibit', 'persuade'],
     ans: 2,
@@ -108,7 +108,7 @@ var PYQ_2018_II = [
   },
   {
     y: 2018, s: 'II', n: 15,
-    sec: 'Vocabulary',
+    sec: 'Antonyms',
     q: 'None but the brave deserves the fair.',
     o: ['ugly person', 'coward', 'jealous person', 'weak person'],
     ans: 1,
@@ -196,105 +196,105 @@ var PYQ_2018_II = [
   },
   {
     y: 2018, s: 'II', n: 26,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'We fail to understand your reasons for ______ the college without completing the degree.',
     o: ['attending', 'joining', 'leaving', 'refusing'],
     ans: 2
   },
   {
     y: 2018, s: 'II', n: 27,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'She ______ her energy and started shouting only when she heard the noise of bulldozers and cranes.',
     o: ['checked', 'conserved', 'maintained', 'controlled'],
     ans: 1
   },
   {
     y: 2018, s: 'II', n: 28,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'The British ______ all over Africa and Asia collapsed in the first half of the twentieth century.',
     o: ['hegemony', 'domicile', 'residence', 'inheritance'],
     ans: 0
   },
   {
     y: 2018, s: 'II', n: 29,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'The football match has to be ______ because of the weather.',
     o: ['called off', 'continued', 'put off', 'turned off'],
     ans: 0
   },
   {
     y: 2018, s: 'II', n: 30,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'If I were rich, ______ a lot.',
     o: ['I\'ll travel', 'I can travel', 'I would travel', 'I travelled'],
     ans: 2
   },
   {
     y: 2018, s: 'II', n: 31,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'They apologized ______ me for what happened.',
     o: ['to', 'at', 'for', 'with'],
     ans: 0
   },
   {
     y: 2018, s: 'II', n: 32,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'If you are tired of swimming, just ______ for a while.',
     o: ['struggle', 'stroke', 'float', 'streak'],
     ans: 2
   },
   {
     y: 2018, s: 'II', n: 33,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'He had ______ spoken for two minutes when there was a commotion in the crowd.',
     o: ['even', 'hardly', 'often', 'little'],
     ans: 1
   },
   {
     y: 2018, s: 'II', n: 34,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'I would not commit myself ______ that course of action.',
     o: ['of', 'to', 'by', 'with'],
     ans: 1
   },
   {
     y: 2018, s: 'II', n: 35,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'The soldiers waiting to go into battle for the first time were full of ______.',
     o: ['apprehension', 'consideration', 'anticipation', 'frivolity'],
     ans: 0
   },
   {
     y: 2018, s: 'II', n: 36,
-    sec: 'Vocabulary',
+    sec: 'Idioms and Phrases',
     q: 'A red-letter day',
     o: ['a trivial day', 'a very important or significant day', 'a day of bloodshed and violence', 'a mourning day'],
     ans: 1
   },
   {
     y: 2018, s: 'II', n: 37,
-    sec: 'Vocabulary',
+    sec: 'Idioms and Phrases',
     q: 'The gift of the gab',
     o: ['ability to speak easily and confidently', 'ability to spoil something', 'ability to sell things', 'gift from a sacred institution'],
     ans: 0
   },
   {
     y: 2018, s: 'II', n: 38,
-    sec: 'Vocabulary',
+    sec: 'Idioms and Phrases',
     q: 'Walk a tightrope',
     o: ['to be forced to leave your job', 'to be ready to fall', 'to act very carefully', 'to invite danger'],
     ans: 2
   },
   {
     y: 2018, s: 'II', n: 39,
-    sec: 'Vocabulary',
+    sec: 'Idioms and Phrases',
     q: 'To be in a fix',
     o: ['to receive strong criticism', 'to support oneself', 'to fix problems', 'to be in a difficult situation'],
     ans: 3
   },
   {
     y: 2018, s: 'II', n: 40,
-    sec: 'Vocabulary',
+    sec: 'Idioms and Phrases',
     q: 'To fish in troubled waters',
     o: ['to borrow money', 'to steal belongings of', 'to get benefit in bad situation', 'to extend a helping hand'],
     ans: 2

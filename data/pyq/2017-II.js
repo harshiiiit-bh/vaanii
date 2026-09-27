@@ -1,21 +1,21 @@
 var PYQ_2017_II = [
   {
     y: 2017, s: 'II', n: 1,
-    sec: 'Vocabulary',
+    sec: 'Idioms and Phrases',
     q: 'The discussion was wound up after a long fruitful exchange of view.',
     o: ['postponed', 'cut short', 'interrupted', 'concluded'],
     ans: 3
   },
   {
     y: 2017, s: 'II', n: 2,
-    sec: 'Vocabulary',
+    sec: 'Idioms and Phrases',
     q: 'He was fully alive to the need for making adjustments.',
     o: ['concerned about', 'worried about', 'aware of', 'indifferent about'],
     ans: 2
   },
   {
     y: 2017, s: 'II', n: 3,
-    sec: 'Vocabulary',
+    sec: 'Synonyms',
     q: 'The police officer tried to intimidate the witness but in vain.',
     o: ['inform', 'reward', 'frighten', 'persuade'],
     ans: 2,
@@ -23,7 +23,7 @@ var PYQ_2017_II = [
   },
   {
     y: 2017, s: 'II', n: 4,
-    sec: 'Vocabulary',
+    sec: 'Synonyms',
     q: 'We must adopt drastic measures to control population growth.',
     o: ['simple', 'dramatic', 'realistic', 'severe'],
     ans: 3,
@@ -31,7 +31,7 @@ var PYQ_2017_II = [
   },
   {
     y: 2017, s: 'II', n: 5,
-    sec: 'Vocabulary',
+    sec: 'Synonyms',
     q: 'He is extremely meticulous in his approach.',
     o: ['simple', 'careful', 'fair', 'reasonable'],
     ans: 1,
@@ -39,7 +39,7 @@ var PYQ_2017_II = [
   },
   {
     y: 2017, s: 'II', n: 6,
-    sec: 'Vocabulary',
+    sec: 'Synonyms',
     q: 'The experts\' minute examination brought to light some important clues.',
     o: ['quick', 'detailed', 'superficial', 'prolonged'],
     ans: 1,
@@ -47,7 +47,7 @@ var PYQ_2017_II = [
   },
   {
     y: 2017, s: 'II', n: 7,
-    sec: 'Vocabulary',
+    sec: 'Synonyms',
     q: 'The decision of the Union government to repeal the Urban Land Ceiling Act has been welcomed by all.',
     o: ['suppress', 'amend', 'cancel', 'withhold'],
     ans: 2,
@@ -55,7 +55,7 @@ var PYQ_2017_II = [
   },
   {
     y: 2017, s: 'II', n: 8,
-    sec: 'Vocabulary',
+    sec: 'Synonyms',
     q: 'This is his maiden appearance on the screen.',
     o: ['first', 'last', 'girlish', 'shy'],
     ans: 0,
@@ -63,7 +63,7 @@ var PYQ_2017_II = [
   },
   {
     y: 2017, s: 'II', n: 9,
-    sec: 'Vocabulary',
+    sec: 'Synonyms',
     q: 'At the end of the marathon everybody was exhausted.',
     o: ['weakened', 'honoured', 'satisfied', 'tired'],
     ans: 3,
@@ -71,7 +71,7 @@ var PYQ_2017_II = [
   },
   {
     y: 2017, s: 'II', n: 10,
-    sec: 'Vocabulary',
+    sec: 'Synonyms',
     q: 'He gave me a counterfeit coin.',
     o: ['rare', 'fake', 'unmatured', 'inferior'],
     ans: 1,
@@ -79,14 +79,14 @@ var PYQ_2017_II = [
   },
   {
     y: 2017, s: 'II', n: 11,
-    sec: 'Vocabulary',
+    sec: 'Idioms and Phrases',
     q: 'My mother has been working hard for the last two weeks and she feels run down.',
     o: ['morbid', 'energetic', 'exhausted', 'emotional'],
     ans: 1
   },
   {
     y: 2017, s: 'II', n: 12,
-    sec: 'Vocabulary',
+    sec: 'Antonyms',
     q: 'The President condemned the Act of violence during the celebration of the festival.',
     o: ['reason', 'instigation', 'restraint', 'sobriety'],
     ans: 3,
@@ -94,7 +94,7 @@ var PYQ_2017_II = [
   },
   {
     y: 2017, s: 'II', n: 13,
-    sec: 'Vocabulary',
+    sec: 'Antonyms',
     q: 'The students made a generous contribution to the flood relief fund.',
     o: ['niggard', 'selfish', 'spendthrift', 'indecent'],
     ans: 0,
@@ -102,7 +102,7 @@ var PYQ_2017_II = [
   },
   {
     y: 2017, s: 'II', n: 14,
-    sec: 'Vocabulary',
+    sec: 'Antonyms',
     q: 'He was just idle by temperament.',
     o: ['employed', 'occupied', 'industrious', 'happy'],
     ans: 2,
@@ -110,7 +110,7 @@ var PYQ_2017_II = [
   },
   {
     y: 2017, s: 'II', n: 15,
-    sec: 'Vocabulary',
+    sec: 'Antonyms',
     q: 'Most of the decisions taken by the officer were unjust.',
     o: ['serious', 'lenient', 'correct', 'imbecile'],
     ans: 2,
@@ -118,7 +118,7 @@ var PYQ_2017_II = [
   },
   {
     y: 2017, s: 'II', n: 16,
-    sec: 'Vocabulary',
+    sec: 'Antonyms',
     q: 'He is a loving father and takes great delight in his children.',
     o: ['revolt', 'dissatisfaction', 'enjoyment', 'disgust'],
     ans: 3,
@@ -126,7 +126,7 @@ var PYQ_2017_II = [
   },
   {
     y: 2017, s: 'II', n: 17,
-    sec: 'Vocabulary',
+    sec: 'Antonyms',
     q: 'He was quite concerned about his son\'s career.',
     o: ['unrelated', 'indifferent', 'dispassionate', 'carefree'],
     ans: 1,
@@ -134,7 +134,7 @@ var PYQ_2017_II = [
   },
   {
     y: 2017, s: 'II', n: 18,
-    sec: 'Vocabulary',
+    sec: 'Antonyms',
     q: 'They are confident of success.',
     o: ['imprudent', 'impatient', 'diffident', 'reluctant'],
     ans: 2,
@@ -142,14 +142,14 @@ var PYQ_2017_II = [
   },
   {
     y: 2017, s: 'II', n: 19,
-    sec: 'Vocabulary',
+    sec: 'Idioms and Phrases',
     q: 'We carried on the search for the missing person.',
     o: ['delayed', 'reconsidered', 'broke up', 'called off'],
     ans: 3
   },
   {
     y: 2017, s: 'II', n: 20,
-    sec: 'Vocabulary',
+    sec: 'Antonyms',
     q: 'This TV has many indigenous components.',
     o: ['Indian', 'foreign', 'unnatural', 'genuine'],
     ans: 1,
@@ -272,70 +272,70 @@ var PYQ_2017_II = [
   },
   {
     y: 2017, s: 'II', n: 41,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'He looks as if he ______ weary.',
     o: ['is', 'was', 'would be', 'were'],
     ans: 0
   },
   {
     y: 2017, s: 'II', n: 42,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'My house is insured ______ theft and fire.',
     o: ['for', 'against', 'in', 'towards'],
     ans: 1
   },
   {
     y: 2017, s: 'II', n: 43,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'The result of the prolonged discussion was ______.',
     o: ['disappointment', 'disappointing', 'disappointed', 'to disappoint'],
     ans: 1
   },
   {
     y: 2017, s: 'II', n: 44,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'You are lucky ______ in the 20th century.',
     o: ['by being born', 'to have been born', 'for being born', 'to have born'],
     ans: 1
   },
   {
     y: 2017, s: 'II', n: 45,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'Sita is true to ______.',
     o: ['word', 'her words', 'the words', 'words'],
     ans: 1
   },
   {
     y: 2017, s: 'II', n: 46,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'Years ______ since I saw her last.',
     o: ['have passed', 'had passed', 'had been passing', 'have been passing'],
     ans: 0
   },
   {
     y: 2017, s: 'II', n: 47,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'When he heard the terrible noise he asked me what was ______ on.',
     o: ['happening', 'being', 'getting', 'going'],
     ans: 3
   },
   {
     y: 2017, s: 'II', n: 48,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'Could you lend me some money ? I am very ______ of cash at the moment.',
     o: ['down', 'low', 'short', 'scarce'],
     ans: 2
   },
   {
     y: 2017, s: 'II', n: 49,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'I saw her when she was standing ______ the side of the old statue.',
     o: ['by', 'at', 'in', 'beyond'],
     ans: 0
   },
   {
     y: 2017, s: 'II', n: 50,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'True friends never ______ their loved ones in adversity.',
     o: ['abuse', 'criticise', 'befool', 'desert'],
     ans: 3

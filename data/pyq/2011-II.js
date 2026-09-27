@@ -93,61 +93,61 @@ var PYQ_2011_II = [
 
   // ---------- Vocabulary: Synonyms (Q16-25) ----------
   {
-    y: 2011, s: 'II', n: 16, sec: 'Vocabulary',
+    y: 2011, s: 'II', n: 16, sec: 'Synonyms',
     q: 'The vehicle slowed down as they moved up the GRADIENT.',
     o: ['road with sharp bends', 'bumpy, uneven path', 'slope or incline', 'mountainous area'],
     ans: 2, keyword: 'GRADIENT'
   },
   {
-    y: 2011, s: 'II', n: 17, sec: 'Vocabulary',
+    y: 2011, s: 'II', n: 17, sec: 'Synonyms',
     q: 'It is DEPLORABLE that millions of people in India are below the poverty line.',
     o: ['hateful', 'regrettable', 'undesirable', 'unpleasant'],
     ans: 1, keyword: 'DEPLORABLE'
   },
   {
-    y: 2011, s: 'II', n: 18, sec: 'Vocabulary',
+    y: 2011, s: 'II', n: 18, sec: 'Synonyms',
     q: 'The government should PROSCRIBE that sort of literature.',
     o: ['rusticate', 'excommunicate', 'ban', 'outlaw'],
     ans: 2, keyword: 'PROSCRIBE'
   },
   {
-    y: 2011, s: 'II', n: 19, sec: 'Vocabulary',
+    y: 2011, s: 'II', n: 19, sec: 'Synonyms',
     q: 'The volcano on the island is DORMANT.',
     o: ['cold', 'inactive', 'dangerous', 'old'],
     ans: 1, keyword: 'DORMANT'
   },
   {
-    y: 2011, s: 'II', n: 20, sec: 'Vocabulary',
+    y: 2011, s: 'II', n: 20, sec: 'Synonyms',
     q: 'A person who EQUIVOCATES should not be relied upon.',
     o: ['deceives others', 'tells lies', 'gives misleading statements', 'flatters'],
     ans: 2, keyword: 'EQUIVOCATES'
   },
   {
-    y: 2011, s: 'II', n: 21, sec: 'Vocabulary',
+    y: 2011, s: 'II', n: 21, sec: 'Synonyms',
     q: 'The newspaper reports were MENDACIOUS.',
     o: ['mischievous', 'truthful', 'provocative', 'false'],
     ans: 3, keyword: 'MENDACIOUS'
   },
   {
-    y: 2011, s: 'II', n: 22, sec: 'Vocabulary',
+    y: 2011, s: 'II', n: 22, sec: 'Synonyms',
     q: 'The priest pronounced BENEDICTION.',
     o: ['good wishes', 'blessings', 'punishment', 'appreciation'],
     ans: 1, keyword: 'BENEDICTION'
   },
   {
-    y: 2011, s: 'II', n: 23, sec: 'Vocabulary',
+    y: 2011, s: 'II', n: 23, sec: 'Synonyms',
     q: 'Her habits are INNOCUOUS.',
     o: ['useful', 'injurious', 'causing no harm', 'bad'],
     ans: 2, keyword: 'INNOCUOUS'
   },
   {
-    y: 2011, s: 'II', n: 24, sec: 'Vocabulary',
+    y: 2011, s: 'II', n: 24, sec: 'Synonyms',
     q: 'I INVEIGHED her for her different outlook.',
     o: ['criticized', 'rebuked', 'disliked', 'appreciated'],
     ans: 0, keyword: 'INVEIGHED'
   },
   {
-    y: 2011, s: 'II', n: 25, sec: 'Vocabulary',
+    y: 2011, s: 'II', n: 25, sec: 'Synonyms',
     q: 'The youth was BEFOGGED when he was interrogated loudly by the police inspector.',
     o: ['terrified', 'panicky', 'surprised', 'puzzled'],
     ans: 3, keyword: 'BEFOGGED'
@@ -155,61 +155,61 @@ var PYQ_2011_II = [
 
   // ---------- Vocabulary: Antonyms (Q26-35) ----------
   {
-    y: 2011, s: 'II', n: 26, sec: 'Vocabulary',
+    y: 2011, s: 'II', n: 26, sec: 'Antonyms',
     q: 'A few heavenly talents DARKEN the world in each generation.',
     o: ['brighten', 'please', 'enlighten', 'glamorize'],
     ans: 0, keyword: 'DARKEN'
   },
   {
-    y: 2011, s: 'II', n: 27, sec: 'Vocabulary',
+    y: 2011, s: 'II', n: 27, sec: 'Antonyms',
     q: 'An ICY reception greeted the arrivals.',
     o: ['hostile', 'warm', 'pleasing', 'strange'],
     ans: 1, keyword: 'ICY'
   },
   {
-    y: 2011, s: 'II', n: 28, sec: 'Vocabulary',
+    y: 2011, s: 'II', n: 28, sec: 'Antonyms',
     q: 'The young athlete is ENERGETIC enough to run ten thousand meters at a stretch.',
     o: ['inactive', 'dull', 'gloomy', 'lethargic'],
     ans: 3, keyword: 'ENERGETIC'
   },
   {
-    y: 2011, s: 'II', n: 29, sec: 'Vocabulary',
+    y: 2011, s: 'II', n: 29, sec: 'Antonyms',
     q: 'He has a SECURE position in the entrance examination.',
     o: ['rigid', 'precarious', 'static', 'secondary'],
     ans: 1, keyword: 'SECURE'
   },
   {
-    y: 2011, s: 'II', n: 30, sec: 'Vocabulary',
+    y: 2011, s: 'II', n: 30, sec: 'Antonyms',
     q: 'The accused was ACQUITTED of the charge.',
     o: ['held guilty', 'betrayed', 'involved', 'offended'],
     ans: 0, keyword: 'ACQUITTED'
   },
   {
-    y: 2011, s: 'II', n: 31, sec: 'Vocabulary',
+    y: 2011, s: 'II', n: 31, sec: 'Antonyms',
     q: 'It is COMPULSORY that all members of the board be present at the meeting.',
     o: ['optional', 'contrary', 'obligatory', 'conditional'],
     ans: 0, keyword: 'COMPULSORY'
   },
   {
-    y: 2011, s: 'II', n: 32, sec: 'Vocabulary',
+    y: 2011, s: 'II', n: 32, sec: 'Antonyms',
     q: 'Events ultimately led to LUGUBRIOUS ending.',
     o: ['happy', 'hopeful', 'helpful', 'reassuring'],
     ans: 0, keyword: 'LUGUBRIOUS'
   },
   {
-    y: 2011, s: 'II', n: 33, sec: 'Vocabulary',
+    y: 2011, s: 'II', n: 33, sec: 'Antonyms',
     q: 'He ACCELERATED the speed of his car.',
     o: ['retarded', 'reviewed', 'recorded', 'restored'],
     ans: 0, keyword: 'ACCELERATED'
   },
   {
-    y: 2011, s: 'II', n: 34, sec: 'Vocabulary',
+    y: 2011, s: 'II', n: 34, sec: 'Antonyms',
     q: 'The criminal was known to the police by VARIOUS names.',
     o: ['separate', 'distinct', 'identical', 'similar'],
     ans: 2, keyword: 'VARIOUS'
   },
   {
-    y: 2011, s: 'II', n: 35, sec: 'Vocabulary',
+    y: 2011, s: 'II', n: 35, sec: 'Antonyms',
     q: 'The police praised the METICULOUS arrangements made by the organizers to receive the guest at the airport.',
     o: ['haphazard', 'random', 'ridiculous', 'shabby'],
     ans: 0, keyword: 'METICULOUS'

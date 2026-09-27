@@ -191,37 +191,37 @@ var PYQ_2010_II = [
 
   // ---------- Vocabulary: Synonyms (Q29-34) ----------
   {
-    y: 2010, s: 'II', n: 29, sec: 'Vocabulary',
+    y: 2010, s: 'II', n: 29, sec: 'Synonyms',
     q: 'His descriptions are VIVID.',
     o: ['Detailed', 'Categorical', 'Clear', 'Ambiguous'],
     ans: 2, keyword: 'VIVID'
   },
   {
-    y: 2010, s: 'II', n: 30, sec: 'Vocabulary',
+    y: 2010, s: 'II', n: 30, sec: 'Synonyms',
     q: 'Friends have always DEPLORED my unsociable nature.',
     o: ['Deprived', 'Implored', 'Denied', 'Regretted'],
     ans: 3, keyword: 'DEPLORED'
   },
   {
-    y: 2010, s: 'II', n: 31, sec: 'Vocabulary',
+    y: 2010, s: 'II', n: 31, sec: 'Synonyms',
     q: 'Despite his enormous wealth, the businessman was very FRUGAL in his habits.',
     o: ['Reckless', 'Law-abiding', 'Unpredictable', 'Economical'],
     ans: 3, keyword: 'FRUGAL'
   },
   {
-    y: 2010, s: 'II', n: 32, sec: 'Vocabulary',
+    y: 2010, s: 'II', n: 32, sec: 'Synonyms',
     q: 'He was ENGROSSED in writing a story.',
     o: ['Absolved', 'Absorbed', 'Interested', 'Engaged'],
     ans: 1, keyword: 'ENGROSSED'
   },
   {
-    y: 2010, s: 'II', n: 33, sec: 'Vocabulary',
+    y: 2010, s: 'II', n: 33, sec: 'Synonyms',
     q: 'People fear him because of his VINDICTIVE nature.',
     o: ['Violent', 'Cruel', 'Revengeful', 'Irritable'],
     ans: 2, keyword: 'VINDICTIVE'
   },
   {
-    y: 2010, s: 'II', n: 34, sec: 'Vocabulary',
+    y: 2010, s: 'II', n: 34, sec: 'Synonyms',
     q: 'He always has a very PRAGMATIC approach to life.',
     o: ['Practical', 'Proficient', 'Potent', 'Patronizing'],
     ans: 0, keyword: 'PRAGMATIC'
@@ -229,37 +229,37 @@ var PYQ_2010_II = [
 
   // ---------- Vocabulary: Antonyms (Q35-40) ----------
   {
-    y: 2010, s: 'II', n: 35, sec: 'Vocabulary',
+    y: 2010, s: 'II', n: 35, sec: 'Antonyms',
     q: 'What the critic said about this new book was ABSURD.',
     o: ['Interesting', 'Impartial', 'Sensible', 'Ridiculous'],
     ans: 2, keyword: 'ABSURD'
   },
   {
-    y: 2010, s: 'II', n: 36, sec: 'Vocabulary',
+    y: 2010, s: 'II', n: 36, sec: 'Antonyms',
     q: 'The issue raised in the forum can be IGNORED.',
     o: ['Removed', 'Considered', 'Set aside', 'Debated'],
     ans: 1, keyword: 'IGNORED'
   },
   {
-    y: 2010, s: 'II', n: 37, sec: 'Vocabulary',
+    y: 2010, s: 'II', n: 37, sec: 'Antonyms',
     q: 'After swallowing the frog had become LETHARGIC.',
     o: ['Aggressive', 'Dull', 'Active', 'Hungry'],
     ans: 2, keyword: 'LETHARGIC'
   },
   {
-    y: 2010, s: 'II', n: 38, sec: 'Vocabulary',
+    y: 2010, s: 'II', n: 38, sec: 'Antonyms',
     q: 'For the first time I saw him speaking RUDELY to her.',
     o: ['Softly', 'Gently', 'Politely', 'Slowly'],
     ans: 2, keyword: 'RUDELY'
   },
   {
-    y: 2010, s: 'II', n: 39, sec: 'Vocabulary',
+    y: 2010, s: 'II', n: 39, sec: 'Antonyms',
     q: 'Dust storms and polluted rivers have made it HAZARDOUS to breathe the air and drink the water.',
     o: ['Convenient', 'Risky', 'Wrong', 'Safe'],
     ans: 3, keyword: 'HAZARDOUS'
   },
   {
-    y: 2010, s: 'II', n: 40, sec: 'Vocabulary',
+    y: 2010, s: 'II', n: 40, sec: 'Antonyms',
     q: 'Only hard work can ENRICH our country.',
     o: ['Impoverish', 'Improve', 'Increase', 'Involve'],
     ans: 0, keyword: 'ENRICH'

@@ -71,7 +71,7 @@ var PYQ_2016_II = [
   },
   {
     y: 2016, s: 'II', n: 11,
-    sec: 'Vocabulary',
+    sec: 'Synonyms',
     q: 'Hospitality is a virtue for which the natives of the East in general are highly admired.',
     o: ['Duty of a doctor', 'Generosity shown to guests', 'Cleanliness in hospitals', 'Kindness'],
     ans: 1,
@@ -79,7 +79,7 @@ var PYQ_2016_II = [
   },
   {
     y: 2016, s: 'II', n: 12,
-    sec: 'Vocabulary',
+    sec: 'Synonyms',
     q: 'House rent in cities like Mumbai or Delhi has risen to astronomical figures beyond the reach of even high-salaried people.',
     o: ['exorbitant', 'commercial', 'planetary', 'illogical'],
     ans: 0,
@@ -87,7 +87,7 @@ var PYQ_2016_II = [
   },
   {
     y: 2016, s: 'II', n: 13,
-    sec: 'Vocabulary',
+    sec: 'Synonyms',
     q: 'Appropriate technology holds the key to a nation\'s development.',
     o: ['Modern', 'Suitable', 'Effective', 'Growing'],
     ans: 1,
@@ -95,7 +95,7 @@ var PYQ_2016_II = [
   },
   {
     y: 2016, s: 'II', n: 14,
-    sec: 'Vocabulary',
+    sec: 'Synonyms',
     q: 'He was enamoured of his own golden voice.',
     o: ['very fond of', 'concerned with', 'obsessed with', 'imbued with'],
     ans: 0,
@@ -103,14 +103,14 @@ var PYQ_2016_II = [
   },
   {
     y: 2016, s: 'II', n: 15,
-    sec: 'Vocabulary',
+    sec: 'Idioms and Phrases',
     q: 'Some journalists are guilty of indulging in yellow journalism.',
     o: ['misrepresentation', 'vulgarization', 'sensational reporting', 'loud gestures'],
     ans: 2
   },
   {
     y: 2016, s: 'II', n: 16,
-    sec: 'Vocabulary',
+    sec: 'Antonyms',
     q: 'The culprit was sentenced by the Court.',
     o: ['acquitted', 'punished', 'relieved', 'pardoned'],
     ans: 3,
@@ -118,7 +118,7 @@ var PYQ_2016_II = [
   },
   {
     y: 2016, s: 'II', n: 17,
-    sec: 'Vocabulary',
+    sec: 'Antonyms',
     q: 'Thrifty as he is, he can well afford to live within his means.',
     o: ['careless', 'instinctive', 'sentimental', 'extravagant'],
     ans: 3,
@@ -126,7 +126,7 @@ var PYQ_2016_II = [
   },
   {
     y: 2016, s: 'II', n: 18,
-    sec: 'Vocabulary',
+    sec: 'Antonyms',
     q: 'Do not give him a responsible job, he is immature.',
     o: ['thoughtful', 'cautious', 'calculating', 'seasoned'],
     ans: 3,
@@ -134,14 +134,14 @@ var PYQ_2016_II = [
   },
   {
     y: 2016, s: 'II', n: 19,
-    sec: 'Vocabulary',
+    sec: 'Idioms and Phrases',
     q: 'I was prepared to show my hand provided he agreed to do the same.',
     o: ['to yield', 'to shake hands', 'to conceal my plan', 'to lose my ground'],
     ans: 2
   },
   {
     y: 2016, s: 'II', n: 20,
-    sec: 'Vocabulary',
+    sec: 'Antonyms',
     q: 'Akbar the great was a sagacious ruler.',
     o: ['haughty', 'cunning', 'rude', 'unwise'],
     ans: 3,
@@ -149,70 +149,70 @@ var PYQ_2016_II = [
   },
   {
     y: 2016, s: 'II', n: 21,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'She has been lying in bed for the last fortnight. I hope she will ____.',
     o: ['come out', 'pull out', 'pull through', 'go out'],
     ans: 1
   },
   {
     y: 2016, s: 'II', n: 22,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'The path of progress is beset ____ difficulties.',
     o: ['with', 'by', 'through', 'along'],
     ans: 1
   },
   {
     y: 2016, s: 'II', n: 23,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'I feel ____ for those who are cruel to their children.',
     o: ['sympathy', 'contempt', 'admiration', 'craving'],
     ans: 1
   },
   {
     y: 2016, s: 'II', n: 24,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'Both the parties were keen to have an ____ settlement of the dispute.',
     o: ['enviable', 'inimical', 'worthy', 'amicable'],
     ans: 3
   },
   {
     y: 2016, s: 'II', n: 25,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'I have come to know that the two brothers have ____.',
     o: ['fallen through', 'fallen out', 'fallen for', 'fallen short'],
     ans: 1
   },
   {
     y: 2016, s: 'II', n: 26,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'Everybody finds his own work ____ whereas he feels that others have delightful jobs.',
     o: ['tedious', 'fabulous', 'unprofitable', 'indecent'],
     ans: 0
   },
   {
     y: 2016, s: 'II', n: 27,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'The accident took place because of the criminal ____ of the driver.',
     o: ['performance', 'disregard', 'negligence', 'slackness'],
     ans: 0
   },
   {
     y: 2016, s: 'II', n: 28,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'The belief in the ____ of vaccination is gaining ground.',
     o: ['immunity', 'prevalence', 'efficacy', 'workability'],
     ans: 0
   },
   {
     y: 2016, s: 'II', n: 29,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'Our new leader is a ____ young man and will take us forward.',
     o: ['haughty', 'intoxicated', 'fanciful', 'dynamic'],
     ans: 3
   },
   {
     y: 2016, s: 'II', n: 30,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'They found a world of ____ between what he said and what he did.',
     o: ['chaos', 'bitterness', 'difference', 'hope'],
     ans: 2

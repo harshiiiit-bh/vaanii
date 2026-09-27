@@ -1,77 +1,77 @@
 var PYQ_2017_I = [
   {
     y: 2017, s: 'I', n: 1,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'I ____ you to be at the party this evening.',
     o: ['look forward to', 'hope', 'expect', 'think'],
     ans: 2
   },
   {
     y: 2017, s: 'I', n: 2,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'When I met John yesterday, it was the first time I ____ him since Christmas.',
     o: ['saw', 'have seen', 'had seen', 'have been seeing'],
     ans: 0
   },
   {
     y: 2017, s: 'I', n: 3,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'He ____ to listen to my arguments and walked away.',
     o: ['denied', 'disliked', 'prevented', 'refused'],
     ans: 3
   },
   {
     y: 2017, s: 'I', n: 4,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'The flow of blood was so ____ that the patient died.',
     o: ['intense', 'adequate', 'profuse', 'extensive'],
     ans: 2
   },
   {
     y: 2017, s: 'I', n: 5,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'You have never ____ me about your experiences in America.',
     o: ['said', 'told', 'explained', 'spoken'],
     ans: 1
   },
   {
     y: 2017, s: 'I', n: 6,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'I always felt hungry ____ I heard the dinner bell.',
     o: ['as much as', 'as well as', 'as soon as', 'as close as'],
     ans: 2
   },
   {
     y: 2017, s: 'I', n: 7,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'Although they took every precaution, they could not ____ the accident.',
     o: ['defer', 'allow', 'avoid', 'block'],
     ans: 2
   },
   {
     y: 2017, s: 'I', n: 8,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'The ambitious nobleman ____ to marry the king\'s daughter.',
     o: ['transpired', 'perspired', 'aspired', 'expired'],
     ans: 2
   },
   {
     y: 2017, s: 'I', n: 9,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'The dictator of that country was a monster of wickedness, insatiable in his ____ for blood and plunder.',
     o: ['idea', 'vision', 'lust', 'intention'],
     ans: 2
   },
   {
     y: 2017, s: 'I', n: 10,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'Please don\'t give me any more, I have had ____.',
     o: ['few', 'too little', 'little', 'enough'],
     ans: 3
   },
   {
     y: 2017, s: 'I', n: 11,
-    sec: 'Vocabulary',
+    sec: 'Antonyms',
     q: 'My first lecture in the classroom was a fiasco.',
     o: ['success', 'joy', 'fun', 'disaster'],
     ans: 0,
@@ -79,7 +79,7 @@ var PYQ_2017_I = [
   },
   {
     y: 2017, s: 'I', n: 12,
-    sec: 'Vocabulary',
+    sec: 'Antonyms',
     q: 'It was indeed arduous to cross streets in New York.',
     o: ['pleasant', 'effortless', 'interesting', 'risky'],
     ans: 1,
@@ -87,7 +87,7 @@ var PYQ_2017_I = [
   },
   {
     y: 2017, s: 'I', n: 13,
-    sec: 'Vocabulary',
+    sec: 'Antonyms',
     q: 'Unlike his brother, he is affable.',
     o: ['reserved', 'gullible', 'irritable', 'lovable'],
     ans: 0,
@@ -95,7 +95,7 @@ var PYQ_2017_I = [
   },
   {
     y: 2017, s: 'I', n: 14,
-    sec: 'Vocabulary',
+    sec: 'Antonyms',
     q: 'The birth of his child decidedly proved to be an auspicious event in his life.',
     o: ['precious', 'ominous', 'useless', 'unforgettable'],
     ans: 1,
@@ -103,7 +103,7 @@ var PYQ_2017_I = [
   },
   {
     y: 2017, s: 'I', n: 15,
-    sec: 'Vocabulary',
+    sec: 'Antonyms',
     q: 'The witness corroborated word for word the statement of the victim.',
     o: ['accepted', 'confirmed', 'denied', 'repeated'],
     ans: 2,
@@ -111,7 +111,7 @@ var PYQ_2017_I = [
   },
   {
     y: 2017, s: 'I', n: 16,
-    sec: 'Vocabulary',
+    sec: 'Synonyms',
     q: 'It is unwise to sever diplomatic relations with a neighbouring country over small matters.',
     o: ['engage', 'estrange', 'cut off', 'twist'],
     ans: 2,
@@ -119,7 +119,7 @@ var PYQ_2017_I = [
   },
   {
     y: 2017, s: 'I', n: 17,
-    sec: 'Vocabulary',
+    sec: 'Synonyms',
     q: 'Bad tendencies are to be countered by good ones until all that is evil disappears.',
     o: ['opposed', 'balanced', 'reduced', 'bypassed'],
     ans: 0,
@@ -127,7 +127,7 @@ var PYQ_2017_I = [
   },
   {
     y: 2017, s: 'I', n: 18,
-    sec: 'Vocabulary',
+    sec: 'Synonyms',
     q: 'The police fired indiscriminately at the crowd, killing many innocent women and children.',
     o: ['continuously', 'without distinguishing', 'foolishly', 'rapidly'],
     ans: 1,
@@ -135,7 +135,7 @@ var PYQ_2017_I = [
   },
   {
     y: 2017, s: 'I', n: 19,
-    sec: 'Vocabulary',
+    sec: 'Synonyms',
     q: 'Businessmen who lack acumen cannot be expected to be very successful.',
     o: ['fairness', 'sharpness', 'boldness', 'righteousness'],
     ans: 1,
@@ -143,7 +143,7 @@ var PYQ_2017_I = [
   },
   {
     y: 2017, s: 'I', n: 20,
-    sec: 'Vocabulary',
+    sec: 'Synonyms',
     q: 'His candid opinions have won him many friends.',
     o: ['kind', 'courteous', 'generous', 'frank'],
     ans: 3,

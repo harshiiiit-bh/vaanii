@@ -1,70 +1,70 @@
 var PYQ_2016_I = [
   {
     y: 2016, s: 'I', n: 1,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'When the bus was at full speed, its brakes failed and an accident was ____.',
     o: ['inevitable', 'undeniable', 'fatal', 'miserable'],
     ans: 0
   },
   {
     y: 2016, s: 'I', n: 2,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'To explain his design to his visitors, the architect ____ a simple plan on the blackboard.',
     o: ['built', 'finalised', 'sketched', 'arranged'],
     ans: 2
   },
   {
     y: 2016, s: 'I', n: 3,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'Though Bonsai, a well-known art form, originated in China, it was ____ by the Japanese.',
     o: ['cultivated', 'finished', 'perfected', 'enlarged'],
     ans: 2
   },
   {
     y: 2016, s: 'I', n: 4,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'He is greatly admired for his ____ behaviour.',
     o: ['decrepit', 'decadent', 'decorative', 'decorous'],
     ans: 3
   },
   {
     y: 2016, s: 'I', n: 5,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'Would you mind ____ to the Principal how the trouble started?',
     o: ['remarking', 'saying', 'explaining', 'talking'],
     ans: 2
   },
   {
     y: 2016, s: 'I', n: 6,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'Vaccination will make people immune ____ certain diseases for a given period.',
     o: ['against', 'to', 'with', 'for'],
     ans: 1
   },
   {
     y: 2016, s: 'I', n: 7,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'The two boys looked so alike that it was impossible to ____ between them.',
     o: ['discriminate', 'discern', 'distinguish', 'identify'],
     ans: 2
   },
   {
     y: 2016, s: 'I', n: 8,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'The campers ____ their tents at the base of the mountain.',
     o: ['installed', 'dug', 'pitched', 'established'],
     ans: 2
   },
   {
     y: 2016, s: 'I', n: 9,
-    sec: 'Vocabulary',
+    sec: 'Fill in the Blanks',
     q: 'The enemy had captured him and his life was at stake, still he refused to ____ the state secrets.',
     o: ['divulge', 'divert', 'indulge', 'invert'],
     ans: 0
   },
   {
     y: 2016, s: 'I', n: 10,
-    sec: 'Vocabulary',
+    sec: 'Antonyms',
     q: 'He handled the machine with deft fingers.',
     o: ['delicate', 'sturdy', 'quick', 'clumsy'],
     ans: 3,
@@ -72,7 +72,7 @@ var PYQ_2016_I = [
   },
   {
     y: 2016, s: 'I', n: 11,
-    sec: 'Vocabulary',
+    sec: 'Antonyms',
     q: 'I was deeply affected by his urbane behaviour.',
     o: ['rural', 'rude', 'irrational', 'indifferent'],
     ans: 1,
@@ -80,7 +80,7 @@ var PYQ_2016_I = [
   },
   {
     y: 2016, s: 'I', n: 12,
-    sec: 'Vocabulary',
+    sec: 'Antonyms',
     q: 'His timidity proved costly.',
     o: ['arrogance', 'boldness', 'skilfulness', 'cunning'],
     ans: 1,
@@ -88,7 +88,7 @@ var PYQ_2016_I = [
   },
   {
     y: 2016, s: 'I', n: 13,
-    sec: 'Vocabulary',
+    sec: 'Antonyms',
     q: 'Arrangements were made to handle the mammoth gathering tactfully.',
     o: ['significant', 'small', 'unruly', 'noisy'],
     ans: 1,
@@ -96,7 +96,7 @@ var PYQ_2016_I = [
   },
   {
     y: 2016, s: 'I', n: 14,
-    sec: 'Vocabulary',
+    sec: 'Antonyms',
     q: 'He was engrossed in his work when I walked in.',
     o: ['occupied', 'inattentive', 'engaged', 'absent'],
     ans: 1,
@@ -104,7 +104,7 @@ var PYQ_2016_I = [
   },
   {
     y: 2016, s: 'I', n: 15,
-    sec: 'Vocabulary',
+    sec: 'Antonyms',
     q: 'These are the main points of the preceding paragraph.',
     o: ['following', 'previous', 'first', 'last'],
     ans: 0,
@@ -112,7 +112,7 @@ var PYQ_2016_I = [
   },
   {
     y: 2016, s: 'I', n: 16,
-    sec: 'Vocabulary',
+    sec: 'Antonyms',
     q: 'He made a shrewd guess.',
     o: ['clever', 'wild', 'incorrect', 'discriminating'],
     ans: 1,
@@ -120,7 +120,7 @@ var PYQ_2016_I = [
   },
   {
     y: 2016, s: 'I', n: 17,
-    sec: 'Vocabulary',
+    sec: 'Antonyms',
     q: 'He is suffering from a severe cough.',
     o: ['violent', 'mild', 'bad', 'continuous'],
     ans: 1,
@@ -128,7 +128,7 @@ var PYQ_2016_I = [
   },
   {
     y: 2016, s: 'I', n: 18,
-    sec: 'Vocabulary',
+    sec: 'Antonyms',
     q: 'Cumulatively, the effect of these drugs is quite bad.',
     o: ['Individually', 'Obviously', 'Clearly', 'Collectively'],
     ans: 0,
@@ -136,7 +136,7 @@ var PYQ_2016_I = [
   },
   {
     y: 2016, s: 'I', n: 19,
-    sec: 'Vocabulary',
+    sec: 'Antonyms',
     q: 'He was conspicuous because of his colourful shirt.',
     o: ['charming', 'ugly', 'small', 'unnoticeable'],
     ans: 3,
@@ -144,7 +144,7 @@ var PYQ_2016_I = [
   },
   {
     y: 2016, s: 'I', n: 20,
-    sec: 'Vocabulary',
+    sec: 'Antonyms',
     q: 'He hates these continual arguments with his friend.',
     o: ['repeated', 'irrational', 'occasional', 'regular'],
     ans: 2,
@@ -292,7 +292,7 @@ var PYQ_2016_I = [
   },
   {
     y: 2016, s: 'I', n: 41,
-    sec: 'Vocabulary',
+    sec: 'Synonyms',
     q: 'Suddenly there was a bright flash, followed by a deafening explosion.',
     o: ['dangerous', 'terrifying', 'mild', 'very loud'],
     ans: 3,
@@ -300,7 +300,7 @@ var PYQ_2016_I = [
   },
   {
     y: 2016, s: 'I', n: 42,
-    sec: 'Vocabulary',
+    sec: 'Synonyms',
     q: 'He showed exemplary courage during the crisis.',
     o: ['usual', 'durable', 'commendable', 'some'],
     ans: 2,
@@ -308,7 +308,7 @@ var PYQ_2016_I = [
   },
   {
     y: 2016, s: 'I', n: 43,
-    sec: 'Vocabulary',
+    sec: 'Synonyms',
     q: 'When the new teacher entered the classroom, he found the pupils restive.',
     o: ['at rest', 'idle', 'quiet', 'impatient'],
     ans: 3,
@@ -316,7 +316,7 @@ var PYQ_2016_I = [
   },
   {
     y: 2016, s: 'I', n: 44,
-    sec: 'Vocabulary',
+    sec: 'Synonyms',
     q: 'There is no dearth of talent in this country.',
     o: ['scarcity', 'availability', 'plenty', 'absence'],
     ans: 0,
@@ -324,7 +324,7 @@ var PYQ_2016_I = [
   },
   {
     y: 2016, s: 'I', n: 45,
-    sec: 'Vocabulary',
+    sec: 'Synonyms',
     q: 'The servants retired to their quarters.',
     o: ['entered', 'went away', 'ran away', 'mobilised'],
     ans: 1,
@@ -332,7 +332,7 @@ var PYQ_2016_I = [
   },
   {
     y: 2016, s: 'I', n: 46,
-    sec: 'Vocabulary',
+    sec: 'Synonyms',
     q: 'The navy gave tactical support to the marines.',
     o: ['sensitive', 'strategic', 'immediate', 'expert'],
     ans: 1,
@@ -340,7 +340,7 @@ var PYQ_2016_I = [
   },
   {
     y: 2016, s: 'I', n: 47,
-    sec: 'Vocabulary',
+    sec: 'Synonyms',
     q: 'A genius tends to deviate from the routine way of thinking.',
     o: ['dispute', 'disagree', 'distinguish', 'differ'],
     ans: 3,
@@ -348,7 +348,7 @@ var PYQ_2016_I = [
   },
   {
     y: 2016, s: 'I', n: 48,
-    sec: 'Vocabulary',
+    sec: 'Synonyms',
     q: 'He was greatly debilitated by an attack of influenza.',
     o: ['depressed', 'weakened', 'worried', 'defeated'],
     ans: 1,
@@ -356,7 +356,7 @@ var PYQ_2016_I = [
   },
   {
     y: 2016, s: 'I', n: 49,
-    sec: 'Vocabulary',
+    sec: 'Synonyms',
     q: 'His efforts at helping the poor are laudable.',
     o: ['welcome', 'sincere', 'good', 'praiseworthy'],
     ans: 3,
@@ -364,7 +364,7 @@ var PYQ_2016_I = [
   },
   {
     y: 2016, s: 'I', n: 50,
-    sec: 'Vocabulary',
+    sec: 'Synonyms',
     q: 'His conduct brought him reproach from all quarters.',
     o: ['rebuke', 'sympathy', 'indifference', 'remorse'],
     ans: 0,
