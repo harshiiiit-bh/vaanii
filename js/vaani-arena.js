@@ -924,8 +924,6 @@
       '<span class="vx-chip">' + esc(q._exam || 'NDA') + ' ' + esc(q.s || '') + ' ' + esc(q.y || '') + '</span>';
     w.appendChild(top);
 
-    w.appendChild(questionGridHTML(r));
-
     /* optional per-question countdown — fresh every time a question is
        shown; auto-advances (or submits, if this is the last one) at zero */
     if (m.perQSeconds) {
@@ -997,6 +995,12 @@
       finishRun(false);
     });
     w.appendChild(submit);
+
+    /* nav grid moved to the bottom (matches the PYQ Test Kit layout) so it
+       never pushes the question itself down the page as a match grows —
+       at 100+ questions a top-mounted grid would bury the question below
+       several rows of tiles before the person sees it. */
+    w.appendChild(questionGridHTML(r));
   }
 
   function finishRun(auto) {
