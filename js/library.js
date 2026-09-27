@@ -764,7 +764,11 @@ async function confirmAbandon(bookId){
   location.hash = '#/ongoing';
 }
 
-/* ---- Ongoing Detail (per-book log + vocab quick add) ---- */
+function vbvJumpTo(id){
+  const target=document.getElementById(id);
+  if(target)target.scrollIntoView({behavior:window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});
+}
+\n/* ---- Ongoing Detail (per-book log + vocab quick add) ---- */
 function renderOngoingDetail(id){
   const b = DATA.ongoing.find(x=>x.id===id);
   if(!b){
@@ -789,9 +793,17 @@ function renderOngoingDetail(id){
       <div class="vbv-stat-card"><div class="num">${totalMin}</div><div class="lbl">Minutes Logged</div></div>
       <div class="vbv-stat-card"><div class="num">${(b.vocabWordIds||[]).length}</div><div class="lbl">Words Captured</div></div>
     </div>
+    <nav class="vbv-book-jumpbar" aria-label="Reading desk sections">
+      <button type="button" onclick="vbvJumpTo('vbv-book-progress')">Progress</button>
+      <button type="button" onclick="vbvJumpTo('vbv-book-timer')">Timer</button>
+      <button type="button" onclick="vbvJumpTo('vbv-book-log')">Log pages</button>
+      <button type="button" onclick="vbvJumpTo('vbv-book-highlights')">Highlights</button>
+      <button type="button" onclick="vbvJumpTo('vbv-book-capture')">Capture a word</button>
+      <button type="button" onclick="vbvJumpTo('vbv-reading-history')">History</button>
+    </nav>
 
     ${b.totalPages ? `
-    <div class="panel" style="margin-bottom:20px;">
+    <div class="panel" id="vbv-book-progress" style="margin-bottom:20px;">
       <div class="goal-label"><span>Pages progress</span><span>${pagesLogged} / ${b.totalPages} (${pagesPct}%)</span></div>
       <div class="progress-track"><div class="progress-fill" style="width:${pagesPct}%"></div></div>
       <button class="link-btn-light" style="margin-top:8px;" onclick="openSetTotalPagesModal('${b.id}')">Edit total pages</button>
@@ -801,7 +813,7 @@ function renderOngoingDetail(id){
       <button class="vbv-btn btn-outline btn-sm" onclick="openSetTotalPagesModal('${b.id}')">Add Total Pages</button>
     </div>`}
 
-    <div class="timer-box">
+    <div class="timer-box" id="vbv-book-timer">
       <div>
         <div class="timer-display" id="timer-display">00:00:00</div>
         <div class="timer-sub">${timerRunning ? 'Reading session in progress' : 'Live reading timer'}</div>
@@ -809,7 +821,7 @@ function renderOngoingDetail(id){
       <button class="vbv-btn ${timerRunning?'btn-gold':'btn-maroon'} btn-sm" onclick="${timerRunning?`stopTimer('${b.id}')`:`startTimer('${b.id}')`}">${timerRunning?'Stop &amp; Log Time':'Start Timer'}</button>
     </div>
 
-    <div class="panel">
+    <div class="panel" id="vbv-book-log">
       <h3 style="margin-bottom:14px;">Log today's reading</h3>
       <div class="form-row">
         <div><label>Date</label><input type="date" id="log-date" value="${todayStr()}" max="${todayStr()}"></div>
@@ -821,7 +833,7 @@ function renderOngoingDetail(id){
       </div>
     </div>
 
-    <div class="panel">
+    <div class="panel" id="vbv-book-highlights">
       <h3 style="margin-bottom:14px;">Save a highlight</h3>
       <p style="font-size:13px; color:var(--navy-soft); margin-bottom:12px;">A quote or a line worth keeping from this book.</p>
       <textarea id="highlight-input" rows="2" placeholder="e.g. Discipline is the soul of an army — Washington"></textarea>
@@ -829,7 +841,7 @@ function renderOngoingDetail(id){
       ${notesSorted.length ? `<div style="margin-top:14px;">${notesSorted.map(n=>`<div class="highlight-item">${escapeHtml(n.text)}<span class="h-date">${fmtDate(n.date)}</span></div>`).join('')}</div>` : ''}
     </div>
 
-    <div class="panel">
+    <div class="panel" id="vbv-book-capture">
       <h3 style="margin-bottom:14px;">Add a word to your Vocab Register</h3>
       <p style="font-size:13px; color:var(--navy-soft); margin-bottom:12px;">Type any new word you learnt from this book. It will be defined and sorted into the Vocab Register automatically — no need to open that tab.</p>
       <div class="form-row" style="grid-template-columns:2fr 1fr;">
@@ -838,7 +850,7 @@ function renderOngoingDetail(id){
       </div>
     </div>
 
-    <div class="section-title-row"><h3>Reading log</h3></div>
+    <div class="section-title-row" id="vbv-reading-history"><h3>Reading history</h3></div>
     ${logsSorted.length ? `
     <div class="table-scroll">
     <table class="logtable">
