@@ -78,7 +78,8 @@ function token(css, selector, name) {
   const re = new RegExp(escaped + '\\s*\\{([^}]*)\\}', 'g');
   let match, value = null;
   while ((match = re.exec(css))) {
-    const found = match[1].match(new RegExp('(?:^|;)\\s*' + name + '\\s*:\\s*(#[0-9a-f]{6})\\b', 'i'));
+    const declarations = match[1].replace(/\/\*[\s\S]*?\*\//g, '');
+    const found = declarations.match(new RegExp('(?:^|[;\\s])' + name + '\\s*:\\s*(#[0-9a-f]{6})\\b', 'i'));
     if (found) value = found[1];
   }
   return value;
