@@ -3958,6 +3958,8 @@ function renderCompareGrid(){
   const counter=document.getElementById('compareResultCount');
   if(counter)counter.textContent=list.length+' of '+COMPARISONS.length+' pairs';
   const total=document.getElementById('compareTotal');if(total)total.textContent=COMPARISONS.length;
+  const practised=document.getElementById('comparePractised');
+  if(practised)practised.textContent=COMPARISONS.filter(c=>State.quizScores['cmp-'+c.id]!=null).length;
   grid.innerHTML='';
   if(!list.length){const empty=document.createElement('div');empty.className='cmp-empty';empty.textContent='No pairs match this search and category. Try another word or choose All pairs.';grid.appendChild(empty);return;}
   list.forEach(c=>{
