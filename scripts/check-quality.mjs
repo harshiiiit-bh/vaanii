@@ -250,8 +250,9 @@ try {
   for (const required of ['vx-home-metrics', 'vx-mode-grid', 'vx-arena-brief', 'vx-board-summary', 'vx-board-heading']) {
     if (!arenaSource.includes(required)) throw new Error('Arena refresh markup missing: ' + required);
   }
+  const allRefreshCss = siteCss + '\n' + reconstructionCss;
   for (const required of ['.cmp-hero', '.vp-profile-hero', '.service-hero', '.vx-home-metrics', '.vx-mode-grid', '.service-signal-grid', '.vp-focus-grid', '.daily-refresh-btn']) {
-    if (!siteCss.includes(required)) throw new Error('Site refresh styles missing: ' + required);
+    if (!allRefreshCss.includes(required)) throw new Error('Site refresh styles missing: ' + required);
   }
   console.log('Site refresh: ' + ids.size + ' comparisons, daily rotation, randomized drills, richer Arena/Profile/Service Record and removed Flashcard Drill validated');
 } catch (error) {
