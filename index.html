@@ -657,7 +657,7 @@
   </div>
   <div class="meta-strip" id="topicMetaStrip"></div>
   <div id="readProgress"><div class="fill" id="readProgressFill"></div></div>
-  <div class="flow-stepper" id="flowStepper"></div>
+  <div class="flow-stepper" id="flowStepper" aria-label="Lesson steps"></div>
   <div class="tabs" style="display:none">
     <button class="tab-btn active" data-tab="learn">Learn</button>
     <button class="tab-btn" data-tab="examples">Examples</button>
@@ -731,7 +731,28 @@
 <!-- ============ VOCABULARY ============ -->
 <section class="view vd-vocab" id="view-vocab">
   <div class="section-head"><div><span class="eyebrow">Module 03</span><h2>Vocabulary Mastery Hub</h2></div></div>
-  <p class="section-desc">Five daily word sets, eight daily micro-lessons, a fully cross-linked word network, and dedicated mastery chapters — every entry built for NDA-grade depth, not just a one-line meaning.</p>
+  <p class="section-desc">Start with a clear meaning and one useful example. Explore pronunciation, word families and NDA practice only when you need them.</p>
+
+  <div class="vv-bank-intro"><span class="eyebrow">Word finder</span><h3>Find a word. Understand it. Use it.</h3><p>Search first, then open a word for its plain meaning, Hindi translation, examples and practice.</p></div>
+  <!-- MAIN VOCAB BANK -->
+  <div class="panel-title" style="margin-top:34px"><span class="bar"></span>Full Vocabulary Bank</div>
+  <div class="vocab-toolbar">
+    <div class="search-box"><input id="vocabSearch" placeholder="Search any word..." oninput="renderVocabGrid()"></div>
+  </div>
+  <div class="filter-chips" id="vocabCatChips">
+    <span class="chip active" data-cat="all" onclick="setVocabCat('all')">All</span>
+    <span class="chip" data-cat="nda" onclick="setVocabCat('nda')">NDA Frequent</span>
+    <span class="chip" data-cat="advanced" onclick="setVocabCat('advanced')">Advanced</span>
+    <span class="chip" data-cat="editorial" onclick="setVocabCat('editorial')">Editorial</span>
+    <span class="chip" data-cat="military" onclick="setVocabCat('military')">Military / Defence</span>
+  </div>
+  <div class="filter-chips" id="vocabDiffChips">
+    <span class="chip active" data-diff="all" onclick="setVocabDiff('all')">Any Difficulty</span>
+    <span class="chip" data-diff="1" onclick="setVocabDiff('1')">★ Easy</span>
+    <span class="chip" data-diff="2" onclick="setVocabDiff('2')">★★ Moderate</span>
+    <span class="chip" data-diff="3" onclick="setVocabDiff('3')">★★★ Hard</span>
+  </div>
+  <div class="grid-3 vv-word-grid" id="vocabGrid"></div>
 
   <!-- DAILY 5x5 TABS -->
   <div class="panel-title"><span class="bar"></span>Today's Daily Sets</div>
@@ -761,25 +782,7 @@
   <div class="panel-title" style="margin-top:34px"><span class="bar"></span>Commonly Confused Words</div>
   <div class="cw-grid" id="confuseTableBody"></div>
 
-  <!-- MAIN VOCAB BANK -->
-  <div class="panel-title" style="margin-top:34px"><span class="bar"></span>Full Vocabulary Bank</div>
-  <div class="vocab-toolbar">
-    <div class="search-box"><input id="vocabSearch" placeholder="Search any word..." oninput="renderVocabGrid()"></div>
-  </div>
-  <div class="filter-chips" id="vocabCatChips">
-    <span class="chip active" data-cat="all" onclick="setVocabCat('all')">All</span>
-    <span class="chip" data-cat="nda" onclick="setVocabCat('nda')">NDA Frequent</span>
-    <span class="chip" data-cat="advanced" onclick="setVocabCat('advanced')">Advanced</span>
-    <span class="chip" data-cat="editorial" onclick="setVocabCat('editorial')">Editorial</span>
-    <span class="chip" data-cat="military" onclick="setVocabCat('military')">Military / Defence</span>
-  </div>
-  <div class="filter-chips" id="vocabDiffChips">
-    <span class="chip active" data-diff="all" onclick="setVocabDiff('all')">Any Difficulty</span>
-    <span class="chip" data-diff="1" onclick="setVocabDiff('1')">★ Easy</span>
-    <span class="chip" data-diff="2" onclick="setVocabDiff('2')">★★ Moderate</span>
-    <span class="chip" data-diff="3" onclick="setVocabDiff('3')">★★★ Hard</span>
-  </div>
-  <div class="grid-3 vv-word-grid" id="vocabGrid"></div>
+
 </section>
 
 <!-- ============ WORD DETAIL PAGE ============ -->
@@ -797,7 +800,7 @@
     <div class="wd-section"><h4>Meaning (English)</h4><div class="wd-line" id="wdMeanEn"></div></div>
     <div class="wd-section"><h4>हिंदी अर्थ (Hindi Meaning)</h4><div class="wd-line" id="wdMeanHi"></div></div>
   </div>
-  <div class="wd-section"><h4>Easy Explanation</h4><div class="wd-line" id="wdEasy"></div></div>
+  <div class="wd-section wd-primary-explanation"><h4>In simple words</h4><div class="wd-line" id="wdEasy"></div></div><div class="wd-section wd-dictionary-panel"><div class="wd-api-head"><div><h4>Online Dictionary</h4><p>Optional extra definitions and pronunciation. Your curated VAANI entry stays unchanged.</p></div><button class="btn ghost" id="wdDictionaryLookup" type="button" onclick="lookupExternalWord()">Look up word</button></div><div id="wdDictionaryResult" class="wd-dictionary-result" role="status" aria-live="polite"></div><div class="wd-api-credit">Supplementary data: <a href="https://dictionaryapi.dev/" target="_blank" rel="noopener noreferrer">Free Dictionary API</a></div></div>
 
   <div class="wd-grid-2">
     <div class="wd-section"><h4>Etymology &amp; Word Formation</h4>
@@ -1002,6 +1005,7 @@
 </main>
 
 <script src="data/grammar.js"></script>
+<script src="data/grammar-basics.js"></script>
 <script src="data/vocab.js"></script>
 <script src="data/pyq/manifest.js"></script>
 <script>
@@ -1025,6 +1029,8 @@
 <script src="js/vaani-testkit.js"></script>
 <script src="js/vaani-arena.js"></script>
 <script src="js/vaani-vocab-bridge.js"></script>
+<script src="js/vaani-dictionary.js"></script>
+<script src="js/vaani-writing-coach.js"></script>
 
 <!-- ============================================================
      ARENA — LIVE LEADERBOARDS (Supabase)
