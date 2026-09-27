@@ -457,7 +457,6 @@ const routes = {
   achievements: renderAchievements,
   vocabtest: renderQuizSetup,
   library: renderLibrary,
-  flashcards: renderFlashcardsHome,
   levels: vbvRenderLevels,
   spoken: renderSpoken,
 };
@@ -1609,11 +1608,6 @@ function renderVocab(){
       <div><h3 style="margin-bottom:4px;">Ready to test yourself?</h3><p style="font-size:12.5px; color:var(--navy-soft);">A quick multiple-choice quiz pulled from these ${DATA.vocab.length} words.</p></div>
       <button class="vbv-btn btn-gold" onclick="location.hash='#/vocabtest'">Take a Test</button>
     </div>` : ''}
-    ${DATA.vocab.length >= 1 ? `
-    <div class="panel" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
-      <div><h3 style="margin-bottom:4px;">Or drill with flashcards</h3><p style="font-size:12.5px; color:var(--navy-soft);">Flip through your words — the ones you know least come back more often.</p></div>
-      <button class="vbv-btn btn-outline" onclick="location.hash='#/flashcards'">Review Flashcards</button>
-    </div>` : ''}
     ${dates.length ? dates.map(d=>`
       <div class="vocab-day-group" data-vbv-group>
         <div class="vocab-day-label">${fmtDate(d)} &nbsp;·&nbsp; ${groups[d].length} word${groups[d].length>1?'s':''}</div>
@@ -1626,7 +1620,7 @@ function vocabCardHtml(v){
   return `
   <div class="vocab-card" id="vc-${v.id}" data-vbv-origin="${v.sourceType==='vaani'?'vaani':v.sourceType==='bookreading'?'bookreading':v.sourceBookId?'book':'manual'}">
     <div class="vocab-word-row" onclick="document.getElementById('vc-${v.id}').classList.toggle('open')">
-      <div><span class="vocab-word">${escapeHtml(v.word)}</span> <span class="mastery-dots" title="Flashcard mastery">${masteryDots(v.mastery)}</span></div>
+      <div><span class="vocab-word">${escapeHtml(v.word)}</span> <span class="vbv-entry-kind">${escapeHtml(v.kind||'Word')}</span></div>
       <div class="vocab-source">${v.sourceLabel ? escapeHtml(v.sourceLabel) : (v.sourceBookTitle ? 'From book · '+escapeHtml(v.sourceBookTitle) : (v.sourceType==='vaani'?'From VAANI':'Book Reading'))}</div>
     </div>
     <div class="vocab-body">
@@ -1884,7 +1878,7 @@ const ACHIEVEMENTS = [
   {id:'upcoming_10', title:'Full Armory', icon:'🗃️', desc:'Have 10 books queued in Upcoming at once.', check: d=> d.upcoming.length>=10},
   {id:'all_rounder', title:'All-Rounder Cadet', icon:'🌟', desc:'Complete a book, learn a word, save a highlight, and finish a test — all at least once.', check: d=> d.completed.length>=1 && d.vocab.length>=1 && totalHighlights(d)>=1 && (d.quizHistory||[]).length>=1},
   {id:'decorated_veteran', title:'Decorated Veteran', icon:'🎖️', desc:'Unlock 40 other medals.', check: d=> d.achievements.length>=40},
-  {id:'flash_mastered_10', title:'Flash Discipline', icon:'🃏', desc:'Get 10 words to full mastery in Flashcards.', check: d=> d.vocab.filter(v=>(v.mastery||0)>=5).length>=10},
+  {id:'vocab_collector_10', title:'Vocabulary Collector', icon:'📚', desc:'Save 10 words or phrases to your Vocab Register.', check: d=> d.vocab.length>=10},
   {id:'genre_explorer', title:'Genre Explorer', icon:'🧭', desc:'Complete a book in 3 different categories.', check: d=> new Set(d.completed.map(b=>b.category).filter(Boolean)).size>=3},
   {id:'triple_crown', title:'Triple Crown', icon:'👑', desc:'Score 80%+ on the Basic, Intermediate, and Advanced level quizzes.', check: d=> d.levels && ['basic','intermediate','advanced'].every(l=> (d.levels.quizScores[l]||0)>=80)},
   {id:'grammar_scholar', title:'Grammar Scholar', icon:'📜', desc:'Review every grammar point across all three levels.', check: d=> d.levels && ['basic','intermediate','advanced'].every(l=> (d.levels.viewed[l].grammar||[]).length>=5)},
@@ -2484,125 +2478,6 @@ async function addWordOfDayToRegister(){
   proceedWithWordResult(null, wod.word, { meaning: wod.meaning, synonyms: wod.synonyms, antonyms: wod.antonyms }, {sourceType:'bookreading',sourceLabel:'Book Reading · Word of the Day',kind:'word'});
 }
 
-/* ================= FLASHCARDS ================= */
-let FLASH_STATE = null;
-function buildFlashcardDeck(){
-  const arr = DATA.vocab.slice();
-  arr.sort((a,b)=> (a.mastery||0)-(b.mastery||0) || (a.lastReviewedAt||'').localeCompare(b.lastReviewedAt||''));
-  return shuffleArray(arr.slice(0, Math.min(20, arr.length)));
-}
-function masteryDots(level){
-  const n = level||0;
-  return '●'.repeat(n) + '○'.repeat(5-n);
-}
-function renderFlashcardsHome(){
-  const vocabCount = DATA.vocab.length;
-  const mastered = DATA.vocab.filter(v=>(v.mastery||0)>=4).length;
-  const learning = DATA.vocab.filter(v=>(v.mastery||0)<2).length;
-  return `
-  <div class="page">
-    <div class="page-head with-bg" style="background-image:url('${IMG.chetwode_refl}')">
-      <div class="page-eyebrow">Vocabulary Command</div>
-      <h2>Flashcards</h2>
-      <p>Flip through your Vocab Register, word by word. Cards you're still learning come back around more often.</p>
-    </div>
-    ${vocabCount < 1 ? `
-    <div class="vbv-empty-state"><h4>Your register is empty</h4><p>Add words from any ongoing book's log first.</p>
-    <button class="vbv-btn btn-maroon btn-sm" style="margin-top:12px;" onclick="location.hash='#/vocab'">Go to Vocab Register</button></div>
-    ` : `
-    <div class="stat-row" style="grid-template-columns:repeat(3,1fr); margin-bottom:26px;">
-      <div class="vbv-stat-card"><div class="num">${vocabCount}</div><div class="lbl">Words Total</div></div>
-      <div class="vbv-stat-card"><div class="num">${mastered}</div><div class="lbl">Well Mastered</div></div>
-      <div class="vbv-stat-card"><div class="num">${learning}</div><div class="lbl">Still Learning</div></div>
-    </div>
-    <div class="panel" style="text-align:center;">
-      <p style="font-size:13px; color:var(--navy-soft); margin-bottom:16px;">Each session reviews up to 20 words, prioritizing the ones you know least.</p>
-      <button class="vbv-btn btn-maroon" onclick="startFlashcards()">Start Review</button>
-    </div>
-    `}
-  </div>`;
-}
-function startFlashcards(){
-  const deck = buildFlashcardDeck();
-  if(!deck.length){ vbvToast('Add some words to your Vocab Register first.', 'angry'); return; }
-  FLASH_STATE = { deck, index:0, flipped:false, knowCount:0, learningCount:0 };
-  mountFlashActive();
-}
-function mountFlashActive(){
-  document.getElementById('app').innerHTML = renderFlashActive();
-  window.scrollTo({top:0, behavior:'smooth'});
-}
-function renderFlashActive(){
-  const { deck, index, flipped } = FLASH_STATE;
-  const v = deck[index];
-  return `
-  <div class="page">
-    <div class="quiz-shell">
-      <div class="quiz-top-row">
-        <div class="vbv-quiz-progress">Card ${index+1} of ${deck.length}</div>
-        <div class="vbv-quiz-progress">${masteryDots(v.mastery)}</div>
-      </div>
-      <div class="quiz-progress-track"><div class="quiz-progress-fill" style="width:${Math.round(100*index/deck.length)}%"></div></div>
-      <div class="vbv-flash-card" onclick="flipFlashcard()">
-        <div class="flash-card-inner ${flipped?'flipped':''}">
-          <div class="vbv-flash-face vbv-flash-front">
-            <div class="flash-word">${escapeHtml(v.word)}</div>
-            <div class="flash-hint">Tap to reveal</div>
-          </div>
-          <div class="vbv-flash-face vbv-flash-back">
-            <div class="flash-meaning">${escapeHtml(v.meaning)}</div>
-            ${(v.synonyms||[]).length ? `<div class="tag-group">${(v.synonyms||[]).slice(0,3).map(s=>`<span class="tag syn">${escapeHtml(s)}</span>`).join('')}</div>` : ''}
-          </div>
-        </div>
-      </div>
-      ${flipped ? `
-      <div class="flash-actions">
-        <button class="vbv-btn btn-outline" onclick="event.stopPropagation(); rateFlashcard(false)">Still Learning</button>
-        <button class="vbv-btn btn-maroon" onclick="event.stopPropagation(); rateFlashcard(true)">Know It</button>
-      </div>` : `<p style="text-align:center; font-size:12px; color:var(--navy-soft);">Tap the card to see the meaning</p>`}
-    </div>
-  </div>`;
-}
-function flipFlashcard(){
-  FLASH_STATE.flipped = !FLASH_STATE.flipped;
-  mountFlashActive();
-}
-async function rateFlashcard(knewIt){
-  const v = FLASH_STATE.deck[FLASH_STATE.index];
-  const entry = DATA.vocab.find(x=>x.id===v.id);
-  if(entry){
-    entry.mastery = knewIt ? Math.min(5, (entry.mastery||0)+1) : Math.max(0, (entry.mastery||0)-1);
-    entry.lastReviewedAt = todayStr();
-  }
-  if(knewIt) FLASH_STATE.knowCount++; else FLASH_STATE.learningCount++;
-  await saveData();
-  FLASH_STATE.index++;
-  FLASH_STATE.flipped = false;
-  if(FLASH_STATE.index >= FLASH_STATE.deck.length){ mountFlashSummary(); }
-  else{ mountFlashActive(); }
-}
-function mountFlashSummary(){
-  const { deck, knowCount, learningCount } = FLASH_STATE;
-  document.getElementById('app').innerHTML = `
-  <div class="page">
-    <div class="page-head">
-      <div class="page-eyebrow">Review Complete</div>
-      <h2>${deck.length} cards down.</h2>
-    </div>
-    <div class="stat-row" style="grid-template-columns:repeat(2,1fr); margin-bottom:26px;">
-      <div class="vbv-stat-card"><div class="num">${knowCount}</div><div class="lbl">Know It</div></div>
-      <div class="vbv-stat-card"><div class="num">${learningCount}</div><div class="lbl">Still Learning</div></div>
-    </div>
-    <div class="card-actions">
-      <button class="vbv-btn btn-maroon btn-sm" onclick="startFlashcards()">Review Again</button>
-      <button class="vbv-btn btn-outline btn-sm" onclick="location.hash='#/vocab'">Back to Vocab Register</button>
-    </div>
-  </div>`;
-  window.scrollTo({top:0, behavior:'smooth'});
-}
-
-/* ================= LEVELS (vocab + grammar + quiz curriculum) ================= */
-let currentLevelTab = 'basic';
 function levelVocabCardHtml(word, entry, level){
   const viewed = (DATA.levels.viewed[level].vocab||[]).includes(word);
   const id = 'lv-'+level+'-'+word;
