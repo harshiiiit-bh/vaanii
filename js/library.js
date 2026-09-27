@@ -1276,18 +1276,20 @@ let __manualPending = null; // {bookId, word}
 async function submitVocabWord(bookId){
   const input = document.getElementById('vocab-input');
   const btn = document.getElementById('vocab-add-btn');
-  const word = input.value.trim();
-  if(!word){ vbvToast('Type a word first.', 'angry'); return; }
+  if(!input||!btn){vbvToast('The quick-capture form is not available on this screen.','angry');return;}
+  const word = input.value.replace(/\s+/g,' ').trim();
+  if(!word){ vbvToast('Type a word or phrase first.', 'angry'); input.focus(); return; }
 
   const existing = findVocabByWord(word);
   if(existing){
     openModal(`
-      <h3>Oh, come on.</h3>
-      <div class="sub"></div>
-      <p style="font-size:14.5px; line-height:1.6;">You already added <strong>"${escapeHtml(existing.word)}"</strong> to your register on ${fmtDate(existing.dateAdded)}.
-      How exactly do you plan to clear the interview if you can't even remember a word you personally wrote down?
-      Open your Vocab Register once in a while — it's not decoration.</p>
-      <div class="modal-actions"><button class="vbv-btn btn-maroon btn-sm" onclick="closeModal()">Fine, noted</button></div>
+      <h3>Already in your register</h3>
+      <div class="sub">You only need one entry for each word or phrase.</div>
+      <p style="font-size:14px;line-height:1.65;"> <strong>"${escapeHtml(existing.word)}"</strong> is already saved${existing.dateAdded?' from '+fmtDate(existing.dateAdded):''}. Open the register to review it, or return and add a different entry.</p>
+      <div class="modal-actions">
+        <button class="vbv-btn btn-outline btn-sm" onclick="closeModal()">Continue</button>
+        <button class="vbv-btn btn-maroon btn-sm" onclick="closeModal();location.hash='#/vocab'">Open Register</button>
+      </div>
     `);
     return;
   }
@@ -1312,11 +1314,11 @@ async function submitVocabWord(bookId){
   proceedWithWordResult(bookId, word, result);
 }
 
-function proceedWithWordResult(bookId, word, result){
+function proceedWithWordResult(bookId, word, result, sourceMeta){
   const synHit = findVocabWhoseSynonymsInclude(word) || (result.synonyms||[]).map(s=>findVocabByWord(s)).find(Boolean);
   const antHit = findVocabWhoseAntonymsInclude(word) || (result.antonyms||[]).map(s=>findVocabByWord(s)).find(Boolean);
 
-  __pendingVocab = { bookId, word, result };
+  __pendingVocab = { bookId, word, result, sourceMeta:sourceMeta||null };
 
   if(synHit){
     openModal(`
@@ -1437,18 +1439,23 @@ async function clearApiKey(){
 async function finalizeVocabAdd(mergeIntoId){
   closeModal();
   if(!__pendingVocab) return;
-  const { bookId, word, result } = __pendingVocab;
+  const { bookId, word, result, sourceMeta } = __pendingVocab;
   __pendingVocab = null;
 
   if(mergeIntoId){
     await attachSynonym(mergeIntoId, word);
     return;
   }
+  const sourceBook=(DATA.ongoing.find(b=>b.id===bookId)||{});
   const entry = {
-    id: uid(), word: word, meaning: result.meaning,
+    id: uid(), word: word, meaning: result.meaning||'',
     synonyms: result.synonyms||[], antonyms: result.antonyms||[],
     dateAdded: todayStr(), sourceBookId: bookId,
-    sourceBookTitle: (DATA.ongoing.find(b=>b.id===bookId)||{}).title || ''
+    sourceBookTitle: sourceBook.title || '',
+    sourceType:sourceMeta&&sourceMeta.sourceType||(bookId?'book':'manual'),
+    sourceLabel:sourceMeta&&sourceMeta.sourceLabel||(bookId?'From book · '+sourceBook.title:'Book Reading · Manual capture'),
+    kind:sourceMeta&&sourceMeta.kind||'word',
+    example:sourceMeta&&sourceMeta.example||''
   };
   DATA.vocab.unshift(entry);
   const b = DATA.ongoing.find(x=>x.id===bookId);
@@ -1481,7 +1488,8 @@ async function addVaaniCaptureToRegister(payload){
     example:String(item.example||'').trim().slice(0,500)
   };
   DATA.vocab.unshift(entry);
-  const saved=await saveData();
+  let saved=false;
+  try{saved=await saveData();}catch(error){console.error('[Book Reading register save]',error);}
   if(!saved){
     DATA.vocab=DATA.vocab.filter(v=>v.id!==entry.id);
     return {ok:false,message:'The register could not save this item. Check browser storage and try again.'};
@@ -1500,14 +1508,20 @@ async function handleVbvCaptureButton(button){
   try{payload=JSON.parse(button.getAttribute('data-vbv-register-capture')||'{}');}
   catch(e){vbvToast('This capture could not be read. Try again.','angry');return;}
   button.disabled=true;button.textContent='Saving…';
-  const result=await addVaaniCaptureToRegister(payload);
-  if(result&&result.ok){
-    button.textContent=result.duplicate?'✓ In Register':'✓ Saved';
-    button.classList.add('is-saved');
-    vbvToast(result.duplicate?'"'+result.word+'" is already in your register.':'Saved "'+result.word+'" to your Vocab Register.','good');
-  }else{
+  try{
+    const result=await addVaaniCaptureToRegister(payload);
+    if(result&&result.ok){
+      button.textContent=result.duplicate?'✓ In Register':'✓ Saved';
+      button.classList.add('is-saved');
+      vbvToast(result.duplicate?'"'+result.word+'" is already in your register.':'Saved "'+result.word+'" to your Vocab Register.','good');
+    }else{
+      button.disabled=false;button.textContent='＋ Save to Register';
+      vbvToast((result&&result.message)||'Could not save this item.','angry');
+    }
+  }catch(error){
+    console.error('[Book Reading capture]',error);
     button.disabled=false;button.textContent='＋ Save to Register';
-    vbvToast((result&&result.message)||'Could not save this item.','angry');
+    vbvToast('The save failed. Your item is still on this page; please try again.','angry');
   }
 }
 
@@ -1610,7 +1624,7 @@ function renderVocab(){
 }
 function vocabCardHtml(v){
   return `
-  <div class="vocab-card" id="vc-${v.id}" data-vbv-origin="${v.sourceType==='vaani'?'vaani':v.sourceBookId?'book':'manual'}">
+  <div class="vocab-card" id="vc-${v.id}" data-vbv-origin="${v.sourceType==='vaani'?'vaani':v.sourceType==='bookreading'?'bookreading':v.sourceBookId?'book':'manual'}">
     <div class="vocab-word-row" onclick="document.getElementById('vc-${v.id}').classList.toggle('open')">
       <div><span class="vocab-word">${escapeHtml(v.word)}</span> <span class="mastery-dots" title="Flashcard mastery">${masteryDots(v.mastery)}</span></div>
       <div class="vocab-source">${v.sourceLabel ? escapeHtml(v.sourceLabel) : (v.sourceBookTitle ? 'From book · '+escapeHtml(v.sourceBookTitle) : (v.sourceType==='vaani'?'From VAANI':'Book Reading'))}</div>
@@ -2467,7 +2481,7 @@ function wordOfTheDay(){
 async function addWordOfDayToRegister(){
   const wod = wordOfTheDay();
   if(findVocabByWord(wod.word)){ vbvToast(`"${wod.word}" is already in your register.`, 'good'); return; }
-  proceedWithWordResult(null, wod.word, { meaning: wod.meaning, synonyms: wod.synonyms, antonyms: wod.antonyms });
+  proceedWithWordResult(null, wod.word, { meaning: wod.meaning, synonyms: wod.synonyms, antonyms: wod.antonyms }, {sourceType:'bookreading',sourceLabel:'Book Reading · Word of the Day',kind:'word'});
 }
 
 /* ================= FLASHCARDS ================= */
