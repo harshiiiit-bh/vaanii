@@ -1,0 +1,113 @@
+/* VAANI reconstruction layer — deeper Arena, Profile, Service Record, Comparisons and daily-learning UX. */
+
+/* ---------- shared density / hierarchy ---------- */
+.vaani-section-intro{margin:0 0 16px;color:var(--muted);font-size:.78rem;line-height:1.65;max-width:78ch}
+.vaani-mini-kicker{display:block;margin-bottom:4px;color:var(--gold-d);font:700 .6rem/1.35 var(--mono);letter-spacing:.16em;text-transform:uppercase}
+[data-theme="dark"] .vaani-mini-kicker{color:var(--gold-l)}
+.vaani-soft-card{border:1px solid var(--line);border-radius:15px;background:linear-gradient(145deg,var(--panel),var(--panel2));box-shadow:0 6px 20px rgba(12,23,36,.045)}
+.vaani-progress-track{height:7px;border-radius:99px;overflow:hidden;background:var(--bg2)}
+.vaani-progress-track span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--gold-d),var(--gold-l))}
+
+/* ---------- Arena command centre ---------- */
+.vx-mode-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:0 0 20px}
+.vx-mode-card{
+  appearance:none;display:flex;flex-direction:column;align-items:flex-start;gap:7px;min-height:154px;
+  padding:16px;text-align:left;border:1px solid var(--vx-line);border-radius:15px;background:var(--vx-card);
+  color:var(--vx-ink);cursor:pointer;box-shadow:0 5px 18px rgba(12,20,31,.045);
+  transition:transform .16s,border-color .16s,box-shadow .16s,background .16s;
+}
+.vx-mode-card:hover{transform:translateY(-3px);border-color:rgba(200,164,74,.65);box-shadow:0 12px 28px rgba(12,20,31,.09)}
+.vx-mode-card:focus-visible{outline:3px solid var(--vx-gold);outline-offset:3px}
+.vx-mode-icon{width:38px;height:38px;display:grid;place-items:center;border-radius:11px;background:rgba(200,164,74,.10);border:1px solid rgba(200,164,74,.18);font-size:1.15rem}
+.vx-mode-title{font:700 .84rem/1.25 var(--vx-font-display);letter-spacing:.02em}
+.vx-mode-desc{font-size:.67rem;line-height:1.5;color:var(--vx-muted)}
+.vx-mode-meta{margin-top:auto;font:700 .58rem/1.35 var(--vx-font-mono);color:var(--vx-gold);letter-spacing:.04em}
+.vx-arena-brief{display:grid;grid-template-columns:1.15fr .85fr;gap:12px;margin:0 0 20px}
+.vx-brief-card{padding:16px;border:1px solid var(--vx-line);border-radius:15px;background:linear-gradient(145deg,var(--vx-card),rgba(255,255,255,.65));box-shadow:0 5px 18px rgba(12,20,31,.04)}
+.vx-brief-card h4{margin:0 0 6px;font:700 .88rem/1.3 var(--vx-font-display);color:var(--vx-ink)}
+.vx-brief-card p{margin:0;color:var(--vx-muted);font-size:.7rem;line-height:1.6}
+.vx-steps-mini{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.vx-step-mini{padding:9px 10px;border:1px solid var(--vx-line);border-radius:11px;background:rgba(255,255,255,.55)}
+.vx-step-mini b{display:block;margin-bottom:3px;font:700 .58rem/1.3 var(--vx-font-mono);color:var(--vx-gold)}
+.vx-step-mini span{font-size:.63rem;line-height:1.4;color:var(--vx-muted)}
+.vx-standards{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.vx-standard-pill{padding:5px 8px;border-radius:999px;border:1px solid var(--vx-line);background:rgba(200,164,74,.06);font:700 .57rem/1.3 var(--vx-font-mono);color:var(--vx-muted)}
+@media(max-width:900px){.vx-mode-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.vx-arena-brief{grid-template-columns:1fr}}
+@media(max-width:520px){.vx-mode-grid{grid-template-columns:1fr 1fr}.vx-mode-card{min-height:140px;padding:13px}.vx-steps-mini{grid-template-columns:1fr}.vx-home-metrics{margin-bottom:16px}}
+
+/* ---------- Service Record / Leaderboard ---------- */
+.service-signal-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:15px;margin-top:15px}
+.service-signal-card,.service-goal-card{padding:clamp(16px,2.1vw,23px)!important}
+.service-signal-list{display:flex;flex-direction:column;gap:12px}
+.service-signal-row{display:grid;grid-template-columns:105px minmax(0,1fr) 42px;align-items:center;gap:9px}
+.service-signal-row label{font-size:.7rem;color:var(--muted)}
+.service-signal-row strong{text-align:right;font:700 .68rem/1.3 var(--mono);color:var(--text)}
+.service-signal-bar{height:8px;border-radius:99px;background:var(--bg2);overflow:hidden}
+.service-signal-bar span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--gold-d),var(--gold-l))}
+.service-signal-empty{padding:14px;border:1px dashed var(--line);border-radius:11px;color:var(--muted);font-size:.7rem;line-height:1.55}
+.service-goal-list{display:flex;flex-direction:column;gap:9px}
+.service-goal-item{display:grid;grid-template-columns:32px minmax(0,1fr);gap:9px;align-items:start;padding:10px;border:1px solid var(--line);border-radius:11px;background:var(--panel2)}
+.service-goal-item i{width:32px;height:32px;display:grid;place-items:center;border-radius:9px;background:rgba(173,122,36,.10);font-style:normal}
+.service-goal-item b{display:block;font-size:.72rem;line-height:1.4;color:var(--text)}
+.service-goal-item small{display:block;margin-top:2px;color:var(--muted);font-size:.64rem;line-height:1.45}
+@media(max-width:760px){.service-signal-grid{grid-template-columns:1fr}}
+@media(max-width:420px){.service-signal-row{grid-template-columns:92px minmax(0,1fr) 36px}}
+
+/* ---------- Profile command view ---------- */
+.vp-focus-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:15px;margin-top:15px}
+.vp-focus-card{padding:clamp(16px,2vw,22px)!important}
+.vp-focus-mission{display:grid;grid-template-columns:48px minmax(0,1fr);gap:12px;align-items:center}
+.vp-focus-icon{width:48px;height:48px;display:grid;place-items:center;border-radius:14px;background:linear-gradient(140deg,rgba(173,122,36,.18),rgba(173,122,36,.06));border:1px solid rgba(173,122,36,.22);font-size:1.35rem}
+.vp-focus-mission b{display:block;color:var(--text);font:700 .9rem/1.35 var(--serif)}
+.vp-focus-mission span{display:block;margin-top:3px;color:var(--muted);font-size:.68rem;line-height:1.5}
+.vp-focus-action{margin-top:13px;width:100%;justify-content:center}
+.vp-skill-signal-list{display:flex;flex-direction:column;gap:10px}
+.vp-skill-signal{display:grid;grid-template-columns:86px minmax(0,1fr) 38px;align-items:center;gap:9px}
+.vp-skill-signal label{font-size:.67rem;color:var(--muted)}
+.vp-skill-signal strong{text-align:right;font:700 .64rem/1.3 var(--mono);color:var(--text)}
+.vp-skill-signal .bar{height:7px;border-radius:99px;background:var(--bg2);overflow:hidden}
+.vp-skill-signal .bar span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--gold-d),var(--gold-l))}
+.vp-rhythm{margin-top:15px}
+.vp-rhythm-grid{display:grid;grid-template-columns:repeat(14,minmax(0,1fr));gap:5px}
+.vp-rhythm-cell{aspect-ratio:1/1;border-radius:4px;background:var(--bg2);border:1px solid rgba(0,0,0,.02)}
+.vp-rhythm-cell.l1{background:rgba(173,122,36,.24)}.vp-rhythm-cell.l2{background:rgba(173,122,36,.40)}
+.vp-rhythm-cell.l3{background:rgba(173,122,36,.62)}.vp-rhythm-cell.l4{background:rgba(173,122,36,.86)}
+.vp-rhythm-note{display:flex;justify-content:space-between;gap:10px;margin-top:8px;color:var(--muted);font-size:.63rem}
+@media(max-width:760px){.vp-focus-grid{grid-template-columns:1fr}}
+@media(max-width:430px){.vp-rhythm-grid{gap:4px}}
+
+/* ---------- Comparisons: make the 75-pair bank feel like a library ---------- */
+.cmp-library-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:0 0 15px}
+.cmp-library-stat{padding:12px 13px;border:1px solid var(--line);border-radius:12px;background:var(--panel);box-shadow:0 4px 14px rgba(12,23,36,.035)}
+.cmp-library-stat span{display:block;font-size:.62rem;color:var(--muted)}
+.cmp-library-stat strong{display:block;margin-top:3px;font:700 1rem/1.3 var(--serif);color:var(--gold-d)}
+[data-theme="dark"] .cmp-library-stat strong{color:var(--gold-l)}
+.cmp-priority-line{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:10px}
+.cmp-priority-label{font:700 .59rem/1.3 var(--mono);letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
+.cmp-spotlight{
+  margin-bottom:15px;padding:15px 16px;border-radius:15px;border:1px solid rgba(173,122,36,.22);
+  background:linear-gradient(135deg,rgba(173,122,36,.10),var(--panel2));
+}
+.cmp-spotlight strong{display:block;color:var(--text);font:700 .85rem/1.35 var(--serif)}
+.cmp-spotlight span{display:block;margin-top:3px;color:var(--muted);font-size:.68rem;line-height:1.5}
+.cmp-card-priority.core{color:var(--gold-d)}
+.cmp-card-priority.extended{color:var(--muted)}
+@media(max-width:760px){.cmp-library-strip{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:420px){.cmp-library-strip{grid-template-columns:1fr 1fr}.cmp-library-stat{padding:10px}}
+
+/* ---------- Daily vocabulary rotation ---------- */
+.daily-heading-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:34px}
+.daily-heading-row .panel-title{margin:0!important}
+.daily-refresh-btn{min-height:34px;padding:7px 11px;border:1px solid var(--line);border-radius:999px;background:var(--panel);color:var(--gold-d);font:700 .62rem/1.3 var(--body);cursor:pointer}
+[data-theme="dark"] .daily-refresh-btn{color:var(--gold-l)}
+.daily-refresh-btn:hover{border-color:var(--gold);background:rgba(173,122,36,.06)}
+.daily-refresh-note{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:7px;color:var(--muted);font-size:.63rem;line-height:1.45}
+.daily-refresh-note strong{color:var(--text)}
+
+/* ---------- remove obsolete flashcard affordances ---------- */
+button[data-route="flashcards"]{display:none!important}
+
+/* ---------- drill library ---------- */
+.practice-random-note{margin:0 0 13px;color:var(--muted);font-size:.68rem;line-height:1.5}
+#practiceGrid .topic-card{min-height:170px}
+#practiceGrid .topic-card .topic-meta{font-variant-numeric:tabular-nums}
