@@ -1104,7 +1104,16 @@ function pvEraGroups(exam){
 function renderPyqView(){ pvRender(); }
 function pvRender(){
   const root = document.getElementById('pvApp'); if(!root) return;
-  if(PV.screen==='home') root.innerHTML = pvHomeHTML();
+  if(PV.screen==='home') {
+    root.innerHTML = pvHomeHTML();
+    const topicGrid=root.querySelector('#pvTopicGrid');
+    if(topicGrid)topicGrid.addEventListener('click',event=>{
+      const card=event.target.closest('.pv-topic-card');
+      if(card&&topicGrid.contains(card))pvLaunchTopic(decodeURIComponent(card.dataset.topic||''));
+    });
+    const topicSearch=root.querySelector('#pvTopicSearch');
+    if(topicSearch)topicSearch.addEventListener('input',()=>pvFilterTopicCards(topicSearch.value));
+  }
   else if(PV.screen==='examtype') root.innerHTML = pvExamTypeHTML();
   else if(PV.screen==='archive') root.innerHTML = pvArchiveHTML();
   else if(PV.screen==='archiveSessions') root.innerHTML = pvArchiveSessionsHTML();
@@ -1408,6 +1417,18 @@ function pvHomeHTML(){
   </div>`;
 }
 
+function pvFilterTopicCards(value){
+  const grid=document.getElementById('pvTopicGrid');if(!grid)return;
+  const term=String(value||'').trim().toLocaleLowerCase();
+  const cards=Array.from(grid.querySelectorAll('.pv-topic-card'));let visible=0;
+  cards.forEach(card=>{
+    const topic=String(card.dataset.topic||'').toLocaleLowerCase();
+    const show=!term||topic.includes(term);card.hidden=!show;if(show)visible++;
+  });
+  const results=document.getElementById('pvTopicResults');
+  if(results)results.textContent=term?(visible+' of '+cards.length+' topics'):(cards.length+' topics');
+  const empty=document.getElementById('pvTopicEmpty');if(empty)empty.hidden=visible>0;
+}
 function pvLaunchTopic(sec){
   const list = PYQ_ALL.filter(q=>q.sec===sec);
   pvStartSession('section', list, {title:sec});
