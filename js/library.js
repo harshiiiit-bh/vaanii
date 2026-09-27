@@ -1520,6 +1520,36 @@ async function attachSynonym(vocabId, word){
   navigate();
 }
 
+let vbvRegisterFilter='all';
+function filterVbvRegister(){
+  const input=document.getElementById('vbv-register-search');
+  const term=String(input&&input.value||'').trim().toLocaleLowerCase();
+  let visible=0,total=0;
+  document.querySelectorAll('#app [data-vbv-group]').forEach(group=>{
+    let groupCount=0;
+    group.querySelectorAll('.vocab-card').forEach(card=>{
+      total++;
+      const matchesText=!term||card.textContent.toLocaleLowerCase().includes(term);
+      const origin=card.dataset.vbvOrigin||'manual';
+      const matchesOrigin=vbvRegisterFilter==='all'||origin===vbvRegisterFilter;
+      card.hidden=!(matchesText&&matchesOrigin);
+      if(!card.hidden){visible++;groupCount++;}
+    });
+    group.hidden=groupCount===0;
+  });
+  const count=document.getElementById('vbv-register-count');
+  if(count)count.textContent=(term||vbvRegisterFilter!=='all')?visible+' of '+total+' entries':total+' entries';
+}
+function setVbvRegisterFilter(button){
+  if(!button)return;
+  vbvRegisterFilter=button.dataset.vbvFilter||'all';
+  const row=button.parentElement;
+  if(row)row.querySelectorAll('[data-vbv-filter]').forEach(item=>{
+    const active=item===button;item.classList.toggle('active',active);item.setAttribute('aria-pressed',String(active));
+  });
+  filterVbvRegister();
+}
+
 function renderVocab(){
   const groups = {};
   [...DATA.vocab].sort((a,b)=>b.dateAdded.localeCompare(a.dateAdded)).forEach(v=>{
@@ -1532,7 +1562,28 @@ function renderVocab(){
     <div class="page-head with-bg" style="background-image:url('${IMG.chetwode_day}')">
       <div class="page-eyebrow">Vocabulary Command</div>
       <h2>Vocab Register</h2>
-      <p>Every word you've captured from your reading, sorted by the date you learnt it. Add new words from any ongoing book's log — they land here automatically.</p>
+      <p>One register for words and phrases discovered in books, VAANI Vocabulary, daily lessons and comparisons. Add an entry here or save it from another section.</p>
+    </div>
+    <div class="vbv-register-capture panel">
+      <div class="vbv-register-capture-copy"><b>Quick capture</b><span>Type a word or phrase. The dictionary fills in what it can; manual entry is always available.</span></div>
+      <div class="vbv-register-capture-row">
+        <input type="text" id="vocab-input" maxlength="120" autocomplete="off" placeholder="e.g. indefatigable, break the ice…"
+          aria-label="Word or phrase to add to the Book Reading register"
+          onkeydown="if(event.key==='Enter'){event.preventDefault();submitVocabWord(null)}">
+        <button class="vbv-btn btn-gold" type="button" id="vocab-add-btn" onclick="submitVocabWord(null)">＋ Add entry</button>
+      </div>
+      <button type="button" class="vbv-btn btn-outline btn-sm vbv-cross-link" onclick="switchView('vocab')">Explore VAANI Vocabulary →</button>
+    </div>
+    <div class="vbv-register-tools">
+      <label class="vbv-register-search"><span aria-hidden="true">⌕</span><input id="vbv-register-search" type="search" maxlength="80" placeholder="Search saved words, meanings or sources…" oninput="filterVbvRegister()" aria-label="Search your vocabulary register"></label>
+      <div class="vbv-register-filters" role="group" aria-label="Filter vocabulary origin">
+        <button type="button" class="active" data-vbv-filter="all" aria-pressed="true" onclick="setVbvRegisterFilter(this)">All</button>
+        <button type="button" data-vbv-filter="book" aria-pressed="false" onclick="setVbvRegisterFilter(this)">From books</button>
+        <button type="button" data-vbv-filter="vaani" aria-pressed="false" onclick="setVbvRegisterFilter(this)">From VAANI</button>
+        <button type="button" data-vbv-filter="manual" aria-pressed="false" onclick="setVbvRegisterFilter(this)">Manual</button>
+      </div>
+      <span class="vbv-register-count" id="vbv-register-count">Saved entries</span>
+    </div>
     </div>
     ${DATA.vocab.length >= 4 ? `
     <div class="panel" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
@@ -1545,7 +1596,7 @@ function renderVocab(){
       <button class="vbv-btn btn-outline" onclick="location.hash='#/flashcards'">Review Flashcards</button>
     </div>` : ''}
     ${dates.length ? dates.map(d=>`
-      <div class="vocab-day-group">
+      <div class="vocab-day-group" data-vbv-group>
         <div class="vocab-day-label">${fmtDate(d)} &nbsp;·&nbsp; ${groups[d].length} word${groups[d].length>1?'s':''}</div>
         ${groups[d].map(vocabCardHtml).join('')}
       </div>
@@ -1554,10 +1605,10 @@ function renderVocab(){
 }
 function vocabCardHtml(v){
   return `
-  <div class="vocab-card" id="vc-${v.id}">
+  <div class="vocab-card" id="vc-${v.id}" data-vbv-origin="${v.sourceType==='vaani'?'vaani':v.sourceBookId?'book':'manual'}">
     <div class="vocab-word-row" onclick="document.getElementById('vc-${v.id}').classList.toggle('open')">
       <div><span class="vocab-word">${escapeHtml(v.word)}</span> <span class="mastery-dots" title="Flashcard mastery">${masteryDots(v.mastery)}</span></div>
-      <div class="vocab-source">${v.sourceBookTitle ? 'from "'+escapeHtml(v.sourceBookTitle)+'"' : ''}</div>
+      <div class="vocab-source">${v.sourceLabel ? escapeHtml(v.sourceLabel) : (v.sourceBookTitle ? 'From book · '+escapeHtml(v.sourceBookTitle) : (v.sourceType==='vaani'?'From VAANI':'Book Reading'))}</div>
     </div>
     <div class="vocab-body">
       <div class="vocab-meaning">${escapeHtml(v.meaning)}</div>
