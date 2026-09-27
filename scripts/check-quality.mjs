@@ -279,11 +279,13 @@ try {
   for (const required of [
     'function addVaaniItemToBookRegister(',
     'function makeBookRegisterButton(',
-    'compareCaptureA',
-    'dashWordToBook',
-    'wdAddToBookRegister'
+    'function openCompare(id){',
+    'Save to Book Register'
   ]) {
-    if (!appSource.includes(required) && !pageSource.includes(required)) throw new Error('VAANI → Book Register link is missing: ' + required);
+    if (!appSource.includes(required)) throw new Error('VAANI → Book Register link is missing: ' + required);
+  }
+  for (const id of ['dashWordToBook', 'wdAddToBookRegister']) {
+    if (!pageSource.includes('id="' + id + '"')) throw new Error('Missing one-click capture control: ' + id);
   }
   if (pageSource.includes('data-route="flashcards"') || librarySource.includes('flashcards: renderFlashcardsHome') ||
       librarySource.includes('function renderFlashcardsHome(') || librarySource.includes('Review Flashcards')) {
