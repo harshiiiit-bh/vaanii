@@ -237,3 +237,5 @@
   .cmp-card,.vx-recent-row,.vx-podium-card{transition:none!important}
   .cmp-card:hover,.vx-podium-card:hover{transform:none}
 }
+
+.cmp-source-note{position:relative;z-index:1;margin:10px 0 0!important;color:#b7c5ce!important;font-size:.67rem!important;line-height:1.5!important}
