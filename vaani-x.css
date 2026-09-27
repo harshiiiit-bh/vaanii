@@ -264,6 +264,17 @@
   .vx-row .vx-time{ display:none; }
 }
 
+/* leaderboard rows only (.vx-row-tap) — the home screen's "recent
+   matches" list reuses .vx-row too but never gets this class, so
+   its own button row keeps its normal auto-sized column. */
+.vx-row.vx-row-tap{ grid-template-columns:44px 1fr auto auto 16px; cursor:pointer; }
+.vx-row.vx-row-tap:hover{ background:var(--vx-line); }
+.vx-row.vx-row-tap:focus-visible{ outline:2px solid var(--vx-gold); outline-offset:-2px; }
+.vx-row-chevron{ color:var(--vx-muted); font-size:1.1rem; line-height:1; text-align:right; }
+@media (max-width:520px){
+  .vx-row.vx-row-tap{ grid-template-columns:34px 1fr auto 16px; }
+}
+
 .vx-empty{
   padding:34px 22px; text-align:center;
   color:var(--vx-muted); font-size:.86rem; line-height:1.6;
