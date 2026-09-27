@@ -53,24 +53,33 @@ function loadState(){
    race where a render call in progress before normalization completed could throw and
    silently abort mid-function — the root cause of the blank Grammar screen on first launch. */
 function normalizeState(){
-  State.completedTopics = State.completedTopics || {};
-  State.quizScores = State.quizScores || {};
-  State.vocabLearned = State.vocabLearned || {};
-  State.missions = State.missions || {};
-  State.dailyActivity = State.dailyActivity || {};
-  State.topicProgress = State.topicProgress || {};
-  State.pyqStats = State.pyqStats || { attempts:{} };
-  State.pyqStats.attempts = State.pyqStats.attempts || {};
-  State.topicLastAttempt = State.topicLastAttempt || {};
-  State.personalBests = State.personalBests || { bestCombo:0, longestStreak:0, highestQuizScore:0, fastestQuizSeconds:null, fastestQuizLabel:'', totalQuizzesTaken:0 };
-  State.mysteryBoxesClaimed = State.mysteryBoxesClaimed || 0;
-  State.reviewQueue = Array.isArray(State.reviewQueue) ? State.reviewQueue : [];
-  State.theme = State.theme || 'light';
-  State.name = State.name || 'Cadet';
+  const isRecord=value=>!!value&&typeof value==='object'&&!Array.isArray(value);
+  State.completedTopics=isRecord(State.completedTopics)?State.completedTopics:{};
+  State.quizScores=isRecord(State.quizScores)?State.quizScores:{};
+  State.vocabLearned=isRecord(State.vocabLearned)?State.vocabLearned:{};
+  State.missions=isRecord(State.missions)?State.missions:{};
+  State.dailyActivity=isRecord(State.dailyActivity)?State.dailyActivity:{};
+  State.topicProgress=isRecord(State.topicProgress)?State.topicProgress:{};
+  State.topicLastAttempt=isRecord(State.topicLastAttempt)?State.topicLastAttempt:{};
+  State.pyqStats=isRecord(State.pyqStats)?State.pyqStats:{attempts:{}};
+  State.pyqStats.attempts=isRecord(State.pyqStats.attempts)?State.pyqStats.attempts:{};
+  State.personalBests=isRecord(State.personalBests)?State.personalBests:{};
+  Object.assign(State.personalBests,{bestCombo:0,longestStreak:0,highestQuizScore:0,fastestQuizSeconds:null,fastestQuizLabel:'',totalQuizzesTaken:0},State.personalBests);
+  State.mysteryBoxesClaimed=Number.isFinite(Number(State.mysteryBoxesClaimed))?Math.max(0,Math.floor(Number(State.mysteryBoxesClaimed))):0;
+  State.reviewQueue=Array.isArray(State.reviewQueue)?State.reviewQueue.filter(x=>x&&typeof x==='object'&&!Array.isArray(x)):[];
+  State.name=typeof State.name==='string'?(State.name.trim().slice(0,40)||'Cadet'):'Cadet';
+  State.xp=Number.isFinite(Number(State.xp))?Math.max(0,Math.floor(Number(State.xp))):0;
+  State.streak=Number.isFinite(Number(State.streak))?Math.max(0,Math.floor(Number(State.streak))):0;
+  State.theme=State.theme==='dark'?'dark':'light';
 }
+let __vaaniStorageWarningShown=false;
 function saveState(){
-  localStorage.setItem('vaani_state', JSON.stringify(State));
-  if(typeof persistCombinedAccount==='function') persistCombinedAccount();
+  let saved=false;
+  try{localStorage.setItem('vaani_state',JSON.stringify(State));saved=true;}
+  catch(err){console.warn('[VAANI] Browser storage could not save progress:',err);if(!__vaaniStorageWarningShown&&typeof toast==='function'){__vaaniStorageWarningShown=true;toast('Browser storage is full or unavailable. Your current session can continue, but progress may not persist.');}}
+  try{if(typeof persistCombinedAccount==='function')persistCombinedAccount();}
+  catch(err){console.warn('[VAANI] Account sync could not save progress:',err);}
+  return saved;
 }
 
 /* ============================================================
@@ -1594,10 +1603,18 @@ function pvSelectOption(choiceIdx){
   pvRender();
 }
 
+function pvConfirmSubmitExam(){
+  const s=PV.session;if(!s||s.mode!=='exam')return;
+  const blank=s.questions.filter(q=>!s.answers[q._id]).length;
+  const message=blank?'You have '+blank+' unanswered question'+(blank===1?'':'s')+'. They will receive zero. Submit now?':'You have answered every question. Submit the exam now?';
+  if(typeof confirm==='function'&&!confirm(message))return;
+  pvFinishSession();
+}
 function pvNext(){
   const s = PV.session; if(!s) return;
   if(s.index < s.questions.length-1){ s.index++; if(s.mode==='rapidfire'){ s.remaining=s.perQSeconds; } pvRender(); if(s.mode==='rapidfire') pvStartTimerIfNeeded(); pvSaveContinue(); }
-  else { pvFinishSession(); }
+  else if(s.mode==='exam') pvConfirmSubmitExam();
+  else pvFinishSession();
 }
 function pvPrev(){
   const s = PV.session; if(!s) return;
@@ -1659,12 +1676,12 @@ function pvSessionHTML(){
   } else {
     optsHTML = q.o.map((opt,i)=>{
       let cls = '';
-      if(answer){
+      if(answer && s.mode!=='exam'){
         if(i===q.ans) cls='correct';
         else if(i===answer.choice) cls='wrong';
-      }
-      return `<button class="pv-option ${cls}" ${answer?'disabled':''} onclick="pvSelectOption(${i})">
-        <span class="ol">${letters[i]}</span><span>${opt}</span></button>`;
+      } else if(answer && s.mode==='exam' && i===answer.choice){cls='selected-neutral';}
+      return `<button class="pv-option ${cls}" aria-pressed="${answer && i===answer.choice?'true':'false'}" ${answer?'disabled':''} onclick="pvSelectOption(${i})">
+        <span class="ol">${letters[i]}</span><span>${escapeHtmlVaani(opt)}</span></button>`;
     }).join('');
   }
 
@@ -1673,26 +1690,27 @@ function pvSessionHTML(){
     if(isRevisionLike){
       feedbackHTML = '';
     } else if(answer.choice===-1){
-      feedbackHTML = `<div class="pv-feedback wrong">⏱ Time's up — the correct answer is highlighted above.</div>`;
+      feedbackHTML = `<div class="pv-feedback wrong">⏱ Time's up — the correct answer will be available in your review.</div>`;
     } else if(answer.correct){
-      feedbackHTML = `<div class="pv-feedback correct">✓ Correct!</div>`;
+      feedbackHTML = `<div class="pv-feedback correct">✓ Correct. ${escapeHtmlVaani(q.exp||'You selected the right answer.')}</div>`;
     } else {
-      feedbackHTML = `<div class="pv-feedback wrong">✕ Not quite — the correct answer is highlighted above.</div>`;
+      feedbackHTML = `<div class="pv-feedback wrong">✕ Not quite. ${escapeHtmlVaani(q.exp||'Review the correct answer below.')}</div>`;
     }
   }
   let explainHTML = '';
   if(showResult || isRevisionLike){
-    const extraNotes = `${q.rule?`<div><b>📐 Rule:</b> ${q.rule}</div>`:''}${q.shortcut?`<div style="margin-top:8px">⚡ ${q.shortcut}</div>`:''}${q.correctionNote?`<div style="margin-top:8px;color:var(--red)">⚠ <b>Answer-key note:</b> ${q.correctionNote}</div>`:''}`;
+    const extraNotes = `${q.exp?`<div><b>Why:</b> ${escapeHtmlVaani(q.exp)}</div>`:''}${q.rule?`<div style="margin-top:8px"><b>📐 Rule:</b> ${escapeHtmlVaani(q.rule)}</div>`:''}${q.shortcut?`<div style="margin-top:8px">⚡ ${escapeHtmlVaani(q.shortcut)}</div>`:''}${q.correctionNote?`<div style="margin-top:8px;color:var(--red)">⚠ <b>Answer-key note:</b> ${escapeHtmlVaani(q.correctionNote)}</div>`:''}`;
     if(extraNotes) explainHTML = `<div class="pv-explain-panel">${extraNotes}</div>`;
   } else if(s.mode==='exam' && answer){
-    explainHTML = `<div class="pv-feedback" style="background:rgba(201,162,75,.1);border-left:3px solid var(--gold);color:var(--gold)">✓ Answer locked in — review after you submit the exam.</div>`;
+    explainHTML = `<div class="pv-feedback" style="background:rgba(201,162,75,.1);border-left:3px solid var(--gold);color:var(--gold)">✓ Answer saved — answers and explanations will be revealed after submission.</div>`;
   }
 
   const qgrid = s.questions.map((qq,i)=>{
-    let cls = '';
-    if(i===s.index) cls='current';
-    else if(s.answers[qq._id]){ cls = s.answers[qq._id].correct ? 'solved' : 'incorrect'; }
-    return `<button class="${cls}" onclick="pvJumpTo(${i})">${i+1}</button>`;
+    let cls='';
+    if(i===s.index)cls='current';
+    else if(s.answers[qq._id])cls=s.mode==='exam'?'answered':(s.answers[qq._id].correct?'solved':'incorrect');
+    const status=cls==='current'?'current':cls==='answered'?'answered':cls==='solved'?'correct':cls==='incorrect'?'incorrect':'not answered';
+    return `<button class="${cls}" aria-label="Question ${i+1}, ${status}" ${i===s.index?'aria-current="step"':''} onclick="pvJumpTo(${i})">${i+1}</button>`;
   }).join('');
 
   return `<div class="pv-screen">
@@ -2614,30 +2632,16 @@ function openTopic(id){
   document.getElementById('flowStepper').innerHTML = steps.map((s,i)=>
     `<div class="flow-step ${i===0?'cur':''}" data-step="${s[0]}" onclick="jumpFlow('${s[0]}',this)"><span class="fn">${i+1}</span>${s[2]}</div>`).join('');
 
-  // ---- LEARN PANE (Concept + Rule + Exception) ----
-  let learnHtml = `<div id="fs-concept" class="explain-block reveal">${currentTopic.learn}</div>`;
-  if(currentTopic.didYouKnow){
-    learnHtml += `<div class="dyk-box reveal"><span class="dyk-icon">💡</span><div><b>DID YOU KNOW?</b>${currentTopic.didYouKnow}</div></div>`;
-  }
-  if(currentTopic.diagram){ learnHtml += renderMindmap(currentTopic.diagram); }
-  if(currentTopic.exception){
-    learnHtml += `<div id="fs-exception" class="exception-box reveal"><span class="elabel">⚠ EXCEPTION TO THE RULE</span>${currentTopic.exception}</div>`;
-  }
-  if(currentTopic.levels){
-    learnHtml += `<div id="fs-rule" class="panel-title" style="margin-top:24px"><span class="bar"></span>Explore by Depth</div>` + renderLevels(currentTopic.levels);
-  }
-  if(currentTopic.comparison){
-    learnHtml += `<div class="panel-title" style="margin-top:24px"><span class="bar"></span>Comparison Table</div>` + renderCompare(currentTopic.comparison);
-  }
-  if(currentTopic.cheatSheet){
-    learnHtml += `<div class="cheat-card reveal"><h4>📋 ${currentTopic.cheatSheet.title||'Printable Cheat Sheet'}</h4><div class="cheat-grid">
-      ${currentTopic.cheatSheet.items.map(it=>`<div class="cheat-cell"><b>${it.k}</b>${it.v}</div>`).join('')}</div></div>`;
-  }
-  if(meta.related && meta.related.length){
-    learnHtml += `<div class="reveal" style="margin-top:18px"><div class="panel-title"><span class="bar"></span>Related Topics</div>
-      <div class="tag-row">${meta.related.map(r=>`<span class="tag-chip related" onclick="jumpRelated('${r}')">${r}</span>`).join('')}</div></div>`;
-  }
-  document.getElementById('pane-learn').innerHTML = learnHtml;
+  // Plain-language explanation comes first; detailed reference stays optional.
+  const basics=(typeof GRAMMAR_BASICS!=='undefined'&&GRAMMAR_BASICS[currentTopic.id])||{plain:currentTopic.summary||currentTopic.desc||'Study the rule and examples below.',rule:'Check the role of the word or phrase in the complete sentence.',good:(currentTopic.examples&&currentTopic.examples[0]&&currentTopic.examples[0].s)||'',bad:'',why:(currentTopic.examples&&currentTopic.examples[0]&&currentTopic.examples[0].note)||''};
+  const escLesson=escapeHtmlVaani;
+  let learnHtml='<section class="lesson-start-card"><div class="lesson-start-top"><span class="lesson-kicker">START HERE · PLAIN ENGLISH</span><span class="lesson-time">'+escLesson(meta.time||'6 min')+'</span></div><h3>Understand the idea first</h3><p class="lesson-plain">'+escLesson(basics.plain)+'</p><div class="lesson-rule"><span class="lesson-mini-label">THE RULE</span><p>'+escLesson(basics.rule)+'</p></div>'+(basics.good?'<div class="lesson-example is-good"><span class="lesson-mini-label">EXAMPLE</span><p>'+escLesson(basics.good)+'</p></div>':'')+(basics.bad?'<div class="lesson-example is-watch"><span class="lesson-mini-label">WATCH OUT</span><p>'+escLesson(basics.bad)+'</p><small>'+escLesson(basics.why||'Check the rule before choosing.')+'</small></div>':'')+(!basics.bad&&basics.why?'<p class="lesson-why">'+escLesson(basics.why)+'</p>':'')+'<div class="lesson-start-actions"><button class="btn" type="button" id="lessonGoPractice">Try a question →</button><span>Detailed notes are available below when you need them.</span></div></section>';
+  learnHtml+='<details class="lesson-reference"><summary>Open detailed reference notes (optional)</summary><div class="lesson-reference-body">'+(currentTopic.learn||'')+(currentTopic.didYouKnow?'<div class="dyk-box"><span class="dyk-icon">💡</span><div><b>DID YOU KNOW?</b>'+currentTopic.didYouKnow+'</div></div>':'')+(currentTopic.diagram?renderMindmap(currentTopic.diagram):'')+(currentTopic.exception?'<div class="exception-box"><span class="elabel">⚠ EXCEPTION TO THE RULE</span>'+currentTopic.exception+'</div>':'')+(currentTopic.levels?'<div class="panel-title" style="margin-top:24px"><span class="bar"></span>Explore by Depth</div>'+renderLevels(currentTopic.levels):'')+(currentTopic.comparison?'<div class="panel-title" style="margin-top:24px"><span class="bar"></span>Comparison Table</div>'+renderCompare(currentTopic.comparison):'')+(currentTopic.cheatSheet?'<div class="cheat-card"><h4>📋 '+escLesson(currentTopic.cheatSheet.title||'Printable Cheat Sheet')+'</h4><div class="cheat-grid">'+(currentTopic.cheatSheet.items||[]).map(it=>'<div class="cheat-cell"><b>'+escLesson(it.k)+'</b>'+escLesson(it.v)+'</div>').join('')+'</div></div>':'')+'</div></details>';
+
+  learnHtml='<section class="grammar-coach-card"><div class="lesson-kicker">PRACTISE WRITING</div><h3>Try your own sentence</h3><p>Write one sentence using this rule. The optional checker can suggest corrections.</p><label for="grammarCoachInput">Your sentence</label><textarea id="grammarCoachInput" rows="3" maxlength="3000" placeholder="Write a sentence in your own words…"></textarea><div class="grammar-coach-actions"><button class="btn ghost" type="button" id="grammarCoachCheck" onclick="checkGrammarSentence()">Check sentence</button><span>Manual check · English (US)</span></div><div id="grammarCoachResult" class="grammar-coach-result" role="status" aria-live="polite"></div><small class="grammar-coach-privacy">Your sentence is sent to LanguageTool only when you press Check sentence. Avoid entering personal information. Automated suggestions can be imperfect.</small><small class="grammar-coach-credit">Powered by <a href="https://languagetool.org/" target="_blank" rel="noopener noreferrer">LanguageTool</a>.</small></section>'+learnHtml;
+  const lessonPracticeBtn=document.getElementById('lessonGoPractice');
+  if(lessonPracticeBtn)lessonPracticeBtn.addEventListener('click',()=>{const practiceStep=document.querySelector('.flow-step[data-step="practice"]');if(practiceStep)jumpFlow('practice',practiceStep);});
+
 
   // ---- EXAMPLES PANE ----
   let exHtml = `<div id="fs-example">` + currentTopic.examples.map(e=>
@@ -2739,64 +2743,30 @@ function recordQuizCompletion(pct, elapsedSec, label){
   saveState();
 }
 function renderQuizPane(id, quiz){
-  const pane = document.getElementById('pane-quiz');
-  let idx=0, correctCount=0, qTimer=null, quizStartTs=null;
-  function render(){
-    if(idx===0) comboCount=0;
-    if(idx===0 && quizStartTs===null) quizStartTs = Date.now();
-    if(idx>=quiz.length){
-      const pct = Math.round((correctCount/quiz.length)*100);
-      State.quizScores[id]=pct;
-      State.topicLastAttempt = State.topicLastAttempt || {};
-      State.topicLastAttempt[id] = Date.now();
-      saveState();
-      recordQuizCompletion(pct, quizStartTs?(Date.now()-quizStartTs)/1000:null, (currentTopic?currentTopic.title:id));
-      pane.innerHTML = `<div class="quiz-card" style="text-align:center">
-        <h3 style="margin-bottom:10px">Quiz Complete</h3>
-        <div class="num serif" style="font-size:2.4rem;color:var(--gold)">${pct}%</div>
-        <p style="color:var(--muted);margin:10px 0">${correctCount} of ${quiz.length} correct${comboBest>=3?` · Best combo ×${comboBest}`:''}</p>
-        <button class="btn" onclick="renderQuizPane('${id}', GRAMMAR.find(g=>g.id==='${id}').quiz)">Retry Quiz</button></div>`;
-      addXP(Math.max(5,Math.round(pct/10)),'Quiz score on '+ (currentTopic?currentTopic.title:'topic'));
-      launchConfettiIf(pct>=70);
-      return;
-    }
-    const item = quiz[idx];
-    pane.innerHTML = `<div class="quiz-card">
-      <div class="qhead-row">
-        <div class="quiz-progress">QUESTION ${idx+1} / ${quiz.length} <span class="combo-badge${comboCount>=2?' show':''}" id="qComboBadge">🔥 ×${comboCount}</span></div>
-        <div class="qtimer-ring" id="qTimerRing"><svg viewBox="0 0 40 40"><circle class="qt-bg" cx="20" cy="20" r="16"></circle><circle class="qt-fg" cx="20" cy="20" r="16"></circle></svg><div class="qt-num">15</div></div>
-      </div>
-      <div class="quiz-q">${item.q}</div>
-      <div id="optsWrap"></div>
-      <div class="quiz-feedback" id="qFeedback"></div>
-      <button class="btn quiz-nextbtn" id="nextBtn" style="display:none" onclick="advanceQuiz()">Next →</button>
-    </div>`;
-    const cardEl = pane.querySelector('.quiz-card');
-    qTimer = startQTimer(document.getElementById('qTimerRing'));
-    const wrap = document.getElementById('optsWrap');
-    item.opts.forEach((o,i)=>{
-      const b=document.createElement('button'); b.className='opt-btn'; b.textContent=o;
-      b.onclick=()=>{
-        if(qTimer) qTimer.stop();
-        document.querySelectorAll('.opt-btn').forEach(x=>x.disabled=true);
-        const fb = document.getElementById('qFeedback');
-        if(i===item.ans){
-          b.classList.add('correct');correctCount++;
-          handleQuizCorrect(b, cardEl);
-          if(qElapsedSeconds(qTimer)<=5){ addXP(2,'Quick answer'); fb.insertAdjacentHTML('afterend','<span class="speed-tag">⚡ Quick answer +2 XP</span>'); }
-        } else {
-          b.classList.add('wrong');document.querySelectorAll('.opt-btn')[item.ans].classList.add('correct');
-          handleQuizWrong(cardEl);
-        }
-        document.getElementById('nextBtn').style.display='inline-flex';
-      };
-      wrap.appendChild(b);
-    });
+  const pane=document.getElementById('pane-quiz');if(!pane)return;
+  const questions=Array.isArray(quiz)?quiz:[];let idx=0,correctCount=0,qTimer=null,started=null,finished=false;
+  function finish(){
+    if(finished)return;finished=true;if(qTimer){qTimer.stop();qTimer=null;}
+    const pct=questions.length?Math.round(correctCount/questions.length*100):0;State.quizScores[id]=pct;State.topicLastAttempt=State.topicLastAttempt||{};State.topicLastAttempt[id]=Date.now();saveState();
+    recordQuizCompletion(pct,started?(Date.now()-started)/1000:null,((GRAMMAR.find(g=>g.id===id)||{}).title)||id);
+    pane.innerHTML='<div class="quiz-card quiz-complete-card" role="status"><span class="lesson-kicker">TOPIC CHECK COMPLETE</span><h3>Your result</h3><div class="quiz-result-score">'+pct+'%</div><p>'+correctCount+' of '+questions.length+' answers correct</p><div class="quiz-result-track"><div style="width:'+pct+'%"></div></div><div class="quiz-result-actions"><button class="btn" type="button" id="quizRetry">Try again</button><button class="btn ghost" type="button" id="quizBack">Review lesson</button></div></div>';
+    pane.querySelector('#quizRetry').addEventListener('click',()=>renderQuizPane(id,questions));pane.querySelector('#quizBack').addEventListener('click',()=>{const b=document.querySelector('.tab-btn[data-tab="learn"]');if(b)b.click();});
+    addXP(Math.max(5,Math.round(pct/10)),'Quiz score on '+(((GRAMMAR.find(g=>g.id===id)||{}).title)||'topic'));launchConfettiIf(pct>=70);
   }
-  window.advanceQuiz=()=>{idx++;render();};
-  render();
+  function draw(){
+    if(qTimer){qTimer.stop();qTimer=null;}if(!questions.length){pane.innerHTML='<div class="quiz-card"><h3>Practice coming soon</h3><p>No questions are available for this topic yet.</p></div>';return;}if(idx>=questions.length){finish();return;}
+    if(idx===0)comboCount=0;if(started===null)started=Date.now();const item=questions[idx]||{};
+    pane.innerHTML='<div class="quiz-card quiz-live-card"><div class="quiz-headline"><div><span class="lesson-kicker">CHECK YOUR UNDERSTANDING</span><div class="quiz-progress" id="grammarQuizProgress"></div></div><div class="qtimer-ring" id="qTimerRing"><svg viewBox="0 0 40 40"><circle class="qt-bg" cx="20" cy="20" r="16"></circle><circle class="qt-fg" cx="20" cy="20" r="16"></circle></svg><div class="qt-num">15</div></div></div><div class="quiz-progress-track" role="progressbar" aria-label="Quiz progress" aria-valuemin="0" aria-valuemax="'+questions.length+'" aria-valuenow="'+(idx+1)+'"><div class="quiz-progress-fill" style="width:'+((idx+1)/questions.length*100)+'%"></div></div><div class="quiz-q" id="grammarQuizQuestion"></div><div class="quiz-options" id="optsWrap"></div><div class="quiz-feedback" id="qFeedback" role="status" aria-live="polite"></div><button class="btn quiz-nextbtn" id="nextBtn" type="button" disabled>'+(idx===questions.length-1?'View result':'Next question →')+'</button></div>';
+    pane.querySelector('#grammarQuizProgress').textContent='Question '+(idx+1)+' of '+questions.length;pane.querySelector('#grammarQuizQuestion').textContent=String(item.q||'Read the question carefully.');
+    const card=pane.querySelector('.quiz-card'),wrap=pane.querySelector('#optsWrap');qTimer=startQTimer(pane.querySelector('#qTimerRing'));
+    (Array.isArray(item.opts)?item.opts:[]).forEach((option,i)=>{const b=document.createElement('button');b.type='button';b.className='opt-btn quiz-option';b.setAttribute('aria-pressed','false');const letter=document.createElement('span');letter.className='quiz-option-letter';letter.textContent=String.fromCharCode(65+i);const label=document.createElement('span');label.className='quiz-option-text';label.textContent=String(option);b.append(letter,label);b.addEventListener('click',()=>{if(b.disabled)return;const elapsed=qElapsedSeconds(qTimer);if(qTimer){qTimer.stop();qTimer=null;}wrap.querySelectorAll('button').forEach(x=>{x.disabled=true;x.setAttribute('aria-pressed','false');});b.setAttribute('aria-pressed','true');const fb=pane.querySelector('#qFeedback');
+      if(i===item.ans){correctCount++;b.classList.add('correct');handleQuizCorrect(b,card);fb.className='quiz-feedback is-correct';fb.textContent='Correct. '+String(item.exp||'You selected the right answer.');if(elapsed<=5){addXP(2,'Quick answer');const speed=document.createElement('span');speed.className='speed-tag';speed.textContent='⚡ Quick answer +2 XP';fb.appendChild(speed);}}
+      else{b.classList.add('wrong');const right=wrap.querySelectorAll('button')[item.ans];if(right)right.classList.add('correct');handleQuizWrong(card);fb.className='quiz-feedback is-wrong';fb.textContent='Not quite. Correct answer: '+String((item.opts||[])[item.ans]||'the highlighted option')+'. '+String(item.exp||'Review the rule and try again.');}
+      const next=pane.querySelector('#nextBtn');next.disabled=false;next.focus();});wrap.appendChild(b);});
+    const next=pane.querySelector('#nextBtn');next.addEventListener('click',()=>{if(!next.disabled){idx++;draw();}});
+    if(!item.opts||item.opts.length<2||!Number.isInteger(item.ans)||item.ans<0||item.ans>=item.opts.length){next.disabled=true;pane.querySelector('#qFeedback').textContent='This question needs correction before it can be answered.';if(qTimer){qTimer.stop();qTimer=null;}}
+  }draw();
 }
-
 /* ============================================================
    VOCAB RENDER — Mastery Hub
 =============================================================*/
@@ -2921,6 +2891,24 @@ function renderWOD(){
   document.getElementById('dashWordMeaning').textContent=v.meanEn;
 }
 
+function lookupExternalWord(){
+  const word=VOCAB_BY_ID[currentWordId],button=document.getElementById('wdDictionaryLookup'),host=document.getElementById('wdDictionaryResult');
+  if(!word||!button||!host)return;if(typeof VaaniDictionary==='undefined'){host.textContent='Online dictionary unavailable. The curated VAANI entry remains available.';return;}
+  button.disabled=true;button.textContent='Looking up…';host.textContent='Looking up an optional dictionary entry…';
+  VaaniDictionary.lookup(word.w).then(result=>{if(currentWordId!==word.id)return;host.innerHTML='';const entry=result.entry;
+    const source=document.createElement('p');source.className='dict-source';source.textContent=(result.stale?'Showing a saved entry because the service is unavailable. ':result.source==='cache'?'Showing a saved dictionary entry. ':'Online dictionary result. ')+'Supplementary data; compare with the VAANI lesson.';host.appendChild(source);
+    if(entry.phonetic){const p=document.createElement('p');p.className='dict-phonetic';p.textContent='Pronunciation: '+entry.phonetic;host.appendChild(p);}
+    entry.meanings.forEach(m=>{const group=document.createElement('div');group.className='dict-meaning';if(m.partOfSpeech){const h=document.createElement('h5');h.textContent=m.partOfSpeech;group.appendChild(h);}m.definitions.forEach(d=>{const p=document.createElement('p');p.className='dict-definition';p.textContent=d.definition;group.appendChild(p);if(d.example){const ex=document.createElement('p');ex.className='dict-example';ex.textContent='Example: '+d.example;group.appendChild(ex);}if(d.synonyms.length){const sy=document.createElement('p');sy.className='dict-related';sy.textContent='Synonyms: '+d.synonyms.join(', ');group.appendChild(sy);}if(d.antonyms.length){const an=document.createElement('p');an.className='dict-related';an.textContent='Antonyms: '+d.antonyms.join(', ');group.appendChild(an);}});host.appendChild(group);});
+    const audioUrl=entry.phonetics.map(p=>p.audio).find(url=>{try{const u=new URL(url);return u.protocol==='https:'&&(u.hostname==='ssl.gstatic.com'||u.hostname.endsWith('.dictionaryapi.dev'));}catch(e){return false;}});if(audioUrl){const audio=document.createElement('audio');audio.controls=true;audio.preload='none';audio.src=audioUrl;audio.setAttribute('aria-label','Word pronunciation audio');host.appendChild(audio);}
+  }).catch(err=>{if(currentWordId===word.id)host.textContent=(err&&err.message?err.message:'Online lookup failed.')+' Your curated VAANI entry is still available above.';}).finally(()=>{if(currentWordId===word.id){button.disabled=false;button.textContent='Refresh lookup';}});
+}
+function checkGrammarSentence(){
+ const input=document.getElementById('grammarCoachInput'),result=document.getElementById('grammarCoachResult'),button=document.getElementById('grammarCoachCheck');
+ if(!input||!result||!button)return;const sentence=input.value.trim();result.textContent='';if(!sentence){result.textContent='Write a sentence first.';input.focus();return;}
+ if(typeof VaaniWritingCoach==='undefined'){result.textContent='Online checker unavailable. Use the lesson examples and practice questions instead.';return;}
+ const request=(window.__vaaniCoachRequest||0)+1;window.__vaaniCoachRequest=request;button.disabled=true;button.textContent='Checking…';result.textContent='Checking your sentence…';
+ VaaniWritingCoach.check(sentence).then(matches=>{if(request!==window.__vaaniCoachRequest)return;result.innerHTML='';if(!matches.length){const p=document.createElement('p');p.className='coach-success';p.textContent='No issues found by the checker. Automated feedback cannot guarantee a perfect sentence.';result.appendChild(p);return;}const intro=document.createElement('p');intro.className='coach-intro';intro.textContent=matches.length+' suggestion(s) to review';result.appendChild(intro);matches.forEach((m,i)=>{const card=document.createElement('div');card.className='coach-issue';const h=document.createElement('strong');h.textContent='Suggestion '+(i+1);card.appendChild(h);const p=document.createElement('p');p.textContent=m.message;card.appendChild(p);if(m.context){const c=document.createElement('small');c.textContent='Context: '+m.context;card.appendChild(c);}if(m.replacements.length){const r=document.createElement('p');r.className='coach-replacements';r.textContent='Possible correction: '+m.replacements.join(' · ');card.appendChild(r);}result.appendChild(card);});}).catch(err=>{if(request===window.__vaaniCoachRequest)result.textContent=(err&&err.message?err.message:'Online checking failed.')+' Your sentence has not been changed.';}).finally(()=>{if(request===window.__vaaniCoachRequest){button.disabled=false;button.textContent='Check sentence';}});
+}
 function openWord(id){
   const v = VOCAB_BY_ID[id]; if(!v) return;
   currentWordId = id;
@@ -2954,6 +2942,8 @@ function openWord(id){
   document.getElementById('wdImportance').textContent=v.imp+' / 5';
   document.getElementById('wdYears').textContent=v.years;
   document.getElementById('wdPYQ').textContent=v.pyq;
+  const dictionaryPanel=document.getElementById('wdDictionaryResult'),dictionaryButton=document.getElementById('wdDictionaryLookup');
+  if(dictionaryPanel)dictionaryPanel.textContent='';if(dictionaryButton){dictionaryButton.disabled=false;dictionaryButton.textContent='Look up word';}
   renderWordQuiz(v);
   switchView('worddetail');
 }
