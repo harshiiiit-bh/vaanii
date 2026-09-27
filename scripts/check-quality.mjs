@@ -172,3 +172,30 @@ try {
   console.error('PYQ audit failed:', error.message);
   process.exitCode = 1;
 }
+
+/* Grammar navigation and creator-credit regression checks. */
+try {
+  const appSource = readFileSync('js/app.js', 'utf8');
+  const pageSource = readFileSync('index.html', 'utf8');
+  const grammar = loadData('data/grammar.js', 'GRAMMAR');
+  const tierMatch = appSource.match(/const SKILL_TIERS\s*=\s*(\[[\s\S]*?\]);/);
+  if (!tierMatch) throw new Error('Grammar curriculum tiers are missing.');
+  const tiers = vm.runInNewContext('(' + tierMatch[1] + ')', Object.create(null), { timeout: 1000 });
+  const tierIds = tiers.flatMap((tier) => tier.ids);
+  const grammarIds = grammar.map((topic) => topic.id);
+  const duplicates = tierIds.filter((id, index) => tierIds.indexOf(id) !== index);
+  const missing = grammarIds.filter((id) => !tierIds.includes(id));
+  const unknown = tierIds.filter((id) => !grammarIds.includes(id));
+  if (duplicates.length || missing.length || unknown.length) {
+    throw new Error('Grammar tier coverage mismatch. Duplicate: ' + duplicates.join(', ') + '; missing: ' + missing.join(', ') + '; unknown: ' + unknown.join(', '));
+  }
+  for (const required of ['function gtTopicBrowserHTML(', 'function gtApplyBrowserFilters(', 'function renderGrammarJourney()']) {
+    if (!appSource.includes(required)) throw new Error('Grammar UI component missing: ' + required);
+  }
+  if (!pageSource.includes('href="vaani-grammar-ux.css"')) throw new Error('Grammar UX stylesheet is not linked.');
+  if (!pageSource.includes('Designed and developed by</span><strong>Harshit Chaubey</strong>')) throw new Error('Site-wide creator credit is missing.');
+  console.log('Grammar UX: ' + grammarIds.length + ' topics covered by the navigation tiers; browser, journey, styles and creator credit present');
+} catch (error) {
+  console.error('Grammar UX validation failed:', error.message);
+  process.exitCode = 1;
+}
