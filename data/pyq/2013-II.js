@@ -35,7 +35,7 @@ var PYQ_2013_II = [
 { y: 2013, s: 'II', n: 34, sec: 'Grammar', q: 'He didn\'t have the guts to stand ______ his friend when he was in trouble.', o: ['with','for','by','beside'], ans: 2 },
 { y: 2013, s: 'II', n: 35, sec: 'Grammar', q: 'He broke out of the prison ______ dressing as a woman.', o: ['in','as','by','with'], ans: 2 },
 { y: 2013, s: 'II', n: 36, sec: 'Grammar', q: 'When electricity failed, emergency generators ______.', o: ['cut out','cut off','cut on','cut in'], ans: 2 },
-{ y: 2013, s: 'II', n: 37, sec: 'Grammar', q: 'We need two more hands to ______ the heavy rush of work.', o: ['cope up','cope with','cope to','cope in'], ans: 0 },
+{ y: 2013, s: 'II', n: 37, sec: 'Grammar', q: 'We need two more hands to ______ the heavy rush of work.', o: ['cope up','cope with','cope to','cope in'], ans: 1 },
 { y: 2013, s: 'II', n: 38, sec: 'Grammar', q: 'Twenty-five candidates ______ each other for the first prize.', o: ['compete for','compete with','compete to','compete on'], ans: 1 },
 { y: 2013, s: 'II', n: 39, sec: 'Grammar', q: 'We must eliminate the ______ rich and poor.', o: ['disparity between','disparity for','disparity in','disparity from'], ans: 0 },
 { y: 2013, s: 'II', n: 40, sec: 'Grammar', q: 'As an innovator, he ______ the beaten track and explored new religions.', o: ['deviated from','deviated to','deviated in','deviated for'], ans: 0 },
