@@ -212,7 +212,7 @@ async function persistCombinedAccount(){
   }catch(e){ console.error(e); return false; }
 }
 async function saveData(){
-  if(!ACTIVE_CODE) return;
+  if(!ACTIVE_CODE) return false;
   const newlyUnlocked = checkAndUnlockAchievements();
   const ok = await persistCombinedAccount();
   if(!ok){ vbvToast('Could not save — storage returned nothing.', 'angry'); }
@@ -220,6 +220,7 @@ async function saveData(){
     celebrate();
     newlyUnlocked.forEach((a,i)=> setTimeout(()=> vbvToast(`Medal earned: ${a.icon} ${a.title}`, 'good'), i*650));
   }
+  return ok;
 }
 
 /* ---- API key (device-level setting, not tied to any one account; only needed once this page lives outside Claude) ---- */
@@ -521,6 +522,51 @@ document.querySelectorAll('#vbv-mainnav button').forEach(btn=>{
 window.addEventListener('hashchange', navigate);
 
 /* ================= HOME ================= */
+function renderHomeCommandCenter(){
+  const books=[...DATA.ongoing,...DATA.completed];
+  const pagesToday=books.reduce((sum,b)=>sum+(b.logs||[]).filter(l=>l.date===todayStr()).reduce((n,l)=>n+Number(l.pages||0),0),0);
+  const minutesToday=books.reduce((sum,b)=>sum+(b.logs||[]).filter(l=>l.date===todayStr()).reduce((n,l)=>n+Number(l.minutes||0),0),0);
+  const current=DATA.ongoing[0]||null;
+  const next=DATA.upcoming[0]||null;
+  const activePages=current?(current.logs||[]).reduce((n,l)=>n+Number(l.pages||0),0):0;
+  const progress=current&&current.totalPages?Math.min(100,Math.round(activePages/current.totalPages*100)):null;
+  const latest=DATA.vocab.slice(0,3);
+  let out='<section class="vbv-command-center"><div class="vbv-home-section-kicker">AT A GLANCE · TODAY</div>'+
+    '<div class="vbv-command-metrics"><div><span>Pages today</span><b>'+pagesToday+'</b></div><div><span>Minutes today</span><b>'+minutesToday+'</b></div><div><span>Reading streak</span><b>'+computeStreaks().current+' days</b></div><div><span>All-time pages</span><b>'+books.reduce((n,b)=>n+(b.logs||[]).reduce((a,l)=>a+Number(l.pages||0),0),0)+'</b></div></div>';
+  out+='<div class="vbv-command-grid"><section class="vbv-command-card"><div class="vbv-home-section-kicker">CONTINUE READING</div>';
+  if(current){
+    out+='<div class="vbv-command-book"><span class="vbv-command-book-icon" aria-hidden="true">📖</span><div><b>'+escapeHtml(current.title)+'</b><small>'+escapeHtml(current.author||'Author not recorded')+'</small></div></div>';
+    out+='<p class="vbv-command-copy">'+activePages+' pages logged'+(progress!==null?' · '+progress+'% of the book':' · Total page count not set')+'</p>';
+    if(progress!==null)out+='<div class="vbv-command-progress"><span style="width:'+progress+'%"></span></div>';
+    out+='<a class="vbv-home-primary-link" href="#/ongoingDetail/'+encodeURIComponent(current.id)+'">Open reading desk <span aria-hidden="true">→</span></a>';
+  }else{
+    out+='<div class="vbv-command-empty"><b>No active book</b><p>Choose a queued title or add the next book you plan to read.</p><a class="vbv-inline-link" href="#/upcoming">Open reading queue →</a></div>';
+  }
+  out+='</section><section class="vbv-command-card"><div class="vbv-home-section-kicker">UP NEXT</div>';
+  if(next){
+    out+='<div class="vbv-command-book"><span class="vbv-command-book-icon" aria-hidden="true">01</span><div><b>'+escapeHtml(next.title)+'</b><small>'+escapeHtml(next.author||'Author not recorded')+'</small></div></div>';
+    out+='<p class="vbv-command-copy">The next title in your reading queue.</p><button class="vbv-btn btn-outline btn-sm" type="button" onclick="openStartModal(\''+escJs(next.id)+'\')">Start reading →</button>';
+  }else{
+    out+='<div class="vbv-command-empty"><b>Your queue is clear</b><p>Add a book whenever you find your next read.</p><a class="vbv-inline-link" href="#/upcoming">Add a book →</a></div>';
+  }
+  out+='</section></div>';
+  out+='<div class="vbv-home-tool-grid">'+[
+    ['▤','Full library','All books in one searchable place','#/library'],
+    ['▦','Reading board','Move books through each stage','#/board'],
+    ['✎','Vocab register','Save and revisit discovered words','#/vocab'],
+    ['◎','Vocab test','Practise with your own entries','#/vocabtest'],
+    ['⌁','English levels','Learn from Basic to Advanced','#/levels'],
+    ['◖','Spoken English','Listen and practise aloud','#/spoken']
+  ].map(function(x){return '<a class="vbv-home-tool" href="'+x[3]+'"><span aria-hidden="true">'+x[0]+'</span><b>'+x[1]+'</b><small>'+x[2]+'</small><em>Open →</em></a>';}).join('')+'</div>';
+  out+='<div class="vbv-home-lower"><section class="vbv-command-card"><div class="vbv-home-section-kicker">WORD OF THE DAY</div>';
+  const wod=wordOfTheDay();
+  out+='<div class="vbv-home-wod"><div><b>'+escapeHtml(wod.word)+'</b><p>'+escapeHtml(wod.meaning)+'</p></div><button class="vbv-btn btn-gold btn-sm" type="button" onclick="addWordOfDayToRegister()">＋ Save</button></div></section>';
+  out+='<section class="vbv-command-card"><div class="vbv-home-section-kicker">RECENTLY CAPTURED</div>';
+  out+=latest.length?latest.map(function(v){return '<div class="vbv-home-word-row"><span><b>'+escapeHtml(v.word)+'</b><small>'+escapeHtml(v.meaning||'Meaning not recorded')+'</small></span><em>'+escapeHtml(v.sourceLabel||v.sourceBookTitle||'Register')+'</em></div>';}).join(''):'<p class="vbv-command-copy">Your saved words and phrases will appear here.</p>';
+  out+='</section></div></section>';
+  return out;
+}
+
 function renderHome(){
   const totalPagesRead = DATA.ongoing.reduce((s,b)=> s + b.logs.reduce((a,l)=>a+Number(l.pages||0),0), 0)
     + DATA.completed.reduce((s,b)=> s + (b.logs? b.logs.reduce((a,l)=>a+Number(l.pages||0),0):0), 0);
@@ -553,15 +599,7 @@ function renderHome(){
       <div class="vbv-stat-card"><div class="num">${totalPagesRead}</div><div class="lbl">Pages Logged</div></div>
     </div>
 
-    ${(()=>{ const wod = wordOfTheDay(); return `
-    <div class="wod-card">
-      <div>
-        <div class="wod-label">Word of the Day</div>
-        <div class="vbv-wod-word">${escapeHtml(wod.word)}</div>
-        <div class="wod-meaning">${escapeHtml(wod.meaning)}</div>
-      </div>
-      <button class="vbv-btn btn-gold btn-sm" onclick="addWordOfDayToRegister()">Add to My Register</button>
-    </div>`; })()}
+    ${renderHomeCommandCenter()}
 
     ${isFreshAccount ? `
     <div class="onboard-card">
@@ -573,12 +611,6 @@ function renderHome(){
       </div>
       <button class="vbv-btn btn-gold" onclick="location.hash='#/upcoming'">Add Your First Book</button>
     </div>` : ''}
-
-    <div class="section-title-row"><h3>Currently Reading</h3><a href="#/ongoing">View all →</a></div>
-    <div class="book-grid" style="margin-bottom:46px;">
-      ${DATA.ongoing.length ? DATA.ongoing.slice(0,3).map(ongoingCardHtml).join('') :
-        `<div class="vbv-empty-state" style="grid-column:1/-1;"><h4>No book in progress</h4><p>Move a title from Upcoming to start your reading log.</p></div>`}
-    </div>
 
     <div class="quote-block"><p id="home-quote">${pickRandomQuote()}</p></div>
 
@@ -716,7 +748,11 @@ async function confirmAbandon(bookId){
   location.hash = '#/ongoing';
 }
 
-/* ---- Ongoing Detail (per-book log + vocab quick add) ---- */
+function vbvJumpTo(id){
+  const target=document.getElementById(id);
+  if(target)target.scrollIntoView({behavior:window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});
+}
+\n/* ---- Ongoing Detail (per-book log + vocab quick add) ---- */
 function renderOngoingDetail(id){
   const b = DATA.ongoing.find(x=>x.id===id);
   if(!b){
@@ -741,9 +777,17 @@ function renderOngoingDetail(id){
       <div class="vbv-stat-card"><div class="num">${totalMin}</div><div class="lbl">Minutes Logged</div></div>
       <div class="vbv-stat-card"><div class="num">${(b.vocabWordIds||[]).length}</div><div class="lbl">Words Captured</div></div>
     </div>
+    <nav class="vbv-book-jumpbar" aria-label="Reading desk sections">
+      <button type="button" onclick="vbvJumpTo('vbv-book-progress')">Progress</button>
+      <button type="button" onclick="vbvJumpTo('vbv-book-timer')">Timer</button>
+      <button type="button" onclick="vbvJumpTo('vbv-book-log')">Log pages</button>
+      <button type="button" onclick="vbvJumpTo('vbv-book-highlights')">Highlights</button>
+      <button type="button" onclick="vbvJumpTo('vbv-book-capture')">Capture a word</button>
+      <button type="button" onclick="vbvJumpTo('vbv-reading-history')">History</button>
+    </nav>
 
     ${b.totalPages ? `
-    <div class="panel" style="margin-bottom:20px;">
+    <div class="panel" id="vbv-book-progress" style="margin-bottom:20px;">
       <div class="goal-label"><span>Pages progress</span><span>${pagesLogged} / ${b.totalPages} (${pagesPct}%)</span></div>
       <div class="progress-track"><div class="progress-fill" style="width:${pagesPct}%"></div></div>
       <button class="link-btn-light" style="margin-top:8px;" onclick="openSetTotalPagesModal('${b.id}')">Edit total pages</button>
@@ -753,7 +797,7 @@ function renderOngoingDetail(id){
       <button class="vbv-btn btn-outline btn-sm" onclick="openSetTotalPagesModal('${b.id}')">Add Total Pages</button>
     </div>`}
 
-    <div class="timer-box">
+    <div class="timer-box" id="vbv-book-timer">
       <div>
         <div class="timer-display" id="timer-display">00:00:00</div>
         <div class="timer-sub">${timerRunning ? 'Reading session in progress' : 'Live reading timer'}</div>
@@ -761,7 +805,7 @@ function renderOngoingDetail(id){
       <button class="vbv-btn ${timerRunning?'btn-gold':'btn-maroon'} btn-sm" onclick="${timerRunning?`stopTimer('${b.id}')`:`startTimer('${b.id}')`}">${timerRunning?'Stop &amp; Log Time':'Start Timer'}</button>
     </div>
 
-    <div class="panel">
+    <div class="panel" id="vbv-book-log">
       <h3 style="margin-bottom:14px;">Log today's reading</h3>
       <div class="form-row">
         <div><label>Date</label><input type="date" id="log-date" value="${todayStr()}" max="${todayStr()}"></div>
@@ -773,7 +817,7 @@ function renderOngoingDetail(id){
       </div>
     </div>
 
-    <div class="panel">
+    <div class="panel" id="vbv-book-highlights">
       <h3 style="margin-bottom:14px;">Save a highlight</h3>
       <p style="font-size:13px; color:var(--navy-soft); margin-bottom:12px;">A quote or a line worth keeping from this book.</p>
       <textarea id="highlight-input" rows="2" placeholder="e.g. Discipline is the soul of an army — Washington"></textarea>
@@ -781,7 +825,7 @@ function renderOngoingDetail(id){
       ${notesSorted.length ? `<div style="margin-top:14px;">${notesSorted.map(n=>`<div class="highlight-item">${escapeHtml(n.text)}<span class="h-date">${fmtDate(n.date)}</span></div>`).join('')}</div>` : ''}
     </div>
 
-    <div class="panel">
+    <div class="panel" id="vbv-book-capture">
       <h3 style="margin-bottom:14px;">Add a word to your Vocab Register</h3>
       <p style="font-size:13px; color:var(--navy-soft); margin-bottom:12px;">Type any new word you learnt from this book. It will be defined and sorted into the Vocab Register automatically — no need to open that tab.</p>
       <div class="form-row" style="grid-template-columns:2fr 1fr;">
@@ -790,7 +834,7 @@ function renderOngoingDetail(id){
       </div>
     </div>
 
-    <div class="section-title-row"><h3>Reading log</h3></div>
+    <div class="section-title-row" id="vbv-reading-history"><h3>Reading history</h3></div>
     ${logsSorted.length ? `
     <div class="table-scroll">
     <table class="logtable">
@@ -1428,6 +1472,58 @@ async function finalizeVocabAdd(mergeIntoId){
   navigate();
 }
 
+/* ---------- Cross-module capture: VAANI → Book Reading Register ----------
+   Receives curated word/phrase data from VAANI's vocabulary, daily lessons
+   and comparison pages. Saves into the same account-backed DATA.vocab list. */
+async function addVaaniCaptureToRegister(payload){
+  const item=payload&&typeof payload==='object'?payload:{};
+  const word=String(item.word||'').replace(/\s+/g,' ').trim().slice(0,120);
+  if(!word)return {ok:false,message:'Nothing to save: the item is empty.'};
+  if(!dataLoaded||!ACTIVE_CODE)return {ok:false,message:'Please sign in to VAANI before saving to your Book Reading Register.'};
+  const existing=findVocabByWord(word);
+  if(existing)return {ok:true,duplicate:true,id:existing.id,word:existing.word};
+  const cleanList=value=>Array.isArray(value)?[...new Set(value.map(v=>String(v||'').trim()).filter(Boolean))].slice(0,12):[];
+  const source=String(item.source||'VAANI Vocabulary').trim().slice(0,80);
+  const kind=String(item.kind||'word').trim().slice(0,32);
+  const entry={
+    id:uid(),word:word,meaning:String(item.meaning||'').trim().slice(0,500)||'Saved from VAANI. Add a meaning when you review this entry.',
+    synonyms:cleanList(item.synonyms),antonyms:cleanList(item.antonyms),
+    dateAdded:todayStr(),sourceBookId:null,sourceBookTitle:'',
+    sourceType:'vaani',sourceLabel:'VAANI · '+source,kind:kind,
+    example:String(item.example||'').trim().slice(0,500)
+  };
+  DATA.vocab.unshift(entry);
+  const saved=await saveData();
+  if(!saved){
+    DATA.vocab=DATA.vocab.filter(v=>v.id!==entry.id);
+    return {ok:false,message:'The register could not save this item. Check browser storage and try again.'};
+  }
+  return {ok:true,duplicate:false,id:entry.id,word:entry.word};
+}
+window.VaaniBookRegister=window.VaaniBookRegister||{};
+window.VaaniBookRegister.add=addVaaniCaptureToRegister;
+
+function vbvCaptureButtonHtml(payload,label){
+  return '<button type="button" class="vbv-btn btn-outline btn-sm vbv-capture-action" data-vbv-register-capture="'+escapeHtml(JSON.stringify(payload||{}))+'">'+escapeHtml(label||'＋ Save to Register')+'</button>';
+}
+async function handleVbvCaptureButton(button){
+  if(!button||button.disabled)return;
+  let payload={};
+  try{payload=JSON.parse(button.getAttribute('data-vbv-register-capture')||'{}');}
+  catch(e){vbvToast('This capture could not be read. Try again.','angry');return;}
+  button.disabled=true;button.textContent='Saving…';
+  const result=await addVaaniCaptureToRegister(payload);
+  if(result&&result.ok){
+    button.textContent=result.duplicate?'✓ In Register':'✓ Saved';
+    button.classList.add('is-saved');
+    vbvToast(result.duplicate?'"'+result.word+'" is already in your register.':'Saved "'+result.word+'" to your Vocab Register.','good');
+  }else{
+    button.disabled=false;button.textContent='＋ Save to Register';
+    vbvToast((result&&result.message)||'Could not save this item.','angry');
+  }
+}
+
+
 async function attachSynonym(vocabId, word){
   const v = DATA.vocab.find(x=>x.id===vocabId);
   if(!v) { closeModal(); return; }
@@ -1439,6 +1535,36 @@ async function attachSynonym(vocabId, word){
   if(input) input.value = '';
   vbvToast(`"${word}" added to "${v.word}"'s synonym list.`, 'good');
   navigate();
+}
+
+let vbvRegisterFilter='all';
+function filterVbvRegister(){
+  const input=document.getElementById('vbv-register-search');
+  const term=String(input&&input.value||'').trim().toLocaleLowerCase();
+  let visible=0,total=0;
+  document.querySelectorAll('#app [data-vbv-group]').forEach(group=>{
+    let groupCount=0;
+    group.querySelectorAll('.vocab-card').forEach(card=>{
+      total++;
+      const matchesText=!term||card.textContent.toLocaleLowerCase().includes(term);
+      const origin=card.dataset.vbvOrigin||'manual';
+      const matchesOrigin=vbvRegisterFilter==='all'||origin===vbvRegisterFilter;
+      card.hidden=!(matchesText&&matchesOrigin);
+      if(!card.hidden){visible++;groupCount++;}
+    });
+    group.hidden=groupCount===0;
+  });
+  const count=document.getElementById('vbv-register-count');
+  if(count)count.textContent=(term||vbvRegisterFilter!=='all')?visible+' of '+total+' entries':total+' entries';
+}
+function setVbvRegisterFilter(button){
+  if(!button)return;
+  vbvRegisterFilter=button.dataset.vbvFilter||'all';
+  const row=button.parentElement;
+  if(row)row.querySelectorAll('[data-vbv-filter]').forEach(item=>{
+    const active=item===button;item.classList.toggle('active',active);item.setAttribute('aria-pressed',String(active));
+  });
+  filterVbvRegister();
 }
 
 function renderVocab(){
@@ -1453,7 +1579,28 @@ function renderVocab(){
     <div class="page-head with-bg" style="background-image:url('${IMG.chetwode_day}')">
       <div class="page-eyebrow">Vocabulary Command</div>
       <h2>Vocab Register</h2>
-      <p>Every word you've captured from your reading, sorted by the date you learnt it. Add new words from any ongoing book's log — they land here automatically.</p>
+      <p>One register for words and phrases discovered in books, VAANI Vocabulary, daily lessons and comparisons. Add an entry here or save it from another section.</p>
+    </div>
+    <div class="vbv-register-capture panel">
+      <div class="vbv-register-capture-copy"><b>Quick capture</b><span>Type a word or phrase. The dictionary fills in what it can; manual entry is always available.</span></div>
+      <div class="vbv-register-capture-row">
+        <input type="text" id="vocab-input" maxlength="120" autocomplete="off" placeholder="e.g. indefatigable, break the ice…"
+          aria-label="Word or phrase to add to the Book Reading register"
+          onkeydown="if(event.key==='Enter'){event.preventDefault();submitVocabWord(null)}">
+        <button class="vbv-btn btn-gold" type="button" id="vocab-add-btn" onclick="submitVocabWord(null)">＋ Add entry</button>
+      </div>
+      <button type="button" class="vbv-btn btn-outline btn-sm vbv-cross-link" onclick="switchView('vocab')">Explore VAANI Vocabulary →</button>
+    </div>
+    <div class="vbv-register-tools">
+      <label class="vbv-register-search"><span aria-hidden="true">⌕</span><input id="vbv-register-search" type="search" maxlength="80" placeholder="Search saved words, meanings or sources…" oninput="filterVbvRegister()" aria-label="Search your vocabulary register"></label>
+      <div class="vbv-register-filters" role="group" aria-label="Filter vocabulary origin">
+        <button type="button" class="active" data-vbv-filter="all" aria-pressed="true" onclick="setVbvRegisterFilter(this)">All</button>
+        <button type="button" data-vbv-filter="book" aria-pressed="false" onclick="setVbvRegisterFilter(this)">From books</button>
+        <button type="button" data-vbv-filter="vaani" aria-pressed="false" onclick="setVbvRegisterFilter(this)">From VAANI</button>
+        <button type="button" data-vbv-filter="manual" aria-pressed="false" onclick="setVbvRegisterFilter(this)">Manual</button>
+      </div>
+      <span class="vbv-register-count" id="vbv-register-count">Saved entries</span>
+    </div>
     </div>
     ${DATA.vocab.length >= 4 ? `
     <div class="panel" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
@@ -1466,7 +1613,7 @@ function renderVocab(){
       <button class="vbv-btn btn-outline" onclick="location.hash='#/flashcards'">Review Flashcards</button>
     </div>` : ''}
     ${dates.length ? dates.map(d=>`
-      <div class="vocab-day-group">
+      <div class="vocab-day-group" data-vbv-group>
         <div class="vocab-day-label">${fmtDate(d)} &nbsp;·&nbsp; ${groups[d].length} word${groups[d].length>1?'s':''}</div>
         ${groups[d].map(vocabCardHtml).join('')}
       </div>
@@ -1475,10 +1622,10 @@ function renderVocab(){
 }
 function vocabCardHtml(v){
   return `
-  <div class="vocab-card" id="vc-${v.id}">
+  <div class="vocab-card" id="vc-${v.id}" data-vbv-origin="${v.sourceType==='vaani'?'vaani':v.sourceBookId?'book':'manual'}">
     <div class="vocab-word-row" onclick="document.getElementById('vc-${v.id}').classList.toggle('open')">
       <div><span class="vocab-word">${escapeHtml(v.word)}</span> <span class="mastery-dots" title="Flashcard mastery">${masteryDots(v.mastery)}</span></div>
-      <div class="vocab-source">${v.sourceBookTitle ? 'from "'+escapeHtml(v.sourceBookTitle)+'"' : ''}</div>
+      <div class="vocab-source">${v.sourceLabel ? escapeHtml(v.sourceLabel) : (v.sourceBookTitle ? 'From book · '+escapeHtml(v.sourceBookTitle) : (v.sourceType==='vaani'?'From VAANI':'Book Reading'))}</div>
     </div>
     <div class="vocab-body">
       <div class="vocab-meaning">${escapeHtml(v.meaning)}</div>
@@ -2439,6 +2586,7 @@ function levelVocabCardHtml(word, entry, level){
       <div class="vocab-meaning">${escapeHtml(entry.meaning)}</div>
       ${entry.example ? `<div class="review-quote">"${escapeHtml(entry.example)}"</div>` : ''}
       <div class="tag-group"><span class="lbl">Synonyms</span>${(entry.synonyms||[]).map(s=>`<span class="tag syn">${escapeHtml(s)}</span>`).join('') || '<span class="tag">none listed</span>'}</div>
+      ${vbvCaptureButtonHtml({word:word,meaning:entry.meaning,synonyms:entry.synonyms||[],example:entry.example,kind:'word',source:'Book Reading · '+LEVEL_LABEL[level]+' Vocabulary'},'＋ Save to Register')}
     </div>
   </div>`;
 }
@@ -2643,6 +2791,7 @@ function renderSpoken(){
             <button class="vbv-btn btn-outline btn-sm mic-btn" id="${micId}" onclick="practiceSpeech(PHRASES['${cat}'].items[${i}], '${micId}', '${fbId}')">🎤 Practice</button>
           </div>
           <div class="phrase-feedback" id="${fbId}"></div>
+          ${vbvCaptureButtonHtml({word:phrase,meaning:'Useful phrase for spoken English practice.',kind:'phrase',source:'Book Reading · Spoken English'},'＋ Save phrase')}
         </div>`;
       }).join('')}
     </div>
@@ -2661,6 +2810,13 @@ function setSpokenTab(cat){
    this ever runs. This just does VBV's own one-time setup, the first time the
    Book Reading tab is opened. */
 let __vbvMounted = false;
+if(!window.__vbvCaptureListenerBound){
+  window.__vbvCaptureListenerBound=true;
+  document.addEventListener('click',event=>{
+    const button=event.target&&event.target.closest?event.target.closest('[data-vbv-register-capture]'):null;
+    if(button)handleVbvCaptureButton(button);
+  });
+}
 function mountLibrarySection(){
   if(__vbvMounted) return;
   __vbvMounted = true;
