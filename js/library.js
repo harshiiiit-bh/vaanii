@@ -739,7 +739,8 @@ function vbvJumpTo(id){
   const target=document.getElementById(id);
   if(target)target.scrollIntoView({behavior:window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});
 }
-\n/* ---- Ongoing Detail (per-book log + vocab quick add) ---- */
+
+/* ---- Ongoing Detail (per-book log + vocab quick add) ---- */
 function renderOngoingDetail(id){
   const b = DATA.ongoing.find(x=>x.id===id);
   if(!b){
