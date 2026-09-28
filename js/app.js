@@ -847,46 +847,66 @@ function pyqHi(q){
    older NDA banks place (a)/(b)/(c) inline, and newer CDS banks use |. */
 function pyqSpottingParts(q){
   if(!q||typeof q.q!=='string')return null;
-  if(Array.isArray(q.parts)&&q.parts.length===3&&q.parts.every(p=>typeof p==='string'&&p.trim()))return q.parts.map(p=>p.trim());
+  if(Array.isArray(q.parts)&&(q.parts.length===3||q.parts.length===4)&&q.parts.every(p=>typeof p==='string'&&p.trim()))return q.parts.map(p=>p.trim());
   const source=q.q;
   if(/\s\|\s/.test(source)){
     const split=source.split(/\s*\|\s*/).map(p=>p.trim()).filter(Boolean);
-    if(split.length===3)return split;
+    if(split.length===3||split.length===4)return split;
   }
-  const matches=[...source.matchAll(/\(([abc])\)\s*\/?/gi)];
-  if(matches.length>=3){
-    const parts=[];let cursor=0;let valid=true;
-    for(let i=0;i<3;i++){
-      const m=matches[i];
-      if(m[1].toLowerCase()!==['a','b','c'][i]){valid=false;break;}
-      const part=source.slice(cursor,m.index).replace(/\s*\/\s*$/,'').trim();
-      if(!part){valid=false;break;}
-      parts.push(part);
-      cursor=m.index+m[0].length;
+  const markers=[...source.matchAll(/\(([abcd])\)\s*\/?/gi)];
+  if(markers.length>=3){
+    const sequence=markers.map(m=>m[1].toLowerCase()).join('');
+    const fourIsNoError=sequence.startsWith('abcd')&&/^no\s+error[.!]?$/i.test(source.slice(markers[2].index+markers[2][0].length,markers[3].index).trim());
+    const count=sequence.startsWith('abcd')&&!fourIsNoError?4:sequence.startsWith('abc')?3:0;
+    if(count){
+      const parts=[];let cursor=0;
+      for(let i=0;i<count;i++){
+        const m=markers[i];
+        const part=source.slice(cursor,m.index).replace(/\s*\/\s*$/,'').trim();
+        if(!part)return null;
+        parts.push(part);
+        cursor=m.index+m[0].length;
+      }
+      const tail=source.slice(cursor);
+      if(/^[\s.!?;:]*$/.test(tail)&&tail.trim())parts[parts.length-1]+=tail.trim();
+      return parts;
     }
-    if(valid)return parts;
   }
-  // Early NDA papers store the three underlined sentence fragments as
-  // answer choices, followed by "No error", instead of inline markers.
-  const choices=Array.isArray(q.o)?q.o.slice(0,3).map(value=>String(value).trim()):[];
-  if(choices.length===3&&choices.every(value=>value.length>2&&!/^\(?[abc]\)?\.?$/i.test(value))){
+  // Legacy NDA banks store sentence fragments in q.o, followed by No error.
+  const choices=Array.isArray(q.o)?q.o.map(value=>String(value).trim()):[];
+  const hasNoError=choices.length>0&&/^no\s+error$/i.test(choices[choices.length-1]);
+  const count=choices.length-(hasNoError?1:0);
+  if((count===3||count===4)&&choices.slice(0,count).every(value=>value.length>2&&!/^error in part/i.test(value))){
     const lower=source.toLocaleLowerCase();let cursor=0;const parts=[];
-    for(const phrase of choices){
+    for(const phrase of choices.slice(0,count)){
       const index=lower.indexOf(phrase.toLocaleLowerCase(),cursor);
       if(index<0)return null;
       parts.push(source.slice(index,index+phrase.length));
       cursor=index+phrase.length;
     }
     const tail=source.slice(cursor);
-    if(parts.length===3&&/^[\s.!?;:]*$/.test(tail))parts[2]+=tail.trim();
+    if(/^[\s.!?;:]*$/.test(tail)&&tail.trim())parts[parts.length-1]+=tail.trim();
     return parts;
   }
   return null;
 }
+function pyqSpottingFormat(q,parts){
+  const explicit=String(q&&q.spottingFormat||'').trim().toLowerCase();
+  const valid=['three-part-no-error','three-part','four-part','four-part-no-error'];
+  if(valid.includes(explicit))return explicit;
+  if(q&&q.spottingNoError===true)return parts.length===4?'four-part-no-error':'three-part-no-error';
+  if(q&&q.spottingNoError===false)return parts.length===4?'four-part':'three-part';
+  return parts.length===4?'four-part':'three-part-no-error';
+}
 function pyqOptionLabels(q){
   if(!q||!Array.isArray(q.o))return [];
   if(String(q._sourceSec||q.sec||'').trim().toLowerCase()==='spotting errors'){
-    return ['Error in part (a)','Error in part (b)','Error in part (c)','No error'];
+    const parts=pyqSpottingParts(q);
+    if(!parts)return q.o;
+    const format=pyqSpottingFormat(q,parts);
+    const labels=parts.map((_,i)=>'Error in part ('+String.fromCharCode(97+i)+')');
+    if(format.endsWith('no-error'))labels.push('No error');
+    return labels;
   }
   return q.o;
 }
@@ -933,36 +953,13 @@ function pyqPromptHTML(q){
   if(sourceSec==='spotting errors'){
     const parts=pyqSpottingParts(q);
     if(!parts)return '<span class="pv-error-unsegmented">'+pyqHi(q)+'</span>';
-    return '<span class="pv-error-parts" role="group" aria-label="Sentence parts a, b and c">'+
-      parts.map((part,i)=>'<span class="pv-error-segment"><span class="pv-error-segment-text">'+escapeHtmlVaani(part)+'</span><span class="pv-error-segment-label" aria-label="Part '+letters[i]+'">('+letters[i]+')</span></span>').join('<span class="pv-error-segment-divider" aria-hidden="true"> / </span>')+
+    const partLabels=parts.map((_,i)=>String.fromCharCode(97+i));
+    return '<span class="pv-error-parts" role="group" aria-label="Sentence parts '+partLabels.join(', ')+'" data-part-count="'+parts.length+'">'+
+      parts.map((part,i)=>'<span class="pv-error-segment"><span class="pv-error-segment-text">'+escapeHtmlVaani(part)+'</span><span class="pv-error-segment-label" aria-label="Part '+partLabels[i]+'">('+partLabels[i]+')</span></span>').join('<span class="pv-error-segment-divider" aria-hidden="true"> / </span>')+
       '</span>';
   }
   if(/^(?:choose the correct usage|ordering of sentences|sentence arrangement \(pqrs\))$/i.test(sourceSec)){
-    const source=q.q;
-    const inline=[...source.matchAll(/\(([PQRS])\)\s*\/?\s*/g)];
-    let blocks=[];
-    if(inline.length>=3){
-      let cursor=0;
-      for(const m of inline){
-        const fragment=source.slice(cursor,m.index).trim();
-        if(fragment)blocks.push({label:m[1],text:fragment});
-        cursor=m.index+m[0].length;
-      }
-      const tail=source.slice(cursor).trim();
-      if(tail&&blocks.length)blocks[blocks.length-1].text+=' '+tail;
-    }else{
-      const re=/(?:^|\n|\s|[\/\|]\s*)(S1|S2|S3|S6|P|Q|R|S)\s*[\.:]\s*/g;
-      const matches=[...source.matchAll(re)];
-      for(let i=0;i<matches.length;i++){
-        const m=matches[i],startAt=m.index+m[0].length,endAt=i+1<matches.length?matches[i+1].index:source.length;
-        const fragment=source.slice(startAt,endAt).replace(/\s*\/\s*$/,'').trim();
-        if(fragment)blocks.push({label:m[1],text:fragment});
-      }
-    }
-    if(blocks.length>=3){
-      const keyword=window.VaaniPyqTaxonomy&&typeof window.VaaniPyqTaxonomy.keyword==='function'?window.VaaniPyqTaxonomy.keyword(q):String(q.keyword||'').trim();
-      return '<div class="pv-structured-question">'+blocks.map(b=>'<div class="pv-structured-row"><span class="pv-structured-label">'+escapeHtmlVaani(b.label)+'</span><span class="pv-structured-text">'+pyqHighlightText(b.text,keyword)+'</span></div>').join('')+'</div>';
-    }
+    const structured=pyqLabeledBlocksHTML(q);if(structured)return structured;
   }
   return pyqHi(q);
 }

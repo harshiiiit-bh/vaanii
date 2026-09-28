@@ -362,11 +362,11 @@ try {
 /* PYQ presentation compatibility audit. */
 try {
   const pyqApp=readFileSync('js/app.js','utf8');
-  if(!pyqApp.includes('function pyqSpottingParts(')||!pyqApp.includes('function pyqLabeledBlocks(')||!pyqApp.includes('function pyqPromptHTML(')) throw new Error('PYQ structured renderer helpers are missing.');
+  if(!pyqApp.includes('function pyqSpottingParts(')||!pyqApp.includes('function pyqSpottingFormat(')||!pyqApp.includes('function pyqLabeledBlocks(')||!pyqApp.includes('function pyqPromptHTML(')) throw new Error('PYQ structured renderer helpers are missing.');
   const ctx=Object.create(null); vm.runInNewContext(readFileSync('data/pyq/manifest.js','utf8'),ctx,{timeout:1000});
   const paperNames=ctx.PYQ_PAPER_FILES;
   const renderableSpot=q=>{
-    if(Array.isArray(q.parts)&&q.parts.length===3&&q.parts.every(x=>typeof x==='string'&&x.trim()))return true;
+    if(Array.isArray(q.parts)&&(q.parts.length===3||q.parts.length===4)&&q.parts.every(x=>typeof x==='string'&&x.trim()))return true;
     if(/\s\|\s/.test(String(q.q||''))){const p=String(q.q).split(/\s*\|\s*/).map(x=>x.trim()).filter(Boolean);if(p.length===3)return true;}
     if(/\(a\).*\(b\).*\(c\)/i.test(String(q.q||'')))return true;
     const o=Array.isArray(q.o)?q.o.slice(0,3).map(x=>String(x||'').trim()):[];

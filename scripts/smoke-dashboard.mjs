@@ -174,6 +174,33 @@ try {
     ndaPrompt.includes('that the salary would be enough'),
     'Legacy NDA fragments were not mapped to the sentence');
   console.log('PASS PYQ presentation: NDA 2009-I legacy answer-fragment format displays labelled parts');
+  const fourPartFixture=await page.evaluate(()=>{
+    const base=PYQ_ALL.find(q=>q._exam==='NDA'&&q.sec==='Spotting Errors');
+    if(!base)throw new Error('No spotting-error record available for four-part fixture');
+    const q={...base,_id:'__smoke-four-part-spotting__',n:9999,
+      q:'The cadet reported (a) / the issue (b) / before the drill (c) / without delay. (d)',
+      parts:['The cadet reported','the issue','before the drill','without delay.'],
+      spottingFormat:'four-part',
+      o:['Error in part (a)','Error in part (b)','Error in part (c)','Error in part (d)'],ans:3};
+    const previous=PV.session;
+    try{
+      PV.session={mode:'practice',title:'Four-part spotting regression',questions:[q],index:0,
+        answers:{},streak:0,bestStreak:0,remaining:null,perQSeconds:null,timeLimitSec:null};
+      const doc=new DOMParser().parseFromString(pvSessionHTML(),'text/html');
+      return {
+        parts:[...doc.querySelectorAll('.pv-error-segment-label')].map(el=>el.textContent.trim()),
+        options:[...doc.querySelectorAll('.pv-options .pv-option')].map(el=>(el.textContent||'').replace(/\s+/g,' ').trim()),
+        prompt:doc.querySelector('.pv-error-parts')?.textContent||''
+      };
+    }finally{PV.session=previous;}
+  });
+  assert.deepEqual(fourPartFixture.parts,['(a)','(b)','(c)','(d)'],
+    'Four-part spotting must preserve all four sentence-part labels');
+  assert.equal(fourPartFixture.options.length,4,'Four-part spotting must have exactly four error-part choices');
+  assert.ok(fourPartFixture.options.every((option,i)=>option.includes('Error in part ('+String.fromCharCode(97+i)+')')),
+    'Four-part spotting choices must map to parts a-d: '+JSON.stringify(fourPartFixture.options));
+  assert.ok(fourPartFixture.prompt.includes('without delay.'),'Fourth sentence fragment was dropped');
+  console.log('PASS PYQ presentation: synthetic four-part format displays (a)-(d) and four matching answer choices');
 
   const fullPyqAudit = await page.evaluate(() => {
     const previous = PV.session;
@@ -191,16 +218,24 @@ try {
         const prompt = doc.querySelector('.pv-qtext');
         const options = [...doc.querySelectorAll('.pv-options .pv-option')];
         if (!prompt || !prompt.textContent.trim()) issues.push(q._id+': missing prompt');
-        if (options.length !== (String(q._sourceSec||q.sec).trim().toLowerCase()==='spotting errors'?4:q.o.length)) {
-          issues.push(q._id+': expected '+(q.o.length)+' visible options, found '+options.length);
+        const isSpotting=String(q._sourceSec||q.sec).trim().toLowerCase()==='spotting errors';
+        const expectedOptionCount=isSpotting?pyqOptionLabels(q).length:q.o.length;
+        if (options.length !== expectedOptionCount) {
+          issues.push(q._id+': expected '+expectedOptionCount+' visible options, found '+options.length);
         }
         if (options.some(option => !option.querySelector('.ol') || !(option.textContent||'').trim())) {
           issues.push(q._id+': option missing its letter or text');
         }
         if (q.passage && !doc.querySelector('.pv-passage-text')) issues.push(q._id+': passage missing from prompt');
-        if (String(q._sourceSec||q.sec).trim().toLowerCase()==='spotting errors') {
-          const labels = [...doc.querySelectorAll('.pv-error-segment-label')].map(el=>el.textContent.trim());
-          if (labels.join('|')!=='(a)|(b)|(c)') issues.push(q._id+': spotting parts missing or mislabelled: '+labels.join(','));
+        if (isSpotting) {
+          const labels=[...doc.querySelectorAll('.pv-error-segment-label')].map(el=>el.textContent.trim());
+          const parts=pyqSpottingParts(q)||[];
+          const expected=parts.map((_,i)=>'('+String.fromCharCode(97+i)+')');
+          if (labels.join('|')!==expected.join('|')) issues.push(q._id+': spotting parts missing or mislabelled: '+labels.join(','));
+          if (parts.length!==3&&parts.length!==4) issues.push(q._id+': unsupported spotting part count '+parts.length);
+          const format=pyqSpottingFormat(q,parts);
+          if (format==='four-part'&&parts.length!==4) issues.push(q._id+': four-part format does not have four segments');
+          if (format==='three-part-no-error'&&parts.length!==3) issues.push(q._id+': three-part-no-error format does not have three segments');
         }
         checked++;
         if (issues.length >= 30) break;
