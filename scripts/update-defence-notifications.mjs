@@ -66,25 +66,25 @@ function categoryFor(text, fallback){
   const family = fallback[0] || '';
   if (['SSC','RAILWAYS','BANKING','TEACHING','STATE_PSC','TECHNICAL','UPSC','ENTRANCE','POLICE'].includes(family)) return family;
   if (/afcat|air force common admission/.test(s)) return 'AFCAT';
-  if (/combined defence services|\\bcds\\b/.test(s)) return 'CDS';
-  if (/national defence academy|\\bnda\\b/.test(s)) return 'NDA';
+  if (/combined defence services|\bcds\b/.test(s)) return 'CDS';
+  if (/national defence academy|\bnda\b/.test(s)) return 'NDA';
   if (/agniveer vayu|agnipathvayu|air force agniveer/.test(s)) return 'AGNIVEER';
   if (/agniveer|join indian navy|navy recruitment/.test(s)) return 'AGNIVEER';
   if (/recruitment rally|rally bharti|army recruitment|join indian army/.test(s)) return 'ARMY_RALLY';
-  if (/border security force|\\bbsf\\b/.test(s)) return 'BSF';
-  if (/central reserve police|\\bcrpf\\b/.test(s)) return 'CRPF';
-  if (/central industrial security|\\bcisf\\b/.test(s)) return 'CISF';
-  if (/indo[- ]tibetan|\\bitbp\\b/.test(s)) return 'ITBP';
-  if (/sashastra seema bal|\\bssb\\b/.test(s)) return 'SSB';
+  if (/border security force|\bbsf\b/.test(s)) return 'BSF';
+  if (/central reserve police|\bcrpf\b/.test(s)) return 'CRPF';
+  if (/central industrial security|\bcisf\b/.test(s)) return 'CISF';
+  if (/indo[- ]tibetan|\bitbp\b/.test(s)) return 'ITBP';
+  if (/sashastra seema bal|\bssb\b/.test(s)) return 'SSB';
   if (/assam rifles/.test(s)) return 'ASSAM_RIFLES';
   if (/coast guard/.test(s)) return 'COAST_GUARD';
-  if (/railway|\\brrb\\b|ntpc|loco pilot|\\balp\\b|group[- ]?d/.test(s)) return 'RAILWAYS';
-  if (/ibps|\\bsbi\\b|\\brbi\\b|probationary officer|customer service associate|bank/.test(s)) return 'BANKING';
-  if (/ctet|kvs|navodaya|\\bnvs\\b|teacher eligibility|\\btet\\b/.test(s)) return 'TEACHING';
-  if (/\\bssc\\b|staff selection|\\bcgl\\b|\\bchsl\\b|\\bmts\\b|stenographer|selection post/.test(s)) return 'SSC';
+  if (/railway|\brrb\b|ntpc|loco pilot|\balp\b|group[- ]?d/.test(s)) return 'RAILWAYS';
+  if (/ibps|\bsbi\b|\brbi\b|probationary officer|customer service associate|bank/.test(s)) return 'BANKING';
+  if (/ctet|kvs|navodaya|\bnvs\b|teacher eligibility|\btet\b/.test(s)) return 'TEACHING';
+  if (/\bssc\b|staff selection|\bcgl\b|\bchsl\b|\bmts\b|stenographer|selection post/.test(s)) return 'SSC';
   if (/bpsc|uppsc|mppsc|rpsc|jpsc|state public service/.test(s)) return 'STATE_PSC';
-  if (/\\bupsc\\b|civil services|forest service|engineering services|geo-scientist|epfo/.test(s)) return 'UPSC';
-  if (/isro|drdo|barc|airports authority|\\baai\\b|\\biocl\\b|aiims|esic/.test(s)) return 'TECHNICAL';
+  if (/\bupsc\b|civil services|forest service|engineering services|geo-scientist|epfo/.test(s)) return 'UPSC';
+  if (/isro|drdo|barc|airports authority|\baai\b|\biocl\b|aiims|esic/.test(s)) return 'TECHNICAL';
   return family || 'OTHER';
 }
 
@@ -113,7 +113,7 @@ async function fetchSource(source){
   });
   if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
   const html = await res.text();
-  const matches = [...html.matchAll(/<a\\b[^>]*href=["']([^"']+)["'][^>]*>([\\s\\S]*?)<\\/a>/gi)];
+  const matches = [...html.matchAll(/<a\b[^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi)];
   const out = [];
   for (const m of matches) {
     if (out.length >= MAX_PER_SOURCE) break;
@@ -139,7 +139,7 @@ async function fetchSource(source){
     const context = [label, nearby, href].join(' ').slice(0, 1800);
     if (!relevant.test(context)) continue;
 
-    const genericLabel = /^(click here|view|download|read more|more|apply online|apply now|here|details|know more)[\\s:—-]*$/i.test(label);
+    const genericLabel = /^(click here|view|download|read more|more|apply online|apply now|here|details|know more)[\s:—-]*$/i.test(label);
     const title = titleFromAnchor(genericLabel && nearby.length > 12 ? nearby : label || source.name);
     out.push({ label: title || source.name, url: href, context });
   }
@@ -200,7 +200,7 @@ async function main(){
     const itemStatus = String(item.status || item.type || '').toLowerCase();
     const examPassed = examDate && !Number.isNaN(examDate.valueOf()) && examDate < now;
     const applicationClosed = deadline && !Number.isNaN(deadline.valueOf()) && deadline < now && /notification|upcoming|application/.test(itemStatus);
-    const titleYear = (String(item.title).match(/20\\d{2}/) || [])[0];
+    const titleYear = (String(item.title).match(/20\d{2}/) || [])[0];
     const oldYear = titleYear && Number(titleYear) < now.getUTCFullYear();
     if (examPassed || applicationClosed || oldYear) {
       const reason = examPassed ? 'exam-date-passed' : applicationClosed ? 'application-deadline-passed' : 'older-cycle';
