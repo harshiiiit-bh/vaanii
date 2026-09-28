@@ -358,3 +358,37 @@ try {
   console.error('Academy validation failed:', error.message);
   process.exitCode = 1;
 }
+
+/* PYQ presentation compatibility audit. */
+try {
+  const pyqApp=readFileSync('js/app.js','utf8');
+  if(!pyqApp.includes('function pyqSpottingParts(')||!pyqApp.includes('function pyqLabeledBlocks(')||!pyqApp.includes('function pyqPromptHTML(')) throw new Error('PYQ structured renderer helpers are missing.');
+  const ctx=Object.create(null); vm.runInNewContext(readFileSync('data/pyq/manifest.js','utf8'),ctx,{timeout:1000});
+  const paperNames=ctx.PYQ_PAPER_FILES;
+  const renderableSpot=q=>{
+    if(Array.isArray(q.parts)&&q.parts.length===3&&q.parts.every(x=>typeof x==='string'&&x.trim()))return true;
+    if(/\s\|\s/.test(String(q.q||''))){const p=String(q.q).split(/\s*\|\s*/).map(x=>x.trim()).filter(Boolean);if(p.length===3)return true;}
+    if(/\(a\).*\(b\).*\(c\)/i.test(String(q.q||'')))return true;
+    const o=Array.isArray(q.o)?q.o.slice(0,3).map(x=>String(x||'').trim()):[];
+    return o.length===3&&o.every(x=>x.length>2&&!/error in part/i.test(x));
+  };
+  const hasLabeledBlocks=q=>[...String(q.q||'').matchAll(/(?:^|\n|\s\/\s)(S1|S2|S3|S6|P|Q|R|S):\s*/g)].length>=3;
+  let total=0,spotting=0,spottingBad=[],wordClass=0,wordClassBad=[],structured=0,structuredBad=[],reading=0,readingBad=[];
+  for(const filename of paperNames){
+    const path='data/pyq/'+filename+'.js';if(!existsSync(path))throw new Error('PYQ manifest points to missing paper: '+path);
+    const c=Object.create(null);vm.runInNewContext(readFileSync(path,'utf8'),c,{timeout:1500});
+    const variable=Object.keys(c).find(key=>/^PYQ_(?:CDS_)?\d{4}_(?:I|II)$/.test(key));if(!variable)throw new Error('No PYQ array in '+path);
+    for(const q of c[variable]){
+      total++;const sec=String(q.sec||'').trim();const at=path+' question '+q.n;
+      if(sec.toLowerCase()==='spotting errors'){spotting++;if(!renderableSpot(q))spottingBad.push(at);}
+      if(/^(?:word classes|parts of speech)$/i.test(sec)){wordClass++;if(typeof q.keyword!=='string'||!q.keyword.trim()||!String(q.q||'').toLocaleLowerCase().includes(q.keyword.trim().toLocaleLowerCase()))wordClassBad.push(at);}
+      if(/ordering of sentences|sentence arrangement \(pqrs\)|choose the correct usage/i.test(sec)){structured++;if(!hasLabeledBlocks(q))structuredBad.push(at);}
+      if(/reading comprehension/i.test(sec)){reading++;if(typeof q.passage!=='string'||!q.passage.trim())readingBad.push(at);}
+    }
+  }
+  if(spottingBad.length)throw new Error('Spotting Errors missing visible sentence-part structure: '+spottingBad.slice(0,20).join(', '));
+  if(wordClassBad.length)throw new Error('Word Classes/Parts of Speech missing target-word highlighting: '+wordClassBad.slice(0,20).join(', '));
+  if(structuredBad.length)throw new Error('Structured PYQ lost its printed labels: '+structuredBad.slice(0,20).join(', '));
+  if(readingBad.length)throw new Error('Reading Comprehension missing passage context: '+readingBad.slice(0,20).join(', '));
+  console.log('PYQ presentation audit: '+total+' questions; '+spotting+' Spotting Errors, '+wordClass+' Parts-of-Speech/Word-Class, '+structured+' labeled-structure questions, '+reading+' Reading Comprehension checks passed');
+}catch(error){console.error('PYQ presentation audit failed:',error.message);process.exitCode=1;}
