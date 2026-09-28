@@ -133,3 +133,6 @@
   #view-notifications .nc-accordion>summary{align-items:flex-start;flex-wrap:wrap}
   #view-notifications .nc-accordion>summary small{order:3;width:100%;margin-left:0;text-align:left}
 }
+
+/* The global header glass layer is reserved for the sticky navigation. Keep it off the exam hero so its dark gradient and white copy remain legible. */
+#view-notifications .nc-hero::before{content:none!important}

@@ -31,6 +31,21 @@ if (missing.length) {
   console.log('Local script and stylesheet references: present');
 }
 
+// Guard against literal escaped characters leaking into the rendered page.
+if (/\\n\s*<link\b/i.test(html)) {
+  console.error('Escaped newline leaked into HTML markup near a stylesheet link');
+  process.exitCode = 1;
+} else {
+  console.log('HTML markup: no escaped-newline leak near stylesheet links');
+}
+const notificationCss = readFileSync('vaani-defence-feed.css', 'utf8');
+if (!/#view-notifications\s+\.nc-hero::before\s*\{[^}]*content\s*:\s*none\s*!important/i.test(notificationCss)) {
+  console.error('Notifications hero is still exposed to the global header glass overlay');
+  process.exitCode = 1;
+} else {
+  console.log('Notifications hero: global header overlay disabled');
+}
+
 function loadData(path, variable) {
   const source = readFileSync(path, 'utf8');
   const json = vm.runInNewContext(source + '\nJSON.stringify(' + variable + ')', Object.create(null), { timeout: 1000 });

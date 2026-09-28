@@ -70,6 +70,21 @@ try {
   assert.ok(await page.locator('#focusSprintWidget .vd-focus-body').count() > 0, 'Focus Sprint did not render');
   console.log('PASS dashboard: hero, briefing, roadmap, missions, word, heatmap, badges and focus sprint');
 
+  await clickMainView('notifications');
+  await page.waitForTimeout(250);
+  const notificationText = await page.locator('#view-notifications').innerText();
+  assert.ok(!notificationText.includes('\\n'), 'A literal escaped newline leaked into the visible page');
+  const notificationHero = await page.locator('#view-notifications .nc-hero').evaluate(el => ({
+    before: getComputedStyle(el, '::before').content,
+    background: getComputedStyle(el).backgroundImage,
+    titleColor: getComputedStyle(el.querySelector('h1')).color
+  }));
+  assert.equal(notificationHero.before, 'none', 'Global header glass overlay is covering the notifications hero');
+  assert.match(notificationHero.background, /linear-gradient/, 'Notifications hero lost its dark gradient');
+  assert.equal(notificationHero.titleColor, 'rgb(255, 255, 255)', 'Notifications hero heading is not white');
+  console.log('PASS notifications: no escaped newline; hero gradient and heading remain visible');
+  await clickMainView('dashboard');
+
   await page.locator('#themeBtn').click();
   const darkTheme = await page.evaluate(() => document.body.getAttribute('data-theme'));
   assert.equal(darkTheme, 'dark', 'Theme toggle did not enter dark mode');
