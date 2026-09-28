@@ -175,11 +175,6 @@
       if(b.hasAttribute('data-gts-scan')){
         if(scanAnswered)return;
         scanChoice=b.dataset.gtsScan;scanAnswered=true;
-        var sqn=SCANS[scanIndex%SCANS.length],scCorrect=sqn.bad==='E'?'No error':sq n;
-      }
-      if(b.hasAttribute('data-gts-scan')){
-        if(scanAnswered)return;
-        scanChoice=b.dataset.gtsScan;scanAnswered=true;
         var scan=SCANS[scanIndex%SCANS.length],expected=scan.bad==='E'?'No error':'Part '+scan.bad;
         var chosen=scanChoice==='E'?'No error':'Part '+scanChoice;
         record(scanChoice===scan.bad,'scanner',scanIndex,scan.parts.join(' / '),chosen,expected);render();return;
