@@ -26,6 +26,7 @@ jobs:
         run: |
           find . -type f -name '*.js' -not -path './.git/*' -not -path './node_modules/*' -print0 | xargs -0 -r -n1 node --check
           node --check scripts/smoke-dashboard.mjs
+          node --check scripts/update-defence-notifications.mjs
       - name: Check HTML IDs and local dependencies
         run: node scripts/check-quality.mjs
 
