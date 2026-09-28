@@ -1,0 +1,23 @@
+/* VAANI live defence notification feed */
+.nh-feed-toolbar{display:grid;gap:12px;margin:18px 0 20px}
+.nh-feed-toolbar input{width:100%;box-sizing:border-box;border:1px solid rgba(120,95,45,.22);background:rgba(255,255,255,.72);border-radius:14px;padding:13px 15px;font:600 14px Inter,sans-serif;color:inherit;outline:none}
+.nh-feed-toolbar input:focus{border-color:rgba(173,126,43,.72);box-shadow:0 0 0 3px rgba(173,126,43,.10)}
+.nh-feed-filters{display:flex;gap:8px;overflow-x:auto;padding-bottom:3px;scrollbar-width:thin}
+.nh-feed-filters button{flex:0 0 auto;border:1px solid rgba(120,95,45,.18);background:rgba(255,255,255,.58);border-radius:999px;padding:8px 12px;font:800 11px Inter,sans-serif;letter-spacing:.03em;text-transform:uppercase;cursor:pointer;color:inherit}
+.nh-feed-filters button.active{background:#171717;color:#fff;border-color:#171717}
+.nh-feed-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.nh-feed-card{position:relative;padding:18px;border:1px solid rgba(120,95,45,.16);border-radius:18px;background:linear-gradient(145deg,rgba(255,255,255,.92),rgba(248,244,234,.82));box-shadow:0 10px 28px rgba(32,25,12,.06);overflow:hidden}
+.nh-feed-card:before{content:"";position:absolute;inset:0 0 auto;height:3px;background:linear-gradient(90deg,#b08a3d,#e4c77e,transparent)}
+.nh-feed-top{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:11px}
+.nh-feed-cat,.nh-feed-status{font:800 9px Inter,sans-serif;letter-spacing:.08em;text-transform:uppercase}
+.nh-feed-cat{color:#8a6826}
+.nh-feed-status{color:#777}
+.nh-feed-card h3{margin:0 0 8px;font:800 18px/1.2 Oswald,sans-serif;letter-spacing:.01em}
+.nh-feed-card p{margin:0 0 15px;font:500 12px/1.55 Inter,sans-serif;color:rgba(35,31,25,.73)}
+.nh-feed-meta{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;border-top:1px solid rgba(120,95,45,.12);padding-top:10px;margin-bottom:12px;font:700 9px Inter,sans-serif;color:#777}
+.nh-feed-card .nh-card-link{font-size:11px}
+.nh-feed-empty{grid-column:1/-1;padding:30px 18px;text-align:center;border:1px dashed rgba(120,95,45,.24);border-radius:16px;font:600 13px Inter,sans-serif;color:#777}
+.nh-feed-note{margin:14px 0 24px;font:500 10px/1.5 Inter,sans-serif;color:#777}
+.nh-calendar-head{margin-top:4px}
+@media(max-width:900px){.nh-feed-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:620px){.nh-feed-grid{grid-template-columns:1fr}.nh-feed-card{padding:16px}}
