@@ -396,6 +396,7 @@ try {
   // Exercise primary views at narrow-phone, tablet, laptop and wide-desktop sizes.
   // This checks the view and navigation shells as well as the main document width.
   for (const width of [320, 768, 1024, 1280, 1600]) {
+    console.log('RESPONSIVE CHECK viewport=' + width);
     await page.setViewportSize({ width, height: 900 });
     const views = width === 320
       ? ['dashboard', 'vocab', 'books', 'profile', 'notifications']
