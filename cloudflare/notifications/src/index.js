@@ -60,8 +60,9 @@ async function syncPayload(request, env) {
   const body = await request.json();
   const items = Array.isArray(body.items) ? body.items : [];
   const archiveIds = Array.isArray(body.archiveIds) ? body.archiveIds : [];
-  if (items.length > SYNC_CHUNK_LIMIT || archiveIds.length > SYNC_CHUNK_LIMIT) {
-    return json({ error: "Sync accepts at most " + SYNC_CHUNK_LIMIT + " items and archive IDs per request. Split the payload into smaller chunks." }, 413);
+  const pruneIds = Array.isArray(body.pruneIds) ? body.pruneIds : [];
+  if (items.length > SYNC_CHUNK_LIMIT || archiveIds.length > SYNC_CHUNK_LIMIT || pruneIds.length > SYNC_CHUNK_LIMIT) {
+    return json({ error: "Sync accepts at most " + SYNC_CHUNK_LIMIT + " items, archive IDs, and prune IDs per request." }, 413);
   }
 
   const now = new Date().toISOString();
@@ -72,10 +73,13 @@ async function syncPayload(request, env) {
         .bind(now, now, String(id))
     );
   }
-  if (!statements.length) return json({ ok: true, synced: 0, archived: 0 });
+  for (const id of pruneIds) {
+    statements.push(env.DB.prepare("DELETE FROM notifications WHERE id=?").bind(String(id)));
+  }
+  if (!statements.length) return json({ ok: true, synced: 0, archived: 0, deleted: 0 });
 
   await env.DB.batch(statements);
-  return json({ ok: true, synced: items.length, archived: archiveIds.length, chunkLimit: SYNC_CHUNK_LIMIT });
+  return json({ ok: true, synced: items.length, archived: archiveIds.length, deleted: pruneIds.length, chunkLimit: SYNC_CHUNK_LIMIT });
 }
 
 export default {
