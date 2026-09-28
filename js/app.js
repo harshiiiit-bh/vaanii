@@ -3275,7 +3275,7 @@ function openPractice(p){
   switchView('topic');
 }
 function renderReadingGrid(){
-  const grid=document.getElementById('readingGrid'); grid.innerHTML='';
+  const grid=document.getElementById('readingGrid'); if(!grid)return; grid.innerHTML='';
   READING.forEach(r=>{
     const div=document.createElement('div'); div.className='card topic-card';
     div.innerHTML=`<div class="icon">${r.icon}</div><h3>${r.title}</h3><p>Comprehension passage with analytical questions.</p>
@@ -3305,7 +3305,7 @@ function openReading(r){
   switchView('topic');
 }
 function renderTestsGrid(){
-  const grid=document.getElementById('testsGrid'); grid.innerHTML='';
+  const grid=document.getElementById('testsGrid'); if(!grid)return; grid.innerHTML='';
   TESTS.forEach(t=>{
     const div=document.createElement('div'); div.className='card topic-card';
     div.innerHTML=`<div class="icon">${t.icon}</div><h3>${t.title}</h3><p>${t.desc}</p>
@@ -3758,9 +3758,17 @@ function refreshHomeV2(){
     });
   }
 
-  const qi = dayIndex()%QUOTES_OF_DAY.length;
-  const qEl=document.getElementById('quoteText'); if(qEl) qEl.textContent = QUOTES_OF_DAY[qi].q;
-  const qaEl=document.getElementById('quoteAuthor'); if(qaEl) qaEl.textContent = '— '+QUOTES_OF_DAY[qi].a;
+  const now=new Date();
+  const quoteDay=Math.floor((Date.UTC(now.getFullYear(),now.getMonth(),now.getDate())-Date.UTC(now.getFullYear(),0,1))/86400000);
+  const qEl=document.getElementById('quoteText'),qaEl=document.getElementById('quoteAuthor');
+  if(Array.isArray(QUOTES_OF_DAY)&&QUOTES_OF_DAY.length){
+    const qi=((quoteDay%QUOTES_OF_DAY.length)+QUOTES_OF_DAY.length)%QUOTES_OF_DAY.length;
+    if(qEl)qEl.textContent=QUOTES_OF_DAY[qi].q||'Keep showing up and keep learning.';
+    if(qaEl)qaEl.textContent='— '+(QUOTES_OF_DAY[qi].a||'VAANI');
+  }else{
+    if(qEl)qEl.textContent='Keep showing up and keep learning.';
+    if(qaEl)qaEl.textContent='— VAANI';
+  }
 
   const lvl2 = Math.floor(State.xp/100)+1;
   const ranks2=['Recruit','Cadet','Lance Naik','Naik','Havildar','Subedar','Lieutenant','Captain','Major','Colonel'];
