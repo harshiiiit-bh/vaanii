@@ -143,8 +143,32 @@
     }
   }
 
-  function init(){
+  function ensureAll(){
     document.querySelectorAll('.view').forEach(mountOne);
+  }
+
+  function installRouteResilience(){
+    const observer=new MutationObserver(records=>{
+      let needsRepair=false;
+      for(const record of records){
+        if(record.type==='childList' && record.target.classList?.contains('view')){
+          if(!record.target.querySelector(':scope > .vaani-3d-model')){
+            needsRepair=true;
+            break;
+          }
+        }
+      }
+      if(needsRepair) ensureAll();
+    });
+    document.querySelectorAll('.view').forEach(view=>{
+      observer.observe(view,{childList:true});
+    });
+    window.VAANI_3D_OBSERVER=observer;
+  }
+
+  function init(){
+    ensureAll();
+    installRouteResilience();
     window.VAANI_3D = {
       version:'1.0-safe',
       supported,
