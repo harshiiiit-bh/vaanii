@@ -882,6 +882,13 @@ function pyqSpottingParts(q){
   }
   return null;
 }
+function pyqOptionLabels(q){
+  if(!q||!Array.isArray(q.o))return [];
+  if(String(q._sourceSec||q.sec||'').trim().toLowerCase()==='spotting errors'){
+    return ['Error in part (a)','Error in part (b)','Error in part (c)','No error'];
+  }
+  return q.o;
+}
 function pyqPromptHTML(q){
   if(!q||typeof q.q!=='string')return '';
   if(String(q._sourceSec||q.sec||'').trim().toLowerCase()!=='spotting errors')return pyqHi(q);
@@ -1789,12 +1796,13 @@ function pvSessionHTML(){
     </div>`;
   }
 
+  const displayOptions = pyqOptionLabels(q);
   let optsHTML = '';
   if(isRevisionLike){
-    optsHTML = q.o.map((opt,i)=>`<div class="pv-option ${i===q.ans?'correct':''}" style="cursor:default">
+    optsHTML = displayOptions.map((opt,i)=>`<div class="pv-option ${i===q.ans?'correct':''}" style="cursor:default">
       <span class="ol">${letters[i]}</span><span>${escapeHtmlVaani(opt)}</span></div>`).join('');
   } else {
-    optsHTML = q.o.map((opt,i)=>{
+    optsHTML = displayOptions.map((opt,i)=>{
       let cls = '';
       if(answer && s.mode!=='exam'){
         if(i===q.ans) cls='correct';
