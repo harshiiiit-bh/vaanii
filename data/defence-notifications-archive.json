@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "generatedAt": "2026-09-28T13:55:52.922Z",
-  "source": "VAANI Defence Notification Archive",
+  "generatedAt": "2026-09-28T14:01:50.000Z",
+  "source": "VAANI Government & Defence Notification Archive",
   "items": [
     {
       "id": "upsc-nda-ii-2026",
@@ -38,6 +38,28 @@
       "summary": "CDS II 2026 cycle. Verify all cycle-specific details in the official UPSC notice.",
       "archivedAt": "2026-09-28T13:55:52.922Z",
       "archiveReason": "exam-date-passed"
+    },
+    {
+      "id": "ibps-crp-rrb-xv-officers-2026",
+      "title": "IBPS CRP-RRB XV — Officers registration",
+      "organization": "IBPS",
+      "category": "BANKING",
+      "type": "Recruitment notification",
+      "status": "closed",
+      "notificationDate": "2026-09-01",
+      "applicationStartDate": null,
+      "lastDate": "2026-09-27",
+      "examDate": null,
+      "url": "https://ibpsreg.ibps.in/rrbxvaug26/index.php?stat=0",
+      "sourceUrl": "https://www.ibps.in/index.php/crp-updates/",
+      "sourceName": "IBPS — CRP Updates",
+      "official": true,
+      "summary": "Registration for CRP-RRBs-XV Officers was scheduled from 1 to 27 Sep 2026. The application window has ended; check IBPS for subsequent notices.",
+      "firstSeen": "2026-09-28T14:01:50.000Z",
+      "lastSeen": "2026-09-28T14:01:50.000Z",
+      "archivedAt": "2026-09-28T14:01:50.000Z",
+      "archiveReason": "application-deadline-passed",
+      "updatedAt": "2026-09-28T14:01:50.000Z"
     }
   ]
 }
