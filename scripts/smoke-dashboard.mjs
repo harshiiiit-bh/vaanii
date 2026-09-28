@@ -115,8 +115,20 @@ try {
   await page.locator('#vbv-mainnav button[data-route="academy"]').click();
   await page.waitForSelector('#app .academy-page', { timeout: 15000 });
   assert.equal(await page.locator('#app .academy-card').count(), 4, 'Academy gallery must show all four academies');
-  const academyImageResults = await page.locator('#app .academy-card-photo img').evaluateAll(images => images.map(img => ({ alt:img.alt, src:img.currentSrc||img.src, width:img.naturalWidth })));
-  assert.equal(academyImageResults.length, 4, 'Each academy needs its own image');
+  await page.locator('#app .academy-card-photo').evaluateAll(frames => Promise.all(frames.map(frame => {
+    const img = frame.querySelector('img');
+    if (!img || img.complete) return Promise.resolve();
+    return new Promise(resolve => {
+      img.addEventListener('load', resolve, { once:true });
+      img.addEventListener('error', resolve, { once:true });
+      setTimeout(resolve, 20000);
+    });
+  })));
+  const academyImageResults = await page.locator('#app .academy-card-photo').evaluateAll(frames => frames.map(frame => {
+    const img = frame.querySelector('img');
+    return { alt:frame.getAttribute('aria-label')||img?.alt||'', src:img?.currentSrc||img?.src||'', width:img?.naturalWidth||0 };
+  }));
+  assert.equal(academyImageResults.length, 4, 'Each academy needs an image card');
   assert.ok(academyImageResults.every(image => image.alt && image.width > 0), 'One or more academy photos did not load: ' + JSON.stringify(academyImageResults));
   console.log('PASS Book Reading Academy: four real academy photos load with accessible alt text and source credits');
 
