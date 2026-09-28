@@ -1,0 +1,44 @@
+name: VAANI Defence Notification Sync
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Every hour at :17 UTC. A non-top-of-hour minute reduces GitHub Actions queue pressure.
+    - cron: '17 * * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: defence-notification-sync
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Refresh defence notifications
+        run: node scripts/update-defence-notifications.mjs
+
+      - name: Commit changed feed
+        run: |
+          git config user.name "vaani-notification-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/defence-notifications.json
+          if git diff --cached --quiet; then
+            echo "No notification changes detected."
+            exit 0
+          fi
+          git commit -m "chore: refresh defence notifications"
+          git push
