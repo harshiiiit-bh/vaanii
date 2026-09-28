@@ -162,12 +162,16 @@ try {
   await page.waitForSelector('#view-grammar #gtStudioPanel .gt-drill-card', { timeout:10000 });
   const grammarHero = await page.locator('#view-grammar .gt-header').evaluate(el => ({
     titleFill:getComputedStyle(el.querySelector('.gt-title')).webkitTextFillColor,
-    background:getComputedStyle(el).backgroundImage,
-    cubeAnimation:getComputedStyle(el.querySelector('.gt-grammar-cube')).animationName
+    background:getComputedStyle(el).backgroundImage
   }));
   assert.equal(grammarHero.titleFill, 'rgb(244, 248, 249)', 'Grammar hero heading lost its high-contrast light text');
   assert.match(grammarHero.background, /linear-gradient/, 'Grammar hero lost its dark command-centre background');
-  assert.equal(grammarHero.cubeAnimation, 'gtsCube', 'Grammar 3D cube animation is not active');
+  // This suite normally emulates reduced motion; temporarily enable motion to
+  // confirm the cube animation exists, then restore the accessible preference.
+  await page.emulateMedia({ reducedMotion:'no-preference' });
+  const cubeAnimation = await page.locator('#view-grammar .gt-grammar-cube').evaluate(el => getComputedStyle(el).animationName);
+  assert.equal(cubeAnimation, 'gtsCube', 'Grammar 3D cube animation is not active');
+  await page.emulateMedia({ reducedMotion:'reduce' });
   assert.equal(await page.locator('#gtStudioLab .gt-studio-tab').count(), 4, 'Grammar Studio is missing a practice mode');
   await page.locator('#gtStudioLab [data-gts-tab="scanner"]').click();
   await page.locator('#gtStudioLab [data-gts-scan="C"]').click();
