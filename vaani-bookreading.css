@@ -24,3 +24,23 @@
 .vbv-scope .tool-tile .tt-icon{
   width:17px; height:17px; flex-shrink:0;
 }
+
+
+/* Reading UX refresh: shared VAANI brass/navy language, clearer actions,
+   responsive capture controls, and calmer paper-like surfaces. */
+.vbv-scope .page{max-width:1240px;margin-inline:auto;padding:clamp(16px,2.6vw,30px);}
+.vbv-scope .page-head{border-radius:10px;overflow:hidden;box-shadow:0 14px 36px rgba(20,31,45,.13);}
+.vbv-scope .panel,.vbv-scope .vbv-stat-card,.vbv-scope .onboard-card,.vbv-scope .wod-card{
+  border-radius:10px;border:1px solid rgba(184,134,47,.2);box-shadow:0 8px 24px rgba(28,43,58,.07);
+}
+.vbv-scope .section-title-row{align-items:center;gap:12px;}
+.vbv-scope .vbv-btn{transition:transform .18s ease,box-shadow .18s ease,background .18s ease;}
+.vbv-scope .vbv-btn:hover{transform:translateY(-1px);box-shadow:0 5px 14px rgba(28,43,58,.15);}
+.vbv-scope .vbv-btn:focus-visible,.vbv-scope input:focus-visible,.vbv-scope textarea:focus-visible{
+  outline:3px solid rgba(184,134,47,.55);outline-offset:2px;
+}
+.vbv-scope .vbv-capture-row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:12px;padding:12px 14px;border:1px dashed rgba(184,134,47,.55);border-radius:8px;background:rgba(243,230,200,.32);}
+.vbv-scope .vbv-capture-row>span{font-size:12px;color:var(--navy-soft);flex:1 1 220px;}
+.vbv-scope .vbv-capture-row .vbv-btn{white-space:nowrap;}
+@media(max-width:600px){.vbv-scope .page{padding:14px 12px}.vbv-scope .vbv-capture-row{align-items:stretch}.vbv-scope .vbv-capture-row .vbv-btn{width:100%}}
+@media(prefers-reduced-motion:reduce){.vbv-scope .vbv-btn{transition:none}.vbv-scope .vbv-btn:hover{transform:none}}
