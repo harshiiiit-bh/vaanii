@@ -1,0 +1,313 @@
+/* ============================================================
+   VAANI — SAFE 3D SECTION MODELS
+   Pure CSS 3D. No libraries, no WebGL, no external assets.
+   Each major section gets its own visual vocabulary.
+   ============================================================ */
+
+.vaani-3d-model{
+  position:absolute;
+  top:clamp(18px,2.5vw,32px);
+  right:clamp(14px,2.8vw,36px);
+  width:clamp(84px,10vw,132px);
+  height:clamp(84px,10vw,132px);
+  z-index:3;
+  pointer-events:none!important;
+  user-select:none;
+  contain:layout paint style;
+  isolation:isolate;
+  perspective:700px;
+  color:var(--model-accent,#d8b66a);
+  opacity:.78;
+  transform:translateZ(0);
+}
+.vaani-3d-model *{pointer-events:none!important}
+.vaani-3d-model__scene{
+  position:absolute;inset:0;
+  transform-style:preserve-3d;
+  transform:rotateX(var(--scene-x,-12deg)) rotateY(var(--scene-y,18deg));
+}
+.vaani-3d-model__glow{
+  position:absolute;inset:12%;border-radius:50%;
+  background:radial-gradient(circle,rgba(210,170,80,.18),transparent 68%);
+  filter:blur(2px);
+}
+.vaani-3d-model__floor{
+  position:absolute;left:12%;right:12%;bottom:8%;height:16%;
+  border-radius:50%;
+  border:1px solid color-mix(in srgb,currentColor 30%,transparent);
+  transform:rotateX(78deg);
+  background:radial-gradient(ellipse,currentColor 0%,transparent 62%);
+  opacity:.35;
+}
+.vaani-3d-model__orbit{
+  position:absolute;inset:10%;
+  border:1px solid color-mix(in srgb,currentColor 48%,transparent);
+  border-radius:50%;
+  transform:rotateX(68deg);
+}
+.vaani-3d-model__orbit::after{
+  content:"";position:absolute;width:18%;height:18%;left:9%;top:15%;
+  border-radius:50%;background:currentColor;box-shadow:0 0 14px currentColor;
+}
+
+/* Shared 3D cube */
+.vaani-3d-cube{
+  --cube-size:48px;
+  position:absolute;left:50%;top:50%;
+  width:var(--cube-size);height:var(--cube-size);
+  transform-style:preserve-3d;
+  transform:translate(-50%,-50%) rotateX(-18deg) rotateY(28deg);
+  animation:vaaniCubeTurn 14s linear infinite;
+}
+.vaani-3d-cube .face{
+  position:absolute;inset:0;
+  display:grid;place-items:center;
+  border:1px solid currentColor;
+  background:linear-gradient(145deg,rgba(255,255,255,.11),rgba(255,255,255,.025));
+  box-shadow:inset 0 0 18px rgba(255,255,255,.035);
+  backface-visibility:hidden;
+  font:700 7px/1 var(--mono,monospace);
+  letter-spacing:.08em;
+  color:currentColor;
+}
+.vaani-3d-cube .front{transform:translateZ(calc(var(--cube-size)/2))}
+.vaani-3d-cube .back{transform:rotateY(180deg) translateZ(calc(var(--cube-size)/2))}
+.vaani-3d-cube .right{transform:rotateY(90deg) translateZ(calc(var(--cube-size)/2))}
+.vaani-3d-cube .left{transform:rotateY(-90deg) translateZ(calc(var(--cube-size)/2))}
+.vaani-3d-cube .top{transform:rotateX(90deg) translateZ(calc(var(--cube-size)/2))}
+.vaani-3d-cube .bottom{transform:rotateX(-90deg) translateZ(calc(var(--cube-size)/2))}
+
+/* Dashboard: compass command orb */
+#view-dashboard .vaani-3d-model{--model-accent:#d8b66a}
+.vaani-model-dashboard .compass-ring{position:absolute;inset:14%;border:1px solid currentColor;border-radius:50%}
+.vaani-model-dashboard .compass-ring::before,
+.vaani-model-dashboard .compass-ring::after{
+  content:"";position:absolute;left:50%;top:50%;
+  background:currentColor;transform:translate(-50%,-50%);opacity:.6
+}
+.vaani-model-dashboard .compass-ring::before{width:78%;height:1px}
+.vaani-model-dashboard .compass-ring::after{height:78%;width:1px}
+.vaani-model-dashboard .compass-needle{
+  position:absolute;left:50%;top:50%;width:10px;height:56%;
+  transform:translate(-50%,-50%) rotate(28deg) translateZ(8px);
+  clip-path:polygon(50% 0,100% 100%,50% 82%,0 100%);
+  background:linear-gradient(180deg,#f2d493,#a77a2d);
+  transform-origin:50% 50%;
+}
+.vaani-model-dashboard .compass-core{
+  position:absolute;left:50%;top:50%;width:16px;height:16px;border-radius:50%;
+  transform:translate(-50%,-50%) translateZ(12px);
+  background:#2fd7c4;border:2px solid #0d1826;box-shadow:0 0 15px rgba(47,215,196,.65)
+}
+
+/* Grammar: command cube */
+#view-grammar .vaani-3d-model{--model-accent:#7bf0e0}
+#view-grammar .vaani-3d-model{top:clamp(16px,2vw,26px)}
+.vaani-model-grammar .vaani-3d-cube{--cube-size:54px}
+.vaani-model-grammar .vaani-3d-cube .front{color:#7bf0e0}
+.vaani-model-grammar .vaani-3d-cube .right{color:#d9a941}
+.vaani-model-grammar .vaani-3d-cube .top{color:#9feee4}
+.vaani-model-grammar .cube-core{
+  position:absolute;left:50%;top:50%;width:8px;height:8px;border-radius:50%;
+  transform:translate(-50%,-50%) translateZ(42px);
+  background:#7bf0e0;box-shadow:0 0 14px #7bf0e0;
+}
+
+/* Journey: stacked progression prism */
+#view-journey .vaani-3d-model{--model-accent:#e5bf6f}
+.vaani-model-journey .stage{
+  position:absolute;left:50%;bottom:18%;
+  width:74%;height:16px;border:1px solid currentColor;
+  transform:translateX(-50%) rotateX(67deg) translateZ(var(--z,0));
+  background:rgba(217,169,65,.12);
+}
+.vaani-model-journey .stage.s1{--z:0px;width:84%}
+.vaani-model-journey .stage.s2{--z:12px;width:70%;bottom:35%}
+.vaani-model-journey .stage.s3{--z:24px;width:56%;bottom:51%}
+.vaani-model-journey .stage.s4{--z:36px;width:42%;bottom:67%}
+.vaani-model-journey .flag{position:absolute;left:50%;top:18%;width:2px;height:50%;background:currentColor}
+.vaani-model-journey .flag::after{content:"";position:absolute;left:2px;top:0;width:24px;height:12px;background:currentColor;clip-path:polygon(0 0,100% 25%,72% 100%,0 80%)}
+
+/* Topic: lesson lens */
+#view-topic .vaani-3d-model{--model-accent:#4dd8cb}
+.vaani-model-topic .lens{
+  position:absolute;left:50%;top:50%;width:58%;height:58%;border-radius:50%;
+  transform:translate(-50%,-50%) translateZ(14px);
+  border:2px solid currentColor;
+  box-shadow:inset 0 0 24px rgba(77,216,203,.13),0 0 22px rgba(77,216,203,.18);
+}
+.vaani-model-topic .lens::before{
+  content:"";position:absolute;left:50%;top:50%;width:22%;height:22%;border-radius:50%;
+  transform:translate(-50%,-50%);
+  background:currentColor;box-shadow:0 0 16px currentColor;
+}
+.vaani-model-topic .lens-axis{
+  position:absolute;left:15%;right:15%;top:50%;height:1px;background:currentColor;opacity:.45;
+}
+
+/* Compare: mirrored decision prisms */
+#view-compare .vaani-3d-model{--model-accent:#d5aa55}
+.vaani-model-compare .prism{
+  position:absolute;top:50%;width:30%;height:52%;
+  border:1px solid currentColor;background:rgba(213,170,85,.08);
+  transform-style:preserve-3d;box-shadow:inset 0 0 16px rgba(255,255,255,.03)
+}
+.vaani-model-compare .left{left:15%;transform:translateY(-50%) rotateY(22deg) rotateX(-8deg)}
+.vaani-model-compare .right{right:15%;transform:translateY(-50%) rotateY(-22deg) rotateX(-8deg)}
+.vaani-model-compare .vs{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) translateZ(36px);
+  font:800 10px/1 var(--mono);color:#f4d893;letter-spacing:.08em
+}
+#view-compare-detail .vaani-3d-model{--model-accent:#62cfd0}
+.vaani-model-compare-detail .beam{
+  position:absolute;left:18%;right:18%;top:42%;height:3px;background:currentColor;
+  transform:rotateX(72deg) translateZ(22px)
+}
+.vaani-model-compare-detail .plate{
+  position:absolute;width:34%;height:18%;border:1px solid currentColor;
+  border-radius:50%;top:60%;background:rgba(98,207,208,.08);
+  transform:rotateX(72deg)
+}
+.vaani-model-compare-detail .plate.one{left:6%}.vaani-model-compare-detail .plate.two{right:6%}
+.vaani-model-compare-detail .hub{
+  position:absolute;left:50%;top:48%;width:18px;height:18px;border-radius:50%;
+  transform:translate(-50%,-50%) translateZ(24px);background:currentColor;box-shadow:0 0 16px currentColor
+}
+
+/* Vocabulary: rotating lexicon barrel */
+#view-vocab .vaani-3d-model{--model-accent:#8be3d8}
+.vaani-model-vocab .barrel{
+  position:absolute;left:50%;top:50%;width:44%;height:64%;
+  transform:translate(-50%,-50%) rotateY(22deg);
+  transform-style:preserve-3d;animation:vaaniBarrel 9s linear infinite;
+}
+.vaani-model-vocab .barrel-face{
+  position:absolute;inset:0;border:1px solid currentColor;background:rgba(139,227,216,.08);
+  display:grid;place-items:center;font:800 9px/1 var(--serif);color:currentColor;
+}
+.vaani-model-vocab .f1{transform:translateZ(16px)}.vaani-model-vocab .f2{transform:rotateY(120deg) translateZ(16px)}.vaani-model-vocab .f3{transform:rotateY(240deg) translateZ(16px)}
+.vaani-model-vocab .cap{position:absolute;left:50%;width:44%;height:16%;transform:translateX(-50%) rotateX(90deg);border:1px solid currentColor;border-radius:50%;background:rgba(139,227,216,.08)}
+.vaani-model-vocab .top{top:8%}.vaani-model-vocab .bottom{bottom:8%}
+
+/* Word detail: floating word prism */
+#view-worddetail .vaani-3d-model{--model-accent:#e4bd68}
+.vaani-model-worddetail .word-prism{
+  position:absolute;left:50%;top:50%;width:68%;height:34%;
+  transform:translate(-50%,-50%) rotateX(14deg) rotateY(-22deg) translateZ(20px);
+  border:1px solid currentColor;background:linear-gradient(135deg,rgba(228,189,104,.12),rgba(228,189,104,.03));
+  box-shadow:inset 0 0 18px rgba(255,255,255,.04);
+}
+.vaani-model-worddetail .word-prism::before{
+  content:"WORD";position:absolute;inset:0;display:grid;place-items:center;
+  font:800 9px/1 var(--mono);letter-spacing:.16em;color:currentColor
+}
+
+/* Books: open book */
+#view-books .vaani-3d-model{--model-accent:#d7ad5f}
+.vaani-model-books .book-half{
+  position:absolute;top:28%;width:35%;height:48%;border:1px solid currentColor;
+  background:linear-gradient(135deg,rgba(215,173,95,.14),rgba(215,173,95,.03));
+  transform-style:preserve-3d;
+}
+.vaani-model-books .book-left{left:12%;transform-origin:right center;transform:rotateY(24deg) rotateX(12deg)}
+.vaani-model-books .book-right{right:12%;transform-origin:left center;transform:rotateY(-24deg) rotateX(12deg)}
+.vaani-model-books .spine{position:absolute;left:50%;top:29%;width:2px;height:46%;background:currentColor;transform:translateX(-50%) translateZ(2px)}
+.vaani-model-books .page-line{position:absolute;left:10%;right:10%;height:1px;background:currentColor;opacity:.45}
+.vaani-model-books .l1{top:55%}.vaani-model-books .l2{top:64%}.vaani-model-books .l3{top:73%}
+
+/* PYQ: target turret */
+#view-pyq .vaani-3d-model{--model-accent:#eecc78}
+.vaani-model-pyq .target{
+  position:absolute;left:50%;top:50%;border-radius:50%;transform:translate(-50%,-50%) rotateX(68deg);
+  border:1px solid currentColor
+}
+.vaani-model-pyq .r1{width:78%;height:78%;background:radial-gradient(circle,#f1d48e 0 11%,transparent 12%),transparent}
+.vaani-model-pyq .r2{width:58%;height:58%;border-color:#61cfc3}
+.vaani-model-pyq .r3{width:36%;height:36%;border-color:#f1d48e}
+.vaani-model-pyq .pin{
+  position:absolute;left:50%;top:50%;width:8px;height:34px;background:#f1d48e;
+  transform:translate(-50%,-68%) rotateX(20deg) translateZ(30px)
+}
+
+/* Games: die */
+#view-games .vaani-3d-model{--model-accent:#cfab57}
+.vaani-model-games .vaani-3d-cube{--cube-size:48px;animation-duration:8s}
+.vaani-model-games .dot{position:absolute;width:5px;height:5px;border-radius:50%;background:currentColor;box-shadow:0 0 6px currentColor}
+.vaani-model-games .d1{left:31%;top:31%}.vaani-model-games .d2{right:31%;bottom:31%}.vaani-model-games .d3{left:50%;top:50%;transform:translate(-50%,-50%)}
+
+/* Leaderboard: podium/trophy */
+#view-leaderboard .vaani-3d-model{--model-accent:#e5bf69}
+.vaani-model-leaderboard .podium{position:absolute;bottom:18%;width:23%;border:1px solid currentColor;background:rgba(229,191,105,.08);transform:rotateX(62deg)}
+.vaani-model-leaderboard .p1{left:15%;height:33%}.vaani-model-leaderboard .p2{left:39%;height:48%}.vaani-model-leaderboard .p3{right:15%;height:28%}
+.vaani-model-leaderboard .cup{
+  position:absolute;left:50%;top:18%;width:28%;height:40%;
+  transform:translateX(-50%) translateZ(18px);border:1px solid currentColor;border-radius:8px 8px 15px 15px;
+  background:linear-gradient(160deg,rgba(229,191,105,.2),rgba(229,191,105,.04));
+}
+.vaani-model-leaderboard .handle{position:absolute;top:25%;width:16%;height:22%;border:1px solid currentColor;border-radius:50%}
+.vaani-model-leaderboard .h1{left:25%}.vaani-model-leaderboard .h2{right:25%}
+
+/* Profile: medal */
+#view-profile .vaani-3d-model{--model-accent:#e6c476}
+.vaani-model-profile .ribbon{
+  position:absolute;top:13%;left:42%;width:14%;height:28%;
+  background:linear-gradient(180deg,#57a99a,#2e6f68);clip-path:polygon(0 0,100% 0,84% 100%,50% 78%,16% 100%);
+}
+.vaani-model-profile .medal{
+  position:absolute;left:50%;top:55%;width:50%;height:50%;border-radius:50%;
+  transform:translate(-50%,-50%) translateZ(22px);
+  border:2px solid currentColor;background:radial-gradient(circle,#f0d594 0 32%,#ba8a31 33% 45%,#4e7d78 46% 100%);
+  box-shadow:0 0 22px rgba(230,196,118,.24)
+}
+.vaani-model-profile .medal::after{content:"★";position:absolute;inset:0;display:grid;place-items:center;color:#253c3a;font-size:18px}
+
+/* Notifications: signal beacon */
+#view-notifications .vaani-3d-model{--model-accent:#6ed5c5}
+.vaani-model-notifications .beacon{
+  position:absolute;left:50%;bottom:18%;width:26%;height:48%;
+  transform:translateX(-50%) translateZ(10px);
+  border:1px solid currentColor;border-radius:12px 12px 5px 5px;
+  background:linear-gradient(180deg,rgba(110,213,197,.14),rgba(110,213,197,.04));
+}
+.vaani-model-notifications .signal{
+  position:absolute;left:50%;top:20%;border:1px solid currentColor;border-left-color:transparent;border-right-color:transparent;border-bottom-color:transparent;border-radius:50%;
+  transform:translateX(-50%) rotateX(66deg);
+}
+.vaani-model-notifications .s1{width:52%;height:28%}.vaani-model-notifications .s2{width:76%;height:44%;top:10%;opacity:.55}
+.vaani-model-notifications .lamp{
+  position:absolute;left:50%;top:18%;width:10px;height:10px;border-radius:50%;
+  transform:translateX(-50%) translateZ(16px);background:currentColor;box-shadow:0 0 16px currentColor
+}
+
+/* Generic visual fallback for less prominent sub-views */
+#view-compare-detail .vaani-3d-model,
+#view-topic .vaani-3d-model,
+#view-worddetail .vaani-3d-model{opacity:.68}
+
+/* Motion safety */
+@keyframes vaaniCubeTurn{
+  from{transform:translate(-50%,-50%) rotateX(-18deg) rotateY(0deg)}
+  to{transform:translate(-50%,-50%) rotateX(-18deg) rotateY(360deg)}
+}
+@keyframes vaaniBarrel{to{transform:translate(-50%,-50%) rotateY(382deg)}}
+
+@media(max-width:760px){
+  .vaani-3d-model{width:78px;height:78px;top:14px;right:10px;opacity:.58}
+  #view-grammar .vaani-3d-model{top:12px}
+  .vaani-3d-model__glow{opacity:.55}
+}
+@media(max-width:420px){
+  .vaani-3d-model{width:66px;height:66px;opacity:.5;right:8px}
+  .vaani-3d-model__glow{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+  .vaani-3d-model *{animation:none!important}
+}
+@media not all and (min-resolution:.001dpcm){
+  /* conservative legacy fallback */
+  .vaani-3d-model{opacity:.35}
+}
+@supports not (transform-style:preserve-3d){
+  .vaani-3d-model{opacity:.28}
+  .vaani-3d-model__scene,.vaani-3d-cube{transform:none!important}
+}
