@@ -169,8 +169,12 @@ try {
   // This suite normally emulates reduced motion; temporarily enable motion to
   // confirm the cube animation exists, then restore the accessible preference.
   await page.emulateMedia({ reducedMotion:'no-preference' });
-  const cubeAnimation = await page.locator('#view-grammar .gt-grammar-cube').evaluate(el => getComputedStyle(el).animationName);
-  assert.equal(cubeAnimation, 'gtsCube', 'Grammar 3D cube animation is not active');
+  const cubeAnimation = await page.locator('#view-grammar .gt-grammar-cube').evaluate(el => ({
+    name:getComputedStyle(el).animationName,
+    running:el.getAnimations().some(animation => animation.animationName === 'gtsCube')
+  }));
+  assert.equal(cubeAnimation.name, 'gtsCube', 'Grammar 3D cube animation is not declared');
+  assert.equal(cubeAnimation.running, true, 'Grammar 3D cube animation is not running');
   await page.emulateMedia({ reducedMotion:'reduce' });
   assert.equal(await page.locator('#gtStudioLab .gt-studio-tab').count(), 4, 'Grammar Studio is missing a practice mode');
   await page.locator('#gtStudioLab [data-gts-tab="scanner"]').click();
