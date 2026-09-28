@@ -847,6 +847,7 @@ var PYQ_CDS_2023_I = [
     "n": 41,
     "sec": "Spotting Errors",
     "q": "Guest is unwelcome when he stays too long.",
+    "parts": ["Guest is","unwelcome","when he stays too long."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -868,6 +869,7 @@ var PYQ_CDS_2023_I = [
     "n": 42,
     "sec": "Spotting Errors",
     "q": "My friend and benefactor has come.",
+    "parts": ["My friend and benefactor","has","come."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -889,6 +891,7 @@ var PYQ_CDS_2023_I = [
     "n": 43,
     "sec": "Spotting Errors",
     "q": "Either he or I am mistaken.",
+    "parts": ["Either he","or I","am mistaken."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -910,6 +913,7 @@ var PYQ_CDS_2023_I = [
     "n": 44,
     "sec": "Spotting Errors",
     "q": "Each of these substances are found in India.",
+    "parts": ["Each of","these substances","are found in India."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -931,6 +935,7 @@ var PYQ_CDS_2023_I = [
     "n": 45,
     "sec": "Spotting Errors",
     "q": "Who do you wish to see?",
+    "parts": ["Who","do you wish","to see?"],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -952,6 +957,7 @@ var PYQ_CDS_2023_I = [
     "n": 46,
     "sec": "Spotting Errors",
     "q": "It was one of the best speeches that has ever been made in the Parliament.",
+    "parts": ["It was one of the best speeches","that has ever been","made in the Parliament."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -973,6 +979,7 @@ var PYQ_CDS_2023_I = [
     "n": 47,
     "sec": "Spotting Errors",
     "q": "I played with same bat that you used.",
+    "parts": ["I played with","same bat","that you used."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -994,6 +1001,7 @@ var PYQ_CDS_2023_I = [
     "n": 48,
     "sec": "Spotting Errors",
     "q": "His written statement defers in several important respects from his oral statement.",
+    "parts": ["His written statement","defers in several important respects","from his oral statement."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -1014,6 +1022,7 @@ var PYQ_CDS_2023_I = [
     "n": 49,
     "sec": "Spotting Errors",
     "q": "I have ordered for three cups of coffee.",
+    "parts": ["I have ordered for","three cups","of coffee."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -1035,6 +1044,7 @@ var PYQ_CDS_2023_I = [
     "n": 50,
     "sec": "Spotting Errors",
     "q": "One must not boast of one’s own success.",
+    "parts": ["One must not","boast of","one’s own success."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",

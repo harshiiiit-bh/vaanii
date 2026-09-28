@@ -142,6 +142,24 @@ try {
   assert.ok(await page.locator('.vp-logout-btn').count(), 'Profile logout control is missing');
   console.log('PASS navigation: all primary views opened; logout control is present');
 
+  await clickMainView('pyq');
+  await page.evaluate(() => {
+    const question = PYQ_ALL.find(q => q._exam === 'CDS' && q.y === 2022 && q.s === 'I' &&
+      q.n === 1 && q.sec === 'Spotting Errors');
+    if (!question) throw new Error('CDS I 2022 spotting-error regression question was not loaded');
+    pvStartSession('section', [question], { title: 'CDS I 2022 · Spotting Errors' });
+  });
+  await page.waitForSelector('#view-pyq .pv-error-parts', { timeout: 10000 });
+  const renderedParts = await page.locator('#view-pyq .pv-error-segment-label').allTextContents();
+  assert.deepEqual(renderedParts, ['(a)', '(b)', '(c)'], 'Spotting Errors must show all three sentence-part labels');
+  const renderedPrompt = (await page.locator('#view-pyq .pv-error-parts').textContent()) || '';
+  assert.ok(renderedPrompt.includes('This task is being undertaken') &&
+    renderedPrompt.includes('for the benefit of young people in needed') &&
+    renderedPrompt.includes('at the instance of the Chief of the Group.'),
+    'Spotting Errors segment text was not preserved');
+  console.log('PASS PYQ presentation: CDS I 2022 spotting-error prompt displays labelled (a), (b), and (c) parts');
+
+
   // Exercise every remaining Book Reading route, including empty states.
   await clickMainView('books');
   for (const route of ['home','dashboard','board','library','ongoing','completed','upcoming','vocab','vocabtest','achievements','academy']) {

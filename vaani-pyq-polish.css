@@ -130,3 +130,50 @@
 @media(prefers-reduced-motion:reduce){
   #view-pyq .pv-topic-card,#view-pyq .pv-option,#view-pyq .pv-topic-open b{transition:none}
 }
+
+
+/* Spotting Errors: keep each tested segment visibly tied to its answer letter. */
+#view-pyq .pv-error-parts{
+  display:block;
+  line-height:2.15;
+  overflow-wrap:anywhere;
+}
+#view-pyq .pv-error-segment{
+  display:inline;
+  padding:0 .13em .12em;
+  border-bottom:1px solid rgba(173,122,36,.62);
+  -webkit-box-decoration-break:clone;
+  box-decoration-break:clone;
+}
+#view-pyq .pv-error-segment-label{
+  display:inline-flex;
+  align-items:center;
+  margin-inline-start:.3em;
+  padding:.02em .34em;
+  border:1px solid rgba(173,122,36,.42);
+  border-radius:5px;
+  background:rgba(201,162,75,.17);
+  color:var(--gold);
+  font-size:.66em;
+  font-weight:800;
+  line-height:1.45;
+  vertical-align:baseline;
+  white-space:nowrap;
+}
+#view-pyq .pv-error-segment-divider{
+  display:inline-block;
+  padding:0 .28em;
+  color:var(--muted);
+  font-size:.82em;
+}
+#view-pyq .pv-error-unsegmented{
+  border-inline-start:3px solid var(--red);
+  padding-inline-start:.65em;
+}
+[data-theme="dark"] #view-pyq .pv-error-segment{
+  border-bottom-color:rgba(224,197,129,.72);
+}
+[data-theme="dark"] #view-pyq .pv-error-segment-label{
+  border-color:rgba(224,197,129,.48);
+  background:rgba(201,162,75,.18);
+}

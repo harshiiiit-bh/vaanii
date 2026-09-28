@@ -2117,6 +2117,7 @@ var PYQ_CDS_2022_II = [
     "n": 101,
     "sec": "Spotting Errors",
     "q": "It would be nice to have a good evening stroll after five hours of office.",
+    "parts": ["It would be nice to have a","good evening stroll","after five hours of office."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -2138,6 +2139,7 @@ var PYQ_CDS_2022_II = [
     "n": 102,
     "sec": "Spotting Errors",
     "q": "Arun likes Geography more than he likes History.",
+    "parts": ["Arun likes","Geography more than","he likes History."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -2159,6 +2161,7 @@ var PYQ_CDS_2022_II = [
     "n": 103,
     "sec": "Spotting Errors",
     "q": "While the solar energy has grabbed the spotlight, wind power too has been made steady progress across the world and in India.",
+    "parts": ["While the solar energy has grabbed the spotlight,","wind power too has been made steady progress","across the world and in India."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -2180,6 +2183,7 @@ var PYQ_CDS_2022_II = [
     "n": 104,
     "sec": "Spotting Errors",
     "q": "Pride brings a great dealing of vanity, an egotistic inflation.",
+    "parts": ["Pride brings a great dealing of","vanity,","an egotistic inflation."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -2201,6 +2205,7 @@ var PYQ_CDS_2022_II = [
     "n": 105,
     "sec": "Spotting Errors",
     "q": "Persuasion happens only when someone takes a stand from which he has unwilling to move.",
+    "parts": ["Persuasion happens only","when someone takes a stand","from which he has unwilling to move."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -2222,6 +2227,7 @@ var PYQ_CDS_2022_II = [
     "n": 106,
     "sec": "Spotting Errors",
     "q": "The food consumed is converted on the body into glucose.",
+    "parts": ["The food consumed is converted","on","the body into glucose."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -2243,6 +2249,7 @@ var PYQ_CDS_2022_II = [
     "n": 107,
     "sec": "Spotting Errors",
     "q": "This testing method requires one to fast overnight after which the fasting blood sugar level is measured.",
+    "parts": ["This testing method requires","one to fast overnight after which","the fasting blood sugar level is measured."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -2264,6 +2271,7 @@ var PYQ_CDS_2022_II = [
     "n": 108,
     "sec": "Spotting Errors",
     "q": "Multiple research studies have laid emphasis on the importance of walking to improved glucose control.",
+    "parts": ["Multiple research studies","have laid emphasis on the importance","of walking to improved glucose control."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -2285,6 +2293,7 @@ var PYQ_CDS_2022_II = [
     "n": 109,
     "sec": "Spotting Errors",
     "q": "This also allows individual writers to play his strengths.",
+    "parts": ["This also allows","individual writers","to play his strengths."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -2306,6 +2315,7 @@ var PYQ_CDS_2022_II = [
     "n": 110,
     "sec": "Spotting Errors",
     "q": "As a screen writer, there are, broadly speaking, two kind of jobs in the film world.",
+    "parts": ["As a screen writer,","there are, broadly speaking,","two kind of jobs in the film world."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",

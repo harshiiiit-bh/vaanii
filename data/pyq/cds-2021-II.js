@@ -438,6 +438,7 @@ var PYQ_CDS_2021_II = [
     "n": 21,
     "sec": "Spotting Errors",
     "q": "Everything is going well; we didn’t have any problem.",
+    "parts": ["Everything is going well;","we didn’t have","any problem."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -459,6 +460,7 @@ var PYQ_CDS_2021_II = [
     "n": 22,
     "sec": "Spotting Errors",
     "q": "Lavanya hasn’t gone to work yesterday.",
+    "parts": ["Lavanya hasn’t gone","to work","yesterday."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -480,6 +482,7 @@ var PYQ_CDS_2021_II = [
     "n": 23,
     "sec": "Spotting Errors",
     "q": "Look! The boy over there wears the same sweater as you.",
+    "parts": ["Look! The boy over there","wears the same sweater","as you."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -501,6 +504,7 @@ var PYQ_CDS_2021_II = [
     "n": 24,
     "sec": "Spotting Errors",
     "q": "It begins to turn dark: shall I switch on the lights?",
+    "parts": ["It begins","to turn dark:","shall I switch on the lights?"],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -522,6 +526,7 @@ var PYQ_CDS_2021_II = [
     "n": 25,
     "sec": "Spotting Errors",
     "q": "Raman and Mitali have been married for twenty years.",
+    "parts": ["Raman and Mitali","have been married","for twenty years."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -543,6 +548,7 @@ var PYQ_CDS_2021_II = [
     "n": 26,
     "sec": "Spotting Errors",
     "q": "I have played basketball for the past three hours.",
+    "parts": ["I have played","basketball","for the past three hours."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -564,6 +570,7 @@ var PYQ_CDS_2021_II = [
     "n": 27,
     "sec": "Spotting Errors",
     "q": "Jamila had a book in front of her, but she didn’t read it.",
+    "parts": ["Jamila had a book","in front of her,","but she didn’t read it."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -585,6 +592,7 @@ var PYQ_CDS_2021_II = [
     "n": 28,
     "sec": "Spotting Errors",
     "q": "When she heard the news she hasn’t been very pleased.",
+    "parts": ["When she heard the news","she hasn’t been","very pleased."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -606,6 +614,7 @@ var PYQ_CDS_2021_II = [
     "n": 29,
     "sec": "Spotting Errors",
     "q": "Where are you coming from?",
+    "parts": ["Where are you coming from?","Are you","an American?"],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -627,6 +636,7 @@ var PYQ_CDS_2021_II = [
     "n": 30,
     "sec": "Spotting Errors",
     "q": "I went to Canada a few years ago for a holiday.",
+    "parts": ["I went to Canada","a few years ago","for a holiday."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
