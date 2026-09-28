@@ -122,6 +122,10 @@ try {
   for (let cycle=0; cycle<1009; cycle++) {
     const view=threeDCycleViews[cycle % threeDCycleViews.length];
     await clickMainView(view);
+    await page.waitForFunction(viewName => {
+      const active=document.getElementById('view-'+viewName);
+      return !!active?.querySelector(':scope > .vaani-3d-model');
+    }, view, {timeout:3000});
     const probe=await page.evaluate(expected => {
       const active=document.querySelector('.view.active');
       const model=active?.querySelector(':scope > .vaani-3d-model');
