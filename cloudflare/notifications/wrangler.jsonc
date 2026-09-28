@@ -9,5 +9,16 @@
     "binding": "DB",
     "database_name": "vaani-notifications",
     "database_id": "bb6b88b8-f589-4e04-aad8-735896de5c15"
-  }]
+  }],
+  // Preview reads the public notification feed; Worker code blocks all Preview writes.
+  "previews": {
+    "vars": {
+      "ENVIRONMENT": "preview"
+    },
+    "d1_databases": [{
+      "binding": "DB",
+      "database_name": "vaani-notifications",
+      "database_id": "bb6b88b8-f589-4e04-aad8-735896de5c15"
+    }]
+  }
 }

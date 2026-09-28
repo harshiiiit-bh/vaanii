@@ -87,6 +87,9 @@ export default {
     const url = new URL(request.url);
     if (request.method === "OPTIONS") return new Response(null, { headers: { "access-control-allow-origin": "*", "access-control-allow-methods": "GET,POST,OPTIONS", "access-control-allow-headers": "Content-Type,Authorization" } });
     try {
+      if (env.ENVIRONMENT === "preview" && !["GET", "OPTIONS"].includes(request.method)) {
+        return json({ error: "Write operations are disabled in Worker Previews." }, 403);
+      }
       if (request.method === "GET" && url.pathname === "/api/notifications") return json({ version: 2, source: "VAANI Government & Defence Notification Engine", generatedAt: new Date().toISOString(), items: await list(env.DB, false) });
       if (request.method === "GET" && url.pathname === "/api/notifications/archive") return json({ version: 2, source: "VAANI Government & Defence Notification Archive", generatedAt: new Date().toISOString(), items: await list(env.DB, true) });
       if (request.method === "POST" && url.pathname === "/api/notifications/sync") return await syncPayload(request, env);

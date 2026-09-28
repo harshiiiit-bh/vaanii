@@ -25,3 +25,9 @@ This backend is separate from VAANI Arena's Supabase project.
 Never put `SYNC_SECRET` in frontend code.
 
 Arena remains on Supabase.
+
+## Preview deployments
+
+Worker Previews are configured in `wrangler.jsonc`. They use the existing notifications D1 database for read-only access to the public notification feed. The Worker rejects all non-GET/non-OPTIONS methods when `ENVIRONMENT=preview`, so preview deployments cannot run the protected sync or other write operations.
+
+If you later move previews to a separate staging D1 database, update the ID in `previews.d1_databases` and apply the schema to that database before deploying a Preview.

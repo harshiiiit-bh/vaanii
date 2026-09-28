@@ -137,3 +137,147 @@ table { max-width:100%; }
   #view-dashboard .vd-qa { grid-template-columns:repeat(2,minmax(0,1fr)); }
   #view-dashboard .vd-stat-lbl { letter-spacing:.04em; }
 }
+
+
+/* ============================================================
+   VAANI COMPLETE EXPERIENCE PASS — September 2026
+   Shared visual system and cross-module layout refinement.
+   Existing markup, IDs, storage and event handlers are preserved.
+   ============================================================ */
+:root{
+  --ui-radius-sm:10px;--ui-radius-md:15px;--ui-radius-lg:22px;
+  --ui-space:clamp(12px,1.5vw,20px);
+  --ui-ease:cubic-bezier(.2,.75,.25,1);
+}
+html{scroll-behavior:smooth;scroll-padding-top:100px}
+body{font-feature-settings:"ss01" on; text-rendering:optimizeLegibility}
+main{padding-inline:clamp(12px,2.2vw,34px)}
+.view{padding-bottom:clamp(24px,4vw,52px)}
+.view h1,.view h2,.view h3{scroll-margin-top:110px}
+.view h2{line-height:1.2}
+.view p{line-height:1.65}
+button,a,[role="button"],input,select,textarea{ -webkit-tap-highlight-color:transparent}
+button{touch-action:manipulation}
+:focus-visible{outline:3px solid var(--blue,#3978b8);outline-offset:3px}
+::selection{background:rgba(201,162,75,.28);color:var(--text)}
+
+/* Consistent surfaces: shared across learning, practice and account views. */
+.view .card,.view .panel,.view .section-card,.view .module-card,
+.view .feature-card,.view .content-card,.view .stat-card{
+  min-width:0;border-radius:var(--ui-radius-md);
+}
+.view .card,.view .panel{
+  transition:border-color .18s var(--ui-ease),box-shadow .18s var(--ui-ease);
+}
+.view :is(input,select,textarea){
+  min-width:0;max-width:100%;font-size:16px;
+}
+.view :is(.grid,.cards-grid,.card-grid,[class*="-grid"]){
+  min-width:0;
+}
+.view :is(img,svg,video){max-width:100%}
+.view :is(.section-head,.section-header,.module-head,.panel-head){
+  min-width:0;gap:10px;flex-wrap:wrap;
+}
+.view :is(.section-head h2,.section-header h2,.module-head h2,.panel-head h2){
+  min-width:0;overflow-wrap:anywhere;
+}
+
+/* A coherent rhythm for every major view. */
+#view-dashboard,#view-grammar,#view-compare,#view-vocab,#view-books,
+#view-pyq,#view-games,#view-leaderboard,#view-profile,#view-notifications{
+  min-width:0;
+}
+#view-grammar,#view-vocab,#view-pyq,#view-books,#view-games,
+#view-compare,#view-profile,#view-leaderboard,#view-notifications{
+  --module-gap:clamp(12px,1.5vw,20px);
+}
+#view-grammar>*+*,#view-vocab>*+*,#view-pyq>*+*,#view-books>*+*,
+#view-games>*+*,#view-compare>*+*,#view-profile>*+*,
+#view-leaderboard>*+*,#view-notifications>*+*{margin-top:var(--module-gap)}
+
+/* Content grids: never allow long titles or controls to force overflow. */
+#view-grammar [class*="grid"],#view-vocab [class*="grid"],
+#view-pyq [class*="grid"],#view-books [class*="grid"],
+#view-games [class*="grid"],#view-notifications [class*="grid"]{
+  min-width:0;
+}
+#view-grammar .grid,#view-vocab .grid,#view-pyq .grid,
+#view-books .grid,#view-games .grid,#view-notifications .grid{
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));
+}
+#view-grammar :is(.topic-grid,.grammar-grid,.lesson-grid),
+#view-vocab :is(.vocab-grid,.word-grid),
+#view-pyq :is(.pyq-grid,.paper-grid,.practice-grid),
+#view-books :is(.book-grid,.reading-grid),
+#view-games :is(.arena-grid,.game-grid){
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));
+}
+
+/* Module heroes use a common responsive scale without flattening their identity. */
+.view :is(.hero,.page-hero,.module-hero,.section-hero){
+  min-width:0;max-width:100%;overflow:hidden;
+  border-radius:clamp(14px,1.8vw,24px);
+}
+.view :is(.hero,.page-hero,.module-hero,.section-hero) :is(h1,h2,p){
+  max-width:100%;overflow-wrap:anywhere;
+}
+.view :is(.hero-actions,.hero-buttons,.action-row,.toolbar,.filter-row){
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0;
+}
+.view :is(.hero-actions,.hero-buttons,.action-row,.toolbar,.filter-row)>*{min-width:0}
+
+/* Tables and long question content remain usable on narrow screens. */
+.view table{width:100%;border-collapse:collapse}
+.view :is(.table-wrap,.table-container,.overflow-x,.results-table-wrap){
+  max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain;
+}
+.view :is(.question,.question-card,.quiz-question,.pyq-question){
+  min-width:0;overflow-wrap:anywhere;
+}
+.view :is(.options,.answer-options,.choice-list){
+  min-width:0;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));
+}
+.view :is(.options,.answer-options,.choice-list)>*{min-width:0;overflow-wrap:anywhere}
+
+/* Navigation: keep controls legible and prevent compressed desktop nav. */
+.topbar{min-width:0}
+.brand{flex:none;white-space:nowrap}
+.top-right{min-width:0;flex:none}
+.mainnav{min-width:0}
+.mainnav button{white-space:nowrap}
+@media(max-width:1180px){
+  .topbar{gap:8px}
+  nav.mainnav{gap:1px}
+  nav.mainnav button{padding:8px 10px;font-size:.64rem}
+  .top-right{gap:5px}
+  .xp-pill{padding:6px 9px;font-size:.65rem}
+  .streak-pill{padding:6px 9px}
+}
+@media(max-width:760px){
+  main{padding-inline:12px}
+  .view{padding-bottom:28px}
+  .view :is(.hero,.page-hero,.module-hero,.section-hero){border-radius:15px}
+  .view :is(.section-head,.section-header,.module-head,.panel-head){align-items:flex-start}
+  .view :is(.hero-actions,.hero-buttons,.action-row)>button,
+  .view :is(.hero-actions,.hero-buttons,.action-row)>.button{max-width:100%}
+  .view :is(.toolbar,.filter-row){align-items:stretch}
+  .view :is(.toolbar,.filter-row)>input,.view :is(.toolbar,.filter-row)>select{flex:1 1 180px}
+}
+@media(max-width:420px){
+  main{padding-inline:10px}
+  .view :is(.card,.panel){border-radius:12px}
+  .view :is(.section-head h2,.section-header h2){font-size:1.1rem}
+  .view :is(.hero-actions,.hero-buttons,.action-row)>button{flex:1 1 auto}
+  .view :is(.stats-grid,.metric-grid,.overview-grid){grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+/* Calm, consistent interaction feedback; motion respects accessibility. */
+.view button,.view a,.view [role="button"]{
+  transition:color .16s var(--ui-ease),background-color .16s var(--ui-ease),
+  border-color .16s var(--ui-ease),box-shadow .16s var(--ui-ease),transform .16s var(--ui-ease);
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}

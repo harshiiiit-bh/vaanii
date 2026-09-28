@@ -393,6 +393,45 @@ try {
 
   console.log('PASS mobile layout: dashboard, vocabulary, Book Reading and profile fit a 390px viewport');
 
+  // Exercise primary views at narrow-phone, tablet, laptop and wide-desktop sizes.
+  // This checks the view and navigation shells as well as the main document width.
+  for (const width of [320, 768, 1024, 1280, 1600]) {
+    console.log('RESPONSIVE CHECK viewport=' + width);
+    await page.setViewportSize({ width, height: 900 });
+    const views = width === 320
+      ? ['dashboard', 'vocab', 'books', 'profile', 'notifications']
+      : ['dashboard', 'grammar', 'compare', 'vocab', 'pyq', 'games', 'leaderboard', 'profile', 'notifications', 'books'];
+    for (const view of views) {
+      await clickMainView(view);
+      const layout = await page.evaluate(() => {
+        const active = document.querySelector('.view.active');
+        const rect = active?.getBoundingClientRect();
+        return {
+          width: innerWidth,
+          documentWidth: document.documentElement.scrollWidth,
+          left: rect ? Math.round(rect.left) : null,
+          right: rect ? Math.round(rect.right) : null,
+          mainNavVisible: !!document.querySelector('#vaaniMainNav') &&
+            getComputedStyle(document.querySelector('#vaaniMainNav')).display !== 'none',
+          bottomNavVisible: !!document.querySelector('#bottomNav') &&
+            getComputedStyle(document.querySelector('#bottomNav')).display !== 'none'
+        };
+      });
+      assert.ok(layout.documentWidth <= width + 2,
+        'Document overflow at ' + width + 'px in ' + view + ': ' + JSON.stringify(layout));
+      assert.ok(layout.left !== null && layout.left >= -2 && layout.right <= width + 2,
+        'Active view exceeds viewport at ' + width + 'px in ' + view + ': ' + JSON.stringify(layout));
+      if (width >= 768) {
+        assert.equal(layout.mainNavVisible, true, 'Primary navigation disappeared at ' + width + 'px');
+        assert.equal(layout.bottomNavVisible, false, 'Mobile bottom navigation unexpectedly appears at ' + width + 'px');
+      } else {
+        assert.equal(layout.bottomNavVisible, true, 'Mobile bottom navigation disappeared at ' + width + 'px');
+      }
+    }
+  }
+  console.log('PASS responsive views: narrow phone, tablet, laptop and wide desktop layouts');
+  await clickMainView('profile');
+
   const savedAccountKeys = await page.evaluate(() =>
     Object.keys(localStorage).filter(key => key.startsWith('vbv_veer_bhogya_account_')));
   assert.ok(savedAccountKeys.length > 0, 'Account data was not persisted before logout');
