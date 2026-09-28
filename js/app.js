@@ -295,6 +295,9 @@ function switchView(name){
   if(!target) return; // unknown view name — nothing to switch to, avoid throwing
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   target.classList.add('active');
+  // Reveal the destination synchronously. Delayed .reveal elements were exposing
+  // the page background during route changes and caused visible black/white flashes.
+  target.querySelectorAll('.reveal:not(.in)').forEach(el=>el.classList.add('in'));
   document.querySelectorAll('#vaaniMainNav button').forEach(b=>b.classList.toggle('active',b.dataset.view===name));
   document.querySelectorAll('.bottomnav button').forEach(b=>b.classList.toggle('active',b.dataset.view===name));
   if(['grammar','compare','vocab','practice','reading','tests','games','pyq'].includes(name)) lastListView=name;
@@ -343,9 +346,9 @@ function switchView(name){
    any stragglers. */
 function forceRevealIn(viewEl){
   if(!viewEl) return;
-  setTimeout(()=>{
-    viewEl.querySelectorAll('.reveal:not(.in)').forEach(el=>el.classList.add('in'));
-  }, 500);
+  // Keep as a defensive no-op fallback. The destination is already revealed
+  // synchronously in switchView(), so this must never create a blank phase.
+  viewEl.querySelectorAll('.reveal:not(.in)').forEach(el=>el.classList.add('in'));
 }
 function toggleMobileNav(){
   const nav=document.getElementById('vaaniMainNav'), btn=document.getElementById('hamburgerBtn');
