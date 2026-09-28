@@ -8,6 +8,20 @@ tabs.forEach(t=>t.addEventListener('click',()=>{filter=t.dataset.ncFilter;tabs.f
 search?.addEventListener('input',apply);
 
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function addArchiveButton(section){
+  const archive=document.createElement('div');
+  archive.className='nc-archive-wrap';
+  archive.innerHTML='<button type="button" class="nc-archive-toggle" id="ncArchiveToggle">🗄️ View notification archive</button><div class="nc-archive-panel" id="ncArchivePanel" hidden><div class="nc-archive-head"><div><b>Historical defence notifications</b><span>Past cycles stay here instead of disappearing.</span></div><span id="ncArchiveCount"></span></div><div class="nc-archive-grid" id="ncArchiveGrid"><div class="nc-live-empty">Loading archive…</div></div></div>';
+  section.appendChild(archive);
+  const toggle=archive.querySelector('#ncArchiveToggle'),panel=archive.querySelector('#ncArchivePanel'),grid=archive.querySelector('#ncArchiveGrid'),count=archive.querySelector('#ncArchiveCount');
+  toggle.addEventListener('click',()=>{panel.hidden=!panel.hidden;toggle.textContent=panel.hidden?'🗄️ View notification archive':'✕ Hide notification archive';});
+  fetch('data/defence-notifications-archive.json?v='+Date.now(),{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('archive '+r.status);return r.json();}).then(data=>{
+    const items=Array.isArray(data.items)?data.items:[];
+    count.textContent=items.length+' archived';
+    grid.innerHTML=items.length?items.slice(0,48).map(x=>'<article class="nc-live-card"><div class="nc-live-top"><span>'+esc(String(x.category||'DEFENCE').replace('_',' '))+'</span><small>ARCHIVED</small></div><h3>'+esc(x.title)+'</h3><p>'+esc(x.summary||'Historical notification. Open the official source for reference.')+'</p><div class="nc-live-meta"><span>'+esc(x.organization||'Official source')+'</span><span>Archived '+esc(x.archivedAt?new Date(x.archivedAt).toLocaleDateString('en-IN'):'')+'</span></div><a class="nc-btn" href="'+esc(x.url)+'" target="_blank" rel="noopener noreferrer">Open source ↗</a></article>').join(''):'<div class="nc-live-empty">No archived notifications yet.</div>';
+  }).catch(()=>{grid.innerHTML='<div class="nc-live-empty">Archive is temporarily unavailable.</div>';});
+}
+
 function addLiveFeed(){
   const toolbar=root.querySelector('.nc-toolbar');
   const grid=root.querySelector('.nc-grid');
