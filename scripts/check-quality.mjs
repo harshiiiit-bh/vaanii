@@ -372,7 +372,16 @@ try {
     const o=Array.isArray(q.o)?q.o.slice(0,3).map(x=>String(x||'').trim()):[];
     return o.length===3&&o.every(x=>x.length>2&&!/error in part/i.test(x));
   };
-  const hasLabeledBlocks=q=>[...String(q.q||'').matchAll(/(?:^|\n|\s\/\s)(S1|S2|S3|S6|P|Q|R|S):\s*/g)].length>=3;
+  const hasLabeledBlocks=q=>{
+    const text=String(q.q||'');
+    const inline=[...text.matchAll(/\(([PQRS])\)\s*\/?\s*/g)].length;
+    const prefix=[...text.matchAll(/(?:^|\n|\s\/\s)(S1|S2|S3|S6|P|Q|R|S):\s*/g)].length;
+    const sec=String(q.sec||'').trim().toLowerCase();
+    if(sec==='sentence arrangement (pqrs)')return inline>=4||prefix>=4;
+    if(sec==='ordering of sentences')return prefix>=6;
+    if(sec==='choose the correct usage')return prefix>=3;
+    return true;
+  };
   let total=0,spotting=0,spottingBad=[],wordClass=0,wordClassBad=[],structured=0,structuredBad=[],reading=0,readingBad=[];
   for(const filename of paperNames){
     const path='data/pyq/'+filename+'.js';if(!existsSync(path))throw new Error('PYQ manifest points to missing paper: '+path);
