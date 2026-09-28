@@ -150,6 +150,13 @@ try {
     const dimensions = await page.evaluate(() => ({ width: innerWidth, scrollWidth: document.documentElement.scrollWidth }));
     assert.ok(dimensions.scrollWidth <= dimensions.width + 2, 'Horizontal overflow on mobile ' + view + ': ' + JSON.stringify(dimensions));
   }
+  await clickMainView('books');
+  await page.locator('#vbv-mainnav button[data-route="academy"]').click();
+  await page.waitForSelector('#app .academy-page', { timeout: 15000 });
+  assert.equal(await page.locator('#app .academy-card').count(), 4, 'Mobile Academy gallery is incomplete');
+  const academyMobile = await page.evaluate(() => ({ width:innerWidth, scrollWidth:document.documentElement.scrollWidth }));
+  assert.ok(academyMobile.scrollWidth <= academyMobile.width + 2, 'Horizontal overflow on mobile Academy: ' + JSON.stringify(academyMobile));
+  console.log('PASS mobile Academy: all four cards fit a 390px viewport');
   console.log('PASS mobile layout: dashboard, vocabulary, Book Reading and profile fit a 390px viewport');
 
   const savedAccountKeys = await page.evaluate(() =>
