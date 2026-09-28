@@ -74,7 +74,7 @@
   display:grid;place-items:center;perspective:900px;isolation:isolate;
 }
 #view-grammar .gt-hero-stage::before{
-  content:"";position:absolute;width:76%;aspect-ratio:1;border-radius:50%;
+  content:"";position:absolute;left:12%;top:12%;width:76%;aspect-ratio:1;border-radius:50%;
   background:radial-gradient(circle,rgba(33,196,180,.18),rgba(33,196,180,.035) 48%,transparent 70%);
   filter:blur(5px);z-index:-1;animation:gtsGlow 5s ease-in-out infinite alternate;
 }
@@ -273,6 +273,16 @@
   #view-grammar .gt-sidebar{grid-template-columns:minmax(0,1fr)}
   #view-grammar .gt-weightage-card{grid-column:auto}
 }
+/* Motion paths: restrained, continuous 3D rotation and SVG orbit. */
+@keyframes gtsOrbit{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes gtsCube{
+  0%,100%{transform:rotateX(-16deg) rotateY(-32deg)}
+  50%{transform:rotateX(14deg) rotateY(148deg)}
+}
+@keyframes gtsPulse{0%{transform:scale(.72);opacity:.58}75%,100%{transform:scale(1.55);opacity:0}}
+@keyframes gtsGlow{from{transform:scale(.9);opacity:.55}to{transform:scale(1.13);opacity:1}}
+@keyframes gtsFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+
 @media(prefers-reduced-motion:reduce){
   #view-grammar .gt-orbit-rotor,#view-grammar .gt-grammar-cube,#view-grammar .gt-hero-stage::before,
   #view-grammar .gt-orbit-label{animation:none!important}
