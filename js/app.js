@@ -938,7 +938,31 @@ function pyqPromptHTML(q){
       '</span>';
   }
   if(/^(?:choose the correct usage|ordering of sentences|sentence arrangement \(pqrs\))$/i.test(sourceSec)){
-    const structured=pyqLabeledBlocksHTML(q);if(structured)return structured;
+    const source=q.q;
+    const inline=[...source.matchAll(/\(([PQRS])\)\s*\/?\s*/g)];
+    let blocks=[];
+    if(inline.length>=3){
+      let cursor=0;
+      for(const m of inline){
+        const fragment=source.slice(cursor,m.index).trim();
+        if(fragment)blocks.push({label:m[1],text:fragment});
+        cursor=m.index+m[0].length;
+      }
+      const tail=source.slice(cursor).trim();
+      if(tail&&blocks.length)blocks[blocks.length-1].text+=' '+tail;
+    }else{
+      const re=/(?:^|\n|\s|[\/\|]\s*)(S1|S2|S3|S6|P|Q|R|S)\s*[\.:]\s*/g;
+      const matches=[...source.matchAll(re)];
+      for(let i=0;i<matches.length;i++){
+        const m=matches[i],startAt=m.index+m[0].length,endAt=i+1<matches.length?matches[i+1].index:source.length;
+        const fragment=source.slice(startAt,endAt).replace(/\s*\/\s*$/,'').trim();
+        if(fragment)blocks.push({label:m[1],text:fragment});
+      }
+    }
+    if(blocks.length>=3){
+      const keyword=window.VaaniPyqTaxonomy&&typeof window.VaaniPyqTaxonomy.keyword==='function'?window.VaaniPyqTaxonomy.keyword(q):String(q.keyword||'').trim();
+      return '<div class="pv-structured-question">'+blocks.map(b=>'<div class="pv-structured-row"><span class="pv-structured-label">'+escapeHtmlVaani(b.label)+'</span><span class="pv-structured-text">'+pyqHighlightText(b.text,keyword)+'</span></div>').join('')+'</div>';
+    }
   }
   return pyqHi(q);
 }
