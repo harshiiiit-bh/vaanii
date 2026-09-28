@@ -845,48 +845,73 @@ function pyqHi(q){
 /* Render spotting-error sentence boundaries as visible, labelled parts.
    Sources vary: imported CDS banks may carry an explicit parts array,
    older NDA banks place (a)/(b)/(c) inline, and newer CDS banks use |. */
+function pyqSpottingCleanPart(value){
+  return String(value==null?'':value)
+    .replace(/^\s*(?:\/|\|)\s*/,'')
+    .replace(/\s*(?:\/|\|)\s*$/,'')
+    .trim();
+}
+function pyqSpottingIsNoError(value){
+  return /^no\s+error[.!?]?$/i.test(pyqSpottingCleanPart(value));
+}
 function pyqSpottingParts(q){
   if(!q||typeof q.q!=='string')return null;
-  if(Array.isArray(q.parts)&&(q.parts.length===3||q.parts.length===4)&&q.parts.every(p=>typeof p==='string'&&p.trim()))return q.parts.map(p=>p.trim());
   const source=q.q;
-  if(/\s\|\s/.test(source)){
-    const split=source.split(/\s*\|\s*/).map(p=>p.trim()).filter(Boolean);
-    if(split.length===3||split.length===4)return split;
-  }
+  const explicit=String(q.spottingFormat||'').trim().toLowerCase();
+  const forceFour=explicit==='four-part'||q.spottingNoError===false;
+  const forceNoError=explicit==='three-part-no-error'||q.spottingNoError===true;
   const markers=[...source.matchAll(/\(([abcd])\)\s*\/?/gi)];
   if(markers.length>=3){
     const sequence=markers.map(m=>m[1].toLowerCase()).join('');
-    const atFront=!source.slice(0,markers[0].index).trim();
-    if(atFront){
-      const blocks=markers.map((m,i)=>source.slice(m.index+m[0].length,i+1<markers.length?markers[i+1].index:source.length).trim());
-      const startsAbcd=sequence.startsWith('abcd');
-      if(startsAbcd&&/^no\s+error[.!?]?$/i.test(blocks[3]||''))return blocks.slice(0,3).filter(Boolean);
-      const count=startsAbcd?4:sequence.startsWith('abc')?3:0;
-      if(count&&blocks.slice(0,count).every(part=>part))return blocks.slice(0,count);
-    }else{
-      const startsAbcd=sequence.startsWith('abcd');
-      const fourth=startsAbcd?source.slice(markers[2].index+markers[2][0].length,markers[3].index).replace(/\s*\/\s*$/,'').trim():'';
-      const fourIsNoError=startsAbcd&&/^no\s+error[.!?]?$/i.test(fourth);
-      const count=startsAbcd&&!fourIsNoError?4:sequence.startsWith('abc')?3:0;
-      if(count){
-        const parts=[];let cursor=0;
-        for(let i=0;i<count;i++){
-          const m=markers[i];
-          const part=source.slice(cursor,m.index).replace(/\s*\/\s*$/,'').trim();
-          if(!part)return null;
-          parts.push(part);cursor=m.index+m[0].length;
+    const hasABC=sequence.startsWith('abc');
+    const hasABCD=sequence.startsWith('abcd');
+    if(hasABC){
+      const atFront=!source.slice(0,markers[0].index).trim();
+      const bridge=hasABCD
+        ?pyqSpottingCleanPart(source.slice(markers[2].index+markers[2][0].length,markers[3].index))
+        :'';
+      const afterD=hasABCD
+        ?pyqSpottingCleanPart(source.slice(markers[3].index+markers[3][0].length))
+        :'';
+      const noErrorOption=Array.isArray(q.o)&&q.o.some(option=>/\bno\s+error\b/i.test(String(option)));
+      const sourceSaysNoError=pyqSpottingIsNoError(bridge)||pyqSpottingIsNoError(afterD);
+      const noError=forceFour?false:(forceNoError||sourceSaysNoError||(!hasABCD&&noErrorOption));
+      const count=forceFour?4:(hasABCD?(noError?3:4):3);
+      if(markers.length>=count){
+        const parts=[];
+        if(atFront){
+          for(let i=0;i<count;i++){
+            const marker=markers[i];
+            const next=markers[i+1];
+            const raw=source.slice(marker.index+marker[0].length,next?next.index:source.length);
+            parts.push(pyqSpottingCleanPart(raw));
+          }
+        }else{
+          let cursor=0;
+          for(let i=0;i<count;i++){
+            const marker=markers[i];
+            parts.push(pyqSpottingCleanPart(source.slice(cursor,marker.index)));
+            cursor=marker.index+marker[0].length;
+          }
         }
-        const tail=source.slice(cursor);
-        if(/^[\s.!?;:]*$/.test(tail)&&tail.trim())parts[parts.length-1]+=tail.trim();
-        return parts;
+        if(parts.length===count&&parts.every(part=>part))return parts;
       }
     }
   }
-  // Legacy NDA banks store sentence fragments in q.o, followed by No error.
+  // Pipe-delimited legacy sources may omit the inline (a)-(d) markers.
+  if(/\s\|\s/.test(source)){
+    const split=source.split(/\s*\|\s*/).map(pyqSpottingCleanPart).filter(Boolean);
+    if(split.length===4&&pyqSpottingIsNoError(split[3]))return split.slice(0,3);
+    if(split.length===3||split.length===4)return split;
+  }
+  if(Array.isArray(q.parts)&&(q.parts.length===3||q.parts.length===4)&&q.parts.every(p=>typeof p==='string'&&p.trim())){
+    return q.parts.map(p=>pyqSpottingCleanPart(p));
+  }
+  // Legacy NDA banks sometimes store the sentence fragments in q.o.
   const choices=Array.isArray(q.o)?q.o.map(value=>String(value).trim()):[];
-  const hasNoError=choices.length>0&&/^no\s+error[.!?]?$/i.test(choices[choices.length-1]);
+  const hasNoError=choices.length>0&&pyqSpottingIsNoError(choices[choices.length-1]);
   const count=choices.length-(hasNoError?1:0);
-  if((count===3||count===4)&&choices.slice(0,count).every(value=>value.length>2&&!/^error in part/i.test(value))){
+  if((count===3||count===4)&&choices.slice(0,count).every(value=>value.length>2&&!/^error\s+in\s+part/i.test(value))){
     const lower=source.toLocaleLowerCase();let cursor=0;const parts=[];
     for(const phrase of choices.slice(0,count)){
       const index=lower.indexOf(phrase.toLocaleLowerCase(),cursor);
@@ -901,20 +926,40 @@ function pyqSpottingParts(q){
 }
 function pyqSpottingFormat(q,parts){
   const explicit=String(q&&q.spottingFormat||'').trim().toLowerCase();
-  const valid=['three-part-no-error','three-part','four-part','four-part-no-error'];
-  if(valid.includes(explicit))return explicit;
-  if(q&&q.spottingNoError===true)return parts.length===4?'four-part-no-error':'three-part-no-error';
-  if(q&&q.spottingNoError===false)return parts.length===4?'four-part':'three-part';
-  return parts.length===4?'four-part':'three-part-no-error';
+  if(explicit==='four-part'||explicit==='four-part-no-error')return 'four-part';
+  if(explicit==='three-part')return 'three-part';
+  if(explicit==='three-part-no-error')return 'three-part-no-error';
+  if(q&&q.spottingNoError===false)return parts&&parts.length===4?'four-part':'three-part';
+  if(q&&q.spottingNoError===true)return 'three-part-no-error';
+  const options=Array.isArray(q&&q.o)?q.o.map(value=>String(value||'')):[];
+  if(options.some(value=>/error\s+in\s+part\s*\(?d\)?/i.test(value)))return 'four-part';
+  if(parts&&parts.length===4)return 'four-part';
+  const source=String(q&&q.q||'');
+  const markers=[...source.matchAll(/\(([abcd])\)\s*\/?/gi)];
+  const hasABCD=markers.map(m=>m[1].toLowerCase()).join('').startsWith('abcd');
+  if(hasABCD){
+    const bridge=markers[2]&&markers[3]
+      ?pyqSpottingCleanPart(source.slice(markers[2].index+markers[2][0].length,markers[3].index)):'';
+    const afterD=markers[3]?pyqSpottingCleanPart(source.slice(markers[3].index+markers[3][0].length)):'';
+    if(!pyqSpottingIsNoError(bridge)&&!pyqSpottingIsNoError(afterD))return 'four-part';
+  }
+  const hasNoError=/\bno\s+error\b/i.test(source)||options.some(value=>/\bno\s+error\b/i.test(value));
+  if(parts&&parts.length===3)return hasNoError?'three-part-no-error':'three-part';
+  if(hasNoError)return 'three-part-no-error';
+  return 'three-part';
 }
 function pyqOptionLabels(q){
   if(!q||!Array.isArray(q.o))return [];
   if(String(q._sourceSec||q.sec||'').trim().toLowerCase()==='spotting errors'){
     const parts=pyqSpottingParts(q);
-    if(!parts)return q.o;
     const format=pyqSpottingFormat(q,parts);
-    const labels=parts.map((_,i)=>'Error in part ('+String.fromCharCode(97+i)+')');
-    if(format.endsWith('no-error'))labels.push('No error');
+    const explicit=String(q.spottingFormat||'').trim().toLowerCase();
+    const hasDChoice=q.o.some(value=>/error\s+in\s+part\s*\(?d\)?/i.test(String(value)));
+    const hasNoError=q.o.some(value=>/\bno\s+error\b/i.test(String(value)));
+    if(!parts&&!explicit&&q.spottingNoError===undefined&&!hasDChoice&&!hasNoError)return q.o;
+    const count=format==='four-part'?4:format==='three-part-no-error'?3:parts&&parts.length===4?4:3;
+    const labels=Array.from({length:count},(_,i)=>'Error in part ('+String.fromCharCode(97+i)+')');
+    if(format==='three-part-no-error')labels.push('No error');
     return labels;
   }
   return q.o;

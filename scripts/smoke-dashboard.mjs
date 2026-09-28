@@ -158,6 +158,10 @@ try {
     renderedPrompt.includes('at the instance of the Chief of the Group.'),
     'Spotting Errors segment text was not preserved');
   console.log('PASS PYQ presentation: CDS I 2022 spotting-error prompt displays labelled (a), (b), and (c) parts');
+  const cdsOptions=await page.locator('#view-pyq .pv-options .pv-option').allTextContents();
+  assert.equal(cdsOptions.length,4,'CDS I 2022 three-part question must retain four response options');
+  assert.ok(cdsOptions[3].includes('No error'),'CDS I 2022 source marks the fourth response as No error');
+
 
   await page.evaluate(() => {
     const question = PYQ_ALL.find(q => q._exam === 'NDA' && q.y === 2009 && q.s === 'I' &&
@@ -202,6 +206,47 @@ try {
   assert.ok(fourPartFixture.prompt.includes('without delay.'),'Fourth sentence fragment was dropped');
   console.log('PASS PYQ presentation: synthetic four-part format displays (a)-(d) and four matching answer choices');
 
+  const inferredFormats=await page.evaluate(()=>{
+    const base=PYQ_ALL.find(q=>q._exam==='NDA'&&q.sec==='Spotting Errors');
+    if(!base)throw new Error('No spotting-error record available for inferred-format fixtures');
+    const render=q=>{
+      const previous=PV.session;
+      try{
+        PV.session={mode:'practice',title:'Spotting format regression',questions:[q],index:0,
+          answers:{},streak:0,bestStreak:0,remaining:null,perQSeconds:null,timeLimitSec:null};
+        const doc=new DOMParser().parseFromString(pvSessionHTML(),'text/html');
+        const options=[...doc.querySelectorAll('.pv-options .pv-option')].map(el=>(el.textContent||'').replace(/\s+/g,' ').trim());
+        return {
+          parts:[...doc.querySelectorAll('.pv-error-segment-label')].map(el=>el.textContent.trim()),
+          text:[...doc.querySelectorAll('.pv-error-segment-text')].map(el=>(el.textContent||'').replace(/\s+/g,' ').trim()),
+          options,
+          parsed:pyqSpottingParts(q),
+          format:pyqSpottingFormat(q,pyqSpottingParts(q))
+        };
+      }finally{PV.session=previous;}
+    };
+    const four={...base,_id:'__smoke-inferred-four__',n:9998,
+      q:'The cadet reported (a) / the issue (b) / before the drill (c) / without delay. (d)',
+      o:['(a)','(b)','(c)','(d)']};
+    delete four.parts;delete four.spottingFormat;delete four.spottingNoError;
+    const three={...base,_id:'__smoke-inferred-three-no-error__',n:9997,
+      q:'The cadet reported (a) / the issue (b) / before the drill (c) / No error (d)',
+      o:['(a)','(b)','(c)','(d)']};
+    delete three.parts;delete three.spottingFormat;delete three.spottingNoError;
+    return {four:render(four),three:render(three)};
+  });
+  assert.equal(inferredFormats.four.format,'four-part','Four source segments should infer the four-part format');
+  assert.deepEqual(inferredFormats.four.parts,['(a)','(b)','(c)','(d)']);
+  assert.deepEqual(inferredFormats.four.text,['The cadet reported','the issue','before the drill','without delay.']);
+  assert.ok(inferredFormats.four.options[3].includes('Error in part (d)'),
+    'Four-part D must be Error in part (d): '+JSON.stringify(inferredFormats.four.options));
+  assert.equal(inferredFormats.three.format,'three-part-no-error','A printed No error (d) must infer three-part format');
+  assert.deepEqual(inferredFormats.three.parts,['(a)','(b)','(c)']);
+  assert.equal(inferredFormats.three.options.length,4);
+  assert.ok(inferredFormats.three.options[3].includes('No error'),
+    'Three-part D must remain No error: '+JSON.stringify(inferredFormats.three.options));
+  console.log('PASS PYQ presentation: inferred four-part D=Error in part (d); three-part D=No error');
+
   const fullPyqAudit = await page.evaluate(() => {
     const previous = PV.session;
     const issues = [];
@@ -234,8 +279,11 @@ try {
           if (labels.join('|')!==expected.join('|')) issues.push(q._id+': spotting parts missing or mislabelled: '+labels.join(','));
           if (parts.length!==3&&parts.length!==4) issues.push(q._id+': unsupported spotting part count '+parts.length);
           const format=pyqSpottingFormat(q,parts);
+          const choices=pyqOptionLabels(q);
           if (format==='four-part'&&parts.length!==4) issues.push(q._id+': four-part format does not have four segments');
           if (format==='three-part-no-error'&&parts.length!==3) issues.push(q._id+': three-part-no-error format does not have three segments');
+          if (format==='four-part'&&(choices.length!==4||choices[3]!=='Error in part (d)')) issues.push(q._id+': four-part D choice is not Error in part (d)');
+          if (format==='three-part-no-error'&&(choices.length!==4||choices[3]!=='No error')) issues.push(q._id+': three-part D choice is not No error');
         }
         checked++;
         if (issues.length >= 30) break;
