@@ -24,15 +24,15 @@ const dateRx = /\b(?:0?[1-9]|[12]\d|3[01])[./-](?:0?[1-9]|1[0-2])[./-](?:20\d{2}
 
 function stripHtml(html){
   return html
-    .replace(/<script[\\s\\S]*?<\\/script>/gi,' ')
-    .replace(/<style[\\s\\S]*?<\\/style>/gi,' ')
-    .replace(/<!--[\\s\\S]*?-->/g,' ')
+    .replace(/<script[\s\S]*?<\/script>/gi,' ')
+    .replace(/<style[\s\S]*?<\/style>/gi,' ')
+    .replace(/<!--[\s\S]*?-->/g,' ')
     .replace(/<[^>]+>/g,' ')
     .replace(/&nbsp;/gi,' ')
     .replace(/&amp;/gi,'&')
-    .replace(/&#39;/g,"'")
+    .replace(/&#39;/gi,"'")
     .replace(/&quot;/gi,'"')
-    .replace(/\\s+/g,' ')
+    .replace(/\s+/g,' ')
     .trim();
 }
 
@@ -49,16 +49,16 @@ function categoryFor(text, fallback){
   const s = text.toLowerCase();
   if (/afcat|air force common admission/.test(s)) return 'AFCAT';
   if (/central armed police|capf/.test(s)) return 'CAPF';
-  if (/combined defence services|\\bcds\\b/.test(s)) return 'CDS';
-  if (/national defence academy|\\bnda\\b/.test(s)) return 'NDA';
-  if (/agniveer vayu|agniveervayu|air force agniveer/.test(s)) return 'AGNIVEER';
+  if (/combined defence services|\bcds\b/.test(s)) return 'CDS';
+  if (/national defence academy|\bnda\b/.test(s)) return 'NDA';
+  if (/agniveer vayu|agnipathvayu|air force agniveer/.test(s)) return 'AGNIVEER';
   if (/agniveer|join indian navy|navy recruitment/.test(s)) return 'AGNIVEER';
   if (/recruitment rally|rally bharti|army recruitment|join indian army/.test(s)) return 'ARMY_RALLY';
-  if (/border security force|\\bbsf\\b/.test(s)) return 'BSF';
-  if (/central reserve police|\\bcrpf\\b/.test(s)) return 'CRPF';
-  if (/central industrial security|\\bcisf\\b/.test(s)) return 'CISF';
-  if (/indo[- ]tibetan|\\bitbp\\b/.test(s)) return 'ITBP';
-  if (/sashastra seema bal|\\bssb\\b/.test(s)) return 'SSB';
+  if (/border security force|\bbsf\b/.test(s)) return 'BSF';
+  if (/central reserve police|\bcrpf\b/.test(s)) return 'CRPF';
+  if (/central industrial security|\bcisf\b/.test(s)) return 'CISF';
+  if (/indo[- ]tibetan|\bitbp\b/.test(s)) return 'ITBP';
+  if (/sashastra seema bal|\bssb\b/.test(s)) return 'SSB';
   if (/assam rifles/.test(s)) return 'ASSAM_RIFLES';
   if (/coast guard/.test(s)) return 'COAST_GUARD';
   return fallback[0] || 'DEFENCE';
@@ -74,7 +74,7 @@ function statusFor(text){
 }
 
 function titleFromAnchor(text){
-  return text.replace(/\\s+/g,' ').replace(/^(click here|view|download)\\s*[:|-]?\\s*/i,'').trim().slice(0,180);
+  return text.replace(/\s+/g,' ').replace(/^(click here|view|download)\s*[:|-]?\s*/i,'').trim().slice(0,180);
 }
 
 function makeId(title,url){
@@ -85,7 +85,7 @@ async function fetchSource(source){
   const res=await fetch(source.url,{headers:{'user-agent':USER_AGENT,'accept':'text/html,application/xhtml+xml'},redirect:'follow'});
   if(!res.ok) throw new Error(`${res.status} ${res.statusText}`);
   const html=await res.text();
-  const matches=[...html.matchAll(/<a\\b[^>]*href=["']([^"']+)["'][^>]*>([\\s\\S]*?)<\\/a>/gi)];
+  const matches=[...html.matchAll(/<a\b[^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi)];
   const out=[];
   for(const m of matches){
     if(out.length>=MAX_PER_SOURCE) break;
@@ -96,18 +96,17 @@ async function fetchSource(source){
     if(!relevant.test(context)) continue;
     out.push({label:titleFromAnchor(label),url:href,context:context.slice(0,900)});
   }
-  return {out,checkedAt:new Date().toISOString(),text:stripHtml(html).slice(0,12000)};
+  return {out,checkedAt:new Date().toISOString()};
 }
 
 function inferDates(context){
-  const dates=[...context.matchAll(dateRx)].map(x=>x[0]);
-  return dates.slice(0,4);
+  return [...context.matchAll(dateRx)].map(x=>x[0]).slice(0,4);
 }
 
 async function main(){
   let existing={version:1,generatedAt:null,source:'VAANI Defence Notification Engine',items:[]};
   try { existing=JSON.parse(await fs.readFile(DATA_FILE,'utf8')); } catch {}
-  const byKey=new Map(existing.items.map(x=>[x.id,x]));
+  const byKey=new Map((existing.items||[]).map(x=>[x.id,x]));
   const runLog=[];
 
   for(const source of sources){
@@ -135,7 +134,7 @@ async function main(){
           official:true,
           firstSeen:prev?.firstSeen||new Date().toISOString(),
           lastSeen:new Date().toISOString(),
-          summary:prev?.summary||'Automatically discovered from the organisation\'s public source page. Open the official source and verify the complete notice before applying.'
+          summary:prev?.summary||"Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
         });
       }
     }catch(error){
@@ -144,15 +143,14 @@ async function main(){
   }
 
   const items=[...byKey.values()]
-    .filter(x=>x.title && x.url)
+    .filter(x=>x.title&&x.url)
     .sort((a,b)=>String(b.lastSeen||b.firstSeen).localeCompare(String(a.lastSeen||a.firstSeen)));
 
   const output={version:1,generatedAt:new Date().toISOString(),source:'VAANI Defence Notification Engine',checkedSources:runLog,items};
-  await fs.writeFile(DATA_FILE,JSON.stringify(output,null,2)+'\\n');
+  await fs.writeFile(DATA_FILE,JSON.stringify(output,null,2)+'\n');
   console.log(JSON.stringify({generatedAt:output.generatedAt,items:items.length,runLog},null,2));
 
-  const successful=runLog.filter(x=>x.ok).length;
-  if(successful===0) throw new Error('All notification sources failed; refusing to publish a blank refresh.');
+  if(runLog.every(x=>!x.ok)) throw new Error('All notification sources failed; refusing to publish a blank refresh.');
 }
 
 main().catch(error=>{console.error(error);process.exit(1);});
