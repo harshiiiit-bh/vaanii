@@ -416,3 +416,27 @@ try {
   if(readingBad.length)throw new Error('Reading Comprehension missing passage context: '+readingBad.slice(0,20).join(', '));
   console.log('PYQ presentation audit: '+total+' questions; '+spotting+' Spotting Errors, '+wordClass+' Parts-of-Speech/Word-Class, '+structured+' labeled-structure questions, '+reading+' Reading Comprehension checks passed');
 }catch(error){console.error('PYQ presentation audit failed:',error.message);process.exitCode=1;}
+
+
+/* Cloudflare Worker Preview configuration and read-only safety guard. */
+try {
+  const workerConfig = JSON.parse(readFileSync('cloudflare/notifications/wrangler.jsonc', 'utf8'));
+  const productionDb = (workerConfig.d1_databases || []).find(binding => binding.binding === 'DB');
+  const previewDb = (workerConfig.previews?.d1_databases || []).find(binding => binding.binding === 'DB');
+  const workerSource = readFileSync('cloudflare/notifications/src/index.js', 'utf8');
+  if (!workerConfig.previews || !previewDb) throw new Error('Wrangler Previews must declare the DB binding.');
+  if (!workerConfig.previews.vars || workerConfig.previews.vars.ENVIRONMENT !== 'preview') {
+    throw new Error('Wrangler Previews must set ENVIRONMENT=preview.');
+  }
+  if (!productionDb || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(previewDb.database_id || '')) {
+    throw new Error('Preview DB must have a valid D1 database ID.');
+  }
+  if (!workerSource.includes('env.ENVIRONMENT === "preview"') ||
+      !workerSource.includes('Write operations are disabled in Worker Previews.')) {
+    throw new Error('Worker must reject write operations in Preview deployments.');
+  }
+  console.log('Cloudflare Worker: Preview DB binding and read-only write guard validated');
+} catch (error) {
+  console.error('Cloudflare Preview validation failed:', error.message);
+  process.exitCode = 1;
+}
