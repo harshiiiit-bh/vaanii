@@ -21,3 +21,12 @@
 .nh-calendar-head{margin-top:4px}
 @media(max-width:900px){.nh-feed-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:620px){.nh-feed-grid{grid-template-columns:1fr}.nh-feed-card{padding:16px}}
+
+.nc-archive-wrap{margin-top:16px}
+.nc-archive-toggle{width:100%;border:1px solid rgba(120,95,45,.18);background:rgba(255,255,255,.72);border-radius:14px;padding:12px 15px;text-align:left;font:800 12px Inter,sans-serif;color:inherit;cursor:pointer}
+.nc-archive-panel{margin-top:12px;padding-top:14px;border-top:1px solid rgba(120,95,45,.12)}
+.nc-archive-head{display:flex;justify-content:space-between;gap:12px;margin-bottom:12px;font:800 11px Inter,sans-serif}
+.nc-archive-head div{display:grid;gap:3px}.nc-archive-head span{font-weight:500;color:#777}.nc-archive-head>span{color:#94702a}
+.nc-archive-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media(max-width:900px){.nc-archive-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:620px){.nc-archive-grid{grid-template-columns:1fr}}
