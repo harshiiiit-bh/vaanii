@@ -273,7 +273,7 @@ button{touch-action:manipulation}
 }
 
 /* Calm, consistent interaction feedback; motion respects accessibility. */
-.view button,.view a,.view [role="button]{
+.view button,.view a,.view [role="button"]{
   transition:color .16s var(--ui-ease),background-color .16s var(--ui-ease),
   border-color .16s var(--ui-ease),box-shadow .16s var(--ui-ease),transform .16s var(--ui-ease);
 }
