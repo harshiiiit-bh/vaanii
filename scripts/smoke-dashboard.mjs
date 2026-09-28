@@ -92,14 +92,14 @@ try {
   console.log('PASS navigation: all primary views opened; logout control is present');
 
   const savedAccountKeys = await page.evaluate(() =>
-    Object.keys(localStorage).filter(key => key.startsWith('veer_bhogya_account_')));
+    Object.keys(localStorage).filter(key => key.startsWith('vbv_veer_bhogya_account_')));
   assert.ok(savedAccountKeys.length > 0, 'Account data was not persisted before logout');
   page.once('dialog', dialog => dialog.accept());
   await page.locator('.vp-logout-btn').click();
   await page.waitForSelector('#gate-stage-start', { state: 'visible', timeout: 15000 });
   const afterLogout = await page.evaluate(() => ({
     session: localStorage.getItem('vbv_session_code'),
-    accounts: Object.keys(localStorage).filter(key => key.startsWith('veer_bhogya_account_'))
+    accounts: Object.keys(localStorage).filter(key => key.startsWith('vbv_veer_bhogya_account_'))
   }));
   assert.equal(afterLogout.session, null, 'Logout did not clear the session pointer');
   assert.ok(afterLogout.accounts.length > 0, 'Logout removed the saved account data');
