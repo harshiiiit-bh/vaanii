@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="vaani-profile.css">
 <link rel="stylesheet" href="vaani-bookreading.css">
 <link rel="stylesheet" href="vaani-contrast.css">
-<link rel="stylesheet" href="vaani-pyq-polish.css">
+<link rel="stylesheet" href="vaani-pyq-polish.css?v=20260928-pyq4">
 <link rel="stylesheet" href="vaani-grammar-ux.css">
 <link rel="stylesheet" href="vaani-site-refresh.css">
 </head>
@@ -1082,15 +1082,16 @@
 <script src="data/grammar-basics.js"></script>
 <script src="data/vocab.js"></script>
 <script src="data/comparisons-extra.js"></script>
-<script src="data/pyq/manifest.js"></script>
+<script src="data/pyq/manifest.js?v=20260928-pyq4"></script>
 <script>
   /* Writes out a normal <script src> tag for every paper listed in the
      manifest above, right here in the document as it's still being
      parsed — so these load exactly as synchronously and reliably as if
      they'd been typed directly into this file by hand. Nothing async,
      nothing that can silently fail: if the page loaded, these load. */
+  var VAANI_PYQ_ASSET_VERSION = '20260928-pyq4';
   PYQ_PAPER_FILES.forEach(function(f){
-    document.write('<script src="data/pyq/'+f+'.js"><\/script>');
+    document.write('<script src="data/pyq/'+f+'.js?v='+VAANI_PYQ_ASSET_VERSION+'"><\/script>');
   });
 </script>
 <!-- Book Reading (Veer Bhogya Vasundhara) — data first, then its app logic -->
@@ -1100,8 +1101,8 @@
 <script src="js/library.js"></script>
 <!-- To add a new PYQ paper: drop data/pyq/<year>-<session>.js in the folder
      and add one more <script src="..."> line above. Nothing else to change. -->
-<script src="js/vaani-pyq-taxonomy.js"></script>
-<script src="js/app.js"></script>
+<script src="js/vaani-pyq-taxonomy.js?v=20260928-pyq4"></script>
+<script src="js/app.js?v=20260928-pyq4"></script>
 <script src="js/vaani-testkit.js"></script>
 <script src="js/vaani-arena.js"></script>
 <script src="js/vaani-vocab-bridge.js"></script>
