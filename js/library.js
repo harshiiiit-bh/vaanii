@@ -351,6 +351,11 @@ function paceRating(totalPages, startAt, endAt){
 /* ================= TOASTS ================= */
 function vbvToast(msg, kind){
   const stack = document.getElementById('vbvToast-stack');
+  if(!stack){
+    if(typeof toast==='function')toast(msg);
+    else console.warn('[Book Reading] '+String(msg||''));
+    return;
+  }
   while(stack.children.length >= 4){ stack.removeChild(stack.firstChild); }
   const el = document.createElement('div');
   el.className = 'vbvToast' + (kind ? ' '+kind : '');
