@@ -324,12 +324,17 @@ function switchView(name){
   }
   if(name==='journey') setTimeout(()=>safeCall(renderGrammarJourney,'renderGrammarJourney'), 30);
   closeMobileNav();
-  window.scrollTo({top:0,behavior:'smooth'});
+  // Route changes must be atomic. Smooth scrolling here exposed the document
+  // background while hidden views were being swapped, producing black/white flashes.
+  // Jump to the new view immediately; the browser paints only the target state.
+  try{ window.scrollTo(0,0); }catch(_err){}
   setTimeout(()=>{
-    if(typeof initTilt==='function') safeCall(initTilt,'initTilt');
+    if(typeof initTilt==='function' && window.matchMedia('(hover:hover) and (pointer:fine)').matches){
+      safeCall(initTilt,'initTilt');
+    }
     if(typeof initReveal==='function') safeCall(initReveal,'initReveal');
     forceRevealIn(target);
-  },60);
+  },0);
 }
 /* Safety net for requirement #6: guarantee that nothing inside the view we just navigated
    to can be permanently stuck at opacity:0 / translateY() because its IntersectionObserver
