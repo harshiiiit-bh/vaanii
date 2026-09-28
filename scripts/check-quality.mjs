@@ -420,7 +420,8 @@ try {
 
 /* Cloudflare Worker Preview configuration and read-only safety guard. */
 try {
-  const workerConfig = JSON.parse(readFileSync('cloudflare/notifications/wrangler.jsonc', 'utf8'));
+  const workerConfigSource = readFileSync('cloudflare/notifications/wrangler.jsonc', 'utf8');
+  const workerConfig = JSON.parse(workerConfigSource.replace(/^\\s*\\/\\/.*$/gm, ''));
   const productionDb = (workerConfig.d1_databases || []).find(binding => binding.binding === 'DB');
   const previewDb = (workerConfig.previews?.d1_databases || []).find(binding => binding.binding === 'DB');
   const workerSource = readFileSync('cloudflare/notifications/src/index.js', 'utf8');
