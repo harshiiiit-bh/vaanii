@@ -1,0 +1,107 @@
+/* ============================================================
+   VAANI STABILITY / MOBILE-FIRST REFINEMENT
+   Loaded last. Presentation-only safety layer.
+   ============================================================ */
+
+html{overflow-x:clip}
+body{overflow-x:clip}
+img{background-color:transparent}
+
+/* A single, quiet visual hierarchy on small screens. */
+@media(max-width:760px){
+  /* Remove heavy atmospheric layers that compete with learning content. */
+  #bgSystem,#cursorGlow,#cursorDot,#confetti-canvas,#vaaniVfxScene,.grain{
+    display:none!important;
+  }
+
+  /* Navigation always stays above page content. */
+  header{z-index:100!important}
+  .bottomnav{z-index:90!important}
+  main{z-index:2!important;padding-bottom:calc(var(--bottomnav-h,64px) + 18px)!important}
+
+  /* Avoid expensive clip-path/shape transitions on phones. */
+  .view.vfx-shape-enter{
+    animation:vfxMobileViewIn .26s ease-out both!important;
+    clip-path:none!important;
+  }
+  @keyframes vfxMobileViewIn{
+    from{opacity:.65;transform:translateY(5px)}
+    to{opacity:1;transform:none}
+  }
+
+  /* Dashboard hero: image is atmospheric, never the load-critical content. */
+  #view-dashboard .vd-hero{
+    min-height:0!important;
+    background:
+      linear-gradient(135deg,#132431 0%,#0b1722 58%,#10232b 100%)!important;
+  }
+  #view-dashboard .vd-hero-photo{
+    opacity:.20!important;
+    mask-image:none!important;
+    -webkit-mask-image:none!important;
+    object-position:center 28%!important;
+  }
+  #view-dashboard .vd-hero-compass{
+    display:none!important;
+  }
+
+  /* Compact the global top chrome. */
+  header .topbar{
+    min-height:58px!important;
+    padding-block:7px!important;
+  }
+  .bottomnav{
+    min-height:var(--bottomnav-h,64px)!important;
+  }
+
+  /* Studio stays available but cannot cover the page. */
+  #vaaniVfxDock{
+    right:10px!important;
+    bottom:calc(var(--bottomnav-h,64px) + 8px + var(--safe-b,0px))!important;
+  }
+  #vaaniVfxDock .vfx-dock-trigger{
+    width:44px!important;
+    height:44px!important;
+    min-width:44px!important;
+    min-height:44px!important;
+    padding:0!important;
+    border-radius:50%!important;
+    font-size:0!important;
+  }
+  #vaaniVfxDock .vfx-dock-trigger .vfx-dock-star{
+    width:24px!important;height:24px!important;margin:0!important;
+  }
+  #vaaniVfxDock .vfx-dock-panel{
+    width:min(320px,calc(100vw - 20px))!important;
+    max-height:calc(100dvh - var(--bottomnav-h,64px) - 76px)!important;
+    margin-bottom:7px!important;
+    border-radius:15px!important;
+  }
+
+  /* Grammar: content first, decoration second. */
+  #view-grammar .gt-header{
+    overflow:hidden!important;
+  }
+  #view-grammar .gt-hero-stage{
+    display:none!important;
+  }
+  #view-grammar .gt-title{
+    max-width:none!important;
+  }
+  #view-grammar .gt-hero-copy{
+    padding-right:0!important;
+  }
+  #view-grammar .gt-hero-actions{
+    grid-template-columns:1fr 1fr!important;
+  }
+}
+
+@media(max-width:390px){
+  #view-grammar .gt-header{padding:15px 13px 13px!important}
+  #view-grammar .gt-title{font-size:1.85rem!important}
+  #view-grammar .gt-hero-actions{grid-template-columns:1fr!important}
+}
+
+/* Hero image failure fallback is reinforced by a quiet background. */
+.vd-hero-photo.is-broken{display:none!important}
+.vd-hero-photo.is-loading{opacity:.04!important}
