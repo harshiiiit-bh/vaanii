@@ -1703,7 +1703,7 @@ function renderAcademy(){
   ];
   const cards = academies.map(a=>`
     <article class="academy-card">
-      <div class="academy-card-photo is-missing">
+      <div class="academy-card-photo is-missing" aria-label="${escapeHtml(a.alt)}">
         <img src="${a.img}" alt="${escapeHtml(a.alt)}" loading="eager" decoding="async" onload="this.parentElement.classList.remove('is-missing')" onerror="this.remove();this.parentElement.classList.add('is-missing')">
         <span class="academy-card-index">${a.index}</span>
         <span class="academy-card-field">${a.field}</span>
@@ -1725,7 +1725,7 @@ function renderAcademy(){
         <h2 id="academyHeroTitle">Four academies.<br><em>One calling.</em></h2>
         <p>Different horizons. A shared commitment to discipline, courage and service. Step inside the institutions behind the journey.</p>
         <div class="academy-hero-actions">
-          <a href="#academyGallery" class="academy-hero-cta">Explore the academies <span aria-hidden="true">↓</span></a>
+          <button type="button" class="academy-hero-cta" onclick="document.getElementById(&quot;academyGallery&quot;)?.scrollIntoView({behavior:&quot;smooth&quot;,block:&quot;start&quot;})">Explore the academies <span aria-hidden="true">↓</span></button>
           <span class="academy-hero-motto">LEARN WITH PURPOSE · SERVE WITH HONOUR</span>
         </div>
       </div>
