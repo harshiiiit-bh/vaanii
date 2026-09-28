@@ -289,3 +289,210 @@
   #view-grammar .gt-orbit-pulse{display:none}
   #view-grammar .gt-hero-primary,#view-grammar .gt-hero-secondary,#view-grammar .gt-studio-option{transition:none}
 }
+
+
+/* ============================================================
+   MOBILE-FIRST GRAMMAR PASS — optimized for 320–600px screens
+   Desktop layout stays intact; phone layout prioritizes scanability,
+   touch targets and vertical rhythm.
+   ============================================================ */
+@media (max-width:600px){
+  #view-grammar{
+    width:100%!important;
+    margin:0!important;
+    padding:8px 0 34px!important;
+    border-left:0!important;
+    border-right:0!important;
+    border-radius:0!important;
+    box-shadow:none!important;
+    overflow:visible!important;
+  }
+
+  /* Compact hero: copy stays dominant, 3D art becomes a small accent. */
+  #view-grammar .gt-header{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    grid-template-areas:"copy" "stats"!important;
+    gap:16px!important;
+    margin:0 10px 14px!important;
+    padding:18px 16px 15px!important;
+    min-height:0!important;
+    border-radius:17px!important;
+  }
+  #view-grammar .gt-hero-copy{
+    padding-right:0!important;
+  }
+  #view-grammar .gt-eyebrow{
+    max-width:26ch;
+    font-size:.55rem!important;
+    letter-spacing:.14em!important;
+  }
+  #view-grammar .gt-title{
+    max-width:10ch;
+    margin:7px 0 9px!important;
+    font-size:clamp(2rem,10vw,2.65rem)!important;
+    line-height:.98!important;
+    letter-spacing:-.045em!important;
+  }
+  #view-grammar .gt-hero-sub{
+    max-width:34ch!important;
+    font-size:.78rem!important;
+    line-height:1.55!important;
+  }
+  #view-grammar .gt-hero-actions{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:8px!important;
+    margin-top:15px!important;
+  }
+  #view-grammar .gt-hero-primary,
+  #view-grammar .gt-hero-secondary{
+    width:100%!important;
+    min-height:44px!important;
+    padding:10px 9px!important;
+    font-size:.68rem!important;
+    white-space:nowrap;
+  }
+  #view-grammar .gt-hero-stage{
+    position:absolute!important;
+    top:12px!important;
+    right:10px!important;
+    width:78px!important;
+    height:78px!important;
+    min-height:78px!important;
+    pointer-events:none!important;
+  }
+  #view-grammar .gt-orbit-svg{display:none!important}
+  #view-grammar .gt-orbit-label{display:none!important}
+  #view-grammar .gt-hero-stage::before{width:100%!important;left:0!important;top:0!important}
+  #view-grammar .gt-cube-scene{width:62px!important;height:62px!important;transform:scale(.72)!important}
+  #view-grammar .gt-cube-face{border-radius:9px!important;font-size:.5rem!important}
+  #view-grammar .gt-cube-front{transform:translateZ(31px)}
+  #view-grammar .gt-cube-back{transform:rotateY(180deg) translateZ(31px)}
+  #view-grammar .gt-cube-right{transform:rotateY(90deg) translateZ(31px)}
+  #view-grammar .gt-cube-left{transform:rotateY(-90deg) translateZ(31px)}
+  #view-grammar .gt-cube-top{transform:rotateX(90deg) translateZ(31px)}
+  #view-grammar .gt-cube-bottom{transform:rotateX(-90deg) translateZ(31px)}
+
+  #view-grammar .gt-headchips{
+    grid-area:stats!important;
+    width:100%!important;
+    max-width:none!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:6px!important;
+    margin:0!important;
+  }
+  #view-grammar .gt-chip{
+    min-height:50px!important;
+    padding:7px 3px!important;
+    border-radius:10px!important;
+  }
+  #view-grammar .gt-chip-num{font-size:.9rem!important}
+  #view-grammar .gt-chip-lbl{font-size:.46rem!important;letter-spacing:.03em!important}
+
+  /* Course browser first; progress cards follow without wasting the first screen. */
+  #view-grammar .gt-layout{
+    display:flex!important;
+    flex-direction:column!important;
+    gap:12px!important;
+    margin:0 10px!important;
+  }
+  #view-grammar .gt-tree-wrap{
+    width:100%!important;
+    border-radius:15px!important;
+  }
+  #view-grammar .gt-browser-intro{padding:15px 14px!important}
+  #view-grammar .gt-browser-intro h3{font-size:1rem!important}
+  #view-grammar .gt-browser-intro p{font-size:.72rem!important;line-height:1.5!important}
+  #view-grammar .gt-browser-toolbar{padding:10px 12px!important}
+  #view-grammar .gt-browser-filters{
+    display:flex!important;
+    gap:6px!important;
+    padding:0 12px 9px!important;
+    overflow-x:auto!important;
+    scrollbar-width:none!important;
+  }
+  #view-grammar .gt-browser-filters::-webkit-scrollbar{display:none}
+  #view-grammar .gt-browser-filter{flex:0 0 auto!important;min-height:34px!important;padding:7px 10px!important;font-size:.62rem!important}
+  #view-grammar .gt-topic-groups{padding:0 8px 12px!important}
+  #view-grammar .gt-topic-group{margin:7px 0!important;border-radius:11px!important}
+  #view-grammar .gt-topic-group summary{min-height:54px!important;padding:10px 11px!important}
+  #view-grammar .gt-tier-title{font-size:.76rem!important}
+  #view-grammar .gt-tier-subtitle{font-size:.61rem!important}
+  #view-grammar .gt-tier-count{font-size:.58rem!important}
+  #view-grammar .gt-topic-grid{
+    grid-template-columns:1fr!important;
+    gap:7px!important;
+    padding:7px!important;
+  }
+  #view-grammar .gt-topic-card{
+    display:grid!important;
+    grid-template-columns:42px minmax(0,1fr) auto!important;
+    grid-template-areas:"icon body open" "icon status open"!important;
+    align-items:center!important;
+    min-height:74px!important;
+    padding:9px!important;
+    gap:2px 9px!important;
+    border-radius:10px!important;
+  }
+  #view-grammar .gt-topic-icon{
+    grid-area:icon!important;
+    width:42px!important;
+    height:42px!important;
+    margin:0!important;
+    border-radius:11px!important;
+  }
+  #view-grammar .gt-topic-title{grid-area:body!important;font-size:.76rem!important;line-height:1.25!important}
+  #view-grammar .gt-topic-desc{grid-area:body!important;align-self:end!important;max-width:100%!important;font-size:.62rem!important;line-height:1.25!important;margin-top:18px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #view-grammar .gt-topic-status{grid-area:status!important;font-size:.58rem!important;line-height:1.2!important}
+  #view-grammar .gt-topic-pct{font-size:.58rem!important}
+  #view-grammar .gt-topic-open{grid-area:open!important;font-size:1.1rem!important;padding:5px!important}
+
+  /* Progress rail becomes a compact two-column status strip. */
+  #view-grammar .gt-sidebar{
+    width:100%!important;
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:8px!important;
+  }
+  #view-grammar .gt-card{padding:12px!important;border-radius:12px!important}
+  #view-grammar .gt-progress-card,#view-grammar .gt-power-card,#view-grammar .gt-stats-card{min-height:100px!important}
+  #view-grammar .gt-weightage-card{grid-column:1/-1!important}
+
+  #view-grammar .gt-quickactions{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    margin:12px 10px 0!important;
+    gap:7px!important;
+  }
+  #view-grammar .gt-qa-btn{min-height:43px!important;padding:9px 8px!important;font-size:.64rem!important}
+  #view-grammar .gt-qa-btn.primary{grid-column:1/-1!important}
+
+  /* Practice lab: one-column controls with a horizontal tab rail. */
+  #view-grammar .gt-studio-lab{
+    margin:14px 10px 0!important;
+    padding:14px!important;
+    border-radius:15px!important;
+  }
+  #view-grammar .gt-studio-heading h3{font-size:1.05rem!important}
+  #view-grammar .gt-studio-heading p{font-size:.69rem!important}
+  #view-grammar .gt-studio-stats{gap:5px!important}
+  #view-grammar .gt-studio-stat{min-width:58px!important;padding:7px 8px!important}
+  #view-grammar .gt-studio-tabs{margin-inline:-1px!important;padding-bottom:8px!important}
+  #view-grammar .gt-studio-tab{min-height:35px!important;padding:8px 10px!important;font-size:.61rem!important}
+  #view-grammar .gt-studio-options{grid-template-columns:1fr!important}
+  #view-grammar .gt-drill-question,#view-grammar .gt-scan-question{font-size:.88rem!important}
+}
+
+@media (max-width:380px){
+  #view-grammar .gt-header{margin-inline:7px!important;padding:16px 13px 13px!important}
+  #view-grammar .gt-title{font-size:1.9rem!important}
+  #view-grammar .gt-hero-stage{right:7px!important;top:10px!important;transform:scale(.88)}
+  #view-grammar .gt-hero-copy{padding-right:54px!important}
+  #view-grammar .gt-hero-actions{grid-template-columns:1fr!important}
+  #view-grammar .gt-hero-primary,#view-grammar .gt-hero-secondary{min-height:41px!important}
+  #view-grammar .gt-chip{min-height:46px!important}
+  #view-grammar .gt-chip-lbl{font-size:.43rem!important}
+  #view-grammar .gt-topic-card{grid-template-columns:38px minmax(0,1fr) auto!important;min-height:70px!important}
+  #view-grammar .gt-topic-icon{width:38px!important;height:38px!important}
+}
