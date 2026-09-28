@@ -918,6 +918,15 @@ function pyqLabeledBlocks(q){
   }
   return blocks.length>=3?blocks:null;
 }
+function pyqLabeledBlocksHTML(q){
+  const blocks=pyqLabeledBlocks(q);
+  if(!blocks)return null;
+  const keyword=window.VaaniPyqTaxonomy&&typeof window.VaaniPyqTaxonomy.keyword==='function'
+    ?window.VaaniPyqTaxonomy.keyword(q):String(q.keyword||'').trim();
+  return '<div class="pv-structured-question">'+blocks.map(b=>
+    '<div class="pv-structured-row"><span class="pv-structured-label">'+escapeHtmlVaani(b.label)+'</span><span class="pv-structured-text">'+pyqHighlightText(b.text,keyword)+'</span></div>'
+  ).join('')+'</div>';
+}
 function pyqPromptHTML(q){
   if(!q||typeof q.q!=='string')return '';
   const sourceSec=String(q._sourceSec||q.sec||'').trim().toLowerCase();
