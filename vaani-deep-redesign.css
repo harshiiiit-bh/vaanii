@@ -747,3 +747,10 @@ nav.mainnav button.active{
   .qnav-menu{right:10px;bottom:calc(var(--bottomnav-h,72px) + 26px + var(--safe-b,0px))}
   #toast-wrap{left:12px;right:12px;bottom:calc(var(--bottomnav-h,72px) + 10px + var(--safe-b,0px));max-width:none}
 }
+
+
+/* Tablet/laptop nav must start at the leading edge when its buttons overflow.
+   Centering an overflowing flex row can clip the first destinations. */
+@media(min-width:768px) and (max-width:1180px){
+  nav.mainnav{justify-content:flex-start}
+}
