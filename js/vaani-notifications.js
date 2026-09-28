@@ -46,6 +46,8 @@
     if (['UPSC'].includes(category)) return 'upsc';
     if (['STATE_PSC','BPSC','UPPSC','MPPSC','RPSC','JPSC'].includes(category)) return 'state-psc';
     if (['TECHNICAL','ISRO','DRDO','BARC','AAI'].includes(category)) return 'technical';
+    if (['ENTRANCE','NTA','JEE','NEET','CUET','UGC_NET','CSIR_NET'].includes(category)) return 'entrance';
+    if (['POLICE','STATE_POLICE','UPPRPB','CSBC','BPSSC'].includes(category)) return 'police';
     return 'other';
   }
 
