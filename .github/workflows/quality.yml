@@ -25,5 +25,40 @@ jobs:
         shell: bash
         run: |
           find . -type f -name '*.js' -not -path './.git/*' -not -path './node_modules/*' -print0 | xargs -0 -r -n1 node --check
+          node --check scripts/smoke-dashboard.mjs
       - name: Check HTML IDs and local dependencies
         run: node scripts/check-quality.mjs
+
+  browser-smoke:
+    name: Desktop browser smoke test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install Playwright
+        run: npm install --no-save --no-package-lock playwright
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Serve VAANI
+        shell: bash
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/vaani-http.log 2>&1 &
+          for i in {1..30}; do
+            if curl -fsS http://127.0.0.1:4173/ >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/vaani-http.log
+          exit 1
+      - name: Exercise dashboard and learning flows
+        run: node scripts/smoke-dashboard.mjs
+      - name: Preserve failure screenshot
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vaani-browser-smoke-failure
+          path: vaani-browser-smoke-failure.png
+          if-no-files-found: ignore
