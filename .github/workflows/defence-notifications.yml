@@ -3,7 +3,6 @@ name: VAANI Defence Notification Sync
 on:
   workflow_dispatch:
   schedule:
-    # Every hour at :17 UTC. A non-top-of-hour minute reduces GitHub Actions queue pressure.
     - cron: '17 * * * *'
 
 permissions:
@@ -31,13 +30,41 @@ jobs:
       - name: Refresh defence notifications
         run: node scripts/update-defence-notifications.mjs
 
-      - name: Commit changed feed
+      - name: Sync live feed to Cloudflare D1
+        if: ${{ secrets.VAANI_NOTIFICATIONS_API != '' && secrets.VAANI_NOTIFICATIONS_SYNC_SECRET != '' }}
+        env:
+          VAANI_NOTIFICATIONS_API: ${{ secrets.VAANI_NOTIFICATIONS_API }}
+          VAANI_NOTIFICATIONS_SYNC_SECRET: ${{ secrets.VAANI_NOTIFICATIONS_SYNC_SECRET }}
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const feed = JSON.parse(fs.readFileSync('data/defence-notifications.json','utf8'));
+          const archive = JSON.parse(fs.readFileSync('data/defence-notifications-archive.json','utf8'));
+          const payload = JSON.stringify({
+            items: [...(feed.items || []), ...(archive.items || [])],
+            archiveIds: (archive.items || []).map(x => x.id)
+          });
+          fetch(process.env.VAANI_NOTIFICATIONS_API.replace(/\/$/, '') + '/api/notifications/sync', {
+            method: 'POST',
+            headers: {
+              'content-type': 'application/json',
+              'authorization': 'Bearer ' + process.env.VAANI_NOTIFICATIONS_SYNC_SECRET
+            },
+            body: payload
+          }).then(async r => {
+            const text = await r.text();
+            if (!r.ok) throw new Error('Cloudflare sync failed: ' + r.status + ' ' + text);
+            console.log(text);
+          }).catch(e => { console.error(e); process.exit(1); });
+          NODE
+
+      - name: Commit changed JSON snapshot
         run: |
           git config user.name "vaani-notification-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/defence-notifications.json data/defence-notifications-archive.json
           if git diff --cached --quiet; then
-            echo "No notification changes detected."
+            echo "No notification snapshot changes detected."
             exit 0
           fi
           git commit -m "chore: refresh defence notifications"
