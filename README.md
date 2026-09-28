@@ -2,7 +2,7 @@
 
 **VAANI** is a browser-based English-learning workspace for competitive-exam preparation. It brings lessons, vocabulary, question practice and reading progress together in one responsive website.
 
-**Live site:** https://harshiiiit-bh.github.io/vaani/
+**Live site:** https://harshiiiit-bh.github.io/vaanii/
 
 ## What’s inside
 
