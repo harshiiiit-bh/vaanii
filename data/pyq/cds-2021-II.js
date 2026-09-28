@@ -1118,7 +1118,7 @@ var PYQ_CDS_2021_II = [
     "s": "II",
     "n": 53,
     "sec": "Ordering of Sentences",
-    "q": "S1,: Paragraphs are the building blocks of any write-up. S6: Understanding of these makes one a good writer of paragraphs. P : A paragraph need not be pages together in length. Q : But actually a paragraph is a group of at least five sentences on the lower limit. R : In reality, unity and coherence, not length, constitute a real good paragraph. S : Many people define paragraphs in terms of their length. The correct sequence should be",
+    "q": "S1: Paragraphs are the building blocks of any write-up. S6: Understanding of these makes one a good writer of paragraphs. P : A paragraph need not be pages together in length. Q : But actually a paragraph is a group of at least five sentences on the lower limit. R : In reality, unity and coherence, not length, constitute a real good paragraph. S : Many people define paragraphs in terms of their length. The correct sequence should be",
     "o": [
       "QPRS",
       "RQPS",
@@ -1181,7 +1181,7 @@ var PYQ_CDS_2021_II = [
     "s": "II",
     "n": 56,
     "sec": "Ordering of Sentences",
-    "q": "SI : Now only fifteen minutes were left. S6: Our performance was excellent. P : Thank God, we rubbed the word ‘defeat’ writ large on our forehead. Q : It was a game of life and death. R : Each one had concluded that we were going to lose. 77 S : It was a matter of minutes. The correct sequence should be",
+    "q": "S1: Now only fifteen minutes were left. S6: Our performance was excellent. P : Thank God, we rubbed the word ‘defeat’ writ large on our forehead. Q : It was a game of life and death. R : Each one had concluded that we were going to lose. 77 S : It was a matter of minutes. The correct sequence should be",
     "o": [
       "PSQR",
       "PQSR",
