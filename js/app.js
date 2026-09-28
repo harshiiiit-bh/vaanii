@@ -826,19 +826,4050 @@ const PYQ_ALL = PYQ_PAPERS.flatMap(p=>p.data.map(q=>{
 const PYQ_BY_ID = {}; PYQ_ALL.forEach(q=>PYQ_BY_ID[q._id]=q);
 
 /* Highlight the explicit target keyword safely across PYQ types. */
-function pyqHi(q){
-  if(!q||typeof q.q!=='string')return '';
-  const text=q.q;
-  const keyword=window.VaaniPyqTaxonomy&&typeof window.VaaniPyqTaxonomy.keyword==='function'?window.VaaniPyqTaxonomy.keyword(q):String(q.keyword||'').trim();
+function pyqHighlightText(text, keyword){
+  text=String(text==null?'':text);
+  keyword=String(keyword||'').trim();
   const safe=value=>escapeHtmlVaani(String(value)).replace(/\r\n?/g,'\n');
   if(!keyword)return safe(text);
-  const specials=['.','*','+','?','^','$','{','}','(',')','|','[',']','\\'];
+  const specials=['.','*','+','?','^','
+/* Render spotting-error sentence boundaries as visible, labelled parts.
+   Sources vary: imported CDS banks may carry an explicit parts array,
+   older NDA banks place (a)/(b)/(c) inline, and newer CDS banks use |. */
+function pyqSpottingParts(q){
+  if(!q||typeof q.q!=='string')return null;
+  if(Array.isArray(q.parts)&&q.parts.length===3&&q.parts.every(p=>typeof p==='string'&&p.trim()))return q.parts.map(p=>p.trim());
+  const source=q.q;
+  if(/\s\|\s/.test(source)){
+    const split=source.split(/\s*\|\s*/).map(p=>p.trim()).filter(Boolean);
+    if(split.length===3)return split;
+  }
+  const matches=[...source.matchAll(/\(([abc])\)\s*\/?/gi)];
+  if(matches.length>=3){
+    const parts=[];let cursor=0;let valid=true;
+    for(let i=0;i<3;i++){
+      const m=matches[i];
+      if(m[1].toLowerCase()!==['a','b','c'][i]){valid=false;break;}
+      const part=source.slice(cursor,m.index).replace(/\s*\/\s*$/,'').trim();
+      if(!part){valid=false;break;}
+      parts.push(part);
+      cursor=m.index+m[0].length;
+    }
+    if(valid)return parts;
+  }
+  // Early NDA papers store the three underlined sentence fragments as
+  // answer choices, followed by "No error", instead of inline markers.
+  const choices=Array.isArray(q.o)?q.o.slice(0,3).map(value=>String(value).trim()):[];
+  if(choices.length===3&&choices.every(value=>value.length>2&&!/^\(?[abc]\)?\.?$/i.test(value))){
+    const lower=source.toLocaleLowerCase();let cursor=0;const parts=[];
+    for(const phrase of choices){
+      const index=lower.indexOf(phrase.toLocaleLowerCase(),cursor);
+      if(index<0)return null;
+      parts.push(source.slice(index,index+phrase.length));
+      cursor=index+phrase.length;
+    }
+    const tail=source.slice(cursor);
+    if(parts.length===3&&/^[\s.!?;:]*$/.test(tail))parts[2]+=tail.trim();
+    return parts;
+  }
+  return null;
+}
+function pyqOptionLabels(q){
+  if(!q||!Array.isArray(q.o))return [];
+  if(String(q._sourceSec||q.sec||'').trim().toLowerCase()==='spotting errors'){
+    return ['Error in part (a)','Error in part (b)','Error in part (c)','No error'];
+  }
+  return q.o;
+}
+function pyqLabeledBlocks(q){
+  if(!q||typeof q.q!=='string')return null;
+  const source=q.q;
+  const re=/(?:^|\n|\s\/\s)(S1|S2|S3|S6|P|Q|R|S):\s*/g;
+  const matches=[...source.matchAll(re)];
+  if(!matches.length)return null;
+  const blocks=[];
+  for(let i=0;i<matches.length;i++){
+    const label=matches[i][1];
+    const start=matches[i].index+matches[i][0].length;
+    const end=i+1<matches.length?matches[i+1].index:source.length;
+    const text=source.slice(start,end).replace(/\s*\/\s*$/,'').trim();
+    if(text)blocks.push({label,text});
+  }
+  return blocks.length>=3?blocks:null;
+}
+function pyqLabeledBlocksHTML(q){
+  const blocks=pyqLabeledBlocks(q);if(!blocks)return null;
+  const keyword=window.VaaniPyqTaxonomy&&typeof window.VaaniPyqTaxonomy.keyword==='function'?window.VaaniPyqTaxonomy.keyword(q):String(q.keyword||'').trim();
+  return '<div class="pv-structured-question">'+blocks.map(b=>
+    '<div class="pv-structured-row"><span class="pv-structured-label">'+escapeHtmlVaani(b.label)+'</span><span class="pv-structured-text">'+pyqHighlightText(b.text,keyword)+'</span></div>'
+  ).join('')+'</div>';
+}
+function pyqPromptHTML(q){
+  if(!q||typeof q.q!=='string')return '';
+  const sourceSec=String(q._sourceSec||q.sec||'').trim().toLowerCase();
+  if(sourceSec==='spotting errors'){
+    const parts=pyqSpottingParts(q);
+    if(!parts)return '<span class="pv-error-unsegmented">'+pyqHi(q)+'</span>';
+    return '<span class="pv-error-parts" role="group" aria-label="Sentence parts a, b and c">'+
+      parts.map((part,i)=>'<span class="pv-error-segment"><span class="pv-error-segment-text">'+escapeHtmlVaani(part)+'</span><span class="pv-error-segment-label" aria-label="Part '+letters[i]+'">('+letters[i]+')</span></span>').join('<span class="pv-error-segment-divider" aria-hidden="true"> / </span>')+
+      '</span>';
+  }
+  if(/^(?:choose the correct usage|ordering of sentences|sentence arrangement \(pqrs\))$/i.test(sourceSec)){
+    const structured=pyqLabeledBlocksHTML(q);if(structured)return structured;
+  }
+  return pyqHi(q);
+}
+
+
+/* ---- stats (persisted in State.pyqStats) ---- */
+function ensurePyqStats(){
+  State.pyqStats = State.pyqStats || { attempts:{}, history:[] };
+  State.pyqStats.attempts = State.pyqStats.attempts || {};
+  State.pyqStats.history = State.pyqStats.history || [];
+  return State.pyqStats;
+}
+function pyqAccuracyFor(list){
+  const st = ensurePyqStats();
+  const attempted = list.filter(q=>st.attempts[q._id]!==undefined);
+  if(!attempted.length) return null;
+  const correct = attempted.filter(q=>st.attempts[q._id]===true).length;
+  return Math.round((correct/attempted.length)*100);
+}
+function pyqTopicAccuracy(){
+  const st = ensurePyqStats();
+  const bySec = {};
+  PYQ_ALL.forEach(q=>{
+    if(st.attempts[q._id]===undefined) return;
+    bySec[q.sec] = bySec[q.sec] || {c:0,t:0};
+    bySec[q.sec].t++;
+    if(st.attempts[q._id]===true) bySec[q.sec].c++;
+  });
+  return Object.entries(bySec).map(([sec,v])=>({sec, acc:Math.round(v.c/v.t*100), n:v.t}));
+}
+/* ============================================================
+   MISTAKE NOTEBOOK — spaced repetition for vocab + PYQ.
+   Leitner-style boxes: get it wrong -> back to box 0, due tomorrow.
+   Get it right -> advance a box, due further out. Reach the last box
+   and get it right once more -> it's graduated, drops off the list.
+============================================================ */
+const REVIEW_INTERVALS_DAYS = [1,2,4,8,16,30];
+function ensureReviewQueue(){ if(!Array.isArray(State.reviewQueue)) State.reviewQueue=[]; return State.reviewQueue; }
+function findReviewItem(kind, ref){ return ensureReviewQueue().find(x=>x.kind===kind && x.ref===ref); }
+function addDaysISO(days){ const d=new Date(); d.setDate(d.getDate()+days); return d.toISOString(); }
+function reviewMarkWrong(kind, ref){
+  const q = ensureReviewQueue();
+  let item = findReviewItem(kind, ref);
+  if(!item){ item = {kind, ref, box:0, wrongCount:0, rightCount:0, addedAt:new Date().toISOString()}; q.push(item); }
+  item.box = 0;
+  item.wrongCount = (item.wrongCount||0)+1;
+  item.nextReview = addDaysISO(REVIEW_INTERVALS_DAYS[0]);
+  saveState();
+}
+function reviewMarkRight(kind, ref){
+  const item = findReviewItem(kind, ref);
+  if(!item) return; // never missed, nothing to track
+  item.rightCount = (item.rightCount||0)+1;
+  if(item.box >= REVIEW_INTERVALS_DAYS.length-1){
+    const q = ensureReviewQueue(); const idx = q.indexOf(item); if(idx>-1) q.splice(idx,1); // graduated
+  } else {
+    item.box++;
+    item.nextReview = addDaysISO(REVIEW_INTERVALS_DAYS[item.box]);
+  }
+  saveState();
+}
+function reviewDueItems(kindFilter){
+  const now = Date.now();
+  return ensureReviewQueue().filter(x=> (!kindFilter || x.kind===kindFilter) && new Date(x.nextReview).getTime() <= now);
+}
+function reviewSoonestDue(){
+  const q = ensureReviewQueue();
+  if(!q.length) return null;
+  return q.reduce((a,b)=> new Date(a.nextReview) < new Date(b.nextReview) ? a : b);
+}
+
+function recordPyqAttempt(qid, correct){
+  const st = ensurePyqStats();
+  st.attempts[qid] = correct;
+  st.history = st.history.filter(h=>h.qid!==qid);
+  st.history.unshift({qid, correct, ts:Date.now()});
+  if(st.history.length>40) st.history.length = 40;
+  if(correct) reviewMarkRight('pyq', qid); else reviewMarkWrong('pyq', qid);
+  saveState();
+}
+
+/* ---- learn concept cross-link ---- */
+function pyqLearnConcept(qid){
+  const q = PYQ_BY_ID[qid]; if(!q) return;
+  if(q.lessonType==='grammar' && q.lessonId){
+    const g = GRAMMAR.find(x=>x.id===q.lessonId);
+    if(g){ openTopic(g.id); return; }
+  }
+  if(q.lessonType==='vocab'){
+    switchView('vocab');
+    if(q.keyword){ document.getElementById('vocabSearch').value=q.keyword; renderVocabGrid(); }
+    toast('Opened Vocabulary Hub' + (q.keyword?` — searching "${q.keyword}"`:''));
+    return;
+  }
+  if(q.lessonType==='practice' && q.lessonId){
+    switchView('pyq');
+    toast('Opened matching drill: '+ (PRACTICE.find(p=>p.id===q.lessonId)||{title:'Sentence Practice'}).title);
+    return;
+  }
+  if(q.lessonType==='reading'){
+    switchView('pyq');
+    toast('Opened Reading Comprehension module');
+    return;
+  }
+  toast('No linked lesson yet for this question — more coverage coming as content expands.');
+}
+
+/* ============================================================
+   PYQ VAULT 2.0 — dashboard-first, one-question-at-a-time engine
+   Screens: home -> paper -> section drill / exam-picker -> session -> summary
+   ============================================================ */
+const letters = ['a','b','c','d'];
+const TOPIC_ICONS = { 'Spotting Errors':'🔍', 'Vocabulary':'📚', 'Grammar':'✍️', 'Reading Comprehension':'📖', 'Sentence Arrangement (PQRS)':'🔀' };
+const PV = { screen:'home', paperKey:null, session:null, archiveEra:null, archiveYear:null, paperReturn:null, examType:null };
+
+function pvShuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  return a;
+}
+function pvFmtTime(sec){
+  sec = Math.max(0, Math.round(sec));
+  const m = Math.floor(sec/60), s = sec%60;
+  return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+}
+function pvRingSVG(pct, size, stroke, colorVar, extraClass){
+  size = size||108; stroke = stroke||10; colorVar = colorVar||'--gold';
+  pct = Math.max(0, Math.min(100, pct));
+  const r = (size-stroke)/2, c = 2*Math.PI*r, off = c-(pct/100)*c;
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" class="pv-ring-svg ${extraClass||''}">
+    <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="var(--line)" stroke-width="${stroke}"/>
+    <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="var(${colorVar})" stroke-width="${stroke}" stroke-linecap="round"
+      stroke-dasharray="${c.toFixed(2)}" stroke-dashoffset="${off.toFixed(2)}" transform="rotate(-90 ${size/2} ${size/2})" class="pv-ring-fill"/>
+  </svg>`;
+}
+const PV_TOPIC_ICONS={
+  'Synonyms':'🔗','Antonyms':'↔️','Spotting Errors':'🔎','Reading Comprehension':'📖',
+  'Sentence Arrangement (PQRS)':'🧩','Fill in the Blanks':'✍️','Grammar':'📐',
+  'Sentence Improvement':'📝','Sentence Correction':'🛠️','Selecting Words':'🧠',
+  'Ordering of Sentences':'🧩','Ordering of Words in a Sentence':'🔤',
+  'Idioms and Phrases':'💬','Usage of Paired Words':'🔀','Cloze Test':'📄',
+  'Sentence Completion':'📝','Parts of Speech & Word Classes':'🏷️',
+  'Prepositions and Determiners':'📍','Correlating Sentences':'🔗','Matching List':'🧩',
+  'Adaptation of Borrowed Words':'🌐','Use of Phrasal Verbs':'⚡','Commonly Used Words':'📚',
+  'Word Meanings':'📖','Active & Passive Voice':'🔄','Direct/Indirect Speech':'🗣️',
+  'Discourse Markers':'🧭','Vocabulary':'🅰️','Homonyms & Homophones':'🔊','Word Usage':'✅'
+};
+function pvTopicIcon(sec){ return PV_TOPIC_ICONS[sec] || TOPIC_ICONS[sec] || '📘'; }
+function pvTopicHint(sec){
+  const hints={
+    'Synonyms':'Choose words with similar meanings.','Antonyms':'Choose words with opposite meanings.',
+    'Spotting Errors':'Find the incorrect part of a sentence.','Reading Comprehension':'Answer questions using the passage.',
+    'Sentence Arrangement (PQRS)':'Put sentence parts in a logical order.','Fill in the Blanks':'Complete the sentence using context.',
+    'Sentence Improvement':'Improve the marked part without changing meaning.','Sentence Correction':'Select the grammatically correct sentence.',
+    'Selecting Words':'Choose the word that best fits the context.','Ordering of Sentences':'Arrange sentences into a clear passage.',
+    'Ordering of Words in a Sentence':'Put words in the correct order.','Idioms and Phrases':'Understand fixed expressions and their meanings.',
+    'Usage of Paired Words':'Choose the correct word from a pair.','Cloze Test':'Complete a passage using context clues.',
+    'Sentence Completion':'Finish the sentence logically and grammatically.','Parts of Speech & Word Classes':'Identify how words function in a sentence.',
+    'Prepositions and Determiners':'Practise prepositions and noun determiners.','Correlating Sentences':'Match sentences that belong together.',
+    'Matching List':'Match each item with its correct partner.','Adaptation of Borrowed Words':'Practise words adopted from other languages.',
+    'Use of Phrasal Verbs':'Choose the correct verb-particle combination.','Commonly Used Words':'Build accuracy with everyday English.',
+    'Word Meanings':'Choose the meaning that fits the context.','Active & Passive Voice':'Change the focus while preserving meaning.',
+    'Direct/Indirect Speech':'Report spoken words accurately.','Discourse Markers':'Connect ideas with the right linking expressions.',
+    'Vocabulary':'Practise precise word meaning and usage.','Homonyms & Homophones':'Distinguish words that sound alike or share forms.',
+    'Word Usage':'Choose the correct word or expression.'
+  };
+  return hints[sec]||'Practise questions from this skill.';
+}
+function pvAccBadgeClass(acc){ if(acc===null) return 'mid'; return acc>=70?'strong':(acc<45?'weak':'mid'); }
+
+/* ---- persistence for "Continue where you left off" ---- */
+function pvSaveContinue(){
+  const s = PV.session; if(!s || s.finished){ return; }
+  State.pyqContinue = {
+    mode:s.mode, title:s.title, qids:s.questions.map(q=>q._id), index:s.index, answers:s.answers,
+    negativeMarking:!!s.negativeMarking, deferReveal:!!s.deferReveal, perQSeconds:s.perQSeconds||null,
+    timeLimitSec:s.timeLimitSec||null, savedAt:Date.now()
+  };
+  saveState();
+}
+function pvClearContinue(){ State.pyqContinue = null; saveState(); }
+function pvResumeContinue(){
+  const c = State.pyqContinue; if(!c) return;
+  const qs = c.qids.map(id=>PYQ_BY_ID[id]).filter(Boolean);
+  if(!qs.length){ pvClearContinue(); toast('That session is no longer available.'); return; }
+  pvStartSession(c.mode, qs, {
+    title:c.title, negativeMarking:c.negativeMarking, deferReveal:c.deferReveal,
+    perQSeconds:c.perQSeconds, timeLimitSec:c.timeLimitSec, resumeIndex:c.index, resumeAnswers:c.answers
+  });
+}
+
+/* ---- data groupers ----
+   `exam` is optional on all of these: pass it to scope to one exam
+   (used by the Previous Years Papers archive, via PV.examType), or
+   omit it to see every exam's papers together (used by the unrelated,
+   pre-existing global Exam Mode picker, which is out of scope here and
+   left exactly as it behaved before). */
+function pvPapersByYear(exam){
+  const years = {};
+  // PYQ_PAPERS is already globally sorted (year ascending; within a
+  // year, sessions in roman-numeral order — I before II before III...)
+  // by getSortedPYQPapers(), so grouping below preserves that order
+  // without needing to re-sort. Years with only one session (or any
+  // number of sessions) are handled automatically — nothing here
+  // assumes a fixed pair of papers per year.
+  const papersToGroup = exam ? PYQ_PAPERS.filter(p=>p.exam===exam) : PYQ_PAPERS;
+  papersToGroup.forEach(p=>{ years[p.year] = years[p.year] || []; years[p.year].push(p); });
+  return Object.keys(years).sort((a,b)=>a-b).map(y=>{
+    const papers = years[y];
+    const st = ensurePyqStats();
+    let totalQ = 0, attempted = 0, correctSum = 0, answeredSum = 0;
+    papers.forEach(p=>{
+      const qs = p.data;
+      totalQ += qs.length;
+      qs.forEach(q=>{
+        const id = _pyqQuestionId(p.exam, q);
+        if(st.attempts[id]!==undefined){ attempted++; answeredSum++; if(st.attempts[id]===true) correctSum++; }
+      });
+    });
+    const completion = totalQ ? Math.round(attempted/totalQ*100) : 0;
+    const bestScore = answeredSum ? Math.round(correctSum/answeredSum*100) : null;
+    return { year:y, papers, totalQ, completion, bestScore };
+  });
+}
+function pvPaperQuestions(year, session, exam){
+  return PYQ_ALL.filter(q=>String(q.y)===String(year) && q.s===session && (!exam || q._exam===exam));
+}
+function pvPaperSections(year, session, exam){
+  const list = pvPaperQuestions(year, session, exam);
+  const order = [], groups = {};
+  list.forEach(q=>{ if(!groups[q.sec]){ groups[q.sec]=[]; order.push(q.sec); } groups[q.sec].push(q); });
+  return order.map(sec=>({ sec, list:groups[sec] }));
+}
+function pvTopics(){ return [...new Set(PYQ_ALL.map(q=>q.sec))]; }
+
+/* ---- Military Archive — dynamic era bucketing ----
+   Papers are grouped into 4-year Era blocks starting at 2009 (2009–2012,
+   2013–2016, 2017–2020, ...). Nothing here hardcodes a specific year or a
+   fixed list of eras — buckets are derived purely from whatever years exist
+   in PYQ_PAPERS, so a newly registered paper (any future year) automatically
+   lands in the correct existing era, or spins up a brand-new era card, with
+   zero changes to this code. The era containing (or ahead of) the current
+   real-world year is labelled open-ended, e.g. "2025+"; fully-elapsed eras
+   get a closed range label, e.g. "2009–2012". */
+function pvEraForYear(year){
+  const y = parseInt(year,10);
+  const start = 2009 + Math.floor((y-2009)/4)*4;
+  const end = start+3;
+  const nowYear = new Date().getFullYear();
+  const label = (end>=nowYear) ? (start+'+') : (start+'–'+end);
+  return { key:start, start, end, label };
+}
+function pvEraGroups(exam){
+  const yearGroups = pvPapersByYear(exam);
+  const st = ensurePyqStats();
+  const eras = {};
+  yearGroups.forEach(g=>{
+    const e = pvEraForYear(g.year);
+    if(!eras[e.key]) eras[e.key] = { key:e.key, label:e.label, years:[] };
+    eras[e.key].years.push(g);
+  });
+  return Object.keys(eras).sort((a,b)=>a-b).map(k=>{
+    const era = eras[k];
+    let totalPapers=0, totalQ=0, attempted=0;
+    era.years.forEach(y=>{
+      totalPapers += y.papers.length;
+      totalQ += y.totalQ;
+      y.papers.forEach(p=>{ p.data.forEach(q=>{ const id=_pyqQuestionId(p.exam,q); if(st.attempts[id]!==undefined) attempted++; }); });
+    });
+    const completion = totalQ ? Math.round(attempted/totalQ*100) : 0;
+    return { key:era.key, label:era.label, years:era.years, totalPapers, totalQ, completion };
+  });
+}
+
+/* ---- router ---- */
+function renderPyqView(){ pvRender(); }
+function pvRender(){
+  const root = document.getElementById('pvApp'); if(!root) return;
+  if(PV.screen==='home') {
+    root.innerHTML = pvHomeHTML();
+    const topicGrid=root.querySelector('#pvTopicGrid');
+    if(topicGrid)topicGrid.addEventListener('click',event=>{
+      const card=event.target.closest('.pv-topic-card');
+      if(card&&topicGrid.contains(card))pvLaunchTopic(decodeURIComponent(card.dataset.topic||''));
+    });
+    const topicSearch=root.querySelector('#pvTopicSearch');
+    if(topicSearch)topicSearch.addEventListener('input',()=>pvFilterTopicCards(topicSearch.value));
+  }
+  else if(PV.screen==='examtype') root.innerHTML = pvExamTypeHTML();
+  else if(PV.screen==='archive') root.innerHTML = pvArchiveHTML();
+  else if(PV.screen==='archiveSessions') root.innerHTML = pvArchiveSessionsHTML();
+  else if(PV.screen==='paper') root.innerHTML = pvPaperHTML();
+  else if(PV.screen==='exampicker') root.innerHTML = pvExamPickerHTML();
+  else if(PV.screen==='session') root.innerHTML = pvSessionHTML();
+  else if(PV.screen==='summary') root.innerHTML = pvSummaryHTML();
+  document.body.classList.toggle('pv-session-active', PV.screen==='session');
+  window.scrollTo({top:0,behavior:'smooth'});
+  setTimeout(()=>{ if(typeof initReveal==='function') initReveal(); },30);
+}
+function pvGoHome(){ pvStopTimer(); PV.screen='home'; PV.session=null; PV.paperReturn=null; pvRender(); }
+
+/* ============================================================
+   MILITARY ARCHIVE — Era → Year → Session hierarchy
+   Its own Command Center wing: hero banner, folder-style Era cards
+   that accordion open into a Year grid, which drills into a Session
+   list, which hands off to the existing Paper screen (unchanged).
+   ============================================================ */
+/* ---- exam-choice screen: shown first, ahead of the archive itself ----
+   PV.examType is the single piece of state that scopes every archive
+   screen below (era list, year, session list, paper) to one exam. It's
+   set here and only read by the archive-flow functions, so it can never
+   bleed into the unrelated global Exam Mode picker (pvExamPickerHTML),
+   which never looks at it. */
+function pvGoExamType(){ PV.screen='examtype'; PV.examType=null; PV.archiveEra=null; PV.archiveYear=null; pvRender(); }
+function pvGoArchive(exam){ if(exam) PV.examType=exam; PV.screen='archive'; PV.archiveEra=null; PV.archiveYear=null; pvRender(); }
+/**
+ * Runs the click micro-interaction (chosen card pulses, the other
+ * fades) then hands off to pvGoArchive(exam). Skips the animation
+ * delay entirely under prefers-reduced-motion — the CSS classes below
+ * still apply (so state/appearance stays correct) but the site's global
+ * reduced-motion rule (see styles.css) already zeroes their transition
+ * durations; this only additionally avoids the JS setTimeout delay,
+ * which that CSS rule can't reach on its own.
+ */
+function pvChooseExamType(exam, btnEl){
+  const grid = document.getElementById('pvExamTypeGrid');
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(!grid || !btnEl || reduce){ pvGoArchive(exam); return; }
+  grid.querySelectorAll('.pv-examtype-card').forEach(c=>{
+    c.classList.add(c===btnEl ? 'is-chosen' : 'is-fading');
+  });
+  setTimeout(()=>{ pvGoArchive(exam); }, 480);
+}
+function pvExamTypeHTML(){
+  // Icons for known exams; anything registered in PYQ_EXAM_INFO without
+  // an icon here still gets a card (falls back to a generic crest), so
+  // adding a future exam only ever means one line in PYQ_EXAM_INFO.
+  const EXAM_ICONS = { NDA:'🎖️', CDS:'🛡️', AFCAT:'✈️' };
+  const examCard = (code)=>{
+    const info = PYQ_EXAM_INFO[code] || { full:code, short:code };
+    const papers = PYQ_PAPERS.filter(p=>p.exam===code);
+    const qCount = PYQ_ALL.filter(q=>q._exam===code).length;
+    const icon = EXAM_ICONS[code] || '🎯';
+    const countLabel = papers.length
+      ? `${papers.length} paper${papers.length!==1?'s':''} · ${qCount} question${qCount!==1?'s':''}`
+      : 'Coming soon';
+    return `<button type="button" class="pv-examtype-card pv-examtype-${code.toLowerCase()}" onclick="pvChooseExamType('${code}', this)">
+      <span class="pv-examtype-overlay"></span>
+      <span class="pv-examtype-body">
+        <span class="pv-examtype-crest">${icon}</span>
+        <span class="pv-examtype-name">${info.full}</span>
+        <span class="pv-examtype-code">${info.short}</span>
+        <span class="pv-examtype-stats">${countLabel}</span>
+      </span>
+    </button>`;
+  };
+  return `<div class="pv-screen ma-root">
+    <div class="pv-topbar">
+      <div class="pv-back" onclick="pvGoHome()">←</div>
+      <div class="pv-topbar-title">Previous Years Papers<small>Choose Your Exam</small></div>
+    </div>
+    <div class="pv-examtype-grid" id="pvExamTypeGrid">
+      ${Object.keys(PYQ_EXAM_INFO).map(examCard).join('')}
+    </div>
+  </div>`;
+}
+function pvToggleEra(key){ PV.archiveEra = (PV.archiveEra===key ? null : key); pvRender(); }
+function pvOpenArchiveYear(year){ PV.archiveYear=year; PV.screen='archiveSessions'; pvRender(); }
+function pvBackToArchive(){ PV.screen='archive'; pvRender(); }
+function pvOpenSessionFromArchive(year, session){ PV.paperReturn='archiveSessions'; pvOpenPaper(year, session); }
+function pvPaperBack(){
+  if(PV.paperReturn==='archiveSessions'){ PV.screen='archiveSessions'; pvRender(); }
+  else { pvGoHome(); }
+}
+
+function pvArchiveHTML(){
+  const exam = PV.examType;
+  const examInfo = PYQ_EXAM_INFO[exam] || { full:exam||'', short:exam||'' };
+  const eras = pvEraGroups(exam);
+  const totalPapers = PYQ_PAPERS.filter(p=>p.exam===exam).length;
+  const totalQAll = PYQ_ALL.filter(q=>q._exam===exam).length;
+  const st = ensurePyqStats();
+  const attemptedAll = PYQ_ALL.filter(q=>q._exam===exam && st.attempts[q._id]!==undefined).length;
+  const overallPct = totalQAll ? Math.round(attemptedAll/totalQAll*100) : 0;
+
+  const erasHTML = eras.length ? eras.map((e,i)=>{
+    const expanded = PV.archiveEra===e.key;
+    const yearsHTML = e.years.map(y=>`
+      <div class="ma-year-tile" onclick="pvOpenArchiveYear('${y.year}')">
+        <div class="ma-year-top">
+          <span class="ma-year-folder">🗂️</span>
+          ${pvRingSVG(y.completion,40,4,'--gold')}
+        </div>
+        <div class="ma-year-num">${y.year}</div>
+        <div class="ma-year-meta">${y.papers.length} paper${y.papers.length>1?'s':''} · ${y.completion}%</div>
+      </div>`).join('');
+    return `<div class="ma-era-card ${expanded?'expanded':''}" style="animation-delay:${i*60}ms">
+      <div class="ma-era-head" onclick="pvToggleEra(${e.key})">
+        <div class="ma-era-icon">${expanded?'📂':'📁'}</div>
+        <div class="ma-era-body">
+          <div class="ma-era-name">${e.label}</div>
+          <div class="ma-era-meta">${e.totalPapers} paper${e.totalPapers>1?'s':''} · ${e.totalQ} questions</div>
+        </div>
+        <div class="ma-era-ring">${pvRingSVG(e.completion,44,4,'--gold')}<div class="ma-era-ring-pct">${e.completion}%</div></div>
+        <div class="ma-era-arrow">▾</div>
+      </div>
+      <div class="ma-era-panel"><div class="ma-era-panel-inner">
+        <div class="ma-year-grid">${yearsHTML}</div>
+      </div></div>
+    </div>`;
+  }).join('') : `<div class="pv-empty-note pv-empty-note-lg">
+      <div class="pv-empty-icon">🗄️</div>
+      <div class="pv-empty-title">No ${examInfo.short} papers yet</div>
+      <div class="pv-empty-sub">Check back soon — this vault gets filled in as papers are verified and added.</div>
+    </div>`;
+
+  return `<div class="pv-screen ma-root">
+    <div class="pv-topbar">
+      <div class="pv-back" onclick="pvGoExamType()">←</div>
+      <div class="pv-topbar-title">Previous Years Papers<small>${examInfo.full} · Records &amp; Dossiers Division</small></div>
+    </div>
+    <div class="ma-hero reveal">
+      <div class="ma-hero-stamp">Official Records</div>
+      <div class="ma-hero-top">
+        <div class="ma-hero-crest">🗃️</div>
+        <div>
+          <div class="ma-hero-title">The ${examInfo.short} Archive Vault</div>
+        </div>
+      </div>
+      <div class="ma-hero-desc">Every previous-year ${examInfo.short} paper on file, filed by era. Break the seal on an Era to reveal its years, then select a session to begin your briefing.</div>
+      <div class="ma-hero-stats">
+        <div class="ma-hero-stat"><b>${eras.length}</b><span>Eras</span></div>
+        <div class="ma-hero-stat"><b>${totalPapers}</b><span>Papers</span></div>
+        <div class="ma-hero-stat"><b>${totalQAll}</b><span>Questions</span></div>
+        <div class="ma-hero-stat"><b>${overallPct}%</b><span>Cleared</span></div>
+      </div>
+    </div>
+    <div class="ma-era-list">${erasHTML}</div>
+  </div>`;
+}
+
+function pvArchiveSessionsHTML(){
+  const year = PV.archiveYear;
+  const exam = PV.examType;
+  const g = pvPapersByYear(exam).find(x=>String(x.year)===String(year));
+  if(!g){ setTimeout(pvGoArchive,0); return `<div class="pv-screen"></div>`; }
+  const st = ensurePyqStats();
+  const rows = g.papers.map((p,i)=>{
+    const qs = pvPaperQuestions(p.year,p.session,exam);
+    const attempted = qs.filter(q=>st.attempts[q._id]!==undefined).length;
+    const pct = qs.length ? Math.round(attempted/qs.length*100) : 0;
+    return `<div class="ma-session-card" style="animation-delay:${i*80}ms" onclick="pvOpenSessionFromArchive(${p.year},'${p.session}')">
+      <div class="ma-session-icon">🎖️</div>
+      <div class="ma-session-body">
+        <div class="ma-session-title">${p.label}</div>
+        <div class="ma-session-sub">${qs.length} Questions${attempted?` · ${pct}% progress`:' · Not started'}</div>
+        <div class="ma-session-progress"><div class="ma-session-progress-fill" style="width:${pct}%"></div></div>
+      </div>
+      <div class="ma-session-arrow">→</div>
+    </div>`;
+  }).join('');
+  return `<div class="pv-screen ma-root">
+    <div class="pv-topbar">
+      <div class="pv-back" onclick="pvBackToArchive()">←</div>
+      <div class="pv-topbar-title">${year}<small>Select Session</small></div>
+    </div>
+    <div class="ma-session-list">${rows}</div>
+  </div>`;
+}
+
+/* ============================================================
+   HOME DASHBOARD
+   ============================================================ */
+function pvHomeHTML(){
+  const st = ensurePyqStats();
+  const totalQ = PYQ_ALL.length;
+  const solvedIds = Object.keys(st.attempts);
+  const solved = solvedIds.length;
+  const acc = pyqAccuracyFor(PYQ_ALL);
+  const bm = getBookmarks().filter(b=>b.startsWith('pyq:')).length;
+  const mistakesCount = solvedIds.filter(id=>st.attempts[id]===false).length;
+  const pct = totalQ ? Math.round(solved/totalQ*100) : 0;
+  const streakDays = State.streak || 0;
+
+  const continueC = State.pyqContinue;
+  const continueHTML = continueC ? `
+    <div class="pv-continue reveal" onclick="pvResumeContinue()">
+      <div class="pv-continue-icon">▶</div>
+      <div class="pv-continue-body">
+        <div class="pv-continue-title">Continue: ${continueC.title}</div>
+        <div class="pv-continue-sub">Question ${(continueC.index||0)+1} of ${continueC.qids.length}</div>
+      </div>
+      <div class="pv-continue-arrow">→</div>
+    </div>` : '';
+
+  const modes = [
+    {icon:'📘', title:'Practice Mode', sub:'Learn at your own pace', fn:"pvLaunchMode('practice')"},
+    {icon:'🎲', title:'Quiz Mode', sub:'20 random questions', fn:"pvLaunchMode('quiz')"},
+    {icon:'⚡', title:'Rapid Fire', sub:'30 Qs · 20 sec each', fn:"pvLaunchMode('rapidfire')"},
+    {icon:'🎖️', title:'Exam Mode', sub:'Full paper · timed', fn:"pvLaunchMode('exam')"},
+    {icon:'📖', title:'Revision', sub:solved+' solved so far', fn:"pvLaunchMode('revision')"},
+    {icon:'🔖', title:'Bookmarks', sub:bm+' saved question'+(bm!==1?'s':''), fn:"pvLaunchMode('bookmarks')"},
+    {icon:'🎯', title:'Mistakes Only', sub:mistakesCount+' to review', fn:"pvLaunchMode('mistakes')"},
+  ];
+  const modesHTML = modes.map(m=>`
+    <div class="pv-mode-card" onclick="${m.fn}">
+      <div class="pv-mode-icon">${m.icon}</div>
+      <div class="pv-mode-title">${m.title}</div>
+      <div class="pv-mode-sub">${m.sub}</div>
+    </div>`).join('');
+
+  const eraGroups = pvEraGroups();
+  const archiveGateHTML = `<div class="ma-gate-card" onclick="pvGoExamType()">
+    <div class="ma-gate-icon">🗃️</div>
+    <div class="ma-gate-body">
+      <div class="ma-gate-title">Previous Years Papers</div>
+      <div class="ma-gate-sub">Every paper on file, filed by Era — browse the full dossier vault.</div>
+      <div class="ma-gate-stats"><span><b>${eraGroups.length}</b> Eras</span><span><b>${PYQ_PAPERS.length}</b> Papers</span><span><b>${totalQ}</b> Qs</span></div>
+    </div>
+    <div class="ma-gate-arrow">→</div>
+  </div>`;
+
+  const topicAcc = pyqTopicAccuracy();
+  const topicList = pvTopics();
+  const topicsHTML = topicList.map(t=>{
+    const count = PYQ_ALL.filter(q=>q.sec===t).length;
+    const ta = topicAcc.find(x=>x.sec===t);
+    const accLabel = ta ? `${ta.acc}%` : 'New';
+    return `<button type="button" class="pv-topic-card" data-topic="${encodeURIComponent(t)}" aria-label="Practice ${escapeHtmlVaani(t)}, ${count} questions">
+      <span class="pv-topic-emoji" aria-hidden="true">${pvTopicIcon(t)}</span>
+      <span class="pv-topic-copy"><span class="pv-topic-name">${escapeHtmlVaani(t)}</span><span class="pv-topic-count">${count} questions</span><span class="pv-topic-hint">${escapeHtmlVaani(pvTopicHint(t))}</span></span>
+      <span class="pv-topic-side"><span class="pv-topic-acc ${pvAccBadgeClass(ta?ta.acc:null)}">${accLabel}</span><span class="pv-topic-open">Practice <b aria-hidden="true">→</b></span></span>
+    </button>`;
+  }).join('');
+
+  const recent = st.history.slice(0,5);
+  const recentHTML = recent.length ? recent.map(h=>{
+    const q = PYQ_BY_ID[h.qid]; if(!q) return '';
+    return `<div class="pv-recent-item" onclick="pvReviewFromRecent('${h.qid}')">
+      <div class="pv-recent-dot ${h.correct?'ok':'no'}">${h.correct?'✓':'✕'}</div>
+      <div class="pv-recent-body">
+        <div class="pv-recent-q">${pyqPromptHTML(q)}</div>
+        <div class="pv-recent-meta">${(PYQ_EXAM_INFO[q._exam]&&PYQ_EXAM_INFO[q._exam].short)||'NDA'} ${q.s} ${q.y} · ${q.sec}</div>
+      </div>
+    </div>`;
+  }).join('') : `<div class="pv-empty-note">Solve a few questions and your recent activity will show up here.</div>`;
+
+  return `<div class="pv-screen">
+    <div class="pv-hero reveal">
+      <div class="pv-hero-top">
+        <div class="pv-hero-id">
+          <div class="pv-hero-badge">🎖️</div>
+          <div>
+            <div class="pv-hero-title">PYQ Command Center</div>
+          </div>
+        </div>
+        <div class="pv-hero-target" onclick="pvLaunchMode('quiz')" title="Quick quiz">🎯</div>
+      </div>
+      <div class="pv-progress-card">
+        <div class="pv-ring-wrap">
+          ${pvRingSVG(pct,108,10,'--gold')}
+          <div class="pv-ring-center"><div class="pv-ring-pct">${pct}%</div><div class="pv-ring-lbl">Overall<br>Progress</div></div>
+        </div>
+        <div class="pv-stat-grid">
+          <div class="pv-stat-box"><span class="pv-stat-icon">📊</span><div><div class="pv-stat-n">${solved} / ${totalQ}</div><div class="pv-stat-l">Solved</div></div></div>
+          <div class="pv-stat-box"><span class="pv-stat-icon">🎯</span><div><div class="pv-stat-n">${acc===null?'—':acc+'%'}</div><div class="pv-stat-l">Accuracy</div></div></div>
+          <div class="pv-stat-box"><span class="pv-stat-icon">🔥</span><div><div class="pv-stat-n">${streakDays}</div><div class="pv-stat-l">Day Streak</div></div></div>
+          <div class="pv-stat-box"><span class="pv-stat-icon">🔖</span><div><div class="pv-stat-n">${bm}</div><div class="pv-stat-l">Bookmarked</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    ${continueHTML}
+
+    <div class="pv-section-title"><h3><span class="bar"></span>Practice Modes</h3></div>
+    <div class="pv-modes-grid">${modesHTML}</div>
+
+    <div class="pv-section-title"><h3><span class="bar"></span>Previous Years Papers</h3></div>
+    ${archiveGateHTML}
+
+    <div class="pv-section-title"><h3><span class="bar"></span>Topic-Wise Practice</h3></div>
+    <div class="pv-topic-tools">
+      <div class="pv-topic-tools-copy"><strong>Choose a skill</strong><small>Search the question bank by topic.</small></div>
+      <label class="pv-topic-search"><span class="search-mark" aria-hidden="true">⌕</span><input id="pvTopicSearch" type="search" maxlength="60" autocomplete="off" placeholder="Search topics…" aria-label="Search topic-wise practice"></label>
+      <span class="pv-topic-results" id="pvTopicResults" aria-live="polite">${topicList.length} topics</span>
+    </div>
+    <div class="pv-topic-grid" id="pvTopicGrid">${topicsHTML}</div>
+    <div class="pv-empty-note pv-topic-empty" id="pvTopicEmpty" hidden>No matching topic. Try another search.</div>
+  </div>`;
+}
+
+function pvFilterTopicCards(value){
+  const grid=document.getElementById('pvTopicGrid');if(!grid)return;
+  const term=String(value||'').trim().toLocaleLowerCase();
+  const cards=Array.from(grid.querySelectorAll('.pv-topic-card'));let visible=0;
+  cards.forEach(card=>{
+    const topic=String(card.dataset.topic||'').toLocaleLowerCase();
+    const show=!term||topic.includes(term);card.hidden=!show;if(show)visible++;
+  });
+  const results=document.getElementById('pvTopicResults');
+  if(results)results.textContent=term?(visible+' of '+cards.length+' topics'):(cards.length+' topics');
+  const empty=document.getElementById('pvTopicEmpty');if(empty)empty.hidden=visible>0;
+}
+function pvLaunchTopic(sec){
+  const list = PYQ_ALL.filter(q=>q.sec===sec);
+  pvStartSession('section', list, {title:sec});
+}
+function pvReviewFromRecent(qid){
+  const q = PYQ_BY_ID[qid]; if(!q) return;
+  const list = PYQ_ALL.filter(x=>x.sec===q.sec);
+  pvStartSession('section', list, {title:q.sec});
+  const idx = PV.session.questions.findIndex(x=>x._id===qid);
+  PV.session.index = Math.max(0, idx);
+  pvRender();
+}
+
+function pvLaunchMode(mode){
+  const st = ensurePyqStats();
+  if(mode==='practice'){
+    pvStartSession('practice', PYQ_ALL, {title:'Practice Mode'});
+  } else if(mode==='quiz'){
+    const pool = pvShuffle(PYQ_ALL).slice(0,20);
+    pvStartSession('quiz', pool, {title:'Quiz Mode'});
+  } else if(mode==='rapidfire'){
+    const pool = pvShuffle(PYQ_ALL).slice(0,30);
+    pvStartSession('rapidfire', pool, {title:'Rapid Fire', perQSeconds:20});
+  } else if(mode==='exam'){
+    PV.screen='exampicker'; pvRender();
+  } else if(mode==='revision'){
+    const ids = Object.keys(st.attempts);
+    if(!ids.length){ toast("Solve a few PYQs first — Revision Mode reviews what you've already attempted."); return; }
+    const list = ids.map(id=>PYQ_BY_ID[id]).filter(Boolean);
+    pvStartSession('revision', list, {title:'Revision Mode'});
+  } else if(mode==='bookmarks'){
+    const list = getBookmarks().filter(b=>b.startsWith('pyq:')).map(b=>PYQ_BY_ID[b.slice(4)]).filter(Boolean);
+    if(!list.length){ toast('No bookmarks yet — tap ★ on any question to save it here.'); return; }
+    pvStartSession('bookmarks', list, {title:'Bookmarks'});
+  } else if(mode==='mistakes'){
+    const ids = Object.keys(st.attempts).filter(id=>st.attempts[id]===false);
+    if(!ids.length){ toast('No mistakes logged yet — nice work, Cadet.'); return; }
+    const list = ids.map(id=>PYQ_BY_ID[id]).filter(Boolean);
+    pvStartSession('mistakes', list, {title:'Mistakes Only'});
+  }
+}
+
+/* ============================================================
+   PAPER PAGE
+   ============================================================ */
+function pvOpenPaper(year, session){
+  // paperKey carries the exam too (PV.examType, set back when the exam
+  // was first chosen) so a paper opened from the CDS archive can never
+  // pull in an NDA paper's questions even if year+session happen to match.
+  PV.paperKey = (PV.examType||'NDA')+'-'+year+'-'+session;
+  PV.screen='paper';
+  pvRender();
+}
+function pvPaperHTML(){
+  const [exam, year, session] = PV.paperKey.split('-');
+  const examLabel = (PYQ_EXAM_INFO[exam] && PYQ_EXAM_INFO[exam].short) || exam;
+  const sections = pvPaperSections(year, session, exam);
+  const allQ = pvPaperQuestions(year, session, exam);
+  const acc = pyqAccuracyFor(allQ);
+  const attempted = allQ.filter(q=>ensurePyqStats().attempts[q._id]!==undefined).length;
+  const pct = allQ.length ? Math.round(attempted/allQ.length*100) : 0;
+
+  const sectionsHTML = sections.map(s=>{
+    const a = pyqAccuracyFor(s.list);
+    return `<div class="pv-section-card" onclick="pvOpenSection(${year},'${session}','${s.sec.replace(/'/g,"\\'")}')">
+      <div class="pv-section-icon">${pvTopicIcon(s.sec)}</div>
+      <div class="pv-section-card-body">
+        <div class="pv-section-card-title">${s.sec}</div>
+        <div class="pv-section-card-sub">${s.list.length} questions${a!==null?` · ${a}% accuracy`:''}</div>
+      </div>
+      <div class="pv-section-card-arrow">→</div>
+    </div>`;
+  }).join('');
+
+  return `<div class="pv-screen">
+    <div class="pv-topbar">
+      <div class="pv-back" onclick="pvPaperBack()">←</div>
+      <div class="pv-topbar-title">${examLabel} ${session} · ${year}<small>Mission Briefing</small></div>
+    </div>
+    <div class="pv-paper-hero">
+      ${pvRingSVG(pct,80,8,'--gold')}
+      <div class="pv-paper-hero-body">
+        <div class="pv-paper-hero-title">${examLabel} ${session} English Paper — ${year}</div>
+        <div class="pv-paper-hero-sub">${allQ.length} questions · ${attempted} attempted${acc!==null?` · ${acc}% accuracy`:''}</div>
+      </div>
+    </div>
+    <div class="pv-section-title"><h3><span class="bar"></span>Sections</h3></div>
+    ${sectionsHTML}
+    <button class="btn ghost" style="width:100%;justify-content:center;margin-top:6px" onclick="pvPracticeFullPaper(${year},'${session}')">📘 Practice Full Paper</button>
+  </div>`;
+}
+function pvOpenSection(year, session, sec){
+  const exam = PV.examType;
+  const examLabel = (PYQ_EXAM_INFO[exam] && PYQ_EXAM_INFO[exam].short) || exam || '';
+  const list = pvPaperQuestions(year, session, exam).filter(q=>q.sec===sec);
+  pvStartSession('section', list, {title:`${examLabel} ${session} ${year} · ${sec}`});
+}
+function pvPracticeFullPaper(year, session){
+  const exam = PV.examType;
+  const examLabel = (PYQ_EXAM_INFO[exam] && PYQ_EXAM_INFO[exam].short) || exam || '';
+  const list = pvPaperQuestions(year, session, exam);
+  pvStartSession('section', list, {title:`${examLabel} ${session} ${year} — Full Paper`});
+}
+
+/* ============================================================
+   EXAM MODE PICKER
+   ============================================================ */
+function pvExamPickerHTML(){
+  const yearGroups = pvPapersByYear();
+  const rows = yearGroups.flatMap(g=>g.papers).map(p=>{
+    const qs = pvPaperQuestions(p.year, p.session, p.exam);
+    const mins = Math.max(15, Math.round(qs.length*1));
+    const examLabel = (PYQ_EXAM_INFO[p.exam] && PYQ_EXAM_INFO[p.exam].short) || p.exam;
+    return `<div class="pv-paper-row" onclick="pvStartExam(${p.year},'${p.session}','${p.exam}')">
+      <div class="pv-paper-row-body">
+        <div class="pv-paper-row-title">${examLabel} ${p.session} · ${p.year} Simulation</div>
+        <div class="pv-paper-row-sub">${qs.length} questions · ${mins} min timer</div>
+      </div>
+      <div class="pv-paper-row-arrow">→</div>
+    </div>`;
+  }).join('');
+  return `<div class="pv-screen">
+    <div class="pv-topbar">
+      <div class="pv-back" onclick="pvGoHome()">←</div>
+      <div class="pv-topbar-title">Exam Mode<small>Choose a paper to simulate</small></div>
+    </div>
+    <div class="pv-exam-note">⚠ Full simulation: one timed attempt at the complete paper, negative marking (−⅓ per wrong answer), and no explanations until you submit — just like the real exam hall.</div>
+    ${rows}
+  </div>`;
+}
+function pvStartExam(year, session, exam){
+  // exam is passed explicitly from the picker above; PV.examType is set here
+  // too since vaani-testkit.js's own pvStartExam patch reads it from there.
+  if(exam) PV.examType = exam;
+  const qs = pvPaperQuestions(year, session, exam);
+  if(!qs.length){ toast('This paper is not available yet.'); return; }
+  const mins = Math.max(15, Math.round(qs.length*1));
+  const examLabel = (PYQ_EXAM_INFO[exam] && PYQ_EXAM_INFO[exam].short) || exam || 'NDA';
+  pvStartSession('exam', qs, {
+    title:`${examLabel} ${session} ${year} · Exam Simulation`, negativeMarking:true, deferReveal:true, timeLimitSec: mins*60
+  });
+}
+
+/* ============================================================
+   SESSION ENGINE (shared by every mode)
+   ============================================================ */
+function pvStartSession(mode, questions, opts){
+  opts = opts || {};
+  if(!questions || !questions.length){ toast('No questions available for this mode yet.'); return; }
+  pvStopTimer();
+  const s = {
+    mode, title: opts.title || mode,
+    questions: questions.slice(),
+    index: opts.resumeIndex || 0,
+    answers: opts.resumeAnswers || {},
+    negativeMarking: !!opts.negativeMarking,
+    deferReveal: !!opts.deferReveal,
+    perQSeconds: opts.perQSeconds || null,
+    timeLimitSec: opts.timeLimitSec || null,
+    remaining: opts.timeLimitSec || opts.perQSeconds || null,
+    streak: 0, bestStreak: 0,
+    finished: false, timerId: null
+  };
+  if(s.index >= s.questions.length) s.index = 0;
+  PV.session = s;
+  PV.screen = 'session';
+  pvRender();
+  pvStartTimerIfNeeded();
+  pvSaveContinue();
+}
+function pvStopTimer(){
+  if(PV.session && PV.session.timerId){ clearInterval(PV.session.timerId); PV.session.timerId = null; }
+}
+function pvStartTimerIfNeeded(){
+  const s = PV.session; if(!s) return;
+  pvStopTimer();
+  if(s.mode==='exam' && s.timeLimitSec){
+    s.timerId = setInterval(()=>{
+      s.remaining--;
+      if(s.remaining<=0){ s.remaining=0; pvFinishSession(); return; }
+      pvTickTimerDOM();
+    }, 1000);
+  } else if(s.mode==='rapidfire' && s.perQSeconds){
+    s.remaining = s.perQSeconds;
+    s.timerId = setInterval(()=>{
+      s.remaining--;
+      if(s.remaining<=0){ s.remaining=0; pvTickTimerDOM(); pvAutoAdvanceOnTimeout(); return; }
+      pvTickTimerDOM();
+    }, 1000);
+  }
+}
+function pvTickTimerDOM(){
+  const s = PV.session; if(!s) return;
+  const pill = document.getElementById('pvTimerPill');
+  if(pill){ pill.textContent = pvFmtTime(s.remaining); pill.parentElement.classList.toggle('low', s.remaining<=30); }
+  const ringNum = document.getElementById('pvTimerRingNum');
+  if(ringNum){
+    ringNum.textContent = s.remaining;
+    const pct = (s.remaining/s.perQSeconds)*100;
+    const svgWrap = document.getElementById('pvTimerRingSvg');
+    if(svgWrap) svgWrap.innerHTML = pvRingSVG(pct,50,6,'--gold');
+    const ringBox = document.getElementById('pvTimerRingBox');
+    if(ringBox) ringBox.classList.toggle('low', s.remaining<=5);
+  }
+}
+function pvAutoAdvanceOnTimeout(){
+  const s = PV.session; const q = s.questions[s.index];
+  if(!s.answers[q._id]){
+    s.answers[q._id] = { choice:-1, correct:false, timeUp:true };
+    s.streak = 0;
+    recordPyqAttempt(q._id, false);
+  }
+  if(s.index < s.questions.length-1){ s.index++; s.remaining = s.perQSeconds; pvRender(); pvStartTimerIfNeeded(); }
+  else { pvFinishSession(); }
+}
+
+function pvCurrentQ(){ const s=PV.session; return s ? s.questions[s.index] : null; }
+
+function pvSelectOption(choiceIdx){
+  const s = PV.session; if(!s) return;
+  const q = s.questions[s.index];
+  if(s.answers[q._id]) return; // already answered
+  const correct = choiceIdx===q.ans;
+  s.answers[q._id] = { choice: choiceIdx, correct };
+  if(correct){ s.streak++; s.bestStreak = Math.max(s.bestStreak, s.streak); addXP(2,'PYQ solved correctly'); }
+  else { s.streak = 0; }
+  recordPyqAttempt(q._id, correct);
+  refreshDashboardPyqCard();
+  pvSaveContinue();
+  pvRender();
+}
+
+function pvConfirmSubmitExam(){
+  const s=PV.session;if(!s||s.mode!=='exam')return;
+  const blank=s.questions.filter(q=>!s.answers[q._id]).length;
+  const message=blank?'You have '+blank+' unanswered question'+(blank===1?'':'s')+'. They will receive zero. Submit now?':'You have answered every question. Submit the exam now?';
+  if(typeof confirm==='function'&&!confirm(message))return;
+  pvFinishSession();
+}
+function pvNext(){
+  const s = PV.session; if(!s) return;
+  if(s.index < s.questions.length-1){ s.index++; if(s.mode==='rapidfire'){ s.remaining=s.perQSeconds; } pvRender(); if(s.mode==='rapidfire') pvStartTimerIfNeeded(); pvSaveContinue(); }
+  else if(s.mode==='exam') pvConfirmSubmitExam();
+  else pvFinishSession();
+}
+function pvPrev(){
+  const s = PV.session; if(!s) return;
+  if(s.index>0){ s.index--; pvRender(); pvSaveContinue(); }
+}
+function pvJumpTo(i){
+  const s = PV.session; if(!s) return;
+  s.index = i; pvRender(); pvSaveContinue();
+}
+
+function pvFinishSession(){
+  const s = PV.session; if(!s) return;
+  pvStopTimer();
+  s.finished = true;
+  pvClearContinue();
+  if(s.mode==='exam'){ PV.screen='summary'; pvRender(); return; }
+  toast('Session complete — nice work, Cadet!');
+  pvGoHome();
+}
+
+function pvReportError(qid){
+  toast('Reported — thanks, Cadet. We\'ll review this question.');
+}
+
+function pvSessionHTML(){
+  const s = PV.session; if(!s) return '';
+  const q = s.questions[s.index];
+  const answer = s.answers[q._id];
+  const bmId = 'pyq:'+q._id;
+  const bookmarked = isBookmarked(bmId);
+  const isRevisionLike = (s.mode==='revision' || s.mode==='revision-review');
+  const answered = !!answer || isRevisionLike;
+  const showResult = answered && !(s.mode==='exam'); // exam defers reveal until summary
+
+  const progressPct = ((s.index+1)/s.questions.length)*100;
+
+  let timerHTML = '';
+  if(s.mode==='exam' && s.timeLimitSec){
+    timerHTML = `<div class="pv-timer-pill ${s.remaining<=30?'low':''}"><span class="l">Time Left</span><span id="pvTimerPill">${pvFmtTime(s.remaining)}</span></div>`;
+  } else if(s.mode==='rapidfire' && s.perQSeconds){
+    timerHTML = `<div class="pv-timer-ring" id="pvTimerRingBox">
+      <div id="pvTimerRingSvg">${pvRingSVG((s.remaining/s.perQSeconds)*100,50,6,'--gold')}</div>
+      <div class="pv-timer-ring-num" id="pvTimerRingNum">${s.remaining}</div>
+    </div>`;
+  }
+  let scoreHTML = '';
+  if(s.mode==='rapidfire' || s.mode==='quiz'){
+    const correctCount = Object.values(s.answers).filter(a=>a.correct).length;
+    scoreHTML = `<div class="pv-score-badges">
+      <div class="pv-score-badge"><div class="n">${correctCount*10}</div><div class="l">Score</div></div>
+      <div class="pv-score-badge"><div class="n">×${s.streak}</div><div class="l">Streak</div></div>
+    </div>`;
+  }
+
+  const displayOptions = pyqOptionLabels(q);
+  let optsHTML = '';
+  if(isRevisionLike){
+    optsHTML = displayOptions.map((opt,i)=>`<div class="pv-option ${i===q.ans?'correct':''}" style="cursor:default">
+      <span class="ol">${letters[i]}</span><span>${escapeHtmlVaani(opt)}</span></div>`).join('');
+  } else {
+    optsHTML = displayOptions.map((opt,i)=>{
+      let cls = '';
+      if(answer && s.mode!=='exam'){
+        if(i===q.ans) cls='correct';
+        else if(i===answer.choice) cls='wrong';
+      } else if(answer && s.mode==='exam' && i===answer.choice){cls='selected-neutral';}
+      return `<button class="pv-option ${cls}" aria-pressed="${answer && i===answer.choice?'true':'false'}" ${answer?'disabled':''} onclick="pvSelectOption(${i})">
+        <span class="ol">${letters[i]}</span><span>${escapeHtmlVaani(opt)}</span></button>`;
+    }).join('');
+  }
+
+  // Answer correctness is already shown by the option states and the explanation panel.
+  // Keep the question area clean instead of repeating a banner after every answer.
+  let feedbackHTML = '';
+  let explainHTML = '';
+  if(showResult || isRevisionLike){
+    const extraNotes = `${q.exp?`<div><b>Why:</b> ${escapeHtmlVaani(q.exp)}</div>`:''}${q.rule?`<div style="margin-top:8px"><b>📐 Rule:</b> ${escapeHtmlVaani(q.rule)}</div>`:''}${q.shortcut?`<div style="margin-top:8px">⚡ ${escapeHtmlVaani(q.shortcut)}</div>`:''}${q.correctionNote?`<div style="margin-top:8px;color:var(--red)">⚠ <b>Answer-key note:</b> ${escapeHtmlVaani(q.correctionNote)}</div>`:''}`;
+    if(extraNotes) explainHTML = `<div class="pv-explain-panel">${extraNotes}</div>`;
+  } else if(s.mode==='exam' && answer){
+    explainHTML = `<div class="pv-feedback" style="background:rgba(201,162,75,.1);border-left:3px solid var(--gold);color:var(--gold)">✓ Answer saved — answers and explanations will be revealed after submission.</div>`;
+  }
+
+  const qgrid = s.questions.map((qq,i)=>{
+    let cls='';
+    if(i===s.index)cls='current';
+    else if(s.answers[qq._id])cls=s.mode==='exam'?'answered':(s.answers[qq._id].correct?'solved':'incorrect');
+    const status=cls==='current'?'current':cls==='answered'?'answered':cls==='solved'?'correct':cls==='incorrect'?'incorrect':'not answered';
+    return `<button class="${cls}" aria-label="Question ${i+1}, ${status}" ${i===s.index?'aria-current="step"':''} onclick="pvJumpTo(${i})">${i+1}</button>`;
+  }).join('');
+
+  return `<div class="pv-screen">
+    <div class="pv-session-top">
+      <div class="pv-back" onclick="${s.mode==='exam'?`pvConfirmExitExam()`:(s.mode==='revision-review'?`pvBackToSummary()`:`pvExitSession()`)}">←</div>
+      <div class="pv-session-info">
+        <div class="pv-session-title">${s.title}</div>
+        <div class="pv-session-sub">Q ${s.index+1} / ${s.questions.length}</div>
+      </div>
+      ${timerHTML}
+      ${scoreHTML}
+    </div>
+
+    <div class="pv-progress-track"><div class="pv-progress-fill" style="width:${progressPct}%"></div></div>
+    <div class="pv-progress-count"><span>${Math.round(progressPct)}% through</span><span>${Object.keys(s.answers).length} answered</span></div>
+
+    <div class="pv-qcard reveal">
+      <div class="pv-qmeta-row">
+        <span class="pyq-chip yr">${(PYQ_EXAM_INFO[q._exam]&&PYQ_EXAM_INFO[q._exam].short)||'NDA'} ${q.s} ${q.y}</span>
+        <span class="pyq-chip tp">${q.sec}</span>
+        ${q.diff?`<span class="pyq-chip diff-${q.diff}">${q.diff}</span>`:''}
+        <button class="bm-star ${bookmarked?'active':''}" onclick="toggleBookmark('${bmId}', this)" title="Bookmark" style="margin-left:auto">★</button>
+      </div>
+      ${q.passage ? `<div class="pv-passage"><div class="pv-passage-label">Passage</div><div class="pv-passage-text">${escapeHtmlVaani(q.passage)}</div></div>` : ''}
+      <div class="pv-qtext">${pyqPromptHTML(q)}</div>
+      <div class="pv-answer-hint" ${answer||isRevisionLike?'hidden':''}>Select one option to continue.</div>
+      <div class="pv-options">${optsHTML}</div>
+      ${feedbackHTML}
+      ${explainHTML}
+      ${(showResult || isRevisionLike) ? `<div class="pv-qcard-actions">
+        <div class="pv-qcard-actions-left">
+          <button class="pv-icon-btn" onclick="pvReportError('${q._id}')">⚑ Report</button>
+        </div>
+      </div>` : ''}
+    </div>
+
+    <div class="pv-nav-actions">
+      <button class="pv-nav-btn" onclick="pvPrev()" ${s.index===0?'disabled':''}>← Previous</button>
+      ${s.mode==='revision-review'
+        ? `<button class="pv-nav-btn primary" onclick="${s.index===s.questions.length-1 ? 'pvBackToSummary()' : 'pvNext()'}">${s.index===s.questions.length-1 ? 'Back to Results' : 'Next →'}</button>`
+        : `<button class="pv-nav-btn primary" onclick="pvNext()" ${(!answer && !isRevisionLike && s.mode!=='exam')?'disabled':''}>${s.index===s.questions.length-1 ? (s.mode==='exam'?'Submit Exam':'Finish') : 'Next →'}</button>`}
+    </div>
+
+    <div class="pv-qgrid-wrap">
+      <div class="pv-qgrid-title">Question Navigation</div>
+      <div class="pv-qgrid">${qgrid}</div>
+      <div class="pv-qgrid-legend">
+        <span><i class="solved"></i>Solved</span>
+        <span><i class="incorrect"></i>Incorrect</span>
+        <span><i class="current"></i>Current</span>
+        <span><i class="unattempted"></i>Unattempted</span>
+      </div>
+    </div>
+  </div>`;
+}
+function pvExitSession(){ pvStopTimer(); pvGoHome(); }
+function pvConfirmExitExam(){
+  if(confirm('Leave the exam simulation now? Your progress on this attempt will be lost.')){ pvStopTimer(); PV.session=null; pvClearContinue(); pvGoHome(); }
+}
+
+/* ============================================================
+   EXAM SUMMARY
+   ============================================================ */
+function pvSummaryHTML(){
+  const s = PV.session; if(!s) return '';
+  let correct=0, wrong=0, unattempted=0;
+  s.questions.forEach(q=>{
+    const a = s.answers[q._id];
+    if(!a || a.choice===-1) unattempted++;
+    else if(a.correct) correct++;
+    else wrong++;
+  });
+  const rawScore = correct - (wrong/3);
+  const scoreLabel = (Math.round(rawScore*100)/100).toString();
+  const total = s.questions.length;
+  const acc = (correct+wrong) ? Math.round(correct/(correct+wrong)*100) : 0;
+
+  const reviewHTML = s.questions.map((q,i)=>{
+    const a = s.answers[q._id];
+    const stat = (!a || a.choice===-1) ? '⬜' : (a.correct ? '✅' : '❌');
+    return `<div class="pv-review-item" onclick="pvReviewExamQ(${i})">
+      <span class="idx">Q${i+1}</span><span class="q">${pyqPromptHTML(q)}</span><span class="stat">${stat}</span>
+    </div>`;
+  }).join('');
+
+  return `<div class="pv-screen">
+    <div class="pv-topbar">
+      <div class="pv-back" onclick="pvGoHome()">←</div>
+      <div class="pv-topbar-title">${s.title}<small>Exam Results</small></div>
+    </div>
+    <div class="pv-summary-hero">
+      <div class="pv-summary-score">${scoreLabel} / ${total}</div>
+      <div class="pv-summary-label">Net Score (−⅓ negative marking applied)</div>
+      <div class="pv-summary-grid">
+        <div class="pv-summary-stat"><div class="n" style="color:var(--green)">${correct}</div><div class="l">Correct</div></div>
+        <div class="pv-summary-stat"><div class="n" style="color:var(--red)">${wrong}</div><div class="l">Wrong</div></div>
+        <div class="pv-summary-stat"><div class="n" style="color:var(--muted)">${unattempted}</div><div class="l">Skipped</div></div>
+      </div>
+      <div class="pv-summary-grid" style="grid-template-columns:1fr">
+        <div class="pv-summary-stat"><div class="n">${acc}%</div><div class="l">Accuracy on attempted questions</div></div>
+      </div>
+    </div>
+    <div class="pv-section-title"><h3><span class="bar"></span>Review Every Question</h3></div>
+    ${reviewHTML}
+    <button class="btn" style="width:100%;justify-content:center;margin-top:12px" onclick="pvGoHome()">🏠 Back to Command Center</button>
+  </div>`;
+}
+function pvReviewExamQ(i){
+  const s = PV.session; if(!s) return;
+  s.mode = 'revision-review'; // reveal answers freely without further scoring
+  s.index = i;
+  PV.screen = 'session';
+  pvRender();
+}
+function pvBackToSummary(){
+  const s = PV.session; if(!s) return;
+  s.mode = 'exam';
+  PV.screen = 'summary';
+  pvRender();
+}
+
+/* ---- open a single search result as its own scoped session ---- */
+function pvOpenSearchResult(qid, term){
+  const searchInput = document.getElementById('globalSearch');
+  const searchTerm = (typeof term === 'string' ? term : (searchInput ? searchInput.value : '')).trim().toLowerCase();
+  switchView('pyq');
+  const q = PYQ_BY_ID[qid]; if(!q){ pvGoHome(); return; }
+  const list = PYQ_ALL.filter(x=>(x.q+' '+x.o.join(' ')+' '+x.sec+' '+x.sub).toLowerCase().includes(searchTerm));
+  const pool = list.length ? list : [q];
+  pvStartSession('section', pool, {title:'Search results'});
+  const idx = PV.session.questions.findIndex(x=>x._id===qid);
+  if(idx>0){ PV.session.index = idx; pvRender(); }
+}
+
+/* ---- optional preset entry points (used by "Solve PYQs on this topic" links) ---- */
+function openPyqFiltered(presetTopic, presetLessonId){
+  switchView('pyq');
+  if(presetLessonId){ openPyqByLesson(presetLessonId); return; }
+  if(presetTopic){ pvLaunchTopic(presetTopic); return; }
+  pvGoHome();
+}
+function openPyqByLesson(lessonId){
+  switchView('pyq');
+  const list = PYQ_ALL.filter(q=>q.lessonId===lessonId);
+  if(!list.length){ toast('No linked PYQs found for this lesson yet.'); pvGoHome(); return; }
+  pvStartSession('section', list, {title:'Related PYQs'});
+}
+
+function refreshDashboardPyqCard(){
+  const el = document.getElementById('dashPyqStatMini'); if(!el) return;
+  const st = ensurePyqStats();
+  const solved = Object.keys(st.attempts).length;
+  const acc = pyqAccuracyFor(PYQ_ALL);
+  const bm = getBookmarks().filter(b=>b.startsWith('pyq:')).length;
+  el.innerHTML = `
+    <div class="psm-box"><div class="psm-n">${solved}</div><div class="psm-l">Solved</div></div>
+    <div class="psm-box"><div class="psm-n">${acc===null?'—':acc+'%'}</div><div class="psm-l">Accuracy</div></div>
+    <div class="psm-box"><div class="psm-n">${PYQ_PAPERS.length}</div><div class="psm-l">Papers</div></div>
+    <div class="psm-box"><div class="psm-n">${bm}</div><div class="psm-l">Bookmarked</div></div>`;
+  const topicAcc = pyqTopicAccuracy();
+  const strong = topicAcc.filter(t=>t.acc>=70).sort((a,b)=>b.acc-a.acc).slice(0,4);
+  const weak = topicAcc.filter(t=>t.acc<70).sort((a,b)=>a.acc-b.acc).slice(0,4);
+  const strongEl = document.getElementById('dashPyqStrong');
+  const weakEl = document.getElementById('dashPyqWeak');
+  if(strongEl) strongEl.innerHTML = strong.length? strong.map(t=>`<span class="pyq-topic-pill strong">${t.sec} · ${t.acc}%</span>`).join('') : '<span class="lbl" style="opacity:.6">Solve a few PYQs to see this</span>';
+  if(weakEl) weakEl.innerHTML = weak.length? weak.map(t=>`<span class="pyq-topic-pill weak">${t.sec} · ${t.acc}%</span>`).join('') : '<span class="lbl" style="opacity:.6">Solve a few PYQs to see this</span>';
+}
+
+/* ---- related PYQs injected into a grammar topic page ---- */
+function relatedPyqHTML(lessonId){
+  const related = PYQ_ALL.filter(q=>q.lessonId===lessonId);
+  if(!related.length) return '';
+  const preview = related.slice(0,3);
+  return `<div id="fs-pyq-real" class="panel-title" style="margin-top:24px"><span class="bar"></span>Real NDA PYQs On This Topic (${related.length})</div>
+    ${preview.map(q=>`<div class="related-pyq-mini" onclick="openPyqByLesson('${lessonId}')">
+       <div class="rpm-meta">${(PYQ_EXAM_INFO[q._exam]&&PYQ_EXAM_INFO[q._exam].short)||'NDA'} ${q.s} ${q.y} · ${q.sub}</div>${pyqPromptHTML(q)}
+     </div>`).join('')}
+    <button class="btn ghost" style="margin-top:6px" onclick="openPyqByLesson('${lessonId}')">🎯 Solve All ${related.length} Previous Year Questions on this Topic</button>`;
+}
+
+/* ---- GLOBAL SEARCH ---- */
+let __gsearchReturnFocus = null;
+function openGlobalSearch(){
+  const overlay = document.getElementById('gsearchOverlay');
+  if(!overlay) return;
+  if(!overlay.classList.contains('show')) __gsearchReturnFocus = document.activeElement;
+  overlay.classList.add('show');
+  overlay.setAttribute('aria-hidden','false');
+  const inp = document.getElementById('globalSearch');
+  if(inp){ inp.value=''; inp.focus(); }
+  renderGlobalSearch();
+}
+function closeGlobalSearch(restoreFocus){
+  const overlay = document.getElementById('gsearchOverlay');
+  if(!overlay) return;
+  const wasOpen = overlay.classList.contains('show');
+  overlay.classList.remove('show');
+  overlay.setAttribute('aria-hidden','true');
+  const target = __gsearchReturnFocus;
+  __gsearchReturnFocus = null;
+  if(restoreFocus !== false && wasOpen && target && target.isConnected && typeof target.focus === 'function') target.focus();
+}
+function renderGlobalSearch(){
+  const term = (document.getElementById('globalSearch').value||'').trim().toLowerCase();
+  const results = document.getElementById('gsearchResults');
+  if(!term){ results.innerHTML = `<div class="gsearch-empty">Type to search lessons, vocabulary, PYQs, and practice sets.</div>`; return; }
+
+  const lessons = GRAMMAR.filter(g=>g.title.toLowerCase().includes(term)||g.desc.toLowerCase().includes(term)).slice(0,5);
+  const vocab = VOCAB.filter(v=>v.w.toLowerCase().includes(term)||v.meanEn.toLowerCase().includes(term)).slice(0,5);
+  const practice = PRACTICE.filter(p=>p.title.toLowerCase().includes(term)||p.desc.toLowerCase().includes(term)).slice(0,4);
+  const reading = READING.filter(r=>r.title.toLowerCase().includes(term)).slice(0,3);
+  const pyqs = PYQ_ALL.filter(q=>(q.q+' '+q.o.join(' ')+' '+q.sec+' '+q.sub).toLowerCase().includes(term)).slice(0,6);
+
+  if(!lessons.length && !vocab.length && !practice.length && !reading.length && !pyqs.length){
+    results.innerHTML = `<div class="gsearch-empty">No matches for "${escapeHtmlVaani(term)}". Try a shorter or more general term.</div>`;
+    return;
+  }
+
+  let html='';
+  if(lessons.length){
+    html += `<div class="gsearch-group-label">Lessons</div>` + lessons.map(g=>
+      `<div class="gsearch-item" onclick="closeGlobalSearch();openTopic('${g.id}')"><span class="gi-title">${g.icon} ${g.title}</span><span class="gi-sub">${g.desc}</span></div>`).join('');
+  }
+  if(vocab.length){
+    html += `<div class="gsearch-group-label">Vocabulary</div>` + vocab.map(v=>
+      `<div class="gsearch-item" onclick="closeGlobalSearch();openWord('${v.id}')"><span class="gi-title">${v.w}</span><span class="gi-sub">${v.meanEn}</span></div>`).join('');
+  }
+  if(pyqs.length){
+    html += `<div class="gsearch-group-label">Previous Year Questions (${pyqs.length}${pyqs.length===6?'+':''})</div>` + pyqs.map(q=>
+      `<div class="gsearch-item" onclick="closeGlobalSearch();pvOpenSearchResult('${q._id}')"><span class="gi-title">${(PYQ_EXAM_INFO[q._exam]&&PYQ_EXAM_INFO[q._exam].short)||'NDA'} ${q.s} ${q.y} · ${q.sec}</span><span class="gi-sub">${q.q.slice(0,90)}${q.q.length>90?'…':''}</span></div>`).join('');
+  }
+  if(practice.length){
+    html += `<div class="gsearch-group-label">Practice</div>` + practice.map(p=>
+      `<div class="gsearch-item" onclick="closeGlobalSearch();switchView('pyq')"><span class="gi-title">${p.icon} ${p.title}</span><span class="gi-sub">${p.desc}</span></div>`).join('');
+  }
+  if(reading.length){
+    html += `<div class="gsearch-group-label">Reading</div>` + reading.map(r=>
+      `<div class="gsearch-item" onclick="closeGlobalSearch();switchView('pyq')"><span class="gi-title">${r.icon} ${r.title}</span><span class="gi-sub">${r.time}</span></div>`).join('');
+  }
+  results.innerHTML = html;
+}
+
+
+/* ============================================================
+   RENDER: GRAMMAR GRID
+=============================================================*/
+function topicStatus(id){
+  if(State.completedTopics[id]) return 'cleared';
+  return 'progress';
+}
+
+/* ---- Skill Tree: curriculum-ordered progression map ---- */
+const SKILL_TIERS = [
+  {label:'Tier I · Foundations', ids:['parts-of-speech','noun','pronoun','verb','adjective','adverb','preposition']},
+  {label:'Tier II · Verb Systems', ids:['conjunction','articles','tenses','voice','narration','sva','modals']},
+  {label:'Tier III · Sentence Architecture', ids:['conditionals','question-tags','comparison','clauses','phrases','gerunds-infinitives','participles']},
+  {label:'Tier IV · Precision & Polish', ids:['parallelism','punctuation','capitalization','word-formation','sentence-structure','determiners']},
+  {label:'Tier V · Exam Technique', ids:['spotting-errors','sentence-improvement','idioms-phrasal-verbs','one-word-substitution','jumbled-sentences','confused-words','cloze-test-strategy']}
+];
+function renderSkillTree(){
+  const wrap = document.getElementById('skillTreeWrap'); if(!wrap) return;
+  const flatOrder = SKILL_TIERS.flatMap(t=>t.ids);
+  let firstIncompleteIdx = flatOrder.findIndex(id=>!State.completedTopics[id]);
+  if(firstIncompleteIdx===-1) firstIncompleteIdx = flatOrder.length;
+  let html = `<div class="st-legend">
+    <span><span class="dot" style="background:var(--green)"></span>Cleared</span>
+    <span><span class="dot" style="background:var(--gold)"></span>Next up</span>
+    <span><span class="dot" style="background:var(--muted2)"></span>Upcoming</span>
+  </div><div class="skill-tree">`;
+  SKILL_TIERS.forEach(tier=>{
+    html += `<div class="st-tier"><div class="st-tier-label">${tier.label}</div><div class="st-row">`;
+    tier.ids.forEach(id=>{
+      const g = GRAMMAR.find(x=>x.id===id);
+      if(!g) return;
+      const flatIdx = flatOrder.indexOf(id);
+      const done = !!State.completedTopics[id];
+      const status = done ? 'completed' : (flatIdx===firstIncompleteIdx ? 'current' : (flatIdx<firstIncompleteIdx ? 'completed' : 'locked'));
+      const pyqCount = (typeof PYQ_ALL!=='undefined') ? PYQ_ALL.filter(q=>q.lessonId===id).length : 0;
+      html += `<button class="st-node ${status}" data-id="${id}">
+        <div class="st-node-badge">${g.icon}</div>
+        <div class="st-node-label">${g.title}</div>
+        ${pyqCount?`<div class="pyq-tag" style="margin:4px 0 0;display:inline-block">${pyqCount} PYQ${pyqCount>1?'s':''}</div>`:''}
+      </button>`;
+    });
+    html += `</div></div>`;
+  });
+  html += `</div>`;
+  wrap.innerHTML = html;
+  wrap.querySelectorAll('.st-node').forEach(node=>{
+    node.addEventListener('click',()=>{
+      const id = node.dataset.id;
+      if(node.classList.contains('locked')) toast('Skipping ahead — clearing earlier tiers first gets you combo bonuses, but opening this now, Cadet.');
+      openTopic(id);
+    });
+  });
+}
+
+/* ============================================================
+   GRAMMAR TREE — PHASE 1 render engine
+   (Phase 2 "Grammar Journey" can extend TREE_TOPICS / add tiers here)
+=============================================================*/
+const TREE_TOPICS = [
+  {id:'parts-of-speech', x:230.0, y:56.0, apex:true},
+  {id:'noun', x:30.0, y:214.0},
+  {id:'pronoun', x:106.5, y:198.0},
+  {id:'verb', x:190.6, y:226.0},
+  {id:'adjective', x:266.7, y:205.0},
+  {id:'adverb', x:350.4, y:229.0},
+  {id:'preposition', x:428.7, y:203.0},
+  {id:'conjunction', x:28.0, y:375.4},
+  {id:'articles', x:100.8, y:346.4},
+  {id:'tenses', x:162.2, y:394.6},
+  {id:'voice', x:229.7, y:353.6},
+  {id:'narration', x:294.6, y:397.0},
+  {id:'sva', x:359.3, y:352.8},
+  {id:'modals', x:432.0, y:382.2},
+  {id:'conditionals', x:28.0, y:533.5},
+  {id:'question-tags', x:101.0, y:504.8},
+  {id:'comparison', x:163.7, y:551.8},
+  {id:'clauses', x:231.0, y:512.2},
+  {id:'phrases', x:296.5, y:555.4},
+  {id:'gerunds-infinitives', x:360.1, y:509.5},
+  {id:'participles', x:432.0, y:540.9},
+  {id:'parallelism', x:31.5, y:688.1},
+  {id:'punctuation', x:108.7, y:671.9},
+  {id:'capitalization', x:192.7, y:700.0},
+  {id:'word-formation', x:268.8, y:679.0},
+  {id:'sentence-structure', x:346.4, y:703.0},
+  {id:'determiners', x:426.2, y:677.0},
+  {id:'spotting-errors', x:28.0, y:849.2},
+  {id:'sentence-improvement', x:101.1, y:820.9},
+  {id:'idioms-phrasal-verbs', x:163.7, y:868.2},
+  {id:'one-word-substitution', x:231.1, y:827.9},
+  {id:'jumbled-sentences', x:295.9, y:871.3},
+  {id:'confused-words', x:359.9, y:826.0},
+  {id:'cloze-test-strategy', x:432.0, y:856.6}
+];
+const TREE_META = {
+  'parts-of-speech':{weightage:'High',difficulty:1,time:'7 min'},
+  'noun':{weightage:'Medium',difficulty:1,time:'5 min'},
+  'pronoun':{weightage:'Medium',difficulty:1,time:'5 min'},
+  'verb':{weightage:'High',difficulty:1,time:'5 min'},
+  'adjective':{weightage:'Medium',difficulty:1,time:'5 min'},
+  'adverb':{weightage:'Medium',difficulty:1,time:'5 min'},
+  'preposition':{weightage:'High',difficulty:2,time:'5 min'},
+  'conjunction':{weightage:'Medium',difficulty:2,time:'5 min'},
+  'tenses':{weightage:'High',difficulty:3,time:'12 min'},
+  'voice':{weightage:'High',difficulty:2,time:'8 min'},
+  'question-tags':{weightage:'Low',difficulty:2,time:'8 min'},
+  'articles':{weightage:'High',difficulty:2,time:'5 min'},
+  'narration':{weightage:'High',difficulty:3,time:'10 min'},
+  'sva':{weightage:'High',difficulty:2,time:'7 min'},
+  'modals':{weightage:'Medium',difficulty:2,time:'5 min'},
+  'conditionals':{weightage:'Medium',difficulty:2,time:'6 min'},
+  'comparison':{weightage:'Medium',difficulty:1,time:'4 min'},
+  'clauses':{weightage:'High',difficulty:3,time:'8 min'},
+  'phrases':{weightage:'Medium',difficulty:2,time:'5 min'},
+  'gerunds-infinitives':{weightage:'Medium',difficulty:2,time:'5 min'},
+  'participles':{weightage:'Medium',difficulty:2,time:'5 min'},
+  'parallelism':{weightage:'Medium',difficulty:2,time:'5 min'},
+  'punctuation':{weightage:'Low',difficulty:1,time:'4 min'},
+  'capitalization':{weightage:'Low',difficulty:1,time:'3 min'},
+  'word-formation':{weightage:'Medium',difficulty:2,time:'6 min'},
+  'sentence-structure':{weightage:'Medium',difficulty:2,time:'6 min'},
+  'determiners':{weightage:'Medium',difficulty:1,time:'4 min'},
+  'spotting-errors':{weightage:'High',difficulty:3,time:'10 min'},
+  'sentence-improvement':{weightage:'High',difficulty:3,time:'9 min'},
+  'idioms-phrasal-verbs':{weightage:'High',difficulty:2,time:'8 min'},
+  'one-word-substitution':{weightage:'High',difficulty:2,time:'6 min'},
+  'jumbled-sentences':{weightage:'Medium',difficulty:3,time:'8 min'},
+  'confused-words':{weightage:'Medium',difficulty:2,time:'6 min'},
+  'cloze-test-strategy':{weightage:'High',difficulty:3,time:'10 min'}
+};
+const GT_DIFF_LABEL = {1:'Easy',2:'Medium',3:'Hard'};
+let gtActiveTopicId = null;
+
+function gtProgress(id){
+  if(State.completedTopics[id]) return {pct:100, state:'completed'};
+  if(State.quizScores[id]!=null) return {pct:Math.max(35,Math.min(90,State.quizScores[id])), state:'progress'};
+  if(State.topicProgress && State.topicProgress[id]) return {pct:20, state:'progress'};
+  return {pct:0, state:'empty'};
+}
+function gtRingSVG(pct,color){
+  const r=34, c=Math.PI*2*r;
+  const off = c-(Math.max(0,Math.min(100,pct))/100)*c;
+  return `<svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="${r}" class="gt-ov-bg"></circle><circle cx="40" cy="40" r="${r}" class="gt-ov-fg" style="stroke:${color};stroke-dasharray:${c};stroke-dashoffset:${off}"></circle></svg>`;
+}
+function gtTreeSVGMarkup(){
+  const TRUNK_X = 230;
+  const branches = TREE_TOPICS.filter(n=>!n.apex).map(n=>{
+    const midX = (TRUNK_X+n.x)/2, midY = n.y-24;
+    return `<path d="M${TRUNK_X},${n.y} Q${midX},${midY} ${n.x},${n.y}" class="gt-branch"/>`;
+  }).join('');
+  return `<svg class="gt-tree-svg" viewBox="0 0 460 960" preserveAspectRatio="xMidYMid meet">
+    <path d="M230,940 C226,760 234,560 228,400 C224,280 234,160 230,56" class="gt-trunk"/>
+    ${branches}
+    <ellipse cx="230" cy="942" rx="76" ry="11" class="gt-root-shadow"/>
+  </svg>`;
+}
+function gtSkeletonHTML(){
+  return `<div class="gt-skeleton" aria-hidden="true">
+    <div class="gt-skel-pulse gt-skel-trunk"></div>
+    <div class="gt-skel-pulse gt-skel-node" style="left:50%;top:6%"></div>
+    <div class="gt-skel-pulse gt-skel-node" style="left:15%;top:22%"></div>
+    <div class="gt-skel-pulse gt-skel-node" style="left:85%;top:22%"></div>
+    <div class="gt-skel-pulse gt-skel-node" style="left:10%;top:39%"></div>
+    <div class="gt-skel-pulse gt-skel-node" style="left:90%;top:39%"></div>
+    <div class="gt-skel-pulse gt-skel-node" style="left:15%;top:56%"></div>
+    <div class="gt-skel-pulse gt-skel-node" style="left:85%;top:56%"></div>
+    <div class="gt-skel-pulse gt-skel-node" style="left:10%;top:73%"></div>
+    <div class="gt-skel-pulse gt-skel-node" style="left:90%;top:73%"></div>
+    <div class="gt-skel-pulse gt-skel-node" style="left:15%;top:90%"></div>
+    <div class="gt-skel-pulse gt-skel-node" style="left:85%;top:90%"></div>
+  </div>`;
+}
+function renderGrammarTree(retryCount){
+  const canvas = document.getElementById('gtTreeCanvas');
+  if(!canvas) return; // DOM not ready yet — nothing to do, caller may retry
+  retryCount = retryCount || 0;
+
+  // Guard #1: required data not initialized yet (e.g. called before GRAMMAR/TREE_TOPICS
+  // parsed, or before State was normalized). Show a skeleton and retry shortly instead
+  // of leaving a blank container or throwing mid-build.
+  const dataReady = typeof GRAMMAR!=='undefined' && Array.isArray(GRAMMAR) && GRAMMAR.length
+    && typeof TREE_TOPICS!=='undefined' && Array.isArray(TREE_TOPICS) && TREE_TOPICS.length
+    && State && State.completedTopics && State.quizScores;
+  if(!dataReady){
+    if(!canvas.dataset.built) canvas.innerHTML = gtSkeletonHTML();
+    if(retryCount < 20) setTimeout(()=>renderGrammarTree(retryCount+1), 50);
+    return;
+  }
+
+  // Guard #2: prevent duplicate/overlapping builds (e.g. rapid nav taps, or the boot-time
+  // refreshAll() and a user-triggered switchView('grammar') landing in the same tick).
+  if(canvas.dataset.building==='1') return;
+  canvas.dataset.building = '1';
+
+  try{
+    renderGrammarTreeInner(canvas);
+  }catch(err){
+    console.error('[VAANI] renderGrammarTree failed:', err);
+    if(!canvas.dataset.built){
+      canvas.innerHTML = gtSkeletonHTML();
+      if(retryCount < 20) setTimeout(()=>renderGrammarTree(retryCount+1), 80);
+    }
+  }finally{
+    canvas.dataset.building = '';
+  }
+}
+function gtTopicStatus(id,order,frontier){
+  if(State.completedTopics[id])return 'completed';
+  if(order.indexOf(id)===frontier)return 'current';
+  if(State.quizScores[id]!=null||(State.topicProgress&&State.topicProgress[id]))return 'progress';
+  return 'upcoming';
+}
+function gtTopicBrowserHTML(order,frontier,query,filter){
+  const tierDescriptions=[
+    'Begin with the building blocks of English.',
+    'Learn how verbs, time and sentence links work.',
+    'Connect ideas and build more complex sentences.',
+    'Make your written English more precise.',
+    'Apply grammar skills to exam-style questions.'
+  ];
+  const openTier=frontier>=order.length?SKILL_TIERS.length-1:Math.max(0,SKILL_TIERS.findIndex(t=>t.ids.includes(order[frontier])));
+  const browser=document.createElement('div');browser.className='gt-topic-browser';
+  const intro=document.createElement('div');intro.className='gt-browser-intro';
+  const kicker=document.createElement('span');kicker.className='gt-browser-kicker';kicker.textContent='A clearer way to learn';
+  const heading=document.createElement('h3');heading.textContent='Choose one topic at a time';
+  const help=document.createElement('p');help.textContent='Start with the next topic, or open any section to explore. Every card shows what the topic covers and how far you have progressed.';
+  intro.append(kicker,heading,help);browser.appendChild(intro);
+
+  const toolbar=document.createElement('div');toolbar.className='gt-browser-toolbar';
+  const label=document.createElement('label');label.className='gt-browser-search';
+  const icon=document.createElement('span');icon.className='search-icon';icon.setAttribute('aria-hidden','true');icon.textContent='⌕';
+  const input=document.createElement('input');input.id='gtTopicSearch';input.type='search';input.maxLength=70;input.autocomplete='off';input.placeholder='Search grammar topics…';input.setAttribute('aria-label','Search grammar topics');input.value=query;
+  label.append(icon,input);
+  const count=document.createElement('span');count.className='gt-browser-count';count.id='gtBrowserCount';count.setAttribute('aria-live','polite');count.textContent=order.length+' topics';
+  toolbar.append(label,count);browser.appendChild(toolbar);
+
+  const filters=document.createElement('div');filters.className='gt-browser-filters';filters.setAttribute('role','group');filters.setAttribute('aria-label','Filter grammar topics');
+  [['all','All'],['current','Next up'],['progress','In progress'],['completed','Completed']].forEach(([value,text])=>{
+    const button=document.createElement('button');button.type='button';button.className='gt-browser-filter';button.dataset.gtFilter=value;button.textContent=text;button.setAttribute('aria-pressed',String(filter===value));filters.appendChild(button);
+  });
+  browser.appendChild(filters);
+
+  const groups=document.createElement('div');groups.className='gt-topic-groups';
+  SKILL_TIERS.forEach((tier,tierIndex)=>{
+    const ids=tier.ids.filter(id=>GRAMMAR.some(g=>g.id===id));if(!ids.length)return;
+    const completed=ids.filter(id=>State.completedTopics[id]).length,pct=Math.round(completed/ids.length*100);
+    const details=document.createElement('details');details.className='gt-topic-group';details.dataset.tier=String(tierIndex);
+    details.dataset.defaultOpen=String(openTier===tierIndex);details.open=openTier===tierIndex;
+    const summary=document.createElement('summary');
+    const number=document.createElement('span');number.className='gt-tier-index';number.textContent=String(tierIndex+1).padStart(2,'0');
+    const copy=document.createElement('span');copy.className='gt-tier-copy';
+    const title=document.createElement('span');title.className='gt-tier-title';title.textContent=tier.label.replace(/^Tier [IVX]+\s*·\s*/,'');
+    const subtitle=document.createElement('span');subtitle.className='gt-tier-subtitle';subtitle.textContent=tierDescriptions[tierIndex]||'Continue through the grammar curriculum.';
+    copy.append(title,subtitle);
+    const countLabel=document.createElement('span');countLabel.className='gt-tier-count';countLabel.textContent=completed+'/'+ids.length+' complete';
+    summary.append(number,copy,countLabel);details.appendChild(summary);
+    const progress=document.createElement('div');progress.className='gt-tier-progress';progress.setAttribute('aria-hidden','true');
+    const fill=document.createElement('div');fill.className='gt-tier-progress-fill';fill.style.width=pct+'%';progress.appendChild(fill);details.appendChild(progress);
+    const grid=document.createElement('div');grid.className='gt-topic-grid';
+    ids.forEach(id=>{
+      const g=GRAMMAR.find(x=>x.id===id);if(!g)return;
+      const status=gtTopicStatus(id,order,frontier),pctValue=gtProgress(id).pct||0;
+      const statusLabel=status==='completed'?'Completed':status==='current'?'Next up':status==='progress'?'In progress':'Not started';
+      const card=document.createElement('button');card.type='button';card.className='gt-topic-card';card.dataset.id=id;card.dataset.status=status;
+      card.setAttribute('aria-label','Open '+g.title+'. '+statusLabel+'.');
+      const topicIcon=document.createElement('span');topicIcon.className='gt-topic-icon';topicIcon.setAttribute('aria-hidden','true');topicIcon.textContent=g.icon||'📘';
+      const body=document.createElement('span');body.className='gt-topic-copy';
+      const topicTitle=document.createElement('span');topicTitle.className='gt-topic-title';topicTitle.textContent=g.title;
+      const desc=document.createElement('span');desc.className='gt-topic-desc';desc.textContent=g.desc||'Open this topic to study its rules and examples.';
+      const metaRow=document.createElement('span');metaRow.className='gt-topic-meta';
+      const statusText=document.createElement('span');statusText.className='gt-topic-status';statusText.textContent=statusLabel;
+      const percent=document.createElement('span');percent.className='gt-topic-pct';percent.textContent=pctValue+'%';
+      metaRow.append(statusText,percent);
+      const mini=document.createElement('span');mini.className='gt-topic-mini-progress';mini.setAttribute('aria-hidden','true');
+      const miniFill=document.createElement('span');miniFill.style.width=pctValue+'%';mini.appendChild(miniFill);
+      body.append(topicTitle,desc,metaRow,mini);
+      const open=document.createElement('span');open.className='gt-topic-open';open.setAttribute('aria-hidden','true');open.textContent='›';
+      card.append(topicIcon,body,open);grid.appendChild(card);
+    });
+    details.appendChild(grid);groups.appendChild(details);
+  });
+  browser.appendChild(groups);
+  const empty=document.createElement('div');empty.className='gt-browser-empty';empty.id='gtBrowserEmpty';empty.hidden=true;empty.textContent='No topics match this search or filter. Try another term or choose All.';browser.appendChild(empty);
+  return browser;
+}
+function gtApplyBrowserFilters(canvas){
+  const term=String(canvas.dataset.topicSearch||'').trim().toLocaleLowerCase();
+  const filter=canvas.dataset.topicFilter||'all';
+  let visible=0,total=0;
+  canvas.querySelectorAll('.gt-topic-group').forEach(group=>{
+    let groupVisible=0;
+    group.querySelectorAll('.gt-topic-card').forEach(card=>{
+      total++;
+      const title=card.querySelector('.gt-topic-title')?.textContent||'';
+      const desc=card.querySelector('.gt-topic-desc')?.textContent||'';
+      const matchesText=!term||(title+' '+desc).toLocaleLowerCase().includes(term);
+      const matchesFilter=filter==='all'||card.dataset.status===filter;
+      const show=matchesText&&matchesFilter;card.hidden=!show;
+      if(show){groupVisible++;visible++;}
+    });
+    group.hidden=groupVisible===0;
+    if(term||filter!=='all')group.open=groupVisible>0;
+    else group.open=group.dataset.defaultOpen==='true';
+  });
+  const count=canvas.querySelector('#gtBrowserCount');
+  if(count)count.textContent=(term||filter!=='all')?visible+' of '+total+' topics':visible+' topics';
+  const empty=canvas.querySelector('#gtBrowserEmpty');if(empty)empty.hidden=visible>0;
+}
+function gtBindTopicBrowser(canvas){
+  if(canvas.dataset.eventsBound==='1')return;
+  canvas.dataset.eventsBound='1';
+  canvas.addEventListener('input',event=>{
+    if(event.target&&event.target.id==='gtTopicSearch'){
+      canvas.dataset.topicSearch=event.target.value;gtApplyBrowserFilters(canvas);
+    }
+  });
+  canvas.addEventListener('click',event=>{
+    const filter=event.target.closest('[data-gt-filter]');
+    if(filter&&canvas.contains(filter)){
+      canvas.dataset.topicFilter=filter.dataset.gtFilter||'all';
+      canvas.querySelectorAll('[data-gt-filter]').forEach(btn=>btn.setAttribute('aria-pressed',String(btn===filter)));
+      gtApplyBrowserFilters(canvas);return;
+    }
+    const card=event.target.closest('.gt-topic-card');
+    if(card&&canvas.contains(card))gtOpenSheet(card.dataset.id);
+  });
+}
+function renderGrammarTreeInner(canvas){
+  const cleared=Object.keys(State.completedTopics).filter(id=>GRAMMAR.some(g=>g.id===id)).length;
+  const total=GRAMMAR.length;
+  const overallPct=total?Math.round((cleared/total)*100):0;
+  const scores=Object.values(State.quizScores);
+  const avgScore=scores.length?Math.round(scores.reduce((a,b)=>a+b,0)/scores.length):null;
+  const elTopics=document.getElementById('gtChipTopics');if(elTopics)elTopics.textContent=total;
+  const elCovered=document.getElementById('gtChipCovered');if(elCovered)elCovered.textContent=overallPct+'%';
+  const elScore=document.getElementById('gtChipScore');if(elScore)elScore.textContent=avgScore!=null?avgScore+'%':'--';
+  const ringWrap=document.getElementById('gtOverallRing');
+  if(ringWrap)ringWrap.innerHTML=gtRingSVG(overallPct,'var(--gt-teal)')+'<div class="gt-ring-num">'+overallPct+'%</div>';
+  const progSub=document.getElementById('gtProgressSub');if(progSub)progSub.textContent=cleared+' of '+total+' topics complete';
+  const power=cleared*15+(avgScore||0);
+  const powerNum=document.getElementById('gtPowerNum');if(powerNum)powerNum.textContent=power;
+  const powerSub=document.getElementById('gtPowerSub');
+  if(powerSub)powerSub.textContent=power===0?'Begin the journey':(power<100?'Building momentum':'Command-level grasp');
+  const statCompleted=document.getElementById('gtStatCompleted');if(statCompleted)statCompleted.textContent=cleared+' / '+total;
+  const statTests=document.getElementById('gtStatTests');
+  if(statTests)statTests.textContent=(State.personalBests&&State.personalBests.totalQuizzesTaken)||0;
+  const donut=document.getElementById('gtDonut');
+  if(donut&&!donut.dataset.built){
+    donut.style.background='conic-gradient(var(--gt-red) 0% 45%,var(--gt-gold) 45% 75%,var(--gt-teal) 75% 100%)';
+    donut.innerHTML='<div class="gt-donut-hole"><b>20–25%</b><span>in English</span></div>';
+    donut.dataset.built='1';
+  }
+  const order=SKILL_TIERS.flatMap(t=>t.ids).filter(id=>GRAMMAR.some(g=>g.id===id));
+  const frontier=order.findIndex(id=>!State.completedTopics[id]);
+  const query=canvas.dataset.topicSearch||'',filter=canvas.dataset.topicFilter||'all';
+  const browser=gtTopicBrowserHTML(order,frontier===-1?order.length:frontier,query,filter);
+  canvas.replaceChildren(browser);
+  canvas.dataset.built='1';
+  gtBindTopicBrowser(canvas);
+  gtApplyBrowserFilters(canvas);
+}
+
+function gtRipple(btn,e){
+  const r = document.createElement('span'); r.className='gt-fruit-ripple';
+  const rect = btn.getBoundingClientRect();
+  r.style.width = r.style.height = rect.width+'px';
+  r.style.left = '0'; r.style.top = '0';
+  btn.querySelector('.gt-fruit-ring').appendChild(r);
+  setTimeout(()=>r.remove(),600);
+}
+function gtSparkleTopic(id){
+  const canvas = document.getElementById('gtTreeCanvas'); if(!canvas) return;
+  const btn = canvas.querySelector(`.gt-fruit[data-id="${id}"]`); if(!btn) return;
+  const icons=['✨','⭐','🌟'];
+  for(let i=0;i<5;i++){
+    const s = document.createElement('span'); s.className='gt-sparkle'; s.textContent = icons[i%icons.length];
+    s.style.left = (50 + (Math.random()*40-20))+'%'; s.style.top = (50 + (Math.random()*20-10))+'%';
+    s.style.animationDelay = (i*60)+'ms';
+    btn.appendChild(s);
+    setTimeout(()=>s.remove(),1100+i*60);
+  }
+}
+
+/* ---- bottom sheet ---- */
+function gtOpenSheet(id){
+  const g = GRAMMAR.find(x=>x.id===id); if(!g) return;
+  gtActiveTopicId = id;
+  const meta = TREE_META[id] || {weightage:'Medium',difficulty:2,time:'6 min'};
+  const {pct, state} = gtProgress(id);
+  const mastery = (State.quizScores && State.quizScores[id]!=null) ? State.quizScores[id] : null;
+  const totalQ = (g.quiz && g.quiz.length) || 0;
+  const solvedQ = mastery!=null ? totalQ : 0;
+
+  document.getElementById('gtSheetIcon').textContent = g.icon;
+  document.getElementById('gtSheetTitle').textContent = g.title;
+  document.getElementById('gtSheetDesc').textContent = g.desc;
+  document.getElementById('gtSheetWeightage').textContent = meta.weightage;
+  document.getElementById('gtSheetDifficulty').textContent = GT_DIFF_LABEL[meta.difficulty]||'Medium';
+  document.getElementById('gtSheetTime').textContent = meta.time;
+  document.getElementById('gtSheetMastery').textContent = mastery!=null ? mastery+'%' : '—';
+  document.getElementById('gtSheetQSolved').textContent = totalQ ? (solvedQ+' / '+totalQ) : '—';
+
+  const ringColor = state==='completed' ? 'var(--gt-green)' : (state==='progress' ? 'var(--gt-gold)' : 'var(--gt-teal)');
+  document.getElementById('gtSheetRing').innerHTML = gtRingSVG(pct, ringColor) + `<div class="gt-ring-num">${pct}%</div>`;
+
+  const statusEl = document.getElementById('gtSheetStatus');
+  statusEl.textContent = state==='completed' ? '✓ Completed' : (state==='progress' ? 'In Progress' : 'Not Started');
+  statusEl.className = 'gt-sheet-progress-status ' + (state==='completed'?'completed':state==='progress'?'progress':'');
+
+  const bm = document.getElementById('gtSheetBookmark');
+  const isBm = !!(State.bookmarkedTopics && State.bookmarkedTopics[id]);
+  bm.classList.toggle('is-bookmarked', isBm);
+  const bmLbl = bm.querySelector('.gt-sheet-btn-lbl'); if(bmLbl) bmLbl.textContent = isBm ? 'Saved' : 'Save';
+
+  /* Prerequisites */
+  const prereqEl = document.getElementById('gtSheetPrereq');
+  const prereqIds = (g.meta && g.meta.prereq) || [];
+  if(prereqEl){
+    if(!prereqIds.length){
+      prereqEl.innerHTML = `<span class="gt-dossier-empty-val">None — open topic</span>`;
+    } else {
+      prereqEl.innerHTML = prereqIds.map(pid=>{
+        const pg = GRAMMAR.find(x=>x.id===pid || x.title===pid);
+        const label = pg ? pg.title : pid;
+        const cleared = pg ? !!State.completedTopics[pg.id] : false;
+        return `<span class="gt-dossier-pill${cleared?'':' locked'}">${cleared?'✓ ':''}${label}</span>`;
+      }).join('');
+    }
+  }
+
+  /* Last attempt */
+  const lastAttemptEl = document.getElementById('gtSheetLastAttempt');
+  if(lastAttemptEl){
+    const ts = State.topicLastAttempt && State.topicLastAttempt[id];
+    lastAttemptEl.textContent = ts ? gtRelativeTime(ts) : '—';
+  }
+
+  document.documentElement.classList.add('gt-dossier-lock');
+  document.body.classList.add('gt-dossier-lock');
+  document.getElementById('gtSheetOverlay').classList.add('open');
+}
+function gtRelativeTime(ts){
+  const diff = Math.max(0, Date.now()-ts);
+  const min = Math.floor(diff/60000), hr = Math.floor(diff/3600000), day = Math.floor(diff/86400000);
+  if(day>0) return day===1 ? '1 day ago' : day+' days ago';
+  if(hr>0) return hr===1 ? '1 hour ago' : hr+' hours ago';
+  if(min>0) return min===1 ? '1 min ago' : min+' mins ago';
+  return 'Just now';
+}
+function gtCloseSheet(e){
+  if(e && e.target!==e.currentTarget) return;
+  document.getElementById('gtSheetOverlay').classList.remove('open');
+  document.documentElement.classList.remove('gt-dossier-lock');
+  document.body.classList.remove('gt-dossier-lock');
+}
+function gtSheetBtnRipple(e){
+  const btn = e && e.currentTarget; if(!btn) return;
+  const rect = btn.getBoundingClientRect();
+  const size = Math.max(rect.width, rect.height) * 1.4;
+  const r = document.createElement('span');
+  r.className = 'gt-btn-ripple';
+  r.style.width = r.style.height = size+'px';
+  r.style.left = ((e.clientX||rect.left+rect.width/2) - rect.left - size/2)+'px';
+  r.style.top = ((e.clientY||rect.top+rect.height/2) - rect.top - size/2)+'px';
+  btn.appendChild(r);
+  setTimeout(()=>r.remove(), 550);
+}
+function gtSheetStartTopic(){
+  if(!gtActiveTopicId) return;
+  gtCloseSheet();
+  openTopic(gtActiveTopicId);
+}
+function gtSheetOpenQuiz(){
+  if(!gtActiveTopicId) return;
+  const id = gtActiveTopicId;
+  gtCloseSheet();
+  openTopic(id);
+  setTimeout(()=>{ const tab=document.querySelector('.tab-btn[data-tab="quiz"]'); if(tab) tab.click(); },50);
+}
+function gtSheetOpenPyq(){
+  if(!gtActiveTopicId) return;
+  const id = gtActiveTopicId;
+  gtCloseSheet();
+  openPyqByLesson(id);
+}
+function gtToggleBookmark(){
+  if(!gtActiveTopicId) return;
+  State.bookmarkedTopics = State.bookmarkedTopics || {};
+  const id = gtActiveTopicId;
+  const bm = document.getElementById('gtSheetBookmark');
+  const lbl = bm.querySelector('.gt-sheet-btn-lbl');
+  if(State.bookmarkedTopics[id]){
+    delete State.bookmarkedTopics[id];
+    bm.classList.remove('is-bookmarked'); if(lbl) lbl.textContent='Save';
+    toast('Bookmark removed.');
+  } else {
+    State.bookmarkedTopics[id]=true;
+    bm.classList.add('is-bookmarked'); if(lbl) lbl.textContent='Saved';
+    toast('Topic bookmarked.');
+  }
+  saveState();
+}
+function gtOpenNotes(){
+  if(!gtActiveTopicId) return;
+  const g = GRAMMAR.find(x=>x.id===gtActiveTopicId); if(!g) return;
+  document.getElementById('gtNotesTopicName').textContent = g.title;
+  State.topicNotes = State.topicNotes || {};
+  document.getElementById('gtNotesArea').value = State.topicNotes[gtActiveTopicId] || '';
+  document.getElementById('gtNotesOverlay').classList.add('open');
+}
+function gtCloseNotes(e){
+  if(e && e.target!==e.currentTarget) return;
+  document.getElementById('gtNotesOverlay').classList.remove('open');
+}
+function gtSaveNotes(){
+  if(!gtActiveTopicId) return;
+  State.topicNotes = State.topicNotes || {};
+  State.topicNotes[gtActiveTopicId] = document.getElementById('gtNotesArea').value;
+  saveState();
+  toast('Note saved.');
+  gtCloseNotes();
+}
+function gtPortalTap(){
+  switchView('journey');
+}
+function gtStartLearning(){
+  const t = getContinueTopic();
+  if(t) openTopic(t.id);
+}
+function gtTopicTest(){
+  const t = getContinueTopic();
+  if(!t) return;
+  openTopic(t.id);
+  setTimeout(()=>{ const tab=document.querySelector('.tab-btn[data-tab="quiz"]'); if(tab) tab.click(); },50);
+}
+function gtSmartRevision(){
+  const cont = getContinueTopic();
+  const rec = getRecommendedTopic(cont?cont.id:null);
+  if(!rec || !rec.topic) return;
+  openTopic(rec.topic.id);
+  setTimeout(()=>{ const tab=document.querySelector('.tab-btn[data-tab="quiz"]'); if(tab) tab.click(); },50);
+  toast(rec.reason || 'Revision topic loaded.');
+}
+
+/* ============================================================
+   GRAMMAR JOURNEY — PHASE 2 render engine
+   Order follows the curriculum sequence already defined in
+   SKILL_TIERS (Phase 1 skill tree), so progression/locking logic
+   stays identical app-wide. Reuses gtOpenSheet for the level sheet
+   and gtProgress/TREE_META for per-topic data — fully modular so a
+   Command Token / hint system can hook in later without a rebuild.
+=============================================================*/
+const GJ_SHORT = {
+  'parts-of-speech':'PoS','noun':'Noun','pronoun':'Pron','verb':'Verb','adjective':'Adj','adverb':'Adv',
+  'preposition':'Prep','conjunction':'Conj','articles':'Art','tenses':'Tense','voice':'Voice','narration':'Narr',
+  'sva':'SVA','modals':'Modal','conditionals':'Cond','question-tags':'QTag','comparison':'Comp','clauses':'Clause',
+  'phrases':'Phrase','gerunds-infinitives':'Ger','participles':'Part','parallelism':'Para','punctuation':'Punc',
+  'capitalization':'Cap','word-formation':'WForm','sentence-structure':'SentS','determiners':'Det',
+  'spotting-errors':'Error','sentence-improvement':'Improv','idioms-phrasal-verbs':'Idiom',
+  'one-word-substitution':'OWS','jumbled-sentences':'Order','confused-words':'Confuse','cloze-test-strategy':'Cloze'
+};
+function gjOrder(){ return SKILL_TIERS.flatMap(t=>t.ids).filter(id=>GRAMMAR.some(g=>g.id===id)); }
+function gjFrontierIndex(order){
+  const idx = order.findIndex(id=>!State.completedTopics[id]);
+  return idx===-1 ? order.length : idx;
+}
+let gjResizeBound = false;
+function renderGrammarJourney(){
+  const wrap=document.getElementById('gjPathWrap');
+  if(!wrap)return;
+  const order=gjOrder(),total=order.length;
+  const cleared=order.filter(id=>State.completedTopics[id]).length;
+  const frontier=gjFrontierIndex(order);
+  const overallPct=total?Math.round(cleared/total*100):0;
+
+  const rankChip=document.getElementById('gjRankChip');if(rankChip)rankChip.textContent='Rank: '+gjRankLabel(cleared,total);
+  const elOverall=document.getElementById('gjStatOverall');if(elOverall)elOverall.textContent=overallPct+'%';
+  const elCompleted=document.getElementById('gjStatCompleted');if(elCompleted)elCompleted.textContent=cleared+'/'+total;
+  const frontierTopic=order[frontier]?GRAMMAR.find(g=>g.id===order[frontier]):null;
+  const elCurrent=document.getElementById('gjStatCurrent');if(elCurrent)elCurrent.textContent=frontierTopic?(GJ_SHORT[frontierTopic.id]||frontierTopic.title):'Done';
+  const elStreak=document.getElementById('gjStatStreak');if(elStreak)elStreak.textContent=(State.personalBests&&State.personalBests.longestStreak)||0;
+  const cadetLine=document.getElementById('gjCadetLine');
+  const cadetSub=document.getElementById('gjCadetSub');
+  const cadetBar=document.getElementById('gjCadetBarFill');
+  if(cadetLine)cadetLine.textContent=frontierTopic?('Next up: '+frontierTopic.title):'Every topic cleared, Cadet!';
+  if(cadetSub)cadetSub.textContent=frontierTopic?'Follow the stages below. Each card opens a topic with its lesson, notes and practice.':'All grammar topics are complete. Revisit any stage to revise.';
+  if(cadetBar)cadetBar.style.width=overallPct+'%';
+
+  const descriptions=[
+    'Start here: learn the basic parts of a sentence.',
+    'Build control over verbs, time and sentence links.',
+    'Put ideas together and understand sentence patterns.',
+    'Improve clarity, correctness and written form.',
+    'Practise the question styles used in competitive exams.'
+  ];
+  const roadmap=document.createElement('div');roadmap.className='gj-roadmap';
+  SKILL_TIERS.forEach((tier,tierIndex)=>{
+    const ids=tier.ids.filter(id=>GRAMMAR.some(g=>g.id===id));if(!ids.length)return;
+    const doneCount=ids.filter(id=>State.completedTopics[id]).length;
+    const tierPct=Math.round(doneCount/ids.length*100);
+    const containsFrontier=frontier<total&&ids.includes(order[frontier]);
+    const isDefault=containsFrontier||(frontier>=total&&tierIndex===SKILL_TIERS.length-1);
+    const stage=document.createElement('details');stage.className='gj-roadmap-stage';stage.dataset.tier=String(tierIndex);stage.open=isDefault;
+    const summary=document.createElement('summary');
+    const num=document.createElement('span');num.className='gj-stage-num';num.textContent=String(tierIndex+1).padStart(2,'0');
+    const copy=document.createElement('span');copy.className='gj-stage-copy';
+    const title=document.createElement('span');title.className='gj-stage-title';title.textContent=tier.label.replace(/^Tier [IVX]+\s*·\s*/,'');
+    const desc=document.createElement('span');desc.className='gj-stage-desc';desc.textContent=descriptions[tierIndex]||'Keep moving through the grammar curriculum.';
+    copy.append(title,desc);
+    const count=document.createElement('span');count.className='gj-stage-count';count.textContent=doneCount+'/'+ids.length+' cleared';
+    summary.append(num,copy,count);stage.appendChild(summary);
+    const progress=document.createElement('div');progress.className='gj-stage-progress';progress.setAttribute('aria-hidden','true');
+    const fill=document.createElement('span');fill.style.width=tierPct+'%';progress.appendChild(fill);stage.appendChild(progress);
+    const grid=document.createElement('div');grid.className='gj-stage-grid';
+    ids.forEach(id=>{
+      const g=GRAMMAR.find(x=>x.id===id);if(!g)return;
+      const index=order.indexOf(id),done=!!State.completedTopics[id],locked=index>frontier;
+      const state=done?'is-done':index===frontier?'is-current':locked?'is-locked':'is-available';
+      const label=done?'Completed':index===frontier?'Next up':locked?'Locked':'Available';
+      const card=document.createElement('button');card.type='button';card.className='gj-roadmap-card '+state;card.dataset.id=id;card.dataset.locked=locked?'1':'0';
+      card.setAttribute('aria-label',g.title+'. '+label+(locked?'. Clear the earlier topics first.':'. Open topic.'));
+      const icon=document.createElement('span');icon.className='gj-roadmap-icon';icon.setAttribute('aria-hidden','true');icon.textContent=g.icon||'📘';
+      const body=document.createElement('span');body.className='gj-roadmap-copy';
+      const name=document.createElement('span');name.className='gj-roadmap-name';name.textContent=g.title;
+      const short=document.createElement('span');short.className='gj-roadmap-desc';short.textContent=g.desc||'Open the topic to study its rules and examples.';
+      const status=document.createElement('span');status.className='gj-roadmap-state';status.textContent=label;
+      body.append(name,short,status);
+      const action=document.createElement('span');action.className='gj-roadmap-action';action.setAttribute('aria-hidden','true');action.textContent=locked?'🔒':'→';
+      card.append(icon,body,action);grid.appendChild(card);
+    });
+    stage.appendChild(grid);roadmap.appendChild(stage);
+  });
+  wrap.style.removeProperty('height');
+  wrap.replaceChildren(roadmap);
+  if(wrap.dataset.eventsBound!=='1'){
+    wrap.dataset.eventsBound='1';
+    wrap.addEventListener('click',event=>{
+      const card=event.target.closest('.gj-roadmap-card');
+      if(!card||!wrap.contains(card))return;
+      if(card.dataset.locked==='1'){toast('Clear the levels above this one first, Cadet.');return;}
+      gtOpenSheet(card.dataset.id);
+    });
+  }
+}
+function gjRankLabel(cleared,total){
+  if(!total) return 'Recruit';
+  const pct = cleared/total;
+  if(pct>=1) return 'Commander';
+  if(pct>=0.7) return 'Captain';
+  if(pct>=0.4) return 'Lieutenant';
+  if(pct>0) return 'Cadet';
+  return 'Recruit';
+}
+window.addEventListener('resize', ()=>{
+  if(gjResizeBound) return;
+  gjResizeBound = true;
+  setTimeout(()=>{
+    gjResizeBound = false;
+    const v = document.getElementById('view-journey');
+    if(v && v.classList.contains('active')) renderGrammarJourney();
+  }, 200);
+});
+
+/* ---- Daily Lucky Spin ---- */
+const SPIN_REWARDS = [5,50,10,15,10,25,10,20];
+function updateSpinState(){
+  const btn = document.getElementById('spinBtn'); if(!btn) return;
+  const today = new Date().toDateString();
+  if(State.lastSpinDate===today){
+    btn.disabled = true; btn.textContent = 'Come back tomorrow';
+    document.getElementById('spinDesc').textContent = 'You\'ve claimed today\'s spin. A fresh spin unlocks after midnight.';
+  } else {
+    btn.disabled = false; btn.textContent = 'Spin the Wheel';
+    document.getElementById('spinDesc').textContent = 'One free spin per day. Land the wheel for bonus XP — the higher the number, the bigger the reward.';
+  }
+}
+let spinCurrentRotation = 0;
+function doLuckySpin(){
+  const today = new Date().toDateString();
+  if(State.lastSpinDate===today){ toast('Already claimed today\'s spin. Come back tomorrow, Cadet.'); return; }
+  const btn = document.getElementById('spinBtn'); const wheel = document.getElementById('spinWheel');
+  if(!btn||!wheel||btn.disabled) return;
+  btn.disabled = true;
+  const i = Math.floor(Math.random()*SPIN_REWARDS.length);
+  const reward = SPIN_REWARDS[i];
+  // Angle (0-360) the wheel must be rotated to so segment i's center sits under the top pointer.
+  const targetAngle = (360 - (i*45 + 22.5) + 360) % 360;
+  // Always spin forward from wherever the wheel currently is, landing exactly on targetAngle,
+  // plus a handful of full extra turns for a satisfying spin (never rotates backward).
+  const currentMod = ((spinCurrentRotation % 360) + 360) % 360;
+  let delta = targetAngle - currentMod;
+  if(delta <= 0) delta += 360;
+  spinCurrentRotation += 1800 + delta;
+  wheel.style.transform = `rotate(${spinCurrentRotation}deg)`;
+  setTimeout(()=>{
+    addXP(reward,'Daily Lucky Spin');
+    State.lastSpinDate = today; saveState();
+    launchConfettiIf(reward>=20);
+    toast('Lucky Spin landed on +'+reward+' XP!');
+    updateSpinState();
+    refreshDashboard();
+  }, 3650);
+}
+
+let currentTopic=null;
+function diffDots(n){let h='<span class="diff-dots">';for(let i=1;i<=3;i++)h+=`<span class="diff-dot ${i<=n?'fill':''}"></span>`;return h+'</span>';}
+function renderMindmap(d){
+  if(!d) return '';
+  return `<div class="mindmap reveal"><div class="mm-center">${d.center}</div><div class="mm-branches">
+    ${d.branches.map(b=>`<div class="mm-branch"><div class="mm-branch-label">${b.label}</div>
+      <div class="mm-leaves">${(b.sub||[]).map(s=>`<div class="mm-leaf">${s}</div>`).join('')}</div></div>`).join('')}
+  </div></div>`;
+}
+function renderCompare(c){
+  if(!c) return '';
+  return `<div class="cmp-wrap reveal"><table class="compare-table"><thead><tr>${c.headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead>
+    <tbody>${c.rows.map(r=>`<tr>${r.map(cell=>`<td>${cell}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+}
+function renderLevels(lv){
+  if(!lv) return '';
+  const order=['beginner','intermediate','advanced','expert'];
+  const keys=order.filter(k=>lv[k]);
+  return `<div class="reveal"><div class="level-tabs">${keys.map((k,i)=>`<button class="level-tab ${i===0?'active':''}" onclick="setLevel(this,'${k}')">${k}</button>`).join('')}</div>
+  ${keys.map((k,i)=>`<div class="level-pane ${i===0?'active':''}" data-level="${k}">${lv[k]}</div>`).join('')}</div>`;
+}
+function setLevel(btn,key){
+  const wrap=btn.closest('.reveal');
+  wrap.querySelectorAll('.level-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  wrap.querySelectorAll('.level-pane').forEach(p=>p.classList.toggle('active',p.dataset.level===key));
+}
+function toggleAccordion(el){el.parentElement.classList.toggle('open');}
+function toggleReveal(el){el.classList.toggle('open');}
+function openTopic(id){
+  currentTopic = GRAMMAR.find(g=>g.id===id);
+  if(!currentTopic) return;
+  State.topicProgress = State.topicProgress || {};
+  if(!State.topicProgress[id]){ State.topicProgress[id]=true; saveState(); }
+  document.getElementById('topicEyebrow').textContent='Grammar Module';
+  document.getElementById('topicTitle').textContent=currentTopic.title;
+  const st = topicStatus(id);
+  const stampEl = document.getElementById('topicStamp');
+  stampEl.textContent = st==='cleared'?'CLEARED':'IN PROGRESS';
+  stampEl.className='status-stamp '+(st==='cleared'?'cleared':'progress');
+
+  const meta = currentTopic.meta || {difficulty:2,time:'6 min',prereq:[],related:[]};
+  document.getElementById('topicMetaStrip').innerHTML = `
+    <div class="meta-pill">⏱ <b>${meta.time||'6 min'}</b> read</div>
+    <div class="meta-pill">Difficulty ${diffDots(meta.difficulty||2)}</div>
+    ${meta.prereq&&meta.prereq.length?`<div class="meta-pill">Prereq: <b>${meta.prereq.join(', ')}</b></div>`:''}
+    <div class="meta-pill">📝 ${currentTopic.quiz.length} quiz Qs</div>`;
+
+  const steps=[['concept','①','Concept'],['rule','②','Rule'],['exception','③','Exception'],['trick','④','Trick'],
+    ['example','⑤','Example'],['practice','⑥','Practice'],['pyq','⑦','PYQ'],['summary','⑧','Summary']];
+  document.getElementById('flowStepper').innerHTML = steps.map((s,i)=>
+    `<div class="flow-step ${i===0?'cur':''}" data-step="${s[0]}" onclick="jumpFlow('${s[0]}',this)"><span class="fn">${i+1}</span>${s[2]}</div>`).join('');
+
+  // Plain-language explanation comes first; detailed reference stays optional.
+  const basics=(typeof GRAMMAR_BASICS!=='undefined'&&GRAMMAR_BASICS[currentTopic.id])||{plain:currentTopic.summary||currentTopic.desc||'Study the rule and examples below.',rule:'Check the role of the word or phrase in the complete sentence.',good:(currentTopic.examples&&currentTopic.examples[0]&&currentTopic.examples[0].s)||'',bad:'',why:(currentTopic.examples&&currentTopic.examples[0]&&currentTopic.examples[0].note)||''};
+  const escLesson=escapeHtmlVaani;
+  let learnHtml='<section class="lesson-start-card"><div class="lesson-start-top"><span class="lesson-kicker">START HERE · PLAIN ENGLISH</span><span class="lesson-time">'+escLesson(meta.time||'6 min')+'</span></div><h3>Understand the idea first</h3><p class="lesson-plain">'+escLesson(basics.plain)+'</p><div class="lesson-rule"><span class="lesson-mini-label">THE RULE</span><p>'+escLesson(basics.rule)+'</p></div>'+(basics.good?'<div class="lesson-example is-good"><span class="lesson-mini-label">EXAMPLE</span><p>'+escLesson(basics.good)+'</p></div>':'')+(basics.bad?'<div class="lesson-example is-watch"><span class="lesson-mini-label">WATCH OUT</span><p>'+escLesson(basics.bad)+'</p><small>'+escLesson(basics.why||'Check the rule before choosing.')+'</small></div>':'')+(!basics.bad&&basics.why?'<p class="lesson-why">'+escLesson(basics.why)+'</p>':'')+'<div class="lesson-start-actions"><button class="btn" type="button" id="lessonGoPractice">Try a question →</button><span>Detailed notes are available below when you need them.</span></div></section>';
+  learnHtml+='<details class="lesson-reference"><summary>Open detailed reference notes (optional)</summary><div class="lesson-reference-body">'+(currentTopic.learn||'')+(currentTopic.didYouKnow?'<div class="dyk-box"><span class="dyk-icon">💡</span><div><b>DID YOU KNOW?</b>'+currentTopic.didYouKnow+'</div></div>':'')+(currentTopic.diagram?renderMindmap(currentTopic.diagram):'')+(currentTopic.exception?'<div class="exception-box"><span class="elabel">⚠ EXCEPTION TO THE RULE</span>'+currentTopic.exception+'</div>':'')+(currentTopic.levels?'<div class="panel-title" style="margin-top:24px"><span class="bar"></span>Explore by Depth</div>'+renderLevels(currentTopic.levels):'')+(currentTopic.comparison?'<div class="panel-title" style="margin-top:24px"><span class="bar"></span>Comparison Table</div>'+renderCompare(currentTopic.comparison):'')+(currentTopic.cheatSheet?'<div class="cheat-card"><h4>📋 '+escLesson(currentTopic.cheatSheet.title||'Printable Cheat Sheet')+'</h4><div class="cheat-grid">'+(currentTopic.cheatSheet.items||[]).map(it=>'<div class="cheat-cell"><b>'+escLesson(it.k)+'</b>'+escLesson(it.v)+'</div>').join('')+'</div></div>':'')+'</div></details>';
+
+  learnHtml='<section class="grammar-coach-card"><div class="lesson-kicker">PRACTISE WRITING</div><h3>Try your own sentence</h3><p>Write one sentence using this rule. The optional checker can suggest corrections.</p><label for="grammarCoachInput">Your sentence</label><textarea id="grammarCoachInput" rows="3" maxlength="3000" placeholder="Write a sentence in your own words…"></textarea><div class="grammar-coach-actions"><button class="btn ghost" type="button" id="grammarCoachCheck" onclick="checkGrammarSentence()">Check sentence</button><span>Manual check · English (US)</span></div><div id="grammarCoachResult" class="grammar-coach-result" role="status" aria-live="polite"></div><small class="grammar-coach-privacy">Your sentence is sent to LanguageTool only when you press Check sentence. Avoid entering personal information. Automated suggestions can be imperfect.</small><small class="grammar-coach-credit">Powered by <a href="https://languagetool.org/" target="_blank" rel="noopener noreferrer">LanguageTool</a>.</small></section>'+learnHtml;
+  const lessonPracticeBtn=document.getElementById('lessonGoPractice');
+  if(lessonPracticeBtn)lessonPracticeBtn.addEventListener('click',()=>{const practiceStep=document.querySelector('.flow-step[data-step="practice"]');if(practiceStep)jumpFlow('practice',practiceStep);});
+
+
+  // ---- EXAMPLES PANE ----
+  let exHtml = `<div id="fs-example">` + currentTopic.examples.map(e=>
+    `<div class="example-box reveal">"${e.s}"<br><span style="font-style:normal;color:var(--muted2);font-size:.8rem">→ ${e.note}</span></div>`).join('') + `</div>`;
+  if(currentTopic.officerTip){
+    exHtml += `<div class="officer-tip reveal"><span class="oicon">🎖</span><div><b style="color:var(--green);display:block;font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;margin-bottom:4px">OFFICER'S TIP</b>${currentTopic.officerTip}</div></div>`;
+  }
+  if(currentTopic.realLife){
+    exHtml += `<div class="explain-block reveal"><p><b style="color:var(--gold)">Real-life application:</b> ${currentTopic.realLife}</p></div>`;
+  }
+  document.getElementById('pane-examples').innerHTML = exHtml;
+
+  // ---- TRICKS PANE ----
+  document.getElementById('pane-tricks').innerHTML = `<div id="fs-trick">` +
+    currentTopic.tricks.map(t=>`<div class="trick-box reveal"><span class="tlabel">MEMORY TRICK</span>${t.t}</div>`).join('') + `</div>` +
+    currentTopic.mistakes.map(m=>`<div class="mistake-box reveal"><span class="mlabel">COMMON MISTAKE</span>${m.m}</div>`).join('') +
+    (currentTopic.pyqNotes ? `<div id="fs-pyq" class="panel-title" style="margin-top:24px"><span class="bar"></span>Frequently Asked In NDA PYQ</div>` +
+      currentTopic.pyqNotes.map(p=>`<div class="reveal-card" onclick="toggleReveal(this)"><div class="rc-q">${p.q}<span class="rc-hint">TAP TO REVEAL</span></div><div class="rc-a">${p.a}</div></div>`).join('') : '') +
+    relatedPyqHTML(currentTopic.id);
+
+  // ---- SUMMARY PANE ----
+  document.getElementById('pane-summary').innerHTML = `<div id="fs-summary" class="explain-block reveal"><p>${currentTopic.summary}</p></div>
+    ${currentTopic.mnemonicChain?`<div class="trick-box reveal"><span class="tlabel">QUICK MNEMONIC</span>${currentTopic.mnemonicChain}</div>`:''}
+    <button class="btn glow-btn" onclick="completeTopic('${currentTopic.id}')">Mark Topic Cleared +25 XP</button>`;
+
+  renderQuizPane(currentTopic.id, currentTopic.quiz);
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab==='learn'));
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.toggle('active',p.id==='pane-learn'));
+  switchView('topic');
+  logActivity('Opened topic', currentTopic.title);
+  initReveal(); initTilt();
+  document.querySelector('main').scrollTo&&window.scrollTo({top:0,behavior:'smooth'});
+}
+function jumpFlow(step,btn){
+  const tabMap={concept:'learn',rule:'learn',exception:'learn',trick:'tricks',example:'examples',practice:'quiz',pyq:'tricks',summary:'summary'};
+  document.querySelectorAll('.flow-step').forEach(s=>s.classList.remove('cur'));
+  btn.classList.add('cur');
+  const tabName=tabMap[step];
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tabName));
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.toggle('active',p.id==='pane-'+tabName));
+  setTimeout(()=>{const el=document.getElementById('fs-'+step); if(el) el.scrollIntoView({behavior:'smooth',block:'start'});},80);
+}
+function jumpRelated(title){
+  const t = GRAMMAR.find(g=>g.title.toLowerCase()===title.toLowerCase() || g.id===title);
+  if(t) openTopic(t.id); else toast('Topic coming soon: '+title);
+}
+function initReveal(){
+  const els = document.querySelectorAll('.reveal:not(.in)');
+  els.forEach((el,i)=>{
+    if(!el.style.transitionDelay) el.style.transitionDelay = Math.min(i%8,7)*55+'ms';
+  });
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+  },{threshold:.12});
+  els.forEach(el=>io.observe(el));
+}
+function initTilt(){
+  document.querySelectorAll('.topic-card, .word-card').forEach(card=>{
+    if(card._tiltBound) return; card._tiltBound=true; card.classList.add('tilt');
+    card.addEventListener('mousemove',(e)=>{
+      const r=card.getBoundingClientRect(); const x=(e.clientX-r.left)/r.width-.5; const y=(e.clientY-r.top)/r.height-.5;
+      card.style.transform=`perspective(700px) rotateY(${x*6}deg) rotateX(${-y*6}deg) translateY(-4px)`;
+    });
+    card.addEventListener('mouseleave',()=>{card.style.transform='';});
+  });
+}
+window.addEventListener('scroll',()=>{
+  const view=document.getElementById('view-topic');
+  if(!view.classList.contains('active')) return;
+  const h=document.documentElement.scrollHeight-window.innerHeight;
+  const fill=document.getElementById('readProgressFill');
+  if(fill) fill.style.width = h>0 ? Math.min(100,(window.scrollY/h)*100)+'%' : '0%';
+});
+document.querySelectorAll('.tab-btn').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.tab-pane').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    document.getElementById('pane-'+b.dataset.tab).classList.add('active');
+  });
+});
+function completeTopic(id){
+  if(!State.completedTopics[id]){
+    State.completedTopics[id]=true; saveState(); addXP(25,'Topic cleared: '+currentTopic.title);
+    logActivity('Cleared topic', currentTopic.title); refreshAll(); launchConfettiIf(true);
+    if(typeof gtSparkleTopic==='function') gtSparkleTopic(id);
+  } else { toast('Already cleared.'); }
+}
+
+/* ---- shared personal-bests tracker for any completed quiz/drill ---- */
+function recordQuizCompletion(pct, elapsedSec, label){
+  const pb = State.personalBests;
+  pb.totalQuizzesTaken = (pb.totalQuizzesTaken||0) + 1;
+  if(pct > (pb.highestQuizScore||0)) pb.highestQuizScore = pct;
+  if(pct >= 70 && elapsedSec != null && (pb.fastestQuizSeconds==null || elapsedSec < pb.fastestQuizSeconds)){
+    pb.fastestQuizSeconds = Math.round(elapsedSec);
+    pb.fastestQuizLabel = label;
+  }
+  saveState();
+}
+function renderQuizPane(id, quiz){
+  const pane=document.getElementById('pane-quiz');if(!pane)return;
+  const questions=Array.isArray(quiz)?quiz:[];let idx=0,correctCount=0,qTimer=null,started=null,finished=false;
+  function finish(){
+    if(finished)return;finished=true;if(qTimer){qTimer.stop();qTimer=null;}
+    const pct=questions.length?Math.round(correctCount/questions.length*100):0;State.quizScores[id]=pct;State.topicLastAttempt=State.topicLastAttempt||{};State.topicLastAttempt[id]=Date.now();saveState();
+    recordQuizCompletion(pct,started?(Date.now()-started)/1000:null,((GRAMMAR.find(g=>g.id===id)||{}).title)||id);
+    pane.innerHTML='<div class="quiz-card quiz-complete-card" role="status"><span class="lesson-kicker">TOPIC CHECK COMPLETE</span><h3>Your result</h3><div class="quiz-result-score">'+pct+'%</div><p>'+correctCount+' of '+questions.length+' answers correct</p><div class="quiz-result-track"><div style="width:'+pct+'%"></div></div><div class="quiz-result-actions"><button class="btn" type="button" id="quizRetry">Try again</button><button class="btn ghost" type="button" id="quizBack">Review lesson</button></div></div>';
+    pane.querySelector('#quizRetry').addEventListener('click',()=>renderQuizPane(id,questions));pane.querySelector('#quizBack').addEventListener('click',()=>{const b=document.querySelector('.tab-btn[data-tab="learn"]');if(b)b.click();});
+    addXP(Math.max(5,Math.round(pct/10)),'Quiz score on '+(((GRAMMAR.find(g=>g.id===id)||{}).title)||'topic'));launchConfettiIf(pct>=70);
+  }
+  function draw(){
+    if(qTimer){qTimer.stop();qTimer=null;}if(!questions.length){pane.innerHTML='<div class="quiz-card"><h3>Practice coming soon</h3><p>No questions are available for this topic yet.</p></div>';return;}if(idx>=questions.length){finish();return;}
+    if(idx===0)comboCount=0;if(started===null)started=Date.now();const item=questions[idx]||{};
+    pane.innerHTML='<div class="quiz-card quiz-live-card"><div class="quiz-headline"><div><span class="lesson-kicker">CHECK YOUR UNDERSTANDING</span><div class="quiz-progress" id="grammarQuizProgress"></div></div><div class="qtimer-ring" id="qTimerRing"><svg viewBox="0 0 40 40"><circle class="qt-bg" cx="20" cy="20" r="16"></circle><circle class="qt-fg" cx="20" cy="20" r="16"></circle></svg><div class="qt-num">15</div></div></div><div class="quiz-progress-track" role="progressbar" aria-label="Quiz progress" aria-valuemin="0" aria-valuemax="'+questions.length+'" aria-valuenow="'+(idx+1)+'"><div class="quiz-progress-fill" style="width:'+((idx+1)/questions.length*100)+'%"></div></div><div class="quiz-q" id="grammarQuizQuestion"></div><div class="quiz-options" id="optsWrap"></div><div class="quiz-feedback" id="qFeedback" role="status" aria-live="polite"></div><button class="btn quiz-nextbtn" id="nextBtn" type="button" disabled>'+(idx===questions.length-1?'View result':'Next question →')+'</button></div>';
+    pane.querySelector('#grammarQuizProgress').textContent='Question '+(idx+1)+' of '+questions.length;pane.querySelector('#grammarQuizQuestion').textContent=String(item.q||'Read the question carefully.');
+    const card=pane.querySelector('.quiz-card'),wrap=pane.querySelector('#optsWrap');qTimer=startQTimer(pane.querySelector('#qTimerRing'));
+    (Array.isArray(item.opts)?item.opts:[]).forEach((option,i)=>{const b=document.createElement('button');b.type='button';b.className='opt-btn quiz-option';b.setAttribute('aria-pressed','false');const letter=document.createElement('span');letter.className='quiz-option-letter';letter.textContent=String.fromCharCode(65+i);const label=document.createElement('span');label.className='quiz-option-text';label.textContent=String(option);b.append(letter,label);b.addEventListener('click',()=>{if(b.disabled)return;const elapsed=qElapsedSeconds(qTimer);if(qTimer){qTimer.stop();qTimer=null;}wrap.querySelectorAll('button').forEach(x=>{x.disabled=true;x.setAttribute('aria-pressed','false');});b.setAttribute('aria-pressed','true');const fb=pane.querySelector('#qFeedback');
+      if(i===item.ans){correctCount++;b.classList.add('correct');handleQuizCorrect(b,card);fb.className='quiz-feedback is-correct';fb.textContent='Correct. '+String(item.exp||'You selected the right answer.');if(elapsed<=5){addXP(2,'Quick answer');const speed=document.createElement('span');speed.className='speed-tag';speed.textContent='⚡ Quick answer +2 XP';fb.appendChild(speed);}}
+      else{b.classList.add('wrong');const right=wrap.querySelectorAll('button')[item.ans];if(right)right.classList.add('correct');handleQuizWrong(card);fb.className='quiz-feedback is-wrong';fb.textContent='Not quite. Correct answer: '+String((item.opts||[])[item.ans]||'the highlighted option')+'. '+String(item.exp||'Review the rule and try again.');}
+      const next=pane.querySelector('#nextBtn');next.disabled=false;next.focus();});wrap.appendChild(b);});
+    const next=pane.querySelector('#nextBtn');next.addEventListener('click',()=>{if(!next.disabled){idx++;draw();}});
+    if(!item.opts||item.opts.length<2||!Number.isInteger(item.ans)||item.ans<0||item.ans>=item.opts.length){next.disabled=true;pane.querySelector('#qFeedback').textContent='This question needs correction before it can be answered.';if(qTimer){qTimer.stop();qTimer=null;}}
+  }draw();
+}
+/* ============================================================
+   VOCAB RENDER — Mastery Hub
+=============================================================*/
+let vocabCat='all', vocabDiff='all', currentWordId=null;
+const VOCAB_BY_ID = {}; VOCAB.forEach(v=>VOCAB_BY_ID[v.id]=v);
+function getDailyRotationSalt(){
+  const key='vaani_daily_rotation_salt_v1';
+  try{
+    let value=localStorage.getItem(key);
+    if(!value){value=Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem(key,value);}
+    return value;
+  }catch(e){return 'session-'+Date.now();}
+}
+function shuffleDailyContent(){
+  const key='vaani_daily_rotation_salt_v1';
+  const salt=Math.random().toString(36).slice(2)+Date.now().toString(36);
+  try{localStorage.setItem(key,salt);}catch(e){}
+  renderDailySetTabs();
+  renderDailySingles();
+  const note=document.getElementById('dailyRotationStatus');
+  if(note)note.innerHTML='<strong>Today’s rotation refreshed.</strong> New items were selected while recent repeats were avoided where possible.';
+  toast('Today’s learning rotation shuffled.');
+}
+function dailyDateKey(date){
+  const d=date||new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function dailyHash(text){
+  let h=2166136261;
+  for(let i=0;i<text.length;i++){h^=text.charCodeAt(i);h=Math.imul(h,16777619);}
+  return h>>>0;
+}
+function dailyShuffle(items,seed){
+  let state=seed||0x6D2B79F5;
+  function random(){
+    state=(state+0x6D2B79F5)|0;
+    let t=state;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);
+    return ((t^(t>>>14))>>>0)/4294967296;
+  }
+  const out=items.slice();
+  for(let i=out.length-1;i>0;i--){const j=Math.floor(random()*(i+1));[out[i],out[j]]=[out[j],out[i]];}
+  return out;
+}
+function dailyItemId(item,index){
+  let raw=item&& (item.id||item.t||item.w||item.word||item.phrase||item.q);
+  if(raw==null||raw===''){try{raw=JSON.stringify(item);}catch(e){raw='item';}}
+  return String(raw).trim().toLocaleLowerCase()+'#'+index;
+}
+function pickDaily(arr,n,offset){
+  const items=Array.isArray(arr)?arr.filter(item=>item!=null):[];
+  const wanted=Math.max(0,Math.min(items.length,Math.floor(Number(n)||0)));
+  if(!wanted)return [];
+  const indexed=items.map((item,index)=>({id:dailyItemId(item,index),item:item}));
+  const byId=new Map(indexed.map(entry=>[entry.id,entry.item]));
+  const rotationSalt=getDailyRotationSalt();
+  const fingerprint=String(offset||0)+'|'+indexed.map(entry=>entry.id).join('|');
+  const storageKey='vaani_daily_rotation_v3_'+dailyHash(fingerprint).toString(36);
+  const today=dailyDateKey();
+  let stored=null;
+  try{stored=JSON.parse(localStorage.getItem(storageKey)||'null');}catch(e){}
+  let history=stored&&Array.isArray(stored.history)?stored.history:[];
+  let orderIds=stored&&stored.date===today&&stored.salt===rotationSalt&&Array.isArray(stored.order)?stored.order.filter(id=>byId.has(id)):[];
+  if(orderIds.length!==items.length){
+    const shuffled=dailyShuffle(indexed,dailyHash(today+'|'+fingerprint+'|'+rotationSalt));
+    const cutoff=new Date();cutoff.setDate(cutoff.getDate()-7);const cutoffKey=dailyDateKey(cutoff);
+    const recentIds=new Set();
+    history.filter(entry=>entry&&typeof entry.date==='string'&&entry.date<today&&entry.date>=cutoffKey)
+      .forEach(entry=>(Array.isArray(entry.ids)?entry.ids:[]).forEach(id=>recentIds.add(id)));
+    const fresh=shuffled.filter(entry=>!recentIds.has(entry.id));
+    const repeats=shuffled.filter(entry=>recentIds.has(entry.id));
+    orderIds=fresh.concat(repeats).map(entry=>entry.id);
+  }
+  const selectedIds=orderIds.slice(0,wanted);
+  const previous=history.filter(entry=>entry&&entry.date!==today);
+  previous.push({date:today,ids:selectedIds});
+  try{
+    localStorage.setItem(storageKey,JSON.stringify({date:today,salt:rotationSalt,order:orderIds,history:previous.slice(-15)}));
+  }catch(e){}
+  return selectedIds.map(id=>byId.get(id)).filter(item=>item!==undefined);
+}
+
+function setVocabCat(c){vocabCat=c;document.querySelectorAll('#vocabCatChips .chip').forEach(ch=>ch.classList.toggle('active',ch.dataset.cat===c));renderVocabGrid();}
+function setVocabDiff(d){vocabDiff=d;document.querySelectorAll('#vocabDiffChips .chip').forEach(ch=>ch.classList.toggle('active',ch.dataset.diff===d));renderVocabGrid();}
+
+async function addVaaniItemToBookRegister(payload,button){
+  const item=payload&&typeof payload==='object'?payload:{};
+  const word=String(item.word||'').replace(/\s+/g,' ').trim();
+  if(!word){toast('This item has no word or phrase to save.');return false;}
+  if(button){button.disabled=true;button.dataset.saving='1';button.textContent='Saving…';}
+  try{
+    const bridge=window.VaaniBookRegister;
+    if(!bridge||typeof bridge.add!=='function'){
+      toast('Book Reading register is not ready yet. Open Book Reading once, then try again.');
+      if(button){button.disabled=false;button.textContent='Add to Book Register';delete button.dataset.saving;}
+      return false;
+    }
+    const result=await bridge.add({
+      word,meaning:String(item.meaning||'').trim(),
+      synonyms:Array.isArray(item.synonyms)?item.synonyms:[],
+      antonyms:Array.isArray(item.antonyms)?item.antonyms:[],
+      example:String(item.example||'').trim(),
+      kind:String(item.kind||'word'),
+      source:String(item.source||'VAANI Vocabulary')
+    });
+    if(!result||!result.ok){
+      toast((result&&result.message)||'Could not save this item. Check your account and try again.');
+      if(button){button.disabled=false;button.textContent='Add to Book Register';delete button.dataset.saving;}
+      return false;
+    }
+    if(button){button.textContent=result.duplicate?'✓ In Register':'✓ Added to Register';button.classList.add('is-saved');button.setAttribute('aria-label',word+(result.duplicate?' is already in the Book Reading Register':' added to the Book Reading Register'));}
+    toast(result.duplicate?'"'+word+'" is already in your Book Reading Register.':'Saved "'+word+'" to your Book Reading Register.');
+    return true;
+  }catch(error){
+    console.error('[VAANI → Book Register]',error);
+    toast('Could not reach the Book Reading register. Your current page is unchanged.');
+    if(button){button.disabled=false;button.textContent='Add to Book Register';delete button.dataset.saving;}
+    return false;
+  }
+}
+function makeBookRegisterButton(payload,label){
+  const button=document.createElement('button');
+  button.type='button';button.className='btn ghost v-book-capture';
+  button.textContent=label||'Add to Book Register';
+  button.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();addVaaniItemToBookRegister(payload,button);});
+  return button;
+}
+
+function renderVocabGrid(){
+  const grid = document.getElementById('vocabGrid'); if(!grid) return; grid.innerHTML='';
+  const term = (document.getElementById('vocabSearch')?.value||'').toLowerCase();
+  let list = VOCAB.filter(v=>(vocabCat==='all'||v.cat.includes(vocabCat)) && (vocabDiff==='all'||String(v.diff)===vocabDiff));
+  if(term) list = list.filter(v=>v.w.toLowerCase().includes(term)||v.meanEn.toLowerCase().includes(term));
+  if(!list.length){grid.innerHTML='<div class="empty-state">No words match your filters.</div>';return;}
+  list.forEach(v=>{
+    const div=document.createElement('div'); div.className='card word-card';
+    div.innerHTML=`<div class="wc-top"><h3>${v.w}</h3><div class="wc-imp" title="Exam importance ${v.imp}/5">${'●'.repeat(v.imp)}${'○'.repeat(5-v.imp)}</div></div>
+      <div class="wc-pos">${v.pos}</div>
+      <p class="wc-mean">${v.meanEn}</p>
+      <div class="wc-tags"><span class="wc-tag wc-stars">${'★'.repeat(v.diff)}${'☆'.repeat(3-v.diff)}</span>${v.cat.map(c=>`<span class="wc-tag">${c}</span>`).join('')}</div>`;
+    div.onclick=()=>openWord(v.id);
+    div.appendChild(makeBookRegisterButton({word:v.w,meaning:v.meanEn,synonyms:v.syn,antonyms:v.ant,example:v.exEasy,kind:'word',source:'VAANI Vocabulary'},'＋ Book Register'));
+    grid.appendChild(div);
+  });
+}
+
+function renderDailySetTabs(){
+  const shuffleBtn=document.getElementById('dailyShuffleBtn');
+  if(shuffleBtn&&shuffleBtn.dataset.bound!=='1'){
+    shuffleBtn.dataset.bound='1';
+    shuffleBtn.addEventListener('click',shuffleDailyContent);
+  }
+  const sets=[
+    {key:'wod',label:'Words of the Day',cat:null,offset:0},
+    {key:'advanced',label:'Advanced Words',cat:'advanced',offset:1},
+    {key:'nda',label:'NDA Frequent',cat:'nda',offset:2},
+    {key:'editorial',label:'Editorial Words',cat:'editorial',offset:3},
+    {key:'military',label:'Military Vocabulary',cat:'military',offset:4},
+    {key:'foreign',label:'Foreign Phrases',cat:'foreign',offset:5}
+  ];
+  const tabs=document.getElementById('dailySetTabs');
+  if(!tabs){console.warn('[VAANI] dailySetTabs container is missing');return;}
+  tabs.innerHTML='';
+  sets.forEach((s,i)=>{
+    const b=document.createElement('button'); b.className='daily-tab-btn'+(i===0?' active':''); b.textContent=s.label; b.dataset.key=s.key;
+    b.onclick=()=>{document.querySelectorAll('.daily-tab-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');renderDailySetGrid(s);};
+    tabs.appendChild(b);
+  });
+  renderDailySetGrid(sets[0]);
+}
+function renderDailySetGrid(setDef){
+  const grid=document.getElementById('dailySetGrid');
+  if(!grid){console.warn('[VAANI] dailySetGrid container is missing');return;}
+  grid.innerHTML='';
+  if(!setDef){grid.innerHTML='<div class="empty-state">Choose a daily set to begin.</div>';return;}
+  if(setDef.key==='foreign'){
+    const picks = pickDaily(FOREIGN_PHRASES,5,setDef.offset);
+    picks.forEach(p=>{
+      const div=document.createElement('div'); div.className='card word-card'; div.style.cursor='default';
+      div.innerHTML=`<h3>${p.t}</h3><div class="wc-pos">${p.lang}</div><p class="wc-mean">${p.mean}</p><div class="example-box" style="margin-top:8px">"${p.ex}"</div>`;
+      div.appendChild(makeBookRegisterButton({word:p.t,meaning:p.mean,example:p.ex,kind:'phrase',source:'VAANI Foreign Phrases'},'＋ Book Register'));
+      grid.appendChild(div);
+    });
+    return;
+  }
+  const pool = setDef.cat ? VOCAB.filter(v=>v.cat.includes(setDef.cat)) : VOCAB;
+  const picks = pickDaily(pool,5,setDef.offset);
+  picks.forEach(v=>{
+    const div=document.createElement('div'); div.className='card word-card';
+    div.innerHTML=`<div class="wc-top"><h3>${v.w}</h3><div class="wc-imp" title="Exam importance ${v.imp}/5">${'●'.repeat(v.imp)}${'○'.repeat(5-v.imp)}</div></div><div class="wc-pos">${v.pos}</div><p class="wc-mean">${v.meanEn}</p>`;
+    div.onclick=()=>openWord(v.id);
+    div.appendChild(makeBookRegisterButton({word:v.w,meaning:v.meanEn,synonyms:v.syn,antonyms:v.ant,example:v.exEasy,kind:'word',source:'VAANI Daily Vocabulary'},'＋ Book Register'));
+    grid.appendChild(div);
+  });
+}
+
+function renderDailySingles(){
+  const strip=document.getElementById('dailySinglesStrip'); if(!strip)return; strip.innerHTML='';
+  const items=[
+    {label:'Idiom of the Day',tag:'IDM',d:pickDaily(DAILY_IDIOMS,1,6)[0]},
+    {label:'Phrase of the Day',tag:'PHR',d:pickDaily(DAILY_PHRASES,1,7)[0]},
+    {label:'Proverb of the Day',tag:'PRV',d:pickDaily(DAILY_PROVERBS,1,8)[0]},
+    {label:'Phrasal Verb of the Day',tag:'P·V',d:pickDaily(DAILY_PHRASAL_VERBS,1,9)[0]},
+    {label:'Collocation of the Day',tag:'COL',d:pickDaily(DAILY_COLLOCATIONS,1,10)[0]},
+    {label:'Prefix of the Day',tag:'PRE',d:pickDaily(DAILY_PREFIXES,1,11)[0]},
+    {label:'Suffix of the Day',tag:'SUF',d:pickDaily(DAILY_SUFFIXES,1,12)[0]},
+    {label:'Root Word of the Day',tag:'ROOT',d:pickDaily(DAILY_ROOTS,1,13)[0]}
+  ];
+  const available=items.filter(it=>it.d&&it.d.t);
+  if(!available.length){strip.innerHTML='<div class="empty-state">Daily lessons are temporarily unavailable. Please try again shortly.</div>';return;}
+  available.forEach(it=>{
+    const div=document.createElement('div'); div.className='single-card';
+    div.innerHTML=`<div class="sc-badge">${it.tag}</div><div class="sc-label">${it.label.toUpperCase()}</div><div class="sc-word">${it.d.t}</div><div class="sc-mean">${it.d.mean||''}</div>`;
+    div.appendChild(makeBookRegisterButton({word:it.d.t,meaning:it.d.mean||'',example:it.d.ex||'',kind:it.label.toLowerCase().replace(/ of the day$/,''),source:'VAANI '+it.label},'＋ Book Register'));
+    strip.appendChild(div);
+  });
+}
+
+function renderConfuseTable(){
+  const body=document.getElementById('confuseTableBody'); if(!body) return; body.innerHTML='';
+  CONFUSED_PAIRS.forEach(p=>{
+    const card=document.createElement('div'); card.className='cw-card';
+    card.innerHTML=`<div class="cw-pair-name">${p.pair}</div>
+      <div class="cw-sides">
+        <div class="cw-side"><span class="cw-side-tag">A</span>${p.a}</div>
+        <div class="cw-vs">vs</div>
+        <div class="cw-side"><span class="cw-side-tag b">B</span>${p.b}</div>
+      </div>
+      <div class="cw-trick"><span class="cw-trick-lbl">Memory trick</span>${p.trick}</div>`;
+    body.appendChild(card);
+  });
+}
+
+
+function markWordLearned(){
+  const today=new Date().toDateString();
+  const key = currentWordId || 'wod';
+  if(!State.vocabLearned[today+'_'+key]){State.vocabLearned[today+'_'+key]=true; State.vocabLearned[today]=true; saveState();addXP(10,'Word learned: '+(VOCAB_BY_ID[currentWordId]?VOCAB_BY_ID[currentWordId].w:'Word of the Day'));}
+  else toast('Already marked today.');
+}
+function renderWOD(){
+  const v = pickDaily(VOCAB,1,0)[0];
+  document.getElementById('dashWord').textContent=v.w;
+  document.getElementById('dashWordMeaning').textContent=v.meanEn;
+  const capture=document.getElementById('dashWordToBook');
+  if(capture)capture.onclick=()=>addVaaniItemToBookRegister({word:v.w,meaning:v.meanEn,synonyms:v.syn,antonyms:v.ant,example:v.exEasy,kind:'word',source:'VAANI Word of the Day'},capture);
+}
+
+function lookupExternalWord(){
+  const word=VOCAB_BY_ID[currentWordId],button=document.getElementById('wdDictionaryLookup'),host=document.getElementById('wdDictionaryResult');
+  if(!word||!button||!host)return;if(typeof VaaniDictionary==='undefined'){host.textContent='Online dictionary unavailable. The curated VAANI entry remains available.';return;}
+  button.disabled=true;button.textContent='Looking up…';host.textContent='Looking up an optional dictionary entry…';
+  VaaniDictionary.lookup(word.w).then(result=>{if(currentWordId!==word.id)return;host.innerHTML='';const entry=result.entry;
+    const source=document.createElement('p');source.className='dict-source';source.textContent=(result.stale?'Showing a saved entry because the service is unavailable. ':result.source==='cache'?'Showing a saved dictionary entry. ':'Online dictionary result. ')+'Supplementary data; compare with the VAANI lesson.';host.appendChild(source);
+    if(entry.phonetic){const p=document.createElement('p');p.className='dict-phonetic';p.textContent='Pronunciation: '+entry.phonetic;host.appendChild(p);}
+    entry.meanings.forEach(m=>{const group=document.createElement('div');group.className='dict-meaning';if(m.partOfSpeech){const h=document.createElement('h5');h.textContent=m.partOfSpeech;group.appendChild(h);}m.definitions.forEach(d=>{const p=document.createElement('p');p.className='dict-definition';p.textContent=d.definition;group.appendChild(p);if(d.example){const ex=document.createElement('p');ex.className='dict-example';ex.textContent='Example: '+d.example;group.appendChild(ex);}if(d.synonyms.length){const sy=document.createElement('p');sy.className='dict-related';sy.textContent='Synonyms: '+d.synonyms.join(', ');group.appendChild(sy);}if(d.antonyms.length){const an=document.createElement('p');an.className='dict-related';an.textContent='Antonyms: '+d.antonyms.join(', ');group.appendChild(an);}});host.appendChild(group);});
+    const audioUrl=entry.phonetics.map(p=>p.audio).find(url=>{try{const u=new URL(url);return u.protocol==='https:'&&(u.hostname==='ssl.gstatic.com'||u.hostname.endsWith('.dictionaryapi.dev'));}catch(e){return false;}});if(audioUrl){const audio=document.createElement('audio');audio.controls=true;audio.preload='none';audio.src=audioUrl;audio.setAttribute('aria-label','Word pronunciation audio');host.appendChild(audio);}
+  }).catch(err=>{if(currentWordId===word.id)host.textContent=(err&&err.message?err.message:'Online lookup failed.')+' Your curated VAANI entry is still available above.';}).finally(()=>{if(currentWordId===word.id){button.disabled=false;button.textContent='Refresh lookup';}});
+}
+function checkGrammarSentence(){
+ const input=document.getElementById('grammarCoachInput'),result=document.getElementById('grammarCoachResult'),button=document.getElementById('grammarCoachCheck');
+ if(!input||!result||!button)return;const sentence=input.value.trim();result.textContent='';if(!sentence){result.textContent='Write a sentence first.';input.focus();return;}
+ if(typeof VaaniWritingCoach==='undefined'){result.textContent='Online checker unavailable. Use the lesson examples and practice questions instead.';return;}
+ const request=(window.__vaaniCoachRequest||0)+1;window.__vaaniCoachRequest=request;button.disabled=true;button.textContent='Checking…';result.textContent='Checking your sentence…';
+ VaaniWritingCoach.check(sentence).then(matches=>{if(request!==window.__vaaniCoachRequest)return;result.innerHTML='';if(!matches.length){const p=document.createElement('p');p.className='coach-success';p.textContent='No issues found by the checker. Automated feedback cannot guarantee a perfect sentence.';result.appendChild(p);return;}const intro=document.createElement('p');intro.className='coach-intro';intro.textContent=matches.length+' suggestion(s) to review';result.appendChild(intro);matches.forEach((m,i)=>{const card=document.createElement('div');card.className='coach-issue';const h=document.createElement('strong');h.textContent='Suggestion '+(i+1);card.appendChild(h);const p=document.createElement('p');p.textContent=m.message;card.appendChild(p);if(m.context){const c=document.createElement('small');c.textContent='Context: '+m.context;card.appendChild(c);}if(m.replacements.length){const r=document.createElement('p');r.className='coach-replacements';r.textContent='Possible correction: '+m.replacements.join(' · ');card.appendChild(r);}result.appendChild(card);});}).catch(err=>{if(request===window.__vaaniCoachRequest)result.textContent=(err&&err.message?err.message:'Online checking failed.')+' Your sentence has not been changed.';}).finally(()=>{if(request===window.__vaaniCoachRequest){button.disabled=false;button.textContent='Check sentence';}});
+}
+function openWord(id){
+  const v = VOCAB_BY_ID[id]; if(!v) return;
+  currentWordId = id;
+  document.getElementById('wdWord').textContent=v.w;
+  document.getElementById('wdIpa').textContent=v.ipa;
+  document.getElementById('wdPos').textContent=v.pos;
+  document.getElementById('wdMetaRow').innerHTML=`<span><b>Category:</b> ${v.cat.join(', ')}</span><span><b>Difficulty:</b> ${'★'.repeat(v.diff)}</span><span><b>Exam Importance:</b> ${v.imp}/5</span>`;
+  document.getElementById('wdMeanEn').textContent=v.meanEn;
+  document.getElementById('wdMeanHi').textContent=v.meanHi;
+  document.getElementById('wdEasy').textContent=v.easy;
+  document.getElementById('wdEtym').textContent=v.etym;
+  document.getElementById('wdRoot').textContent=v.root;
+  document.getElementById('wdAffix').textContent=v.affix;
+  document.getElementById('wdSyl').textContent=v.syl;
+  document.getElementById('wdMnemonic').textContent=v.mnemonic;
+  document.getElementById('wdMistake').textContent=v.mistake;
+  document.getElementById('wdSyn').innerHTML=v.syn.map(s=>`<span class="wd-chip" onclick="searchOrOpen('${s.replace(/'/g,"\\'")}')">${s}</span>`).join('');
+  document.getElementById('wdAnt').innerHTML=v.ant.map(s=>`<span class="wd-chip ant" onclick="searchOrOpen('${s.replace(/'/g,"\\'")}')">${s}</span>`).join('');
+  document.getElementById('wdFamily').innerHTML=(v.family||[]).map(s=>`<span class="wd-chip">${s}</span>`).join('')||'<span class="wc-mean">—</span>';
+  document.getElementById('wdConfused').innerHTML=(v.confused||[]).map(s=>`<span class="wd-chip" style="cursor:default">${s}</span>`).join('')||'<span class="wc-mean">—</span>';
+  document.getElementById('wdFormal').textContent=v.formal;
+  document.getElementById('wdBrAm').textContent=v.brAm;
+  document.getElementById('wdPrep').textContent=v.prep;
+  document.getElementById('wdColloc').textContent=(v.colloc||[]).join(' · ');
+  document.getElementById('wdExEasy').textContent='Easy: "'+v.exEasy+'"';
+  document.getElementById('wdExMed').textContent='Medium: "'+v.exMed+'"';
+  document.getElementById('wdExAdv').textContent='Advanced: "'+v.exAdv+'"';
+  document.getElementById('wdExEdit').textContent='Editorial: "'+v.exEdit+'"';
+  document.getElementById('wdExNDA').textContent='NDA-style: "'+v.exNDA+'"';
+  document.getElementById('wdDiffStars').textContent='★'.repeat(v.diff)+'☆'.repeat(3-v.diff);
+  document.getElementById('wdImportance').textContent=v.imp+' / 5';
+  document.getElementById('wdYears').textContent=v.years;
+  document.getElementById('wdPYQ').textContent=v.pyq;
+  const capture=document.getElementById('wdAddToBookRegister');
+  if(capture){
+    capture.disabled=false;capture.textContent='＋ Add to Book Register';capture.classList.remove('is-saved');
+    capture.onclick=()=>addVaaniItemToBookRegister({word:v.w,meaning:v.meanEn,synonyms:v.syn,antonyms:v.ant,example:v.exEasy,kind:'word',source:'VAANI Vocabulary'},capture);
+  }
+  const dictionaryPanel=document.getElementById('wdDictionaryResult'),dictionaryButton=document.getElementById('wdDictionaryLookup');
+  if(dictionaryPanel)dictionaryPanel.textContent='';if(dictionaryButton){dictionaryButton.disabled=false;dictionaryButton.textContent='Look up word';}
+  renderWordQuiz(v);
+  switchView('worddetail');
+}
+function searchOrOpen(word){
+  const match = VOCAB.find(v=>v.w.toLowerCase()===word.toLowerCase());
+  if(match){ openWord(match.id); }
+  else { switchView('vocab'); document.getElementById('vocabSearch').value=word; renderVocabGrid(); toast('Showing closest matches for "'+word+'"'); }
+}
+function renderWordQuiz(v){
+  const wrap=document.getElementById('wdQuizWrap'); wrap.innerHTML='';
+  if(!v.quiz || !v.quiz.length){wrap.innerHTML='<p class="wc-mean">No quiz available for this word yet.</p>';return;}
+  v.quiz.forEach((item,qi)=>{
+    const block=document.createElement('div'); block.style.marginBottom='16px';
+    block.innerHTML=`<div class="quiz-q" style="font-size:.9rem">${qi+1}. ${item.q}</div><div id="wdOpts${qi}"></div><div class="quiz-feedback" id="wdFb${qi}"></div>`;
+    wrap.appendChild(block);
+    const optsWrap=block.querySelector(`#wdOpts${qi}`);
+    item.opts.forEach((o,oi)=>{
+      const b=document.createElement('button'); b.className='opt-btn'; b.textContent=o;
+      b.onclick=()=>{
+        optsWrap.querySelectorAll('.opt-btn').forEach(x=>x.disabled=true);
+        if(oi===item.ans){b.classList.add('correct');handleQuizCorrect(b,null);reviewMarkRight('vocab',v.id);}
+        else{b.classList.add('wrong');optsWrap.querySelectorAll('.opt-btn')[item.ans].classList.add('correct');handleQuizWrong(null);reviewMarkWrong('vocab',v.id);}
+      };
+      optsWrap.appendChild(b);
+    });
+  });
+}
+
+/* ============================================================
+   PRACTICE / READING / TESTS RENDER
+=============================================================*/
+function renderPracticeGrid(){
+  const grid=document.getElementById('practiceGrid'); if(!grid)return; grid.innerHTML='';
+  const randomized = (typeof pvShuffle==='function' ? pvShuffle(PRACTICE) : PRACTICE.slice());
+  randomized.forEach(p=>{
+    const div=document.createElement('div'); div.className='card topic-card';
+    div.innerHTML=`<div class="icon">${p.icon}</div><span class="vaani-mini-kicker">Randomized drill</span><h3>${p.title}</h3><p>${p.desc}</p>
+      <div class="topic-meta"><span>${p.q.length} question${p.q.length>1?'s':''}</span><span>Open ›</span></div>`;
+    div.onclick=()=>openPractice(p);
+    grid.appendChild(div);
+  });
+}
+function openPractice(p){
+  document.getElementById('topicEyebrow').textContent='Sentence Practice · Randomized set';
+  document.getElementById('topicTitle').textContent=p.title;
+  document.getElementById('topicStamp').style.display='none';
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.style.display = b.dataset.tab==='quiz'?'block':'none');
+  document.querySelectorAll('.tab-btn')[3].classList.add('active');
+  document.querySelectorAll('.tab-pane').forEach(x=>x.classList.remove('active'));
+  document.getElementById('pane-quiz').classList.add('active');
+  const rawQuestions = (typeof pvShuffle==='function' ? pvShuffle(p.q) : p.q.slice());
+  const quiz = rawQuestions.map(item=>{
+    if(item.opts){
+      const indexed=item.opts.map((text,index)=>({text,index}));
+      const shuffledOpts=typeof pvShuffle==='function'?pvShuffle(indexed):indexed;
+      return {q:item.s,opts:shuffledOpts.map(o=>o.text),ans:shuffledOpts.findIndex(o=>o.index===item.ans),exp:item.exp};
+    }
+    return {q:item.s+' — which part has the error?',opts:['A','B','C','D'],ans:['A','B','C','D'].indexOf(item.ans),exp:item.exp};
+  });
+  currentTopic={id:p.id,title:p.title};
+  renderQuizPane(p.id, quiz);
+  lastListView='practice';
+  switchView('topic');
+}
+function renderReadingGrid(){
+  const grid=document.getElementById('readingGrid'); if(!grid)return; grid.innerHTML='';
+  READING.forEach(r=>{
+    const div=document.createElement('div'); div.className='card topic-card';
+    div.innerHTML=`<div class="icon">${r.icon}</div><h3>${r.title}</h3><p>Comprehension passage with analytical questions.</p>
+      <div class="topic-meta"><span>⏱ ${r.time}</span><span>${r.q.length} questions</span></div>`;
+    div.onclick=()=>openReading(r);
+    grid.appendChild(div);
+  });
+}
+function openReading(r){
+  document.getElementById('topicEyebrow').textContent='Reading Comprehension';
+  document.getElementById('topicTitle').textContent=r.title;
+  document.getElementById('topicStamp').style.display='none';
+  document.querySelectorAll('.tab-btn').forEach(b=>b.style.display='none');
+  document.querySelectorAll('.tab-pane').forEach(x=>x.classList.remove('active'));
+  document.getElementById('pane-learn').classList.add('active');
+  document.getElementById('pane-learn').innerHTML = `<div class="explain-block"><p>${r.passage}</p></div>
+    <div id="rcQuizHolder"></div>`;
+  currentTopic={id:r.id,title:r.title};
+  const holder=document.getElementById('rcQuizHolder');
+  const origPane = document.getElementById('pane-quiz');
+  origPane.id='pane-quiz'; // keep
+  holder.appendChild(Object.assign(document.createElement('div'),{}));
+  setTimeout(()=>renderQuizPane(r.id, r.q.map(q=>({q:q.s,opts:q.opts,ans:q.ans,exp:q.exp}))),0);
+  document.getElementById('pane-quiz').style.display='block';
+  document.getElementById('pane-quiz').classList.add('active');
+  lastListView='reading';
+  switchView('topic');
+}
+function renderTestsGrid(){
+  const grid=document.getElementById('testsGrid'); if(!grid)return; grid.innerHTML='';
+  TESTS.forEach(t=>{
+    const div=document.createElement('div'); div.className='card topic-card';
+    div.innerHTML=`<div class="icon">${t.icon}</div><h3>${t.title}</h3><p>${t.desc}</p>
+      <div class="topic-meta"><span>${t.n} questions</span><span>Start ›</span></div>`;
+    div.onclick=()=>{
+      document.getElementById('topicEyebrow').textContent='Test';
+      document.getElementById('topicTitle').textContent=t.title;
+      document.getElementById('topicStamp').style.display='none';
+      document.querySelectorAll('.tab-btn').forEach(b=>b.style.display = b.dataset.tab==='quiz'?'block':'none');
+      document.querySelectorAll('.tab-pane').forEach(x=>x.classList.remove('active'));
+      document.getElementById('pane-quiz').classList.add('active');
+      currentTopic={id:t.id,title:t.title};
+      renderQuizPane(t.id, buildGenericQuiz(t.n));
+      lastListView='tests';
+      switchView('topic');
+    };
+    grid.appendChild(div);
+  });
+}
+
+/* ============================================================
+   DASHBOARD / TOPBAR
+=============================================================*/
+function refreshTopBar(){
+  document.getElementById('xpNum').textContent = State.xp;
+  document.getElementById('lvlNum').textContent = Math.floor(State.xp/100)+1;
+  document.getElementById('streakNum').textContent = State.streak;
+}
+function logActivity(action,detail){
+  State.activity = State.activity || [];
+  State.activity.unshift({action,detail,t:new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})});
+  State.activity = State.activity.slice(0,8);
+  saveState();
+}
+function renderProfileSnapshot(){
+  const name=String(State.name||'Cadet').trim()||'Cadet';
+  const initials=name.split(/\s+/).filter(Boolean).slice(0,2).map(part=>part.charAt(0).toUpperCase()).join('')||'C';
+  const avatar=document.getElementById('vpProfileAvatar');if(avatar)avatar.textContent=initials;
+  const completed=GRAMMAR.filter(g=>!!State.completedTopics[g.id]).length;
+  const scores=Object.values(State.quizScores).map(Number).filter(n=>Number.isFinite(n)&&n>=0&&n<=100);
+  const avg=scores.length?Math.round(scores.reduce((sum,n)=>sum+n,0)/scores.length):null;
+  const level=Math.floor(State.xp/100)+1;
+  const ranks=['Recruit','Cadet','Lance Naik','Naik','Havildar','Subedar','Lieutenant','Captain','Major','Colonel'];
+  const rank=ranks[Math.min(level-1,ranks.length-1)];
+  const rankEl=document.getElementById('vpProfileRank');if(rankEl)rankEl.textContent=rank;
+  const host=document.getElementById('vpOverviewStats');
+  if(host)host.innerHTML=[
+    ['Total XP',String(State.xp||0),'✦'],['Current streak',(State.streak||0)+' days','🔥'],
+    ['Grammar topics',completed+'/'+GRAMMAR.length,'📘'],['Average quiz score',avg==null?'—':avg+'%','◎']
+  ].map(item=>'<div class="vp-overview-card"><span class="vp-overview-icon" aria-hidden="true">'+item[2]+'</span><span class="vp-overview-label">'+item[0]+'</span><strong>'+item[1]+'</strong></div>').join('');
+
+  const order=SKILL_TIERS.flatMap(t=>t.ids).filter(id=>GRAMMAR.some(g=>g.id===id));
+  const nextId=order.find(id=>!State.completedTopics[id]);
+  const nextTopic=nextId?GRAMMAR.find(g=>g.id===nextId):null;
+  const mission=document.getElementById('vpFocusMission');
+  if(mission){
+    if(nextTopic){
+      mission.innerHTML='<div class="vp-focus-mission"><div class="vp-focus-icon" aria-hidden="true">'+(nextTopic.icon||'📘')+'</div><div><b>'+escapeHtmlVaani(nextTopic.title)+'</b><span>'+escapeHtmlVaani(nextTopic.desc||'Continue your Grammar journey one topic at a time.')+'</span></div></div><button type="button" class="btn vp-focus-action" onclick="openTopic(\''+String(nextTopic.id).replace(/'/g,"\\\\'")+'\')">Open next topic →</button>';
+    }else{
+      mission.innerHTML='<div class="vp-focus-mission"><div class="vp-focus-icon" aria-hidden="true">🏁</div><div><b>Grammar curriculum cleared</b><span>Revisit any topic to strengthen retention, or keep building vocabulary and comparisons.</span></div></div>';
+    }
+  }
+
+  function familyAverage(ids){
+    const values=ids.map(id=>State.quizScores[id]).map(Number).filter(n=>Number.isFinite(n)&&n>=0&&n<=100);
+    return values.length?Math.round(values.reduce((a,b)=>a+b,0)/values.length):null;
+  }
+  const grammarAvg=familyAverage(GRAMMAR.map(g=>g.id));
+  const compareAvg=familyAverage(COMPARISONS.map(c=>'cmp-'+c.id));
+  const practiceAvg=familyAverage(PRACTICE.map(p=>p.id));
+  const readingAvg=familyAverage(READING.map(r=>r.id));
+  const signals=[['Grammar',grammarAvg],['Comparisons',compareAvg],['Practice',practiceAvg],['Reading',readingAvg]];
+  const signalHost=document.getElementById('vpSkillSignals');
+  if(signalHost){
+    signalHost.innerHTML=signals.map(([label,val])=>{
+      const value=val==null?0:val;
+      return '<div class="vp-skill-signal"><label>'+label+'</label><div class="bar"><span style="width:'+value+'%"></span></div><strong>'+ (val==null?'—':value+'%') +'</strong></div>';
+    }).join('');
+  }
+
+  const feed=document.getElementById('vpActivityList');if(feed){
+    const activity=Array.isArray(State.activity)?State.activity.filter(a=>a&&typeof a==='object').slice(0,6):[];
+    feed.innerHTML=activity.length?activity.map(a=>'<div class="vp-activity-item"><span class="vp-activity-dot" aria-hidden="true"></span><span class="vp-activity-copy"><b>'+escapeHtmlVaani(a.action||'Learning activity')+'</b><span>'+escapeHtmlVaani(a.detail||'')+'</span></span><time>'+escapeHtmlVaani(a.t||'')+'</time></div>').join(''):'<div class="vp-activity-empty">No activity has been recorded yet. Complete a lesson or quiz to start your learning log.</div>';
+  }
+
+  const rhythm=document.getElementById('vpRhythmGrid');
+  const rhythmNote=document.getElementById('vpRhythmNote');
+  if(rhythm){
+    rhythm.innerHTML='';
+    const days=[];
+    for(let i=13;i>=0;i--){
+      const d=new Date();d.setHours(12,0,0,0);d.setDate(d.getDate()-i);
+      const xp=Math.max(0,Number(State.dailyActivity&&State.dailyActivity[d.toDateString()])||0);
+      days.push({date:d,xp});
+      let level=0;if(xp>0)level=1;if(xp>=10)level=2;if(xp>=25)level=3;if(xp>=50)level=4;
+      const cell=document.createElement('span');cell.className='vp-rhythm-cell'+(level?' l'+level:'');cell.title=d.toLocaleDateString(undefined,{month:'short',day:'numeric'})+' · '+xp+' XP';rhythm.appendChild(cell);
+    }
+    if(rhythmNote){
+      const active=days.filter(d=>d.xp>0).length,totalXp=days.reduce((sum,d)=>sum+d.xp,0);
+      rhythmNote.innerHTML='<span>'+active+' active day'+(active===1?'':'s')+'</span><span>'+totalXp+' XP in 14 days</span>';
+    }
+  }
+}
+function renderDashboardMissions(){
+  const host=document.getElementById('missionList');
+  if(!host)return;
+  const missions=[
+    {label:'Clear 1 grammar topic',done:Object.keys(State.completedTopics||{}).length>=1},
+    {label:'Score 70%+ on any quiz',done:Object.values(State.quizScores||{}).some(s=>Number(s)>=70)},
+    {label:'Learn the word of the day',done:!!(State.vocabLearned||{})[new Date().toDateString()]}
+  ];
+  host.innerHTML=missions.map(m=>'<div class="mastery-row"><span style="width:auto;flex:1;color:'+(m.done?'var(--green)':'var(--muted)')+'">'+(m.done?'✓':'▫')+' '+m.label+'</span></div>').join('');
+}
+function refreshDashboard(){
+  renderProfileSnapshot();
+  document.getElementById('dashName').textContent = State.name;
+  document.getElementById('profName').textContent = State.name+"'s Service File";
+  countUp('statXP', State.xp);
+  countUp('statStreak', State.streak);
+  const cleared = Object.keys(State.completedTopics).length;
+  document.getElementById('statTopics').textContent = cleared+'/'+GRAMMAR.length;
+  const scores = Object.values(State.quizScores);
+  const avgAcc = scores.length? Math.round(scores.reduce((a,b)=>a+b,0)/scores.length):0;
+  countUp('statAcc', avgAcc, '%');
+  setRing('ringXP', Math.min(100, Math.round((State.xp%500)/5)));
+  setRing('ringStreak', Math.min(100, State.streak*10));
+  setRing('ringTopics', Math.round((cleared/GRAMMAR.length)*100));
+  setRing('ringAcc', avgAcc);
+
+  document.getElementById('mGrammar').style.width = Math.round((cleared/GRAMMAR.length)*100)+'%';
+  const vocabLearnedDays = Object.keys(State.vocabLearned).length;
+  const pGrammar = Math.round((cleared/GRAMMAR.length)*100);
+  const pVocab = Math.min(100, vocabLearnedDays*8);
+  document.getElementById('mVocab').style.width = pVocab+'%';
+  const practiceDone = Object.keys(State.quizScores).filter(k=>PRACTICE.some(p=>p.id===k)).length;
+  const pPractice = Math.min(100, practiceDone*20);
+  document.getElementById('mPractice').style.width = pPractice+'%';
+  const readingDone = Object.keys(State.quizScores).filter(k=>READING.some(r=>r.id===k)).length;
+  const pReading = Math.min(100, readingDone*50);
+  document.getElementById('mReading').style.width = pReading+'%';
+  renderRadarChart([pGrammar,pVocab,pPractice,pReading]);
+
+  // heatmap — real daily XP activity, not simulated
+  const heat = document.getElementById('heatmap'); heat.innerHTML='';
+  const today0 = new Date();
+  for(let i=59;i>=0;i--){
+    const d=new Date(today0); d.setDate(d.getDate()-i);
+    const key=d.toDateString();
+    const xpDay = (State.dailyActivity && State.dailyActivity[key]) || 0;
+    const c=document.createElement('div'); c.className='heat-cell';
+    let lvl=0;
+    if(xpDay>=40) lvl=4; else if(xpDay>=20) lvl=3; else if(xpDay>=8) lvl=2; else if(xpDay>0) lvl=1;
+    if(lvl) c.classList.add('heat-lvl'+lvl);
+    c.title = d.toLocaleDateString(undefined,{month:'short',day:'numeric'}) + (xpDay?` — ${xpDay} XP`:' — no activity');
+    heat.appendChild(c);
+  }
+  // activity
+  const feed=document.getElementById('activityFeed');
+  const activityItems = Array.isArray(State.activity) ? State.activity.filter(a=>a && typeof a==='object') : [];
+  if(feed && activityItems.length){
+    feed.innerHTML = activityItems.slice(0,50).map(a=>`<div class="activity-item"><span><b>${escapeHtmlVaani(a.action || 'Activity')}</b> — ${escapeHtmlVaani(a.detail || '')}</span><span>${escapeHtmlVaani(a.t || '')}</span></div>`).join('');
+  }
+  // missions
+  const missions=[
+    {id:'m1',label:'Clear 1 grammar topic',target:1,get:()=>Object.keys(State.completedTopics).length},
+    {id:'m2',label:'Score 70%+ on any quiz',target:1,get:()=>Object.values(State.quizScores).some(s=>s>=70)?1:0},
+    {id:'m3',label:'Learn the word of the day',target:1,get:()=>State.vocabLearned[new Date().toDateString()]?1:0},
+  ];
+  document.getElementById('missionList').innerHTML = missions.map(m=>{
+    const done = m.get()>=m.target;
+    return `<div class="mastery-row"><span style="width:auto;flex:1;color:${done?'var(--green)':'var(--muted)'}">${done?'✅':'▫️'} ${m.label}</span></div>`;
+  }).join('');
+
+  // rank
+  const lvl = Math.floor(State.xp/100)+1;
+  const ranks=['Recruit','Cadet','Lance Naik','Naik','Havildar','Subedar','Lieutenant','Captain','Major','Colonel'];
+  const rankName = ranks[Math.min(lvl-1, ranks.length-1)];
+  document.getElementById('rankTitle').textContent = rankName;
+  const rankBadge = document.getElementById('rankBadge');
+  if(rankBadge){
+    rankBadge.setAttribute('data-rank-level', Math.min(lvl, ranks.length));
+    const chevronCount = Math.min(5, Math.ceil(Math.min(lvl, ranks.length)/2));
+    const chevronsHost = document.getElementById('vpChevrons');
+    if(chevronsHost){
+      chevronsHost.innerHTML = Array.from({length:chevronCount}).map((_,i)=>{
+        const y = 68 - i*11;
+        return `<path d="M32,${y} L50,${y-9} L68,${y}" class="vp-chevron"/>`;
+      }).join('');
+    }
+  }
+  const maxRankReached=lvl>=ranks.length;
+  const within=maxRankReached?100:State.xp%100;
+  document.getElementById('rankBar').style.width=within+'%';
+  document.getElementById('rankXPText').textContent=maxRankReached?'Maximum rank achieved':within+' / 100 XP to next rank';
+
+  // progress tree — every topic, not just the first 10 (was GRAMMAR.slice(0,10),
+  // silently hiding 24 of 34 with no indication more existed)
+  const tree=document.getElementById('progTree'); tree.innerHTML='';
+  GRAMMAR.forEach(g=>{
+    const done = !!State.completedTopics[g.id];
+    const n=document.createElement('div'); n.className='prog-node'+(done?' done':'');
+    n.innerHTML=`<b>${g.title}</b><span>${done?'Cleared':'Pending'}</span>`;
+    tree.appendChild(n);
+  });
+
+  renderBadges();
+  renderMysteryBox();
+  renderReviewWidget();
+  renderFocusSprint();
+  refreshHomeV2();
+}
+/* ---- Focus Sprint: a local, timed study session with capped XP ---- */
+let focusSprint = {minutes:15,remaining:900,running:false,endsAt:0,interval:null,task:'Grammar'};
+function focusDayKey(){return new Date().toDateString();}
+function focusFmt(seconds){const n=Math.max(0,Math.ceil(seconds));return String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0');}
+function focusSetDuration(minutes){
+  if(focusSprint.running)return;
+  focusSprint.minutes=minutes;focusSprint.remaining=minutes*60;
+  renderFocusSprint();
+}
+function focusSetTask(task){
+  if(focusSprint.running)return;
+  focusSprint.task=task;renderFocusSprint();
+}
+function focusStopTicker(){if(focusSprint.interval){clearInterval(focusSprint.interval);focusSprint.interval=null;}}
+function focusTick(){
+  focusSprint.remaining=Math.max(0,Math.ceil((focusSprint.endsAt-Date.now())/1000));
+  const timer=document.getElementById('focusSprintTimer');
+  const bar=document.getElementById('focusSprintProgress');
+  const status=document.getElementById('focusSprintStatus');
+  if(timer)timer.textContent=focusFmt(focusSprint.remaining);
+  if(bar)bar.style.width=(100*(1-focusSprint.remaining/(focusSprint.minutes*60)))+'%';
+  if(!focusSprint.remaining){
+    focusStopTicker();focusSprint.running=false;
+    const day=focusDayKey();const done=Number(State.focusSessions[day]||0)+1;State.focusSessions[day]=done;saveState();
+    if(done<=3)addXP(5,'Focus Sprint completed');
+    else{refreshDashboard();toast('Focus Sprint complete — daily XP limit reached.');}
+    focusSprint.remaining=focusSprint.minutes*60;
+    const freshStatus=document.getElementById('focusSprintStatus');
+    if(freshStatus)freshStatus.textContent=done<=3?'Sprint complete. Take a short break before the next one.':'Sprint complete. You have reached today’s 3-session XP limit.';
+    const btn=document.getElementById('focusSprintToggle');if(btn){btn.textContent='Start another sprint';btn.disabled=false;}
+    const progress=document.getElementById('focusSprintProgress');if(progress)progress.style.width='0%';
+    const timerEl=document.getElementById('focusSprintTimer');if(timerEl)timerEl.textContent=focusFmt(focusSprint.remaining);
+    return;
+  }
+}
+function focusToggleSprint(){
+  if(focusSprint.running){
+    focusSprint.remaining=Math.max(0,Math.ceil((focusSprint.endsAt-Date.now())/1000));focusStopTicker();focusSprint.running=false;
+    const b=document.getElementById('focusSprintToggle');if(b)b.textContent='Resume sprint';
+    const s=document.getElementById('focusSprintStatus');if(s)s.textContent='Paused — resume whenever you are ready.';
+    focusTick();return;
+  }
+  focusSprint.running=true;focusSprint.endsAt=Date.now()+focusSprint.remaining*1000;
+  const b=document.getElementById('focusSprintToggle');if(b)b.textContent='Pause sprint';
+  const s=document.getElementById('focusSprintStatus');if(s)s.textContent='Stay focused. Your sprint is in progress.';
+  focusSprint.interval=setInterval(focusTick,250);focusTick();
+}
+function focusResetSprint(){
+  focusStopTicker();focusSprint.running=false;focusSprint.remaining=focusSprint.minutes*60;renderFocusSprint();
+}
+function renderFocusSprint(){
+  const host=document.getElementById('focusSprintWidget');if(!host)return;
+  const today=Number(State.focusSessions[focusDayKey()]||0);
+  const tasks=['Grammar','Vocabulary','PYQ practice','Reading','Comparisons'];
+  const pct=focusSprint.running?100*(1-focusSprint.remaining/(focusSprint.minutes*60)):0;
+  host.innerHTML='<div class="vd-focus-head"><div><span class="vd-focus-kicker">DEEP WORK · LOCAL TIMER</span><h2>Focus Sprint</h2><p>Choose a task, set a short target and work without distractions.</p></div><div class="vd-focus-count"><strong>'+today+'</strong><span>completed today</span></div></div>'+
+    '<div class="vd-focus-body"><div class="vd-focus-controls"><label for="focusSprintTask">What are you working on?</label><select id="focusSprintTask" onchange="focusSetTask(this.value)" '+(focusSprint.running?'disabled':'')+'>'+tasks.map(t=>'<option value="'+t+'" '+(focusSprint.task===t?'selected':'')+'>'+t+'</option>').join('')+'</select>'+
+    '<div class="vd-focus-presets" aria-label="Sprint duration">'+[5,15,25,45].map(n=>'<button type="button" class="vd-focus-preset '+(focusSprint.minutes===n?'active':'')+'" onclick="focusSetDuration('+n+')" '+(focusSprint.running?'disabled':'')+'>'+n+' min</button>').join('')+'</div></div>'+
+    '<div class="vd-focus-clock"><div class="vd-focus-time" id="focusSprintTimer">'+focusFmt(focusSprint.remaining)+'</div><div class="vd-focus-progress"><span id="focusSprintProgress" style="width:'+pct+'%"></span></div><p id="focusSprintStatus" aria-live="polite">'+(focusSprint.running?'Stay focused. Your sprint is in progress.':'Your timer starts when you begin.')+'</p>'+
+    '<div class="vd-focus-actions"><button type="button" class="btn" id="focusSprintToggle" onclick="focusToggleSprint()">'+(focusSprint.running?'Pause sprint':'Start sprint')+'</button><button type="button" class="btn ghost" onclick="focusResetSprint()">Reset</button></div></div></div>'+
+    '<div class="vd-focus-foot">Complete a sprint to earn 5 XP · Maximum 3 rewarded sprints per day.</div>';
+}
+function checkBadges(){ refreshDashboard(); }
+
+/* ---- Mistake Notebook: dashboard widget + review session UI ---- */
+function relativeDueText(iso){
+  const diffMs = new Date(iso).getTime() - Date.now();
+  const days = Math.round(diffMs/86400000);
+  if(days<=0) return 'today';
+  if(days===1) return 'tomorrow';
+  return 'in '+days+' days';
+}
+function renderReviewWidget(){
+  const body = document.getElementById('reviewWidgetBody');
+  const card = document.getElementById('reviewWidgetCard');
+  if(!body) return;
+  const queue = ensureReviewQueue();
+  const due = reviewDueItems();
+  card.classList.toggle('review-due-glow', due.length>0);
+  if(!queue.length){
+    body.innerHTML = `<p class="review-empty">Nothing here yet — any vocab word or PYQ question you get wrong will land here for spaced review, so mistakes turn into the thing you know best.</p>`;
+    return;
+  }
+  if(!due.length){
+    const soonest = reviewSoonestDue();
+    body.innerHTML = `<p class="review-empty">All caught up. ${queue.length} item${queue.length===1?'':'s'} in your notebook — next one due ${soonest?relativeDueText(soonest.nextReview):'soon'}.</p>`;
+    return;
+  }
+  const dueVocab = due.filter(x=>x.kind==='vocab').length;
+  const duePyq = due.filter(x=>x.kind==='pyq').length;
+  body.innerHTML = `
+    <div class="review-due-row">
+      <div class="review-due-count" id="reviewDueCount">0</div>
+      <div class="review-due-text">due for review right now<br><span class="review-due-breakdown">${dueVocab} vocab · ${duePyq} PYQ</span></div>
+      <button class="btn" onclick="openReviewSession()">Start Review →</button>
+    </div>`;
+  countUp('reviewDueCount', due.length);
+}
+let reviewSessionQueue = [], reviewSessionIdx = 0;
+function openReviewSession(kindFilter){
+  const due = reviewDueItems(kindFilter);
+  if(!due.length){ toast('Nothing due for review right now.'); return; }
+  reviewSessionQueue = due.slice(0,20).sort(()=>Math.random()-0.5);
+  reviewSessionIdx = 0;
+  document.getElementById('reviewOverlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+  renderReviewCard();
+}
+function closeReviewSession(){
+  document.getElementById('reviewOverlay').classList.remove('show');
+  document.body.style.overflow = '';
+  renderReviewWidget();
+}
+function renderReviewCard(){
+  const item = reviewSessionQueue[reviewSessionIdx];
+  const cardEl = document.getElementById('reviewCard');
+  cardEl.classList.remove('flipped');
+  document.getElementById('reviewProgress').textContent = (reviewSessionIdx+1)+' / '+reviewSessionQueue.length;
+  const front = document.getElementById('reviewFront');
+  const back = document.getElementById('reviewBack');
+  const actions = document.getElementById('reviewActions');
+  if(item.kind==='vocab'){
+    const v = VOCAB.find(x=>x.id===item.ref);
+    if(!v){ reviewAdvance(); return; }
+    front.innerHTML = `<div class="review-kind-tag">VOCAB</div><div class="review-word">${v.w}</div><div class="review-hint">Tap the card to reveal the meaning</div>`;
+    back.innerHTML = `<div class="review-kind-tag">VOCAB</div><div class="review-word">${v.w}</div><div class="review-meaning">${v.meanEn||''}</div>`;
+    front.onclick = back.onclick = ()=>cardEl.classList.toggle('flipped');
+    actions.innerHTML = `
+      <button class="btn ghost" onclick="reviewGradeVocab(false)">Still shaky</button>
+      <button class="btn" onclick="reviewGradeVocab(true)">Got it ✓</button>`;
+  } else {
+    const q = PYQ_BY_ID[item.ref];
+    if(!q){ reviewAdvance(); return; }
+    front.onclick = back.onclick = null;
+    front.innerHTML = `<div class="review-kind-tag">PYQ · ${escapeHtmlVaani(q.sec||'')}</div>
+      ${q.passage ? `<div class="pv-passage"><div class="pv-passage-label">Passage</div><div class="pv-passage-text">${escapeHtmlVaani(q.passage)}</div></div>` : ''}
+      <div class="review-q">${q.q}</div>
+      <div class="review-opts">${q.o.map((o,i)=>`<button class="opt-btn" onclick="reviewAnswerPyq(${i})">${o}</button>`).join('')}</div>`;
+    back.innerHTML = '';
+    actions.innerHTML = '';
+  }
+}
+function reviewAnswerPyq(oi){
+  const item = reviewSessionQueue[reviewSessionIdx];
+  const q = PYQ_BY_ID[item.ref];
+  const correct = oi === q.ans;
+  const opts = document.querySelectorAll('#reviewFront .opt-btn');
+  opts.forEach((b,i)=>{ b.disabled=true; if(i===q.ans) b.classList.add('correct'); else if(i===oi) b.classList.add('wrong'); });
+  recordPyqAttempt(q._id, correct);
+  setTimeout(reviewAdvance, 850);
+}
+function reviewGradeVocab(gotIt){
+  const item = reviewSessionQueue[reviewSessionIdx];
+  if(gotIt) reviewMarkRight('vocab', item.ref); else reviewMarkWrong('vocab', item.ref);
+  reviewAdvance();
+}
+function reviewAdvance(){
+  reviewSessionIdx++;
+  if(reviewSessionIdx >= reviewSessionQueue.length){
+    toast('Review session complete — nice work.');
+    closeReviewSession();
+    return;
+  }
+  renderReviewCard();
+}
+function escapeHtmlVaani(s){ return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+/* ============================================================
+   VAANI 2.0 — HOME REDESIGN DATA LAYER (uses existing GRAMMAR/SKILL_TIERS data only)
+=============================================================*/
+const QUOTES_OF_DAY = [
+  {q:'Discipline is the bridge between goals and accomplishment.',a:'Jim Rohn'},
+  {q:'The more you sweat in peace, the less you bleed in war.',a:'Military Proverb'},
+  {q:'Success is the sum of small efforts repeated day in and day out.',a:'Robert Collier'},
+  {q:'A soldier who won\u2019t read is only half prepared.',a:'Old Army Saying'},
+  {q:'Amateurs practice until they get it right. Professionals practice until they can\u2019t get it wrong.',a:'Attributed'},
+  {q:'Preparation is the invisible half of victory.',a:'Unknown'},
+  {q:'Calm is a superpower — on the page and on the parade ground.',a:'Cadet Wisdom'}
+];
+function getContinueTopic(){
+  const order = SKILL_TIERS.flatMap(t=>t.ids);
+  for(const id of order){ if(!State.completedTopics[id]){ const g=GRAMMAR.find(x=>x.id===id); if(g) return g; } }
+  return GRAMMAR.find(g=>!State.completedTopics[g.id]) || GRAMMAR[0];
+}
+function getRecommendedTopic(contId){
+  const scored = Object.entries(State.quizScores).filter(([id])=>GRAMMAR.some(g=>g.id===id));
+  if(scored.length){
+    scored.sort((a,b)=>a[1]-b[1]);
+    const g = GRAMMAR.find(x=>x.id===scored[0][0]);
+    if(g && g.id!==contId) return {topic:g, reason:'Your lowest score so far was '+scored[0][1]+'% here — worth another pass.'};
+  }
+  const order = SKILL_TIERS.flatMap(t=>t.ids);
+  const idx = order.indexOf(contId);
+  for(let i=idx+1;i<order.length;i++){ const g=GRAMMAR.find(x=>x.id===order[i]); if(g) return {topic:g, reason:'Next up on your roadmap.'}; }
+  return {topic:GRAMMAR[0], reason:'A solid place to start.'};
+}
+function jumpToContinue(){ const t=getContinueTopic(); if(t) openTopic(t.id); else switchView('grammar'); }
+function refreshHomeV2(){
+  const dEl=document.getElementById('heroDate');
+  if(dEl) dEl.textContent = new Date().toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'});
+
+  const cont = getContinueTopic();
+  if(cont){
+    document.getElementById('continueIcon').textContent = cont.icon;
+    document.getElementById('continueTitle').textContent = cont.title;
+    document.getElementById('continueDesc').textContent = cont.desc;
+    document.getElementById('continueBtn').onclick = ()=>openTopic(cont.id);
+  }
+  const rec = getRecommendedTopic(cont?cont.id:null);
+  if(rec && rec.topic){
+    document.getElementById('recommendIcon').textContent = rec.topic.icon;
+    document.getElementById('recommendTitle').textContent = rec.topic.title;
+    document.getElementById('recommendDesc').textContent = rec.reason;
+    document.getElementById('recommendBtn').onclick = ()=>openTopic(rec.topic.id);
+  }
+
+  const todayKey = new Date().toDateString();
+  const xpToday = (State.dailyActivity && State.dailyActivity[todayKey]) || 0;
+  const goalTarget = 20;
+  const pct = Math.min(100, Math.round((xpToday/goalTarget)*100));
+  setRing('goalRingWrap', pct);
+  const gtEl=document.getElementById('goalText');
+  if(gtEl) gtEl.textContent = xpToday>=goalTarget ? 'Goal complete for today — well done, cadet.' : `Earn ${goalTarget} XP today. You're at ${xpToday}/${goalTarget}.`;
+
+  const track=document.getElementById('roadmapTrack');
+  if(track){
+    track.innerHTML='';
+    const order = SKILL_TIERS.flatMap(t=>t.ids);
+    let currentSet=false;
+    order.forEach(id=>{
+      const g=GRAMMAR.find(x=>x.id===id); if(!g) return;
+      const done = !!State.completedTopics[id];
+      let cls='locked';
+      if(done) cls='done'; else if(!currentSet){ cls='current'; currentSet=true; }
+      const node=document.createElement('div'); node.className='rm-node '+cls;
+      node.innerHTML=`<div class="rm-dot">${done?'✓':g.icon}</div><div class="rm-label">${g.title}</div>`;
+      node.onclick=()=>openTopic(id);
+      track.appendChild(node);
+    });
+  }
+
+  const now=new Date();
+  const quoteDay=Math.floor((Date.UTC(now.getFullYear(),now.getMonth(),now.getDate())-Date.UTC(now.getFullYear(),0,1))/86400000);
+  const qEl=document.getElementById('quoteText'),qaEl=document.getElementById('quoteAuthor');
+  if(Array.isArray(QUOTES_OF_DAY)&&QUOTES_OF_DAY.length){
+    const qi=((quoteDay%QUOTES_OF_DAY.length)+QUOTES_OF_DAY.length)%QUOTES_OF_DAY.length;
+    if(qEl)qEl.textContent=QUOTES_OF_DAY[qi].q||'Keep showing up and keep learning.';
+    if(qaEl)qaEl.textContent='— '+(QUOTES_OF_DAY[qi].a||'VAANI');
+  }else{
+    if(qEl)qEl.textContent='Keep showing up and keep learning.';
+    if(qaEl)qaEl.textContent='— VAANI';
+  }
+
+  const lvl2 = Math.floor(State.xp/100)+1;
+  const ranks2=['Recruit','Cadet','Lance Naik','Naik','Havildar','Subedar','Lieutenant','Captain','Major','Colonel'];
+  const fr=document.getElementById('footerRank'); if(fr) fr.textContent = 'Rank: '+ranks2[Math.min(lvl2-1, ranks2.length-1)];
+}
+
+/* ---- Radar chart: real mastery data across 4 skill axes, no library ---- */
+function renderRadarChart(values){
+  const host = document.getElementById('radarChartWrap'); if(!host) return;
+  const labels = ['Grammar','Vocab','Practice','Reading'];
+  const cx=100, cy=100, R=76;
+  const angleFor = i => (-90 + i*(360/4)) * Math.PI/180;
+  const pointAt = (i, pct) => {
+    const a = angleFor(i), r = (pct/100)*R;
+    return [cx + r*Math.cos(a), cy + r*Math.sin(a)];
+  };
+  let grids='';
+  [0.25,0.5,0.75,1].forEach(f=>{
+    const pts = [0,1,2,3].map(i=>pointAt(i,100*f).join(',')).join(' ');
+    grids += `<polygon class="radar-grid" points="${pts}"></polygon>`;
+  });
+  let axes='', labelsSvg='';
+  [0,1,2,3].forEach(i=>{
+    const [x,y] = pointAt(i,100);
+    axes += `<line class="radar-axis" x1="${cx}" y1="${cy}" x2="${x}" y2="${y}"></line>`;
+    const [lx,ly] = pointAt(i,120);
+    labelsSvg += `<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="middle">${labels[i]} ${Math.round(values[i])}%</text>`;
+  });
+  const shapePts = [0,1,2,3].map(i=>pointAt(i, Math.max(3,values[i])).join(',')).join(' ');
+  const dots = [0,1,2,3].map(i=>{ const [x,y]=pointAt(i,Math.max(3,values[i])); return `<circle class="radar-dot" cx="${x}" cy="${y}" r="2.5"></circle>`; }).join('');
+  host.innerHTML = `<svg class="radar-svg" viewBox="0 0 200 200" width="220" height="220">
+    ${grids}${axes}
+    <polygon class="radar-shape" points="${shapePts}"></polygon>${dots}
+    ${labelsSvg}
+  </svg>`;
+}
+
+/* ---- Mystery Box: real milestone-gated bonus reward (every 150 XP) ---- */
+function mysteryMilestonesAvailable(){ return Math.floor(State.xp/150); }
+function checkMysteryBox(){
+  if(mysteryMilestonesAvailable() > (State.mysteryBoxesClaimed||0)) renderMysteryBox();
+}
+function renderMysteryBox(){
+  const host = document.getElementById('mysteryBoxWrap'); if(!host) return;
+  const avail = mysteryMilestonesAvailable();
+  const claimed = State.mysteryBoxesClaimed||0;
+  const isAvailable = avail > claimed;
+  const nextThreshold = (claimed+1)*150;
+  const into = State.xp - claimed*150;
+  const pct = Math.min(100, Math.round((into/150)*100));
+  host.innerHTML = `<div class="card mystery-box-card ${isAvailable?'available':'locked'}" id="mysteryBoxCard">
+    <div class="mystery-box-icon">${isAvailable?'🎁':'🔒'}</div>
+    <h4>${isAvailable?'Mystery Box Ready':'Mystery Box Locked'}</h4>
+    <p>${isAvailable?'Tap to open — a surprise XP reward is waiting.':`Earn ${nextThreshold-State.xp} more XP to unlock (${State.xp}/${nextThreshold})`}</p>
+    ${!isAvailable?`<div class="mb-progress"><div class="mb-progress-fill" style="width:${pct}%"></div></div>`:''}
+  </div>`;
+  if(isAvailable) document.getElementById('mysteryBoxCard').onclick = openMysteryBox;
+}
+function openMysteryBox(){
+  if(mysteryMilestonesAvailable() <= (State.mysteryBoxesClaimed||0)) return;
+  State.mysteryBoxesClaimed = (State.mysteryBoxesClaimed||0) + 1;
+  const rewards = [15,20,25,30,40];
+  const reward = rewards[Math.floor(Math.random()*rewards.length)];
+  saveState();
+  const card = document.getElementById('mysteryBoxCard');
+  if(card){ card.classList.add('mystery-box-reveal'); card.innerHTML = `<div class="mystery-box-icon">✨</div><h4>+${reward} XP!</h4><p>Mystery box claimed, Cadet.</p>`; card.onclick=null; }
+  launchConfettiIf(true);
+  setTimeout(()=>{ addXP(reward,'Mystery Box'); },350);
+}
+const BADGES=[
+  {id:'first-topic',icon:'🎖️',name:'First Blood',hint:'Clear your first grammar topic',check:()=>Object.keys(State.completedTopics).length>=1},
+  {id:'five-topics',icon:'🏅',name:'Five Cleared',hint:'Clear 5 grammar topics',check:()=>Object.keys(State.completedTopics).length>=5},
+  {id:'all-topics',icon:'👑',name:'Grammar Master',hint:'Clear every grammar topic',check:()=>Object.keys(State.completedTopics).length>=GRAMMAR.length},
+  {id:'streak3',icon:'🔥',name:'3-Day Streak',hint:'Maintain a 3-day streak',check:()=>State.streak>=3},
+  {id:'streak7',icon:'⚡',name:'7-Day Streak',hint:'Maintain a 7-day streak',check:()=>State.streak>=7},
+  {id:'xp100',icon:'⭐',name:'100 XP',hint:'Earn 100 XP total',check:()=>State.xp>=100},
+  {id:'xp500',icon:'🌟',name:'500 XP',hint:'Earn 500 XP total',check:()=>State.xp>=500},
+  {id:'perfect',icon:'💯',name:'Perfect Score',hint:'Score 100% on any quiz',check:()=>Object.values(State.quizScores).some(s=>s===100)},
+];
+function renderBadges(){
+  const targets=['badgeGrid','dashBadgeGrid','profileBadgeGrid'].map(id=>document.getElementById(id)).filter(Boolean);
+  if(!targets.length) return;
+  targets.forEach(grid=>{
+    grid.innerHTML='';
+    BADGES.forEach(b=>{
+      const earned=b.check();
+      const div=document.createElement('div'); div.className='badge'+(earned?' earned':'');
+      div.innerHTML=`<div class="bicon">${b.icon}</div><div class="bname">${b.name}</div>`;
+      grid.appendChild(div);
+    });
+  });
+}
+
+/* ============================================================
+   PHASE 7: SERVICE RECORD (personal bests + real rank + earned citations)
+=============================================================*/
+let serviceBadgeFilter='all';
+function renderLeaderboard(){
+  const pbHost=document.getElementById('personalBestsWrap');
+  const rankHost=document.getElementById('rankObjectiveWrap');
+  const logHost=document.getElementById('fieldLogWrap');
+  if(!pbHost||!rankHost||!logHost)return;
+  const pb=State.personalBests||{};
+  const completed=GRAMMAR.filter(g=>!!State.completedTopics[g.id]).length;
+  const scoreValues=Object.values(State.quizScores).map(Number).filter(n=>Number.isFinite(n)&&n>=0&&n<=100);
+  const average=scoreValues.length?Math.round(scoreValues.reduce((sum,n)=>sum+n,0)/scoreValues.length):null;
+  const metrics=document.getElementById('serviceMetrics');
+  if(metrics){
+    const data=[
+      {label:'Total XP',value:String(State.xp||0),hint:'Lifetime earned'},
+      {label:'Current streak',value:String(State.streak||0),hint:'Consecutive days'},
+      {label:'Topics cleared',value:completed+'/'+GRAMMAR.length,hint:'Grammar curriculum'},
+      {label:'Quiz average',value:average==null?'—':average+'%',hint:scoreValues.length+' recorded scores'}
+    ];
+    metrics.innerHTML=data.map(item=>'<div class="service-metric"><span>'+item.label+'</span><strong>'+item.value+'</strong><small>'+item.hint+'</small></div>').join('');
+  }
+  const rows=[
+    {label:'Best Combo',value:pb.bestCombo?'×'+pb.bestCombo:'—'},
+    {label:'Longest Streak',value:pb.longestStreak?pb.longestStreak+' days':'—'},
+    {label:'Highest Quiz Score',value:pb.highestQuizScore!=null?pb.highestQuizScore+'%':'—'},
+    {label:'Fastest Quiz Clear',value:pb.fastestQuizSeconds!=null?pb.fastestQuizSeconds+'s · '+(pb.fastestQuizLabel||'Quiz'):'—'},
+    {label:'Quizzes Attempted',value:pb.totalQuizzesTaken||0}
+  ];
+  pbHost.innerHTML=rows.map(r=>'<div class="service-record-row"><span>'+r.label+'</span><b>'+r.value+'</b></div>').join('');
+
+  const ranks=['Recruit','Cadet','Lance Naik','Naik','Havildar','Subedar','Lieutenant','Captain','Major','Colonel'];
+  const lvl=Math.floor((State.xp||0)/100)+1;
+  const rankName=ranks[Math.min(lvl-1,ranks.length-1)];
+  const nextRankName=ranks[Math.min(lvl,ranks.length-1)];
+  const within=(State.xp||0)%100;
+  const nextObjective=BADGES.find(b=>!b.check());
+  rankHost.innerHTML=
+    '<div class="service-rank-display"><div class="service-rank-kicker">CURRENT RANK</div><div class="service-rank-name">'+rankName+'</div>'+
+    '<div class="service-rank-track" role="progressbar" aria-label="Progress toward next rank" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+within+'"><span style="width:'+within+'%"></span></div>'+
+    '<div class="service-rank-copy">'+within+' / 100 XP toward <b>'+nextRankName+'</b></div></div>'+
+    (nextObjective?'<div class="service-objective"><span class="service-objective-icon" aria-hidden="true">'+nextObjective.icon+'</span><span><b>Next objective · '+escapeHtmlVaani(nextObjective.name)+'</b><small>'+escapeHtmlVaani(nextObjective.hint)+'</small></span></div>':
+    '<div class="service-objective"><span class="service-objective-icon" aria-hidden="true">🏆</span><span><b>All citations earned</b><small>Every current milestone is complete.</small></span></div>');
+
+  const serviceSignals=document.getElementById('serviceSkillSignals');
+  const serviceGoals=document.getElementById('serviceGoalList');
+  function serviceAverage(ids){
+    const vals=ids.map(id=>State.quizScores[id]).map(Number).filter(n=>Number.isFinite(n)&&n>=0&&n<=100);
+    return vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length):null;
+  }
+  if(serviceSignals){
+    const signals=[
+      ['Grammar',serviceAverage(GRAMMAR.map(g=>g.id))],
+      ['Comparisons',serviceAverage(COMPARISONS.map(c=>'cmp-'+c.id))],
+      ['Practice',serviceAverage(PRACTICE.map(p=>p.id))],
+      ['Reading',serviceAverage(READING.map(r=>r.id))]
+    ];
+    serviceSignals.innerHTML=signals.map(([label,value])=>{
+      const pct=value==null?0:value;
+      return '<div class="service-signal-row"><label>'+label+'</label><div class="service-signal-bar"><span style="width:'+pct+'%"></span></div><strong>'+ (value==null?'—':pct+'%') +'</strong></div>';
+    }).join('');
+  }
+  if(serviceGoals){
+    const goals=[];
+    const nextTopic=SKILL_TIERS.flatMap(t=>t.ids).map(id=>GRAMMAR.find(g=>g.id===id)).find(g=>g&&!State.completedTopics[g.id]);
+    if(nextTopic)goals.push({icon:nextTopic.icon||'📘',title:'Clear '+nextTopic.title,detail:'Next topic in your Grammar progression.'});
+    if((State.streak||0)<7)goals.push({icon:'🔥',title:'Build a 7-day streak',detail:(State.streak||0)+' consecutive day'+((State.streak||0)===1?'':'s')+' recorded so far.'});
+    const highest=pb.highestQuizScore==null?null:Number(pb.highestQuizScore);
+    if(highest==null||highest<70)goals.push({icon:'🎯',title:'Record a 70%+ quiz',detail:highest==null?'No quiz high score recorded yet.':'Current best: '+highest+'%.'});
+    if((State.xp||0)<100)goals.push({icon:'✦',title:'Reach 100 XP',detail:Math.max(0,100-(State.xp||0))+' XP remaining to the next level.'});
+    if(!goals.length)goals.push({icon:'🏅',title:'Maintain the standard',detail:'Your current baseline is established. Keep practising consistently.'});
+    serviceGoals.innerHTML=goals.slice(0,4).map(g=>'<div class="service-goal-item"><i aria-hidden="true">'+g.icon+'</i><span><b>'+escapeHtmlVaani(g.title)+'</b><small>'+escapeHtmlVaani(g.detail)+'</small></span></div>').join('');
+  }
+
+  const weekHost=document.getElementById('serviceWeekWrap');
+  if(weekHost){
+    const days=[];
+    for(let i=6;i>=0;i--){
+      const date=new Date();date.setHours(12,0,0,0);date.setDate(date.getDate()-i);
+      const key=date.toDateString();
+      const xp=Math.max(0,Number(State.dailyActivity&&State.dailyActivity[key])||0);
+      days.push({label:date.toLocaleDateString(undefined,{weekday:'short'}),date:date.toLocaleDateString(undefined,{month:'short',day:'numeric'}),xp:xp,today:i===0});
+    }
+    const max=Math.max(1,...days.map(d=>d.xp));
+    weekHost.innerHTML='<div class="service-week-bars">'+days.map(d=>'<div class="service-week-day'+(d.today?' today':'')+'" title="'+d.date+': '+d.xp+' XP"><div class="service-week-track"><span style="height:'+Math.max(d.xp?6:2,Math.round(d.xp/max*100))+'%"></span></div><b>'+d.xp+'</b><small>'+d.label+'</small></div>').join('')+'</div>'+
+      '<div class="service-week-note">'+days.filter(d=>d.xp>0).length+' active day'+(days.filter(d=>d.xp>0).length===1?'':'s')+' · '+days.reduce((sum,d)=>sum+d.xp,0)+' XP in the last 7 days</div>';
+  }
+
+  const filters=document.getElementById('fieldLogFilters');
+  if(filters&&filters.dataset.bound!=='1'){
+    filters.dataset.bound='1';
+    filters.addEventListener('click',event=>{
+      const button=event.target.closest('[data-filter]');
+      if(!button||!filters.contains(button))return;
+      serviceBadgeFilter=button.dataset.filter||'all';
+      filters.querySelectorAll('[data-filter]').forEach(el=>{
+        const active=el===button;el.classList.toggle('active',active);el.setAttribute('aria-pressed',String(active));
+      });
+      renderLeaderboard();
+    });
+  }
+  const badgeRows=BADGES.map(b=>({badge:b,earned:!!b.check()})).filter(row=>
+    serviceBadgeFilter==='all'||(serviceBadgeFilter==='earned'?row.earned:!row.earned)
+  );
+  logHost.innerHTML=badgeRows.map(({badge:b,earned})=>
+    '<div class="service-citation'+(earned?' earned':' locked')+'"><span class="service-citation-icon" aria-hidden="true">'+b.icon+'</span>'+
+    '<span class="service-citation-copy"><b>'+escapeHtmlVaani(b.name)+'</b><small>'+escapeHtmlVaani(b.hint)+'</small></span>'+
+    '<span class="service-citation-status">'+(earned?'EARNED':'LOCKED')+'</span></div>'
+  ).join('')||'<div class="service-week-note">No citations in this view.</div>';
+}
+/* ============================================================
+   MATCH GAME
+=============================================================*/
+let matchState={first:null,lock:false};
+function initMatchGame(){
+  const pairs = VOCAB.slice(0,4);
+  let tiles=[];
+  pairs.forEach((p,i)=>{ tiles.push({id:'w'+i,text:p.w,pair:i}); tiles.push({id:'s'+i,text:p.syn[0],pair:i}); });
+  for(let i=tiles.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[tiles[i],tiles[j]]=[tiles[j],tiles[i]];}
+  const grid=document.getElementById('matchGrid'); grid.innerHTML='';
+  matchState={first:null,lock:false};
+  tiles.forEach(t=>{
+    const div=document.createElement('div'); div.className='match-tile'; div.textContent=t.text; div.dataset.pair=t.pair;
+    div.onclick=()=>handleMatchClick(div);
+    grid.appendChild(div);
+  });
+}
+function handleMatchClick(div){
+  if(matchState.lock || div.classList.contains('matched') || div.classList.contains('flipped')) return;
+  div.classList.add('flipped');
+  if(!matchState.first){ matchState.first=div; return; }
+  matchState.lock=true;
+  const a=matchState.first, b=div;
+  if(a.dataset.pair===b.dataset.pair){
+    a.classList.add('matched'); b.classList.add('matched');
+    matchState.first=null; matchState.lock=false;
+    const allMatched = [...document.querySelectorAll('.match-tile')].every(t=>t.classList.contains('matched'));
+    if(allMatched){ addXP(20,'Match game cleared'); launchConfettiIf(true); }
+  } else {
+    setTimeout(()=>{a.classList.remove('flipped'); b.classList.remove('flipped'); matchState.first=null; matchState.lock=false;},700);
+  }
+}
+
+/* ============================================================
+   CONFETTI
+=============================================================*/
+function launchConfettiIf(cond){ if(cond) launchConfetti(); }
+function launchConfetti(){
+  const canvas=document.getElementById('confetti-canvas'); const ctx=canvas.getContext('2d');
+  canvas.width=window.innerWidth; canvas.height=window.innerHeight;
+  const colors=['#c9a24b','#49d186','#5b9bd8','#e2575a','#fff'];
+  let pieces=Array.from({length:120},()=>({x:Math.random()*canvas.width,y:-20,r:Math.random()*6+4,c:colors[Math.floor(Math.random()*colors.length)],
+    vy:Math.random()*3+2,vx:Math.random()*2-1,rot:Math.random()*360}));
+  let frame=0;
+  function draw(){
+    frame++;
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    pieces.forEach(p=>{
+      p.y+=p.vy; p.x+=p.vx; p.rot+=5;
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot*Math.PI/180);
+      ctx.fillStyle=p.c; ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r); ctx.restore();
+    });
+    if(frame<140) requestAnimationFrame(draw); else ctx.clearRect(0,0,canvas.width,canvas.height);
+  }
+  draw();
+}
+
+function resetProgress(){
+  if(confirm('Reset all progress? This cannot be undone.')){
+    localStorage.removeItem('vaani_state');
+    location.reload();
+  }
+}
+
+/* ============================================================
+   INIT
+=============================================================*/
+function refreshAll(){
+  normalizeState();
+  safeCall(()=>{
+    document.body.setAttribute('data-theme', State.theme);
+    const tb0=document.getElementById('themeBtn'); if(tb0) tb0.textContent = State.theme==='dark'?'☀️':'🌙';
+  }, 'themeSync');
+  // Each call below is isolated: if one throws, every subsequent call still runs.
+  // renderGrammarTree in particular must never be skipped just because an earlier,
+  // unrelated render function failed.
+  safeCall(()=>refreshTopBar(), 'refreshTopBar');
+  safeCall(()=>renderGrammarTree(), 'renderGrammarTree');
+  safeCall(()=>{
+    const vj = document.getElementById('view-journey');
+    if(vj && vj.classList.contains('active')) renderGrammarJourney();
+  }, 'renderGrammarJourney');
+  safeCall(()=>renderCompareGrid(), 'renderCompareGrid');
+  safeCall(()=>renderVocabGrid(), 'renderVocabGrid');
+  safeCall(()=>renderWOD(), 'renderWOD');
+  safeCall(()=>renderDailySetTabs(), 'renderDailySetTabs');
+  safeCall(()=>renderDailySingles(), 'renderDailySingles');
+  safeCall(()=>renderConfuseTable(), 'renderConfuseTable');
+  safeCall(()=>renderPracticeGrid(), 'renderPracticeGrid');
+  safeCall(()=>renderReadingGrid(), 'renderReadingGrid');
+  safeCall(()=>renderTestsGrid(), 'renderTestsGrid');
+  safeCall(()=>initMatchGame(), 'initMatchGame');
+  safeCall(()=>refreshDashboard(), 'refreshDashboard');
+  // Recover hero, mission and roadmap independently if a secondary dashboard widget fails.
+  safeCall(()=>refreshHomeV2(), 'refreshHomeV2(recovery)');
+  safeCall(()=>renderDashboardMissions(), 'renderDashboardMissions(recovery)');
+  safeCall(()=>refreshDashboardPyqCard(), 'refreshDashboardPyqCard');
+  safeCall(()=>renderLeaderboard(), 'renderLeaderboard');
+  safeCall(()=>updateSpinState(), 'updateSpinState');
+  safeCall(()=>{
+    const stw = document.getElementById('skillTreeWrap');
+    if(stw && stw.style.display!=='none') renderSkillTree();
+  }, 'renderSkillTree');
+  setTimeout(()=>safeCall(()=>initMagnetic(),'initMagnetic'), 60);
+}
+/* ============================================================
+   COMPARISONS — render + quiz logic
+=============================================================*/
+let compareGroup='all';
+function compareGroupOf(c){
+  if(c.group)return c.group;
+  if(c.id==='who-whom')return 'Grammar';
+  if(c.id==='its-its-apostrophe')return 'Spelling';
+  return 'Word choice';
+}
+function renderCompareGrid(){
+  const grid=document.getElementById('compareGrid');if(!grid)return;
+  const search=document.getElementById('compareSearch');
+  const term=String(search&&search.value||'').trim().toLocaleLowerCase();
+  const groups=Array.from(new Set(COMPARISONS.map(compareGroupOf))).sort((a,b)=>a.localeCompare(b));
+  const filters=document.getElementById('compareFilters');
+  if(filters){
+    filters.innerHTML='';
+    [['all','All pairs']].concat(groups.map(group=>[group,group])).forEach(([value,label])=>{
+      const button=document.createElement('button');button.type='button';
+      button.className='cmp-filter'+(compareGroup===value?' active':'');
+      button.dataset.group=value;button.setAttribute('aria-pressed',String(compareGroup===value));
+      button.textContent=label+(value==='all'?' ('+COMPARISONS.length+')':' ('+COMPARISONS.filter(c=>compareGroupOf(c)===value).length+')');
+      button.addEventListener('click',()=>{compareGroup=value;renderCompareGrid();});
+      filters.appendChild(button);
+    });
+  }
+  const list=COMPARISONS.filter(c=>{
+    const searchable=[c.a,c.b,c.tagline,c.meanA,c.meanB,c.rule,compareGroupOf(c)].join(' ').replace(/<[^>]*>/g,' ').toLocaleLowerCase();
+    return (compareGroup==='all'||compareGroupOf(c)===compareGroup)&&(!term||searchable.includes(term));
+  });
+  const counter=document.getElementById('compareResultCount');
+  if(counter)counter.textContent=list.length+' of '+COMPARISONS.length+' pairs';
+  const total=document.getElementById('compareTotal');if(total)total.textContent=COMPARISONS.length;
+  const practised=document.getElementById('comparePractised');
+  if(practised)practised.textContent=COMPARISONS.filter(c=>State.quizScores['cmp-'+c.id]!=null).length;
+  grid.innerHTML='';
+  if(!list.length){const empty=document.createElement('div');empty.className='cmp-empty';empty.textContent='No pairs match this search and category. Try another word or choose All pairs.';grid.appendChild(empty);return;}
+  list.forEach(c=>{
+    const score=State.quizScores['cmp-'+c.id];
+    const done=score!==undefined;
+    const button=document.createElement('button');button.type='button';button.className='card cmp-card';
+    button.setAttribute('aria-label','Study '+c.a+' versus '+c.b+(done?'. Last drill score '+score+' percent.':'. Not yet practised.'));
+    const meta=document.createElement('span');meta.className='cmp-card-top';
+    const category=document.createElement('span');category.className='cmp-card-category';category.textContent=compareGroupOf(c);
+    const priority=document.createElement('span');priority.className='cmp-card-priority';priority.textContent=c.priority||'Core';
+    meta.append(category,priority);
+    const pair=document.createElement('span');pair.className='cmp-pair-row';
+    const left=document.createElement('span');left.textContent=c.a;
+    const vs=document.createElement('span');vs.className='cmp-vs';vs.textContent='VS';
+    const right=document.createElement('span');right.textContent=c.b;
+    pair.append(left,vs,right);
+    const desc=document.createElement('span');desc.className='cmp-desc';desc.textContent=c.tagline;
+    const footer=document.createElement('span');footer.className='cmp-card-foot';
+    const progress=document.createElement('span');progress.className='cmp-progress-chip'+(done?' done':'');
+    progress.textContent=done?'✓ Practised · '+score+'%':'Not practised yet';
+    const action=document.createElement('span');action.className='cmp-card-action';action.textContent='Study pair →';
+    footer.append(progress,action);
+    button.append(meta,pair,desc,footer);
+    button.addEventListener('click',()=>openCompare(c.id));
+    grid.appendChild(button);
+  });
+}
+let currentCompare = null;
+function openCompare(id){
+  const c = COMPARISONS.find(x=>x.id===id); if(!c) return;
+  currentCompare = c;
+  switchView('compare-detail');
+  document.getElementById('cmpTitle').textContent = c.a + ' vs ' + c.b;
+  document.getElementById('cmpTagline').textContent = c.tagline;
+  document.getElementById('cmpMeanA').dataset.letter = c.a[0];
+  document.getElementById('cmpMeanA').innerHTML = `<h3>${c.a}</h3><p>${c.meanA}</p>`;
+  document.getElementById('cmpMeanB').dataset.letter = c.b[0];
+  document.getElementById('cmpMeanB').innerHTML = `<h3>${c.b}</h3><p>${c.meanB}</p>`;
+  document.getElementById('cmpMeanA').appendChild(makeBookRegisterButton({word:c.a,meaning:c.meanA,kind:'word',source:'VAANI Comparisons'},'＋ Save to Book Register'));
+  document.getElementById('cmpMeanB').appendChild(makeBookRegisterButton({word:c.b,meaning:c.meanB,kind:'word',source:'VAANI Comparisons'},'＋ Save to Book Register'));
+  document.getElementById('cmpDifference').innerHTML = c.difference;
+  document.getElementById('cmpRule').innerHTML = c.rule;
+  document.getElementById('cmpExceptions').innerHTML = c.exceptions.map(e=>`<li>${e}</li>`).join('');
+  const t = c.table;
+  document.getElementById('cmpTable').innerHTML = `<thead><tr>${t.headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead>
+    <tbody>${t.rows.map(r=>`<tr>${r.map(cell=>`<td>${cell}</td>`).join('')}</tr>`).join('')}</tbody>`;
+  document.getElementById('cmpExamples').innerHTML = c.examples.map(ex=>`
+    <div class="cmp-ex-pair">
+      <div class="cmp-ex-box right">${ex.right}</div>
+      <div class="cmp-ex-box wrong">${ex.wrong}</div>
+    </div>
+    <div class="cmp-ex-note">${ex.note}</div>`).join('');
+  document.getElementById('cmpTrick').innerHTML = `<div class="panel-title"><span class="bar"></span>Memory Trick &amp; Officer Tip</div>
+    <p>${c.trick}</p><p style="margin-top:8px"><b>Officer Tip:</b> ${c.officerTip}</p>`;
+  renderComparePane(c.id, c.pyq);
+}
+function renderComparePane(id, quiz){
+  const pane = document.getElementById('cmpQuizWrap');
+  let idx=0, correctCount=0, qTimer=null, quizStartTs=null;
+  function render(){
+    if(idx===0) comboCount=0;
+    if(idx===0 && quizStartTs===null) quizStartTs = Date.now();
+    if(idx>=quiz.length){
+      const pct = Math.round((correctCount/quiz.length)*100);
+      State.quizScores['cmp-'+id]=pct; saveState();
+      recordQuizCompletion(pct, quizStartTs?(Date.now()-quizStartTs)/1000:null, (currentCompare?currentCompare.a+' vs '+currentCompare.b:'Comparison drill'));
+      pane.innerHTML = `<div class="quiz-card" style="text-align:center">
+        <h3 style="margin-bottom:10px">Drill Complete</h3>
+        <div class="num serif" style="font-size:2.4rem;color:var(--gold)">${pct}%</div>
+        <p style="color:var(--muted);margin:10px 0">${correctCount} of ${quiz.length} correct${comboBest>=3?` · Best combo ×${comboBest}`:''}</p>
+        <button class="btn" onclick="renderComparePane('${id}', COMPARISONS.find(c=>c.id==='${id}').pyq)">Retry Drill</button></div>`;
+      addXP(Math.max(5,Math.round(pct/10)),'Comparison drill: '+(currentCompare?currentCompare.a+' vs '+currentCompare.b:'pair'));
+      launchConfettiIf(pct>=70);
+      return;
+    }
+    const item = quiz[idx];
+    pane.innerHTML = `<div class="quiz-card">
+      <div class="qhead-row">
+        <div class="quiz-progress">QUESTION ${idx+1} / ${quiz.length} <span class="combo-badge${comboCount>=2?' show':''}">🔥 ×${comboCount}</span> ${item.pyq?`<span class="pyq-tag">PYQ ${item.year||''}</span>`:''}</div>
+        <div class="qtimer-ring" id="cmpTimerRing"><svg viewBox="0 0 40 40"><circle class="qt-bg" cx="20" cy="20" r="16"></circle><circle class="qt-fg" cx="20" cy="20" r="16"></circle></svg><div class="qt-num">15</div></div>
+      </div>
+      <div class="quiz-q">${item.q}</div>
+      <div id="cmpOptsWrap"></div>
+      <div class="quiz-feedback" id="cmpFeedback"></div>
+      <button class="btn quiz-nextbtn" id="cmpNextBtn" style="display:none" onclick="advanceComparePane()">Next →</button>
+    </div>`;
+    const cardEl = pane.querySelector('.quiz-card');
+    qTimer = startQTimer(document.getElementById('cmpTimerRing'));
+    const wrap = document.getElementById('cmpOptsWrap');
+    item.opts.forEach((o,i)=>{
+      const b=document.createElement('button'); b.className='opt-btn'; b.textContent=o;
+      b.onclick=()=>{
+        if(qTimer) qTimer.stop();
+        document.querySelectorAll('#cmpOptsWrap .opt-btn').forEach(x=>x.disabled=true);
+        const fb = document.getElementById('cmpFeedback');
+        if(i===item.ans){
+          b.classList.add('correct');correctCount++;
+          handleQuizCorrect(b, cardEl);
+          if(qElapsedSeconds(qTimer)<=5){ addXP(2,'Quick answer'); fb.insertAdjacentHTML('afterend','<span class="speed-tag">⚡ Quick answer +2 XP</span>'); }
+        } else {
+          b.classList.add('wrong');document.querySelectorAll('#cmpOptsWrap .opt-btn')[item.ans].classList.add('correct');
+          handleQuizWrong(cardEl);
+        }
+        document.getElementById('cmpNextBtn').style.display='inline-flex';
+      };
+      wrap.appendChild(b);
+    });
+  }
+  window.advanceComparePane=()=>{idx++;render();};
+  render();
+}
+
+/* ============================================================
+   PHASE 2: PREMIUM UPGRADE MODULE
+=============================================================*/
+
+function setRing(wrapId, pct){
+  const wrap = document.getElementById(wrapId);
+  if(!wrap) return;
+  let ring = wrap.querySelector('.ring-wrap');
+  if(!ring){
+    ring = document.createElement('div'); ring.className='ring-wrap';
+    ring.innerHTML = `<svg viewBox="0 0 80 80"><circle class="ring-bg" cx="40" cy="40" r="34"></circle><circle class="ring-fg" cx="40" cy="40" r="34"></circle></svg><div class="ring-label"></div>`;
+    wrap.insertBefore(ring, wrap.firstChild);
+  }
+  const c = Math.PI*2*34;
+  const fg = ring.querySelector('.ring-fg');
+  fg.style.strokeDasharray = c;
+  fg.style.strokeDashoffset = c - (Math.max(0,Math.min(100,pct))/100)*c;
+  ring.querySelector('.ring-label').textContent = Math.round(pct)+'%';
+}
+
+/* ---- scroll progress + back to top ---- */
+window.addEventListener('scroll',()=>{
+  const h=document.documentElement.scrollHeight-window.innerHeight;
+  const sp=document.getElementById('scrollProgress');
+  if(sp) sp.style.width = h>0 ? (window.scrollY/h)*100+'%' : '0%';
+  const btt=document.getElementById('backToTop');
+  if(btt) btt.classList.toggle('show', window.scrollY>500);
+},{passive:true});
+
+/* ---- ripple effect on interactive elements ---- */
+document.addEventListener('click',(e)=>{
+  const el = e.target.closest('.btn,.chip,.daily-tab-btn,.tab-btn,nav.mainnav button,.bottomnav button,.theme-toggle,.hamburger,.gate-btn,.card,.opt-btn,.wd-chip,.match-tile,.single-card');
+  if(!el) return;
+  el.classList.add('rippler');
+  const r = el.getBoundingClientRect();
+  const ripple = document.createElement('span'); ripple.className='ripple-el';
+  const size = Math.max(r.width,r.height)*1.4;
+  ripple.style.width = ripple.style.height = size+'px';
+  ripple.style.left = (e.clientX-r.left-size/2)+'px';
+  ripple.style.top = (e.clientY-r.top-size/2)+'px';
+  el.appendChild(ripple);
+  setTimeout(()=>ripple.remove(),650);
+});
+
+/* ---- custom cursor glow + dot ---- */
+(function(){
+  const glow=document.getElementById('cursorGlow'), dot=document.getElementById('cursorDot');
+  if(!glow||!dot) return;
+  let gx=innerWidth/2, gy=innerHeight/2;
+  window.addEventListener('mousemove',(e)=>{
+    gx=e.clientX; gy=e.clientY;
+    dot.style.transform=`translate(${gx}px,${gy}px) translate(-50%,-50%)`;
+    if(e.target.closest('button,a,.card,input')) dot.classList.add('active'); else dot.classList.remove('active');
+  });
+  (function loop(){
+    glow.style.transform=`translate(${gx}px,${gy}px) translate(-50%,-50%)`;
+    requestAnimationFrame(loop);
+  })();
+})();
+
+/* ---- Layer 6: unified background parallax — pointer + touch + gyroscope, GPU-only (transform) ---- */
+(function(){
+  const sys=document.getElementById('bgSystem');
+  if(!sys) return;
+  const reduceMotion = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduceMotion) return; // leave --par-x/--par-y at 0, layers stay static — animations still respect their own reduced-motion rules below
+
+  const RANGE = 22; // max px offset for the shallowest-to-deepest layers (multiplied by each layer's --depth)
+  let targetX=0, targetY=0, curX=0, curY=0;
+
+  function setTarget(nx, ny){ // nx, ny normalized -1..1
+    targetX = nx * RANGE;
+    targetY = ny * RANGE;
+  }
+  window.addEventListener('mousemove', (e)=>{
+    setTarget((e.clientX/innerWidth-.5)*2, (e.clientY/innerHeight-.5)*2);
+  }, {passive:true});
+  window.addEventListener('touchmove', (e)=>{
+    if(!e.touches || !e.touches[0]) return;
+    const t=e.touches[0];
+    setTarget((t.clientX/innerWidth-.5)*2, (t.clientY/innerHeight-.5)*2);
+  }, {passive:true});
+
+  function tick(){
+    curX += (targetX-curX)*0.06;
+    curY += (targetY-curY)*0.06;
+    sys.style.setProperty('--par-x', curX.toFixed(2)+'px');
+    sys.style.setProperty('--par-y', curY.toFixed(2)+'px');
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+
+  // gyroscope (mobile) — only activates after explicit permission granted via enterAcademy() user gesture
+  window.addEventListener('deviceorientation', (e)=>{
+    if(e.beta==null || e.gamma==null) return;
+    const ny = Math.max(-1, Math.min(1, e.beta/45));   // front-back tilt
+    const nx = Math.max(-1, Math.min(1, e.gamma/45));  // left-right tilt
+    setTarget(nx, ny);
+  }, true);
+})();
+function requestGyroParallax(){
+  try{
+    if(typeof DeviceOrientationEvent!=='undefined' && typeof DeviceOrientationEvent.requestPermission==='function'){
+      DeviceOrientationEvent.requestPermission().catch(()=>{});
+    }
+  }catch(err){/* gyroscope unavailable — mouse/touch parallax still works */}
+}
+
+/* ---- magnetic + 3D tilt for cards (extends initTilt) ---- */
+function initMagnetic(){
+  document.querySelectorAll('.card').forEach(card=>{
+    if(card._shineBound) return; card._shineBound=true;
+    if(!card.querySelector('.card-shine')){
+      const s=document.createElement('div'); s.className='card-shine'; card.appendChild(s);
+      const t=document.createElement('div'); t.className='card-trace'; card.appendChild(t);
+    }
+  });
+}
+
+/* ---- floating particle background (canvas, lightweight) ---- */
+(function(){
+  const canvas=document.getElementById('particleCanvas');
+  if(!canvas) return;
+  const ctx=canvas.getContext('2d');
+  let particles=[], w,h;
+  function resize(){ w=canvas.width=innerWidth; h=canvas.height=innerHeight; }
+  resize(); window.addEventListener('resize',resize);
+  const COUNT = innerWidth<700?22:42;
+  for(let i=0;i<COUNT;i++){
+    particles.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*1.8+.4,vx:(Math.random()-.5)*.15,vy:(Math.random()-.5)*.15,a:Math.random()*.5+.15});
+  }
+  function tick(){
+    ctx.clearRect(0,0,w,h);
+    ctx.fillStyle='#c9a24b';
+    particles.forEach(p=>{
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0)p.x=w; if(p.x>w)p.x=0; if(p.y<0)p.y=h; if(p.y>h)p.y=0;
+      ctx.globalAlpha=p.a;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
+    });
+    ctx.globalAlpha=1;
+    requestAnimationFrame(tick);
+  }
+  tick();
+})();
+
+/* ---- floating vocabulary universe: real words + military symbols drifting up through the background ---- */
+(function(){
+  const host=document.getElementById('floatWords');
+  if(!host) return;
+  const pool = (typeof VOCAB!=='undefined' && VOCAB.length) ? VOCAB.map(v=>v.w) :
+    ['LUCID','TENACITY','VALOUR','RESOLVE','PRUDENT','STOIC','VIGILANT','AUDACIOUS'];
+  const symbols = ['⚔','✈','⚓','★','▲','◈','⬡','⌖','✦'];
+  let alive=0; const MAX_ALIVE = innerWidth<700?6:12;
+  function spawn(){
+    if(alive>=MAX_ALIVE) return;
+    const isSymbol = Math.random()<0.28;
+    const w=document.createElement('span'); w.className='float-word'+(isSymbol?' float-symbol':'');
+    w.textContent = isSymbol ? symbols[Math.floor(Math.random()*symbols.length)] : pool[Math.floor(Math.random()*pool.length)];
+    const size = isSymbol ? (Math.random()*0.6+0.9).toFixed(2) : (Math.random()*0.5+0.72).toFixed(2);
+    const dur = (Math.random()*14+16).toFixed(1);
+    const left = (Math.random()*94+2).toFixed(1);
+    const dx = Math.round((Math.random()-.5)*160);
+    const rot = (Math.random()*6-3).toFixed(1);
+    const op = (Math.random()*0.10+0.08).toFixed(2);
+    w.style.cssText = `left:${left}%;font-size:${size}rem;animation-duration:${dur}s;--fwdx:${dx}px;--fwrot:${rot}deg;--fwop:${op}`;
+    host.appendChild(w); alive++;
+    w.addEventListener('animationend',()=>{ w.remove(); alive--; });
+  }
+  for(let i=0;i<4;i++) setTimeout(spawn, i*1400);
+  setInterval(spawn, 3200);
+})();
+
+/* ---- combo system + XP burst particles + question feel ---- */
+let comboCount=0, comboBest=0;
+function burstAt(x,y,kind){
+  const colors = kind==='wrong' ? ['#e2575a','#ff8a8d'] : ['#c9a24b','#49d186','#ffd479'];
+  const n = kind==='wrong' ? 8 : 14;
+  for(let i=0;i<n;i++){
+    const p=document.createElement('div'); p.className='burst-particle';
+    const ang = (Math.PI*2*i/n) + Math.random()*0.4;
+    const dist = 40+Math.random()*70;
+    const bx = Math.cos(ang)*dist, by = Math.sin(ang)*dist;
+    const size = 3+Math.random()*4;
+    p.style.cssText = `left:${x}px;top:${y}px;width:${size}px;height:${size}px;background:${colors[i%colors.length]};--bx:${bx}px;--by:${by}px;box-shadow:0 0 6px ${colors[i%colors.length]}`;
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(),720);
+  }
+}
+function showComboPop(n,x,y){
+  const el=document.createElement('div'); el.className='combo-pop';
+  const scale = Math.min(1.4+n*0.14, 3.1);
+  let label = 'COMBO ×'+n, color='var(--gold)';
+  if(n>=8){label='UNSTOPPABLE ×'+n; color='#ff5f6d';}
+  else if(n>=5){label='ON FIRE ×'+n; color='#ff9f4a';}
+  el.textContent = label;
+  el.style.cssText = `left:${x}px;top:${y}px;font-size:${scale}rem;color:${color}`;
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),860);
+}
+function handleQuizCorrect(btnEl, cardEl){
+  comboCount++; comboBest=Math.max(comboBest,comboCount);
+  if(comboBest > (State.personalBests.bestCombo||0)){ State.personalBests.bestCombo = comboBest; saveState(); }
+  const r=btnEl.getBoundingClientRect(); const x=r.left+r.width/2, y=r.top;
+  burstAt(x,y,'correct');
+  if(comboCount>=2) showComboPop(comboCount,x,y);
+  if(comboCount>0 && comboCount%3===0){
+    const bonus=Math.min(comboCount*2,20);
+    addXP(bonus,'Combo ×'+comboCount+' bonus');
+    launchConfettiIf(comboCount>=6);
+  }
+  if(cardEl){ cardEl.classList.remove('flash-wrong'); void cardEl.offsetWidth; cardEl.classList.add('flash-correct'); setTimeout(()=>cardEl.classList.remove('flash-correct'),520); }
+}
+function handleQuizWrong(cardEl){
+  comboCount=0;
+  if(cardEl){ cardEl.classList.remove('flash-correct'); void cardEl.offsetWidth; cardEl.classList.add('flash-wrong'); setTimeout(()=>cardEl.classList.remove('flash-wrong'),520); }
+}
+/* per-question countdown ring: visual pressure + speed bonus, never force-fails a question */
+function startQTimer(ringEl, onExpireVisualOnly){
+  if(!ringEl) return null;
+  const fg=ringEl.querySelector('.qt-fg'), num=ringEl.querySelector('.qt-num');
+  const R=16, C=2*Math.PI*R, TOTAL=15;
+  fg.style.strokeDasharray = C;
+  fg.style.strokeDashoffset = 0;
+  fg.style.transitionDuration = TOTAL+'s';
+  requestAnimationFrame(()=>{ fg.style.strokeDashoffset = C; });
+  const startedAt = Date.now();
+  const lowT = setTimeout(()=>ringEl.classList.add('low'), (TOTAL-5)*1000);
+  const iv = setInterval(()=>{
+    const left = Math.max(0, TOTAL-Math.floor((Date.now()-startedAt)/1000));
+    if(num) num.textContent = left;
+    if(left<=0) clearInterval(iv);
+  },1000);
+  return { startedAt, stop(){ clearTimeout(lowT); clearInterval(iv); } };
+}
+function qElapsedSeconds(timer){ return timer ? (Date.now()-timer.startedAt)/1000 : 99; }
+
+/* ---- static parallax starfield ---- */
+(function(){
+  const canvas=document.getElementById('starField');
+  if(!canvas) return;
+  const ctx=canvas.getContext('2d');
+  let w,h,stars=[];
+  function resize(){
+    w=canvas.width=innerWidth; h=canvas.height=innerHeight;
+    stars=[]; const n=innerWidth<700?60:120;
+    for(let i=0;i<n;i++) stars.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*1.2+.2,a:Math.random()});
+  }
+  resize(); window.addEventListener('resize',resize);
+  function draw(){
+    ctx.clearRect(0,0,w,h);
+    ctx.fillStyle='#ffffff';
+    stars.forEach(s=>{
+      const tw = s.a + Math.sin(Date.now()/1200+s.x)*.15;
+      ctx.globalAlpha = Math.max(0,Math.min(1,tw))*.5;
+      ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, 7); ctx.fill();
+    });
+    ctx.globalAlpha=1;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ---- gate boot sequence: typing status + soldier-walk progress ---- */
+(function(){
+  const statusEl=document.getElementById('gateStatus');
+  const fill=document.getElementById('gateLoadFill');
+  const track=document.getElementById('gateTrack');
+  const soldier=document.getElementById('gateSoldier');
+  const gateBtn=document.getElementById('gateBtn');
+  if(!statusEl||!fill) return;
+  const lines=['INITIALIZING SECURE LINK','VERIFYING CLEARANCE','LOADING SYLLABUS DATABASE','CALIBRATING DRILL ENGINE','ACCESS GRANTED'];
+  let li=0, ci=0, pct=0, done=false;
+  function typeLine(){
+    if(li>=lines.length) return;
+    const line=lines[li];
+    if(ci<=line.length){
+      statusEl.innerHTML = line.slice(0,ci)+'<span class="cursor-blink"></span>';
+      ci++; setTimeout(typeLine, 26);
+    } else {
+      li++; ci=0; setTimeout(typeLine, 260);
+    }
+  }
+  typeLine();
+
+  function spawnDust(leftPct){
+    if(!track) return;
+    const d=document.createElement('div'); d.className='gate-dust';
+    d.style.left='calc('+leftPct+'% - 2px)';
+    track.appendChild(d);
+    setTimeout(()=>d.remove(), 560);
+  }
+  let lastDust=0;
+  const loadInt=setInterval(()=>{
+    pct=Math.min(100,pct+Math.random()*9+3);
+    fill.style.width=pct+'%';
+    const soldierPct=Math.min(96, 4 + pct*0.92);
+    if(soldier) soldier.style.left=soldierPct+'%';
+    if(Date.now()-lastDust>180){ spawnDust(soldierPct); lastDust=Date.now(); }
+    if(pct>=100 && !done){
+      done=true;
+      clearInterval(loadInt);
+      setTimeout(()=>{
+        if(soldier){ soldier.classList.remove('walking'); soldier.classList.add('saluting'); }
+        if(track) track.classList.add('complete');
+        if(gateBtn) gateBtn.classList.add('armed');
+      }, 220);
+    }
+  },140);
+
+  // floating vocabulary word layer
+  const vocabWords=['Tenacious','Magnanimous','Exonerate','Camaraderie','Vindicate','Resilience','Perseverance','Integrity','Gallantry','Fortitude','Steadfast','Vigilance','Audacity','Discipline'];
+  const vocabEl=document.getElementById('gateVocab');
+  if(vocabEl){
+    vocabWords.forEach((w,i)=>{
+      const s=document.createElement('span');
+      s.textContent=w;
+      s.style.left=(6+Math.random()*80)+'%';
+      s.style.top=(6+Math.random()*80)+'%';
+      s.style.setProperty('--peak',(0.03+Math.random()*0.05).toFixed(3));
+      s.style.animationDuration=(24+Math.random()*20)+'s';
+      s.style.animationDelay=(-Math.random()*30)+'s';
+      vocabEl.appendChild(s);
+    });
+  }
+
+  // gate particle canvas (glowing dust)
+  const gc=document.getElementById('gateParticles');
+  if(gc){
+    const gctx=gc.getContext('2d'); let gw,gh,gp=[];
+    function gresize(){ gw=gc.width=gc.parentElement.offsetWidth; gh=gc.height=gc.parentElement.offsetHeight;
+      gp=[]; for(let i=0;i<50;i++) gp.push({x:Math.random()*gw,y:Math.random()*gh,r:Math.random()*1.4+.3,vy:Math.random()*.35+.08}); }
+    gresize(); window.addEventListener('resize',gresize);
+    function gtick(){
+      gctx.clearRect(0,0,gw,gh); gctx.fillStyle='#e8cf8f';
+      gp.forEach(p=>{ p.y-=p.vy; if(p.y<0)p.y=gh; gctx.globalAlpha=.35; gctx.beginPath(); gctx.arc(p.x,p.y,p.r,0,Math.PI*2); gctx.fill(); });
+      gctx.globalAlpha=1;
+      if(!document.getElementById('gate').classList.contains('hide')) requestAnimationFrame(gtick);
+    }
+    gtick();
+  }
+})();
+
+/* ---- floating XP popup near XP pill on addXP (visual flourish) ---- */
+const _origAddXP = addXP;
+addXP = function(n, reason){
+  _origAddXP(n, reason);
+  const pill = document.querySelector('.xp-pill');
+  if(pill){
+    const r = pill.getBoundingClientRect();
+    const f = document.createElement('div'); f.className='xp-float'; f.textContent='+'+n+' XP';
+    f.style.left = r.left+'px'; f.style.top = (r.top-6)+'px';
+    document.body.appendChild(f); setTimeout(()=>f.remove(),1150);
+  }
+};
+
+/* extend switchView to re-bind magnetic shine layers + scroll-to-top on route change */
+const _origSwitchView = switchView;
+switchView = function(name){
+  _origSwitchView(name);
+  setTimeout(initMagnetic, 70);
+};
+
+
+/* ============================================================
+   PHASE 3: READING MODES / BOOKMARKS / BADGES / QUICK NAV
+=============================================================*/
+function toggleFocusPanel(){
+  document.getElementById('focusPanel').classList.toggle('show');
+}
+document.addEventListener('click', (e)=>{
+  const panel=document.getElementById('focusPanel');
+  if(panel && panel.classList.contains('show') && !panel.contains(e.target) && e.target.id!=='focusBtn'){
+    panel.classList.remove('show');
+  }
+});
+function setDisplayMode(mode){
+  document.body.classList.remove('mode-focus','mode-zen','mode-sepia');
+  if(mode!=='normal') document.body.classList.add('mode-'+mode);
+  localStorage.setItem('vaani_mode', mode);
+  document.querySelectorAll('.fmode-btn').forEach(b=>b.classList.toggle('active', b.dataset.mode===mode));
+}
+function resetDisplaySettings(){
+  setDisplayMode('normal');
+  applyFontSize(100);
+  toast('Display reset to Normal, 100%.');
+}
+document.querySelectorAll('.fmode-btn').forEach(b=>b.addEventListener('click',()=>setDisplayMode(b.dataset.mode)));
+(function(){
+  const saved = localStorage.getItem('vaani_mode') || 'normal';
+  setDisplayMode(saved);
+})();
+
+const FONT_STEPS = [50,60,70,80,90,100,110,120,130,150];
+function adjustFont(dir){
+  let cur = parseInt(localStorage.getItem('vaani_fsize')||'100');
+  let idx = FONT_STEPS.indexOf(cur);
+  if(idx===-1) idx = FONT_STEPS.indexOf(100);
+  idx = Math.max(0, Math.min(FONT_STEPS.length-1, idx+dir));
+  applyFontSize(FONT_STEPS[idx]);
+}
+function applyFontSize(size){
+  document.documentElement.style.fontSize = size+'%';
+  const lbl=document.getElementById('fsizeVal'); if(lbl) lbl.textContent=size+'%';
+  localStorage.setItem('vaani_fsize', size);
+  document.querySelectorAll('.fsize-btn[data-size]').forEach(b=>b.classList.toggle('active', parseInt(b.dataset.size)===size));
+}
+(function(){
+  const saved = parseInt(localStorage.getItem('vaani_fsize')||'100');
+  const size = FONT_STEPS.includes(saved) ? saved : 100;
+  document.documentElement.style.fontSize = size+'%';
+  const lbl=document.getElementById('fsizeVal'); if(lbl) lbl.textContent=size+'%';
+})();
+
+/* keyboard shortcuts */
+document.addEventListener('keydown',(e)=>{
+  const key = String(e.key || '');
+  const isSearchShortcut = (e.ctrlKey || e.metaKey) && key.toLowerCase()==='k';
+  if(isSearchShortcut){
+    e.preventDefault();
+    const overlay=document.getElementById('gsearchOverlay');
+    const input=document.getElementById('globalSearch');
+    if(overlay && overlay.classList.contains('show')){
+      if(input){ input.focus(); input.select(); }
+    } else openGlobalSearch();
+    return;
+  }
+  const target=e.target;
+  const tag=target && target.tagName ? target.tagName.toUpperCase() : '';
+  if(tag==='INPUT' || tag==='TEXTAREA' || tag==='SELECT' || (target && target.isContentEditable)) {
+    if(key==='Escape' && target && typeof target.blur==='function') target.blur();
+    return;
+  }
+  const map={'1':'dashboard','2':'grammar','3':'compare','4':'vocab','5':'practice','6':'reading','7':'tests','8':'games','9':'pyq'};
+  if(map[key]) switchView(map[key]);
+  if(key.toLowerCase()==='f') setDisplayMode(document.body.classList.contains('mode-focus')?'normal':'focus');
+  if(key==='Escape') setDisplayMode('normal');
+  if(key==='/'){ e.preventDefault(); openGlobalSearch(); }
+});
+document.addEventListener('keydown',(e)=>{
+  if(e.key==='Escape'){ closeGlobalSearch(); closeMoreSheet(); if(document.getElementById('gtSheetOverlay').classList.contains('open')) gtCloseSheet(); }
+  if(e.key==='Enter' && document.getElementById('gsearchOverlay').classList.contains('show')){
+    const first = document.querySelector('#gsearchResults .gsearch-item');
+    if(first) first.click();
+  }
+});
+
+/* ===== BOTTOM SHEET (More menu) ===== */
+function openMoreSheet(){
+  document.getElementById('moreSheetBackdrop').classList.add('show');
+  document.getElementById('moreSheet').classList.add('show');
+  document.body.style.overflow='hidden';
+  showSheetMenu();
+}
+function closeMoreSheet(){
+  document.getElementById('moreSheetBackdrop').classList.remove('show');
+  document.getElementById('moreSheet').classList.remove('show');
+  document.body.style.overflow='';
+}
+function sheetGo(view){ closeMoreSheet(); switchView(view); }
+function showSheetMenu(){
+  document.getElementById('sheetTitle').textContent='More';
+  document.getElementById('sheetBackBtn').style.display='none';
+  const items=[
+    {icon:'👤',label:'Profile',action:"sheetGo('profile')"},
+    {icon:'🎖️',label:'Achievements',action:"sheetGo('games')"},
+    {icon:'★',label:'Bookmarks',action:"showSheetBookmarks()"},
+    {icon:'📊',label:'Statistics',action:"sheetGo('leaderboard')"},
+    {icon:'⚙️',label:'Settings',action:"closeMoreSheet();toggleFocusPanel()"},
+    {icon:'✉️',label:'Feedback',soon:false, action:"showSheetFeedback()"},
+    {icon:'ℹ️',label:'About VAANI',action:"showSheetAbout()"}
+  ];
+  document.getElementById('sheetBody').innerHTML = items.map(it=>
+    `<button class="sheet-menu-item" onclick="${it.action}">
+      <span class="smi-icon">${it.icon}</span><span class="smi-label">${it.label}</span><span class="smi-arrow">›</span>
+    </button>`).join('');
+}
+function sheetSubheader(title){
+  document.getElementById('sheetTitle').textContent=title;
+  document.getElementById('sheetBackBtn').style.display='flex';
+}
+function showSheetBookmarks(){
+  sheetSubheader('Bookmarks');
+  const bm = getBookmarks().filter(b=>b.startsWith('pyq:'));
+  const body = document.getElementById('sheetBody');
+  if(!bm.length){
+    body.innerHTML = `<div class="sheet-empty">No bookmarks yet.<br>Tap the ★ on any PYQ card to save it here.</div>`;
+    return;
+  }
+  body.innerHTML = bm.map(b=>{
+    const qid = b.slice(4);
+    const q = PYQ_BY_ID[qid];
+    if(!q) return '';
+    return `<div class="sheet-bm-item" onclick="closeMoreSheet();switchView('pyq');">
+      <b>${q.y} · ${q.s}</b> — ${(q.q||'').slice(0,70)}${(q.q||'').length>70?'…':''}
+    </div>`;
+  }).join('') || `<div class="sheet-empty">No bookmarks yet.</div>`;
+}
+function showSheetFeedback(){
+  sheetSubheader('Feedback');
+  document.getElementById('sheetBody').innerHTML = `
+    <div class="sheet-about">
+      <p>Found a bug, a wrong answer key, or have a suggestion? Send it directly — every report gets read.</p>
+      <a class="btn" style="display:block;text-align:center;text-decoration:none" href="mailto:h29417221@gmail.com?subject=VAANI%20Feedback">✉️ Email Feedback</a>
+      <p style="text-align:center;font-family:var(--mono);font-size:.72rem;color:var(--muted2);margin-top:10px">h29417221@gmail.com</p>
+    </div>`;
+}
+function showSheetAbout(){
+  sheetSubheader('About VAANI');
+  document.getElementById('sheetBody').innerHTML = `
+    <div class="sheet-about">
+      <p><b>VAANI</b> is an NDA/NA English preparation command centre — grammar lessons, vocabulary training, reading comprehension, and a source-verified archive of previous year questions.</p>
+      <p>Every PYQ in the archive is transcribed from an official NDA/NA English paper; nothing is generated or guessed. Currently ${PYQ_PAPERS.length} paper${PYQ_PAPERS.length!==1?'s':''} ${PYQ_PAPERS.length!==1?'are':'is'} available (${PYQ_PAPERS.map(p=>p.label).join(', ')}), with more to follow as they are verified and added.</p>
+      <p>All progress, XP, streaks, and bookmarks are stored locally on this device.</p>
+    </div>`;
+}
+
+/* quick nav fab */
+function toggleQuickNav(){
+  const fab=document.getElementById('quickNavBtn'), menu=document.getElementById('quickNavMenu');
+  const open = !fab.classList.contains('open');
+  fab.classList.toggle('open', open); menu.classList.toggle('show', open);
+  if(open && !menu.dataset.built){
+    menu.dataset.built='1';
+    const items=[['Dashboard','dashboard'],['Grammar','grammar'],['Comparisons','compare'],['Vocabulary','vocab'],['Practice','practice'],['Reading','reading'],['Tests & PYQ','tests'],['🎯 Previous Year Questions','pyq'],['Arena','games'],['Profile','profile']];
+    menu.innerHTML = items.map(([label,v])=>`<div class="qnav-item" onclick="switchView('${v}');toggleQuickNav();">${label}</div>`).join('');
+  }
+}
+
+/* bookmarks for questions */
+function getBookmarks(){ try{ return JSON.parse(localStorage.getItem('vaani_bookmarks')||'[]'); }catch(e){ return []; } }
+function toggleBookmark(qid, starEl){
+  let bm = getBookmarks();
+  if(bm.includes(qid)){ bm = bm.filter(x=>x!==qid); if(starEl) starEl.classList.remove('active'); }
+  else { bm.push(qid); if(starEl) starEl.classList.add('active'); }
+  localStorage.setItem('vaani_bookmarks', JSON.stringify(bm));
+}
+function isBookmarked(qid){ return getBookmarks().includes(qid); }
+
+/* ============================================================
+   BOOT — single, guarded entry point.
+   This is the ONLY place app init runs at page load. It runs at the end of <body>,
+   so the full DOM already exists. First launch, hard refresh, and returning users
+   all pass through this exact same sequence: normalize -> load -> render (isolated).
+=============================================================*/
+function bootApp(){
+  if(window.__vaaniBooted) return; // guards against this script block ever running twice
+  window.__vaaniBooted = true;
+  safeCall(loadState, 'loadState');
+  safeCall(refreshAll, 'refreshAll(boot)');
+  safeCall(initGateSession, 'initGateSession(boot)');
+}
+bootApp();,'{','}','(',')','|','[',']','\\'];
   let esc='';for(const ch of keyword)esc+=specials.includes(ch)?'\\'+ch:ch;
   let match=null;try{match=text.match(new RegExp('\\b'+esc+'\\b','iu'));}catch(e){}
   if(!match){try{match=text.match(new RegExp(esc,'iu'));}catch(e){}}
   if(!match)return safe(text);
   const start=match.index,end=start+match[0].length;
   return safe(text.slice(0,start))+'<mark class="pyq-vocab-hi pyq-keyword-highlight">'+safe(match[0])+'</mark>'+safe(text.slice(end));
+}
+function pyqHi(q){
+  if(!q||typeof q.q!=='string')return '';
+  const keyword=window.VaaniPyqTaxonomy&&typeof window.VaaniPyqTaxonomy.keyword==='function'?window.VaaniPyqTaxonomy.keyword(q):String(q.keyword||'').trim();
+  return pyqHighlightText(q.q,keyword);
 }
 
 /* Render spotting-error sentence boundaries as visible, labelled parts.
