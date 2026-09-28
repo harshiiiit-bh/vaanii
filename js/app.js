@@ -905,7 +905,7 @@ function pyqLabeledBlocks(q){
     if(tail&&blocks.length)blocks[blocks.length-1].text+=' '+tail;
     return blocks.length>=3?blocks:null;
   }
-  const re=/(?:^|\n|\s\/\s)(S1|S2|S3|S6|P|Q|R|S):\s*/g;
+  const re=/(?:^|\n|\s[\/\|]\s)(S1|S2|S3|S6|P|Q|R|S):\s*/g;
   const matches=[...source.matchAll(re)];
   if(!matches.length)return null;
   const blocks=[];
