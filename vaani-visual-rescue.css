@@ -1,0 +1,323 @@
+/* ============================================================
+   VAANI VISUAL RESCUE — contrast + route stability
+   Loaded LAST. Presentation-only safety layer.
+   Purpose:
+   1) Restore the Grammar/Grammar Journey dark command surfaces.
+   2) Prevent light-theme redesign rules from washing out dark-module text.
+   3) Stop whole-view reveal/fade transitions from flashing on route changes.
+   4) Avoid expensive blur/backdrop effects inside the study canvas on phones.
+   ============================================================ */
+
+html{overflow-x:hidden}
+body{overflow-x:hidden}
+
+/* ---------------- ROUTE STABILITY ---------------- */
+.view{
+  animation:none!important;
+}
+.view.active{
+  opacity:1!important;
+  visibility:visible!important;
+  display:block;
+  animation:none!important;
+  filter:none!important;
+}
+.view.active .reveal{
+  opacity:1!important;
+  visibility:visible!important;
+  transform:none!important;
+  transition:none!important;
+  animation:none!important;
+}
+.view.active .reveal.in{
+  opacity:1!important;
+  transform:none!important;
+}
+.view.active :where(.view,.reveal){
+  filter:none!important;
+}
+
+/* ---------------- GRAMMAR COMMAND CENTER ----------------
+   The Grammar tree is intentionally a self-contained dark
+   command surface. Keep its internal palette independent of
+   the site's light/dark global shell. */
+#view-grammar,
+#view-journey{
+  --gt-bg0:#060a10;
+  --gt-bg1:#0a121c;
+  --gt-bg2:#0d1826;
+  --gt-panel:rgba(16,26,38,.92);
+  --gt-panel-b:rgba(120,170,190,.18);
+  --gt-line:rgba(160,200,215,.16);
+  --gt-gold:#d9a941;
+  --gt-gold-l:#f0c874;
+  --gt-gold-d:#a47a2e;
+  --gt-teal:#2fd7c4;
+  --gt-teal-l:#86eee2;
+  --gt-teal-d:#12796d;
+  --gt-green:#3fe08a;
+  --gt-red:#e2575a;
+  --gt-text:#eef5f7;
+  --gt-muted:#a8bac4;
+  --gt-muted2:#738793;
+
+  color:var(--gt-text)!important;
+  background:
+    radial-gradient(ellipse 120% 60% at 50% -10%,rgba(47,215,196,.10),transparent 60%),
+    radial-gradient(ellipse 90% 50% at 85% 100%,rgba(217,169,65,.08),transparent 60%),
+    linear-gradient(180deg,var(--gt-bg0),var(--gt-bg1) 42%,var(--gt-bg2))!important;
+  border-color:rgba(120,170,190,.18)!important;
+}
+
+/* Never let the generic light-theme panel system repaint these modules. */
+#view-grammar :is(
+  .gt-header,.gt-layout,.gt-tree-wrap,.gt-card,.gt-progress-card,
+  .gt-power-card,.gt-stats-card,.gt-weightage-card,.gt-topic-browser,
+  .gt-topic-group,.gt-topic-card,.gt-browser-intro,.gt-browser-toolbar,
+  .gt-topic-groups,.gt-topic-detail,.gt-topic-panel,.gt-lesson-panel,
+  .gt-sheet,.gt-notes-modal,.gt-sub
+),
+#view-journey :is(
+  .gj-head,.gj-pathwrap,.gj-roadmap-stage,.gj-roadmap-card,.gj-stat
+){
+  color:var(--gt-text)!important;
+  background:var(--gt-panel)!important;
+  border-color:var(--gt-panel-b)!important;
+  box-shadow:0 8px 26px rgba(0,0,0,.16);
+}
+
+/* Hero/header — make the title readable on the dark surface. */
+#view-grammar .gt-header,
+#view-journey .gj-head{
+  background:
+    radial-gradient(ellipse at 18% 0%,rgba(47,215,196,.11),transparent 42%),
+    linear-gradient(135deg,rgba(15,27,39,.98),rgba(7,14,22,.98))!important;
+}
+#view-grammar .gt-header{
+  border-radius:18px!important;
+}
+#view-grammar .gt-eyebrow,
+#view-journey .gj-eyebrow{
+  color:var(--gt-teal-l)!important;
+}
+#view-grammar .gt-title,
+#view-journey .gj-title{
+  color:#f5f8fa!important;
+  background:none!important;
+  -webkit-text-fill-color:#f5f8fa!important;
+  text-shadow:0 4px 18px rgba(0,0,0,.28);
+}
+#view-grammar .gt-sub,
+#view-journey .gj-sub{
+  color:var(--gt-muted)!important;
+}
+#view-grammar .gt-chip{
+  background:rgba(12,23,34,.94)!important;
+  border-color:rgba(120,170,190,.22)!important;
+  color:var(--gt-text)!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+#view-grammar .gt-chip-num{color:var(--gt-teal-l)!important}
+#view-grammar .gt-chip-lbl{color:var(--gt-muted)!important}
+
+/* Sidebar cards and statistics. */
+#view-grammar .gt-card{
+  background:linear-gradient(145deg,rgba(15,27,39,.96),rgba(10,19,29,.96))!important;
+  color:var(--gt-text)!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+#view-grammar .gt-card-lbl,
+#view-grammar .gt-progress-sub,
+#view-grammar .gt-power-sub,
+#view-grammar .gt-stat-line,
+#view-grammar .gt-progress-sub,
+#view-grammar .gt-donut-legend{
+  color:var(--gt-muted)!important;
+}
+#view-grammar .gt-stat-line b,
+#view-grammar .gt-ring-num b,
+#view-grammar .gt-ring-num,
+#view-grammar .gt-power-num{
+  color:var(--gt-text)!important;
+}
+#view-grammar .gt-power-num{color:var(--gt-gold-l)!important}
+
+/* Topic browser — no white wash. */
+#view-grammar .gt-tree-wrap{
+  background:linear-gradient(180deg,#0a131d,#0d1826)!important;
+  border-color:rgba(120,170,190,.18)!important;
+}
+#view-grammar .gt-topic-browser{
+  background:transparent!important;
+  box-shadow:none!important;
+}
+#view-grammar .gt-browser-intro{
+  background:linear-gradient(145deg,#0f1d29,#0b1722)!important;
+}
+#view-grammar .gt-browser-kicker{
+  color:var(--gt-teal-l)!important;
+}
+#view-grammar .gt-browser-intro h3{
+  color:#f3f6f8!important;
+}
+#view-grammar .gt-browser-intro p,
+#view-grammar .gt-browser-count{
+  color:var(--gt-muted)!important;
+}
+#view-grammar .gt-browser-toolbar{
+  background:#0b1621!important;
+  border-top:1px solid rgba(160,200,215,.10);
+  border-bottom:1px solid rgba(160,200,215,.10);
+}
+#view-grammar .gt-browser-search{
+  background:#111e2a!important;
+  border-color:rgba(160,200,215,.22)!important;
+  box-shadow:none!important;
+}
+#view-grammar .gt-browser-search input{
+  background:transparent!important;
+  color:#f0f5f7!important;
+  border-color:transparent!important;
+}
+#view-grammar .gt-browser-search input::placeholder{
+  color:#91a5b1!important;
+  opacity:1!important;
+}
+#view-grammar .gt-browser-search .search-icon{
+  color:var(--gt-teal-l)!important;
+}
+#view-grammar .gt-browser-filters{
+  background:transparent!important;
+}
+#view-grammar .gt-browser-filter{
+  color:#b8c7cf!important;
+  background:#172532!important;
+  border-color:rgba(160,200,215,.16)!important;
+}
+#view-grammar .gt-browser-filter[aria-pressed="true"]{
+  color:#9af3e8!important;
+  background:rgba(47,215,196,.13)!important;
+  border-color:#2fd7c4!important;
+}
+#view-grammar .gt-topic-groups{
+  background:#0a141e!important;
+}
+#view-grammar .gt-topic-group{
+  background:#0e1a26!important;
+  border-color:rgba(160,200,215,.14)!important;
+}
+#view-grammar .gt-topic-group summary{
+  color:#f0f5f7!important;
+  background:#111f2c!important;
+}
+#view-grammar .gt-topic-card{
+  background:#13212d!important;
+  border-color:rgba(160,200,215,.16)!important;
+  color:#eef5f7!important;
+  box-shadow:none!important;
+}
+#view-grammar .gt-topic-card:hover{
+  background:#172936!important;
+  border-color:rgba(47,215,196,.48)!important;
+}
+#view-grammar .gt-topic-title{
+  color:#f0f5f7!important;
+}
+#view-grammar .gt-topic-desc{
+  color:#a9bbc5!important;
+}
+#view-grammar .gt-tier-kicker,
+#view-grammar .gt-tier-subtitle{
+  color:#91a5b1!important;
+}
+#view-grammar .gt-browser-empty{
+  color:#b5c4cc!important;
+  border-color:rgba(160,200,215,.22)!important;
+  background:#101d28!important;
+}
+
+/* The tree itself stays dark and legible. */
+#view-grammar .gt-tree-canvas{
+  background:transparent!important;
+}
+#view-grammar .gt-fruit{
+  color:#eef5f7!important;
+}
+#view-grammar .gt-fruit-label{
+  color:#d9e4e8!important;
+}
+#view-grammar .gt-fruit-label small{
+  color:#93a7b2!important;
+}
+
+/* Popovers/sheets inside Grammar must not inherit the light redesign. */
+#view-grammar .gt-sheet,
+#view-grammar .gt-notes-modal{
+  background:#0d1824!important;
+  color:#eef5f7!important;
+  border-color:rgba(160,200,215,.20)!important;
+}
+#view-grammar :is(.gt-sheet-title,.gt-notes-title,.gt-sheet-btn-lbl){
+  color:#eef5f7!important;
+}
+
+/* ---------------- MOBILE PERFORMANCE ---------------- */
+@media(max-width:760px){
+  #view-grammar,
+  #view-journey{
+    border-radius:16px!important;
+    box-shadow:none!important;
+  }
+  #view-grammar :is(.gt-card,.gt-chip,.gt-topic-group,.gt-topic-card,.gt-browser-search,.gt-header),
+  #view-journey :is(.gj-head,.gj-pathwrap,.gj-roadmap-stage,.gj-roadmap-card){
+    backdrop-filter:none!important;
+    -webkit-backdrop-filter:none!important;
+  }
+
+  /* Structural route content must never animate/fade on phones. */
+  #view-grammar *,
+  #view-journey *{
+    animation-duration:0.001ms!important;
+    transition-property:none!important;
+  }
+
+  #view-grammar .gt-title{
+    font-size:clamp(1.9rem,9vw,2.6rem)!important;
+  }
+  #view-grammar .gt-headchips{
+    gap:8px!important;
+  }
+  #view-grammar .gt-chip{
+    min-width:74px!important;
+    padding:9px 12px!important;
+  }
+  #view-grammar .gt-chip-num{
+    font-size:1.25rem!important;
+  }
+  #view-grammar .gt-tree-wrap{
+    border-radius:15px!important;
+  }
+  #view-grammar .gt-browser-intro h3{
+    font-size:1.08rem!important;
+  }
+}
+
+/* ---------------- GLOBAL ACTIVE-VIEW CONTRAST GUARD ----------------
+   Prevent inactive/faded animation states from leaking into the
+   currently visible route. */
+.view.active :where(h1,h2,h3,h4,h5,h6,p,li,label,small,strong,b,span){
+  text-shadow:none;
+}
+.view.active :where(img,svg,video,canvas){
+  filter:none;
+}
+
+/* Preserve intentional disabled controls. */
+button:disabled,
+input:disabled,
+select:disabled,
+textarea:disabled{
+  opacity:.78;
+}
