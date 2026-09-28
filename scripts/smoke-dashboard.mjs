@@ -27,7 +27,12 @@ async function assertVisibleText(selector, label) {
   assert.ok(value && value !== '—' && !/^loading/i.test(value), label + ' was blank: ' + JSON.stringify(value));
 }
 async function clickMainView(name) {
-  await page.locator('#vaaniMainNav button[data-view="' + name + '"]').click();
+  const desktopButton = page.locator('#vaaniMainNav button[data-view="' + name + '"]');
+  if (await desktopButton.isVisible()) {
+    await desktopButton.click();
+  } else {
+    await page.locator('#bottomNav button[data-view="' + name + '"]').click();
+  }
   await page.waitForFunction(view => {
     const el = document.getElementById('view-' + view);
     return !!el && el.classList.contains('active');
