@@ -893,25 +893,30 @@ function pyqOptionLabels(q){
 function pyqLabeledBlocks(q){
   if(!q||typeof q.q!=='string')return null;
   const source=q.q;
+  const inline=[...source.matchAll(/\(([PQRS])\)\s*\/?\s*/g)];
+  if(inline.length>=3){
+    const blocks=[];let cursor=0;
+    for(const m of inline){
+      const text=source.slice(cursor,m.index).trim();
+      if(text)blocks.push({label:m[1],text});
+      cursor=m.index+m[0].length;
+    }
+    const tail=source.slice(cursor).trim();
+    if(tail&&blocks.length)blocks[blocks.length-1].text+=' '+tail;
+    return blocks.length>=3?blocks:null;
+  }
   const re=/(?:^|\n|\s\/\s)(S1|S2|S3|S6|P|Q|R|S):\s*/g;
   const matches=[...source.matchAll(re)];
   if(!matches.length)return null;
   const blocks=[];
   for(let i=0;i<matches.length;i++){
     const label=matches[i][1];
-    const start=matches[i].index+matches[i][0].length;
-    const end=i+1<matches.length?matches[i+1].index:source.length;
-    const text=source.slice(start,end).replace(/\s*\/\s*$/,'').trim();
+    const startAt=matches[i].index+matches[i][0].length;
+    const endAt=i+1<matches.length?matches[i+1].index:source.length;
+    const text=source.slice(startAt,endAt).replace(/\s*\/\s*$/,'').trim();
     if(text)blocks.push({label,text});
   }
   return blocks.length>=3?blocks:null;
-}
-function pyqLabeledBlocksHTML(q){
-  const blocks=pyqLabeledBlocks(q);if(!blocks)return null;
-  const keyword=window.VaaniPyqTaxonomy&&typeof window.VaaniPyqTaxonomy.keyword==='function'?window.VaaniPyqTaxonomy.keyword(q):String(q.keyword||'').trim();
-  return '<div class="pv-structured-question">'+blocks.map(b=>
-    '<div class="pv-structured-row"><span class="pv-structured-label">'+escapeHtmlVaani(b.label)+'</span><span class="pv-structured-text">'+pyqHighlightText(b.text,keyword)+'</span></div>'
-  ).join('')+'</div>';
 }
 function pyqPromptHTML(q){
   if(!q||typeof q.q!=='string')return '';
