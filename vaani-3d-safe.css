@@ -4,6 +4,8 @@
    Each major section gets its own visual vocabulary.
    ============================================================ */
 
+.view{position:relative}
+
 .vaani-3d-model{
   position:absolute;
   top:clamp(18px,2.5vw,32px);
