@@ -302,3 +302,33 @@ try {
   console.error('Book Reading validation failed:', error.message);
   process.exitCode = 1;
 }
+
+
+/* Academy redesign and retired Book Reading shortcuts. */
+try {
+  const librarySource = readFileSync('js/library.js', 'utf8');
+  const pageSource = readFileSync('index.html', 'utf8');
+  const academyCss = readFileSync('styles-vbv.css', 'utf8');
+  const navStart = pageSource.indexOf('<nav class="mainnav" id="vbv-mainnav">');
+  const navEnd = pageSource.indexOf('</nav>', navStart);
+  const bookNav = navStart >= 0 && navEnd >= 0 ? pageSource.slice(navStart, navEnd) : '';
+  const homeStart = librarySource.indexOf('function renderHomeCommandCenter(){');
+  const homeEnd = librarySource.indexOf('\nfunction ', homeStart + 10);
+  const homeTools = homeStart >= 0 && homeEnd >= 0 ? librarySource.slice(homeStart, homeEnd) : '';
+  const academyStart = librarySource.indexOf('function renderAcademy(){');
+  const academyEnd = librarySource.indexOf('\n\n/* ================= EFFICIENCY:', academyStart);
+  const academy = academyStart >= 0 && academyEnd >= 0 ? librarySource.slice(academyStart, academyEnd) : '';
+  if (bookNav.includes('data-route="levels"') || bookNav.includes('data-route="spoken"')) throw new Error('Removed Levels/Spoken English links remain in Book Reading navigation.');
+  if (homeTools.includes('#/levels') || homeTools.includes('#/spoken') || homeTools.includes('English levels') || homeTools.includes('Spoken English')) throw new Error('Removed Levels/Spoken English shortcuts remain on Book Reading home.');
+  if (librarySource.includes('  levels: vbvRenderLevels,') || librarySource.includes('  spoken: renderSpoken,')) throw new Error('Retired Levels/Spoken routes remain active.');
+  for (const required of ['academy-hero', 'Four academies.', 'National Defence Academy', 'Indian Military Academy', 'Air Force Academy', 'Indian Naval Academy', 'academy-grid', 'academy-fieldnote', 'Photo source ↗']) {
+    if (!academy.includes(required)) throw new Error('Academy redesign missing required content: ' + required);
+  }
+  for (const required of ['.academy-hero', '.academy-grid', '.academy-card-photo', '.academy-fieldnote', '@media(max-width:760px)']) {
+    if (!academyCss.includes(required)) throw new Error('Academy responsive styling missing: ' + required);
+  }
+  console.log('Academy: four-academy image gallery, attributions, responsive styling and retired Book Reading links validated');
+} catch (error) {
+  console.error('Academy validation failed:', error.message);
+  process.exitCode = 1;
+}

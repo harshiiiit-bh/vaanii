@@ -109,6 +109,32 @@ try {
   assert.ok(registerText.includes(capturedWord), 'Captured Vocabulary word did not appear in the Book Reading register: ' + capturedWord);
   console.log('PASS Book Reading: command centre and captured word appears in the shared register');
 
+  const bookNavRoutes = await page.locator('#vbv-mainnav button').evaluateAll(buttons => buttons.map(button => button.dataset.route));
+  assert.ok(!bookNavRoutes.includes('levels'), 'Levels is still present in Book Reading navigation');
+  assert.ok(!bookNavRoutes.includes('spoken'), 'Spoken English is still present in Book Reading navigation');
+  await page.locator('#vbv-mainnav button[data-route="academy"]').click();
+  await page.waitForSelector('#app .academy-page', { timeout: 15000 });
+  assert.equal(await page.locator('#app .academy-card').count(), 4, 'Academy gallery must show all four academies');
+  const academyHash = await page.evaluate(() => location.hash);
+  await page.locator('#app .academy-hero-cta').click();
+  assert.equal(await page.evaluate(() => location.hash), academyHash, 'Academy gallery shortcut must not leave the Academy route');
+  await page.locator('#app .academy-card-photo').evaluateAll(frames => Promise.all(frames.map(frame => {
+    const img = frame.querySelector('img');
+    if (!img || img.complete) return Promise.resolve();
+    return new Promise(resolve => {
+      img.addEventListener('load', resolve, { once:true });
+      img.addEventListener('error', resolve, { once:true });
+      setTimeout(resolve, 20000);
+    });
+  })));
+  const academyImageResults = await page.locator('#app .academy-card-photo').evaluateAll(frames => frames.map(frame => {
+    const img = frame.querySelector('img');
+    return { alt:frame.getAttribute('aria-label')||img?.alt||'', src:img?.currentSrc||img?.src||'', width:img?.naturalWidth||0 };
+  }));
+  assert.equal(academyImageResults.length, 4, 'Each academy needs an image card');
+  assert.ok(academyImageResults.every(image => image.alt && image.width > 0), 'One or more academy photos did not load: ' + JSON.stringify(academyImageResults));
+  console.log('PASS Book Reading Academy: four real academy photos load with accessible alt text and source credits');
+
   for (const view of ['grammar', 'compare', 'pyq', 'games', 'leaderboard', 'profile']) {
     await clickMainView(view);
     await page.waitForTimeout(250);
@@ -124,6 +150,14 @@ try {
     const dimensions = await page.evaluate(() => ({ width: innerWidth, scrollWidth: document.documentElement.scrollWidth }));
     assert.ok(dimensions.scrollWidth <= dimensions.width + 2, 'Horizontal overflow on mobile ' + view + ': ' + JSON.stringify(dimensions));
   }
+  await clickMainView('books');
+  await page.locator('#vbv-mainnav button[data-route="academy"]').click();
+  await page.waitForSelector('#app .academy-page', { timeout: 15000 });
+  assert.equal(await page.locator('#app .academy-card').count(), 4, 'Mobile Academy gallery is incomplete');
+  const academyMobile = await page.evaluate(() => ({ width:innerWidth, scrollWidth:document.documentElement.scrollWidth }));
+  assert.ok(academyMobile.scrollWidth <= academyMobile.width + 2, 'Horizontal overflow on mobile Academy: ' + JSON.stringify(academyMobile));
+  console.log('PASS mobile Academy: all four cards fit a 390px viewport');
+  await clickMainView('profile');
   console.log('PASS mobile layout: dashboard, vocabulary, Book Reading and profile fit a 390px viewport');
 
   const savedAccountKeys = await page.evaluate(() =>

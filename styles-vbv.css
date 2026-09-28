@@ -564,3 +564,69 @@
 .vbv-scope #back-nav-btn:hover{ transform:scale(1.06); box-shadow:0 4px 12px rgba(28,43,58,0.35); }
 .vbv-scope #back-nav-btn:active{ transform:scale(0.92); }
 .vbv-scope #back-nav-btn svg{ width:20px; height:20px; }
+
+
+/* ================= ACADEMY COLLECTION · service dossier ================= */
+.vbv-scope .academy-page{max-width:1320px;margin:0 auto;padding-bottom:30px;}
+.vbv-scope .academy-hero{position:relative;isolation:isolate;min-height:390px;display:flex;align-items:flex-end;overflow:hidden;border-radius:12px;background:#101d2c;box-shadow:0 18px 42px rgba(18,30,44,.22);margin:6px 0 36px;}
+.vbv-scope .academy-hero-image{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 42%;z-index:-2;filter:saturate(.82) contrast(1.06);}
+.vbv-scope .academy-hero-overlay{position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(9,18,29,.97) 0%,rgba(9,18,29,.86) 40%,rgba(9,18,29,.35) 100%),linear-gradient(0deg,rgba(9,18,29,.5),transparent 62%);}
+.vbv-scope .academy-hero::after{content:"";position:absolute;right:-95px;top:-145px;width:420px;height:420px;border:1px solid rgba(224,183,88,.22);border-radius:50%;box-shadow:0 0 0 34px rgba(224,183,88,.035),0 0 0 72px rgba(224,183,88,.025);pointer-events:none;}
+.vbv-scope .academy-hero-content{position:relative;z-index:1;padding:clamp(26px,5vw,58px);max-width:780px;color:#fff;}
+.vbv-scope .academy-eyebrow{display:flex;align-items:center;gap:9px;color:#f0d897;font:700 10px/1.4 'Work Sans',sans-serif;letter-spacing:.22em;text-transform:uppercase;margin-bottom:17px;}
+.vbv-scope .academy-eyebrow span{width:22px;height:2px;background:#d7ad52;display:inline-block;}
+.vbv-scope .academy-eyebrow b{font-weight:600;color:rgba(255,255,255,.64);}
+.vbv-scope .academy-hero h2{font-size:clamp(36px,6vw,68px);line-height:.99;letter-spacing:-.035em;color:#fff;max-width:760px;text-shadow:0 3px 24px rgba(0,0,0,.25);}
+.vbv-scope .academy-hero h2 em{font-style:normal;color:#e7c36c;}
+.vbv-scope .academy-hero-content>p{max-width:590px;margin:20px 0 0;color:rgba(255,255,255,.82);font-size:15px;line-height:1.7;}
+.vbv-scope .academy-hero-actions{display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-top:27px;}
+ .vbv-scope .academy-hero-cta{appearance:none;border:0;cursor:pointer;display:inline-flex;align-items:center;gap:12px;padding:12px 19px;border-radius:4px;background:linear-gradient(135deg,#f1d58d,#c99b40);color:#1b2937;text-decoration:none;font:800 11px/1 'Work Sans',sans-serif;letter-spacing:.08em;text-transform:uppercase;box-shadow:0 7px 18px rgba(0,0,0,.2);transition:transform .2s,box-shadow .2s;}
+.vbv-scope .academy-hero-cta:hover{transform:translateY(-2px);box-shadow:0 10px 23px rgba(0,0,0,.28);}
+.vbv-scope .academy-hero-motto{font:600 9px/1.5 'Work Sans',sans-serif;letter-spacing:.17em;color:rgba(255,255,255,.6);}
+.vbv-scope .academy-hero-mark{position:absolute;right:20px;bottom:18px;color:rgba(255,255,255,.46);font:700 8px/1 'Work Sans',sans-serif;letter-spacing:.18em;}
+.vbv-scope .academy-hero-mark span{color:#e7c36c;}
+.vbv-scope .academy-section-heading{display:flex;align-items:end;justify-content:space-between;gap:24px;margin:0 0 19px;padding:0 2px;}
+.vbv-scope .academy-section-kicker{font:700 9px/1.4 'Work Sans',sans-serif;letter-spacing:.23em;color:var(--gold);text-transform:uppercase;}
+.vbv-scope .academy-section-heading h3{font-size:clamp(23px,3vw,32px);color:var(--navy);margin-top:6px;}
+.vbv-scope .academy-section-heading>p{max-width:420px;margin:0 0 2px;color:var(--navy-soft);font-size:13px;line-height:1.6;}
+.vbv-scope .academy-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;}
+.vbv-scope .academy-card{min-width:0;overflow:hidden;border:1px solid rgba(184,134,47,.25);border-radius:9px;background:linear-gradient(155deg,#fffefa 0%,#f6f0e1 100%);box-shadow:0 8px 22px rgba(28,43,58,.08);transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease;}
+.vbv-scope .academy-card:hover{transform:translateY(-4px);box-shadow:0 16px 32px rgba(28,43,58,.14);border-color:rgba(184,134,47,.55);}
+.vbv-scope .academy-card-photo{position:relative;aspect-ratio:16/8.3;overflow:hidden;background:linear-gradient(135deg,#1b2c3e,#40566b 54%,#b68a3a);}
+.vbv-scope .academy-card-photo::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(4,12,22,.08) 20%,rgba(4,12,22,.52) 100%);pointer-events:none;}
+.vbv-scope .academy-card-photo img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 42%;transition:transform .45s cubic-bezier(.2,.7,.2,1),filter .3s;filter:saturate(.88);}
+.vbv-scope .academy-card:hover .academy-card-photo img{transform:scale(1.045);filter:saturate(1.02);}
+.vbv-scope .academy-card-photo.is-missing::before{content:"SERVICE ACADEMY";position:absolute;inset:0;display:grid;place-items:center;color:rgba(255,255,255,.52);font:700 12px/1 'Work Sans',sans-serif;letter-spacing:.25em;}
+.vbv-scope .academy-card-index,.vbv-scope .academy-card-field{position:absolute;z-index:1;bottom:12px;font:700 9px/1 'Work Sans',sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#fff;}
+.vbv-scope .academy-card-index{left:14px;color:#f4d889;}
+.vbv-scope .academy-card-field{right:14px;padding:7px 9px;border:1px solid rgba(255,255,255,.36);border-radius:3px;background:rgba(12,23,35,.42);backdrop-filter:blur(8px);}
+.vbv-scope .academy-card-body{padding:19px 21px 15px;}
+.vbv-scope .academy-card-place{display:flex;align-items:center;gap:6px;color:var(--gold);font:700 9px/1.4 'Work Sans',sans-serif;letter-spacing:.13em;text-transform:uppercase;}
+.vbv-scope .academy-card-place span{font-size:14px;line-height:1;}
+.vbv-scope .academy-card-body h3{margin:7px 0 7px;color:var(--navy);font-size:clamp(19px,2.3vw,25px);line-height:1.15;}
+.vbv-scope .academy-card-body>p{min-height:43px;margin:0;color:var(--navy-soft);font-size:13px;line-height:1.62;}
+.vbv-scope .academy-card-credit{display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid rgba(184,134,47,.2);margin-top:15px;padding-top:11px;color:#718090;font:500 9px/1.45 'Work Sans',sans-serif;}
+.vbv-scope .academy-card-credit a{flex:0 0 auto;color:#92671e;font-weight:700;text-decoration:none;white-space:nowrap;}
+.vbv-scope .academy-card-credit a:hover{text-decoration:underline;text-underline-offset:3px;}
+.vbv-scope .academy-fieldnote{display:grid;grid-template-columns:115px minmax(0,1fr) auto;align-items:center;gap:21px;margin-top:28px;padding:23px 25px;border:1px solid rgba(184,134,47,.28);border-left:4px solid var(--gold);border-radius:7px;background:linear-gradient(110deg,#1d2d40 0%,#172536 70%,#24374b 100%);color:#fff;box-shadow:0 10px 24px rgba(28,43,58,.13);}
+.vbv-scope .academy-fieldnote-index{color:#e3bd63;font:700 9px/1.6 'Work Sans',sans-serif;letter-spacing:.17em;}
+.vbv-scope .academy-fieldnote-index b{display:block;font:800 27px/1 'Fraunces',Georgia,serif;letter-spacing:0;color:#fff;margin-top:4px;}
+.vbv-scope .academy-fieldnote-copy h3{font-size:clamp(18px,2.6vw,25px);color:#fff;line-height:1.2;}
+.vbv-scope .academy-fieldnote-copy p{max-width:720px;margin:8px 0 0;color:rgba(255,255,255,.71);font-size:12px;line-height:1.65;}
+.vbv-scope .academy-fieldnote>a{display:inline-flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid rgba(231,195,108,.5);border-radius:4px;color:#f1d58d;text-decoration:none;font:700 9px/1.3 'Work Sans',sans-serif;letter-spacing:.07em;text-transform:uppercase;white-space:nowrap;}
+.vbv-scope .academy-fieldnote>a:hover{background:rgba(231,195,108,.12);}
+@media(max-width:760px){
+  .vbv-scope .academy-section-heading{align-items:flex-start;flex-direction:column;gap:7px;}
+  .vbv-scope .academy-grid{grid-template-columns:1fr;gap:15px;}
+  .vbv-scope .academy-hero{min-height:360px;}
+  .vbv-scope .academy-fieldnote{grid-template-columns:74px minmax(0,1fr);gap:12px;padding:19px;}
+  .vbv-scope .academy-fieldnote>a{grid-column:2;justify-self:start;}
+}
+@media(max-width:480px){
+  .vbv-scope .academy-hero{min-height:400px;border-radius:8px;}
+  .vbv-scope .academy-hero-content{padding:25px 21px 35px;}
+  .vbv-scope .academy-hero-motto{max-width:155px;}
+  .vbv-scope .academy-card-body{padding:16px 16px 13px;}
+  .vbv-scope .academy-card-body>p{min-height:0;}
+  .vbv-scope .academy-card-credit{align-items:flex-start;flex-direction:column;gap:4px;}
+}

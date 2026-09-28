@@ -462,8 +462,6 @@ const routes = {
   achievements: renderAchievements,
   vocabtest: renderQuizSetup,
   library: renderLibrary,
-  levels: vbvRenderLevels,
-  spoken: renderSpoken,
 };
 
 function currentRoute(){
@@ -560,9 +558,7 @@ function renderHomeCommandCenter(){
     ['▤','Full library','All books in one searchable place','#/library'],
     ['▦','Reading board','Move books through each stage','#/board'],
     ['✎','Vocab register','Save and revisit discovered words','#/vocab'],
-    ['◎','Vocab test','Practise with your own entries','#/vocabtest'],
-    ['⌁','English levels','Learn from Basic to Advanced','#/levels'],
-    ['◖','Spoken English','Listen and practise aloud','#/spoken']
+    ['◎','Vocab test','Practise with your own entries','#/vocabtest']
   ].map(function(x){return '<a class="vbv-home-tool" href="'+x[3]+'"><span aria-hidden="true">'+x[0]+'</span><b>'+x[1]+'</b><small>'+x[2]+'</small><em>Open →</em></a>';}).join('')+'</div>';
   out+='<div class="vbv-home-lower"><section class="vbv-command-card"><div class="vbv-home-section-kicker">WORD OF THE DAY</div>';
   const wod=wordOfTheDay();
@@ -1667,39 +1663,92 @@ async function confirmDeleteVocab(vocabId){
 
 /* ================= ACADEMY / GALLERY PAGE ================= */
 function renderAcademy(){
+  const academies = [
+    {
+      index:'01', code:'NDA', field:'JOINT SERVICES', place:'Khadakwasla · Pune, Maharashtra',
+      name:'National Defence Academy',
+      copy:'A joint-services training institution where cadets build a shared foundation before moving toward their respective services.',
+      img:'https://static.pib.gov.in/WriteReadData/userfiles/image/IMG-20211029-WA0011NAK1.jpg',
+      alt:'Cadets in formation at the National Defence Academy passing-out parade in Khadakwasla.',
+      credit:'Press Information Bureau · Government of India',
+      source:'https://pib.gov.in/Pressreleaseshare.aspx?PRID=1767512'
+    },
+    {
+      index:'02', code:'IMA', field:'ARMY · LAND', place:'Dehradun · Uttarakhand',
+      name:'Indian Military Academy',
+      copy:'An Army officer-training institution where discipline, character and leadership are developed for service on land.',
+      img:'https://upload.wikimedia.org/wikipedia/commons/0/0b/Admiral_RK_Dhowan_reviewing_the_Passing_Out_Parade_at_the_Indian_Military_Academy%2C_Dehradun_01.JPG',
+      alt:'Passing-out parade at the Indian Military Academy, Dehradun, with cadets in formation.',
+      credit:'Indian Navy · Wikimedia Commons · GODL-India',
+      source:'https://commons.wikimedia.org/wiki/File:Admiral_RK_Dhowan_reviewing_the_Passing_Out_Parade_at_the_Indian_Military_Academy,_Dehradun_01.JPG'
+    },
+    {
+      index:'03', code:'AFA', field:'AIR FORCE · SKY', place:'Dundigal · Hyderabad, Telangana',
+      name:'Air Force Academy',
+      copy:'Air Force officer training at Dundigal, including pathways for flying and ground-duty branches.',
+      img:'https://upload.wikimedia.org/wikipedia/commons/5/54/Union_Minister_for_Defence_Rajnath_Singh_witnessing_the_Combined_Graduation_Parade_of_Autumn_term%2C_at_Air_Force_Academy%2C_Hyderabad_2020.jpg',
+      alt:'Combined Graduation Parade at the Air Force Academy with an aircraft flypast.',
+      credit:'Government of India · Wikimedia Commons · GODL-India',
+      source:'https://commons.wikimedia.org/wiki/File:Union_Minister_for_Defence_Rajnath_Singh_witnessing_the_Combined_Graduation_Parade_of_Autumn_term,_at_Air_Force_Academy,_Hyderabad_2020.jpg'
+    },
+    {
+      index:'04', code:'INA', field:'NAVY · SEA', place:'Ezhimala · Kerala',
+      name:'Indian Naval Academy',
+      copy:'A naval training institution set beside the Arabian Sea, preparing officer cadets for the responsibilities of maritime service.',
+      img:'https://upload.wikimedia.org/wikipedia/commons/4/48/Admiral_RK_Dhowan_reviewing_the_ceremonial_guard_during_Passing-out_parade_held_at_Indian_Naval_Academy_%28INA%29%2C_Ezhimala.jpg',
+      alt:'Ceremonial guard in white naval uniforms during a passing-out parade at the Indian Naval Academy, Ezhimala.',
+      credit:'Indian Navy · Wikimedia Commons · GODL-India',
+      source:'https://commons.wikimedia.org/wiki/File:Admiral_RK_Dhowan_reviewing_the_ceremonial_guard_during_Passing-out_parade_held_at_Indian_Naval_Academy_(INA),_Ezhimala.jpg'
+    }
+  ];
+  const cards = academies.map(a=>`
+    <article class="academy-card">
+      <div class="academy-card-photo is-missing" aria-label="${escapeHtml(a.alt)}">
+        <img src="${a.img}" alt="${escapeHtml(a.alt)}" loading="eager" decoding="async" onload="this.parentElement.classList.remove('is-missing')" onerror="this.remove();this.parentElement.classList.add('is-missing')">
+        <span class="academy-card-index">${a.index}</span>
+        <span class="academy-card-field">${a.field}</span>
+      </div>
+      <div class="academy-card-body">
+        <div class="academy-card-place"><span aria-hidden="true">⌖</span> ${a.place}</div>
+        <h3>${a.name}</h3>
+        <p>${a.copy}</p>
+        <div class="academy-card-credit"><span>${a.credit}</span><a href="${a.source}" target="_blank" rel="noopener noreferrer" aria-label="Open photo source for ${a.code}">Photo source ↗</a></div>
+      </div>
+    </article>`).join('');
   return `
-  <div class="page">
-    <div class="page-head">
-      <div class="page-eyebrow">The Spirit Behind the Discipline</div>
-      <h2>Indian Military Academy, Dehradun</h2>
-      <p>Motto: <em>Veer Bhogya Vasundhara</em> — "The brave shall inherit the earth." A reminder for every page turned and every word learnt on the way there.</p>
-    </div>
+  <div class="page academy-page">
+    <section class="academy-hero" aria-labelledby="academyHeroTitle">
+      <img class="academy-hero-image" src="${academies[2].img}" alt="" aria-hidden="true" onerror="this.style.display='none'">
+      <div class="academy-hero-overlay"></div>
+      <div class="academy-hero-content">
+        <div class="academy-eyebrow"><span></span> THE SERVICE ACADEMY COLLECTION <b>· 01—04</b></div>
+        <h2 id="academyHeroTitle">Four academies.<br><em>One calling.</em></h2>
+        <p>Different horizons. A shared commitment to discipline, courage and service. Step inside the institutions behind the journey.</p>
+        <div class="academy-hero-actions">
+          <button type="button" class="academy-hero-cta" onclick="document.getElementById(&quot;academyGallery&quot;)?.scrollIntoView({behavior:&quot;smooth&quot;,block:&quot;start&quot;})">Explore the academies <span aria-hidden="true">↓</span></button>
+          <span class="academy-hero-motto">LEARN WITH PURPOSE · SERVE WITH HONOUR</span>
+        </div>
+      </div>
+      <div class="academy-hero-mark" aria-hidden="true">VAANI <span>·</span> SERVICE DOSSIER</div>
+    </section>
 
-    <div class="about-grid">
-      <div class="tilt-wrap"><img class="tilt-img" id="tilt-1" src="${IMG.chetwode_day}" alt="Chetwode Hall under monsoon skies"></div>
-      <div>
-        <h3 style="margin-bottom:10px;">Chetwode Hall</h3>
-        <p style="color:var(--navy-soft); line-height:1.7; font-size:14.5px;">The administrative heart of the Academy, its facade lined with the words every cadet is made to live by: the safety, honour and welfare of your country come first, always and every time. This site borrows that same standard for a far smaller battlefield — your reading list.</p>
-      </div>
+    <div class="academy-section-heading" id="academyGallery">
+      <div><span class="academy-section-kicker">THE FOUR FRONTIERS</span><h3>Where the journey takes shape</h3></div>
+      <p>Explore the joint, land, air and sea traditions—each with its own setting and service focus.</p>
     </div>
+    <div class="academy-grid">${cards}</div>
 
-    <div class="section-title-row"><h3>What discipline builds</h3></div>
-    <div class="milestone-grid">
-      <div class="milestone-tile" style="background-image:url('${IMG.parade_ncc}')">
-        <h4>Before sunrise</h4><p>The day begins long before comfort would prefer — a habit this register asks you to bring to your reading too.</p>
+    <section class="academy-fieldnote">
+      <div class="academy-fieldnote-index">FIELD NOTE <b>04</b></div>
+      <div class="academy-fieldnote-copy">
+        <h3>The uniform is earned long before it is worn.</h3>
+        <p>Preparation is built in ordinary moments: the page you finish, the promise you keep and the effort you repeat. Entry routes and training stages vary by service and branch; use current official notifications for decisions about eligibility.</p>
       </div>
-      <div class="milestone-tile" style="background-image:url('${IMG.mud}')">
-        <h4>On the ground</h4><p>Training tests the body to reveal the will. Track your ongoing books the same way: log every session, however small.</p>
-      </div>
-      <div class="milestone-tile" style="background-image:url('${IMG.heli_parade}')">
-        <h4>In the classroom</h4><p>Vocabulary and comprehension are quietly graded skills for every service interview. Your Vocab Register is built for that exact test.</p>
-      </div>
-      <div class="milestone-tile" style="background-image:url('${IMG.officers_march}')">
-        <h4>On parade</h4><p>What's rehearsed daily eventually looks effortless. That's the whole idea behind Completed Books — proof of days that added up.</p>
-      </div>
-    </div>
+      <a href="https://upsc.gov.in/" target="_blank" rel="noopener noreferrer">Official notifications <span aria-hidden="true">↗</span></a>
+    </section>
   </div>`;
 }
+
 
 /* ================= EFFICIENCY: rAF-throttled handlers ================= */
 function rafThrottle(fn){
