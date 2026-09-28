@@ -613,7 +613,7 @@ var PYQ_CDS_2021_II = [
     "s": "II",
     "n": 29,
     "sec": "Spotting Errors",
-    "q": "Where are you coming from?",
+    "q": "Where are you coming from? Are you an American?",
     "parts": ["Where are you coming from?","Are you","an American?"],
     "o": [
       "Error in part (a)",
