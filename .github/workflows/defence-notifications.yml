@@ -31,11 +31,14 @@ jobs:
         run: node scripts/update-defence-notifications.mjs
 
       - name: Sync live feed to Cloudflare D1
-        if: ${{ secrets.VAANI_NOTIFICATIONS_API != '' && secrets.VAANI_NOTIFICATIONS_SYNC_SECRET != '' }}
         env:
           VAANI_NOTIFICATIONS_API: ${{ secrets.VAANI_NOTIFICATIONS_API }}
           VAANI_NOTIFICATIONS_SYNC_SECRET: ${{ secrets.VAANI_NOTIFICATIONS_SYNC_SECRET }}
         run: |
+          if [ -z "$VAANI_NOTIFICATIONS_API" ] || [ -z "$VAANI_NOTIFICATIONS_SYNC_SECRET" ]; then
+            echo "::error::Missing VAANI_NOTIFICATIONS_API or VAANI_NOTIFICATIONS_SYNC_SECRET repository secret."
+            exit 1
+          fi
           node <<'NODE'
           const fs = require('node:fs');
           const feed = JSON.parse(fs.readFileSync('data/defence-notifications.json','utf8'));
