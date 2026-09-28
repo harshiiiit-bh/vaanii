@@ -1069,7 +1069,8 @@ var PYQ_CDS_2023_I = [
       "Synonyms",
       "Synonyms Vocabulary"
     ],
-    "topic": "Synonyms Vocabulary"
+    "topic": "Synonyms Vocabulary",
+    "keyword": "anxious"
   },
   {
     "y": 2023,
@@ -1090,7 +1091,8 @@ var PYQ_CDS_2023_I = [
       "Synonyms",
       "Synonyms Vocabulary"
     ],
-    "topic": "Synonyms Vocabulary"
+    "topic": "Synonyms Vocabulary",
+    "keyword": "circumscribed"
   },
   {
     "y": 2023,
@@ -1111,7 +1113,8 @@ var PYQ_CDS_2023_I = [
       "Synonyms",
       "Synonyms Vocabulary"
     ],
-    "topic": "Synonyms Vocabulary"
+    "topic": "Synonyms Vocabulary",
+    "keyword": "eavesdropping"
   },
   {
     "y": 2023,
@@ -1132,7 +1135,8 @@ var PYQ_CDS_2023_I = [
       "Synonyms",
       "Synonyms Vocabulary"
     ],
-    "topic": "Synonyms Vocabulary"
+    "topic": "Synonyms Vocabulary",
+    "keyword": "exhorted"
   },
   {
     "y": 2023,
@@ -1153,7 +1157,8 @@ var PYQ_CDS_2023_I = [
       "Synonyms",
       "Synonyms Vocabulary"
     ],
-    "topic": "Synonyms Vocabulary"
+    "topic": "Synonyms Vocabulary",
+    "keyword": "hospitable"
   },
   {
     "y": 2023,
@@ -1174,7 +1179,8 @@ var PYQ_CDS_2023_I = [
       "Synonyms",
       "Synonyms Vocabulary"
     ],
-    "topic": "Synonyms Vocabulary"
+    "topic": "Synonyms Vocabulary",
+    "keyword": "incongruous"
   },
   {
     "y": 2023,
@@ -1195,7 +1201,8 @@ var PYQ_CDS_2023_I = [
       "Synonyms",
       "Synonyms Vocabulary"
     ],
-    "topic": "Synonyms Vocabulary"
+    "topic": "Synonyms Vocabulary",
+    "keyword": "mercurial"
   },
   {
     "y": 2023,
@@ -1216,7 +1223,8 @@ var PYQ_CDS_2023_I = [
       "Synonyms",
       "Synonyms Vocabulary"
     ],
-    "topic": "Synonyms Vocabulary"
+    "topic": "Synonyms Vocabulary",
+    "keyword": "obligatory"
   },
   {
     "y": 2023,
@@ -1237,7 +1245,8 @@ var PYQ_CDS_2023_I = [
       "Synonyms",
       "Synonyms Vocabulary"
     ],
-    "topic": "Synonyms Vocabulary"
+    "topic": "Synonyms Vocabulary",
+    "keyword": "predisposition"
   },
   {
     "y": 2023,
@@ -1258,7 +1267,8 @@ var PYQ_CDS_2023_I = [
       "Synonyms",
       "Synonyms Vocabulary"
     ],
-    "topic": "Synonyms Vocabulary"
+    "topic": "Synonyms Vocabulary",
+    "keyword": "sardonic"
   },
   {
     "y": 2023,
@@ -1489,7 +1499,8 @@ var PYQ_CDS_2023_I = [
       "Antonyms",
       "Antonym Vocabulary"
     ],
-    "topic": "Antonym Vocabulary"
+    "topic": "Antonym Vocabulary",
+    "keyword": "brevity"
   },
   {
     "y": 2023,
@@ -1510,7 +1521,8 @@ var PYQ_CDS_2023_I = [
       "Antonyms",
       "Antonym Vocabulary"
     ],
-    "topic": "Antonym Vocabulary"
+    "topic": "Antonym Vocabulary",
+    "keyword": "Blend"
   },
   {
     "y": 2023,
@@ -1531,7 +1543,8 @@ var PYQ_CDS_2023_I = [
       "Antonyms",
       "Antonym Vocabulary"
     ],
-    "topic": "Antonym Vocabulary"
+    "topic": "Antonym Vocabulary",
+    "keyword": "considerable"
   },
   {
     "y": 2023,
@@ -1552,7 +1565,8 @@ var PYQ_CDS_2023_I = [
       "Antonyms",
       "Antonym Vocabulary"
     ],
-    "topic": "Antonym Vocabulary"
+    "topic": "Antonym Vocabulary",
+    "keyword": "disdainful"
   },
   {
     "y": 2023,
@@ -1573,7 +1587,8 @@ var PYQ_CDS_2023_I = [
       "Antonyms",
       "Antonym Vocabulary"
     ],
-    "topic": "Antonym Vocabulary"
+    "topic": "Antonym Vocabulary",
+    "keyword": "frugal"
   },
   {
     "y": 2023,
@@ -1594,7 +1609,8 @@ var PYQ_CDS_2023_I = [
       "Antonyms",
       "Antonym Vocabulary"
     ],
-    "topic": "Antonym Vocabulary"
+    "topic": "Antonym Vocabulary",
+    "keyword": "itinerant"
   },
   {
     "y": 2023,
@@ -1615,7 +1631,8 @@ var PYQ_CDS_2023_I = [
       "Antonyms",
       "Antonym Vocabulary"
     ],
-    "topic": "Antonym Vocabulary"
+    "topic": "Antonym Vocabulary",
+    "keyword": "malicious"
   },
   {
     "y": 2023,
@@ -1636,7 +1653,8 @@ var PYQ_CDS_2023_I = [
       "Antonyms",
       "Antonym Vocabulary"
     ],
-    "topic": "Antonym Vocabulary"
+    "topic": "Antonym Vocabulary",
+    "keyword": "perpetuate"
   },
   {
     "y": 2023,
@@ -1657,7 +1675,8 @@ var PYQ_CDS_2023_I = [
       "Antonyms",
       "Antonym Vocabulary"
     ],
-    "topic": "Antonym Vocabulary"
+    "topic": "Antonym Vocabulary",
+    "keyword": "redoubtable"
   },
   {
     "y": 2023,
@@ -1678,7 +1697,8 @@ var PYQ_CDS_2023_I = [
       "Antonyms",
       "Antonym Vocabulary"
     ],
-    "topic": "Antonym Vocabulary"
+    "topic": "Antonym Vocabulary",
+    "keyword": "fusion"
   },
   {
     "y": 2023,
@@ -1976,8 +1996,7 @@ var PYQ_CDS_2023_I = [
   },
   {
     "y": 2023,
-    "s": "I",
-    "n": 95,
+    "s": "I",    "n": 95,
     "sec": "Prepositions",
     "q": "He is indebted his friend.",
     "o": [
@@ -1996,7 +2015,8 @@ var PYQ_CDS_2023_I = [
     "topic": "Preposition and determiners Fill in the blank"
   },
   {
-    "y": 2023,    "s": "I",
+    "y": 2023,
+    "s": "I",
     "n": 96,
     "sec": "Prepositions",
     "q": "Can I be held responsible my spouse’s debts?",

@@ -1069,7 +1069,8 @@ var PYQ_CDS_2023_II = [
       "Synonyms",
       "Synonyms Vocabulary"
     ],
-    "topic": "Synonyms Vocabulary"
+    "topic": "Synonyms Vocabulary",
+    "keyword": "utopian"
   },
   {
     "y": 2023,
@@ -1090,7 +1091,8 @@ var PYQ_CDS_2023_II = [
       "Synonyms",
       "Synonyms Vocabulary"
     ],
-    "topic": "Synonyms Vocabulary"
+    "topic": "Synonyms Vocabulary",
+    "keyword": "nugatory"
   },
   {
     "y": 2023,
@@ -1111,7 +1113,8 @@ var PYQ_CDS_2023_II = [
       "Synonyms",
       "Synonyms Vocabulary"
     ],
-    "topic": "Synonyms Vocabulary"
+    "topic": "Synonyms Vocabulary",
+    "keyword": "convulsed"
   },
   {
     "y": 2023,
@@ -1132,7 +1135,8 @@ var PYQ_CDS_2023_II = [
       "Synonyms",
       "Synonyms Vocabulary"
     ],
-    "topic": "Synonyms Vocabulary"
+    "topic": "Synonyms Vocabulary",
+    "keyword": "complacent"
   },
   {
     "y": 2023,
@@ -1153,7 +1157,8 @@ var PYQ_CDS_2023_II = [
       "Synonyms",
       "Synonyms Vocabulary"
     ],
-    "topic": "Synonyms Vocabulary"
+    "topic": "Synonyms Vocabulary",
+    "keyword": "derisory"
   },
   {
     "y": 2023,
@@ -1174,7 +1179,8 @@ var PYQ_CDS_2023_II = [
       "Synonyms",
       "Synonyms Vocabulary"
     ],
-    "topic": "Synonyms Vocabulary"
+    "topic": "Synonyms Vocabulary",
+    "keyword": "defused"
   },
   {
     "y": 2023,
@@ -1195,7 +1201,8 @@ var PYQ_CDS_2023_II = [
       "Synonyms",
       "Synonyms Vocabulary"
     ],
-    "topic": "Synonyms Vocabulary"
+    "topic": "Synonyms Vocabulary",
+    "keyword": "floundered"
   },
   {
     "y": 2023,
@@ -1216,7 +1223,8 @@ var PYQ_CDS_2023_II = [
       "Synonyms",
       "Synonyms Vocabulary"
     ],
-    "topic": "Synonyms Vocabulary"
+    "topic": "Synonyms Vocabulary",
+    "keyword": "brevity"
   },
   {
     "y": 2023,
@@ -1237,7 +1245,8 @@ var PYQ_CDS_2023_II = [
       "Synonyms",
       "Synonyms Vocabulary"
     ],
-    "topic": "Synonyms Vocabulary"
+    "topic": "Synonyms Vocabulary",
+    "keyword": "obtuse"
   },
   {
     "y": 2023,
@@ -1258,7 +1267,8 @@ var PYQ_CDS_2023_II = [
       "Synonyms",
       "Synonyms Vocabulary"
     ],
-    "topic": "Synonyms Vocabulary"
+    "topic": "Synonyms Vocabulary",
+    "keyword": "transpired"
   },
   {
     "y": 2023,
@@ -1489,7 +1499,8 @@ var PYQ_CDS_2023_II = [
       "Antonyms",
       "Antonyms Vocabulary"
     ],
-    "topic": "Antonyms Vocabulary"
+    "topic": "Antonyms Vocabulary",
+    "keyword": "invincible"
   },
   {
     "y": 2023,
@@ -1510,7 +1521,8 @@ var PYQ_CDS_2023_II = [
       "Antonyms",
       "Antonyms Vocabulary"
     ],
-    "topic": "Antonyms Vocabulary"
+    "topic": "Antonyms Vocabulary",
+    "keyword": "condensation"
   },
   {
     "y": 2023,
@@ -1531,7 +1543,8 @@ var PYQ_CDS_2023_II = [
       "Antonyms",
       "Antonyms Vocabulary"
     ],
-    "topic": "Antonyms Vocabulary"
+    "topic": "Antonyms Vocabulary",
+    "keyword": "ushered"
   },
   {
     "y": 2023,
@@ -1552,7 +1565,8 @@ var PYQ_CDS_2023_II = [
       "Antonyms",
       "Antonyms Vocabulary"
     ],
-    "topic": "Antonyms Vocabulary"
+    "topic": "Antonyms Vocabulary",
+    "keyword": "obfuscated"
   },
   {
     "y": 2023,
@@ -1573,7 +1587,8 @@ var PYQ_CDS_2023_II = [
       "Antonyms",
       "Antonyms Vocabulary"
     ],
-    "topic": "Antonyms Vocabulary"
+    "topic": "Antonyms Vocabulary",
+    "keyword": "abomination"
   },
   {
     "y": 2023,
@@ -1594,7 +1609,8 @@ var PYQ_CDS_2023_II = [
       "Antonyms",
       "Antonyms Vocabulary"
     ],
-    "topic": "Antonyms Vocabulary"
+    "topic": "Antonyms Vocabulary",
+    "keyword": "infraction"
   },
   {
     "y": 2023,
@@ -1615,7 +1631,8 @@ var PYQ_CDS_2023_II = [
       "Antonyms",
       "Antonyms Vocabulary"
     ],
-    "topic": "Antonyms Vocabulary"
+    "topic": "Antonyms Vocabulary",
+    "keyword": "denounce"
   },
   {
     "y": 2023,
@@ -1636,7 +1653,8 @@ var PYQ_CDS_2023_II = [
       "Antonyms",
       "Antonyms Vocabulary"
     ],
-    "topic": "Antonyms Vocabulary"
+    "topic": "Antonyms Vocabulary",
+    "keyword": "centralised"
   },
   {
     "y": 2023,
@@ -1657,7 +1675,8 @@ var PYQ_CDS_2023_II = [
       "Antonyms",
       "Antonyms Vocabulary"
     ],
-    "topic": "Antonyms Vocabulary"
+    "topic": "Antonyms Vocabulary",
+    "keyword": "instability"
   },
   {
     "y": 2023,
@@ -1678,7 +1697,8 @@ var PYQ_CDS_2023_II = [
       "Antonyms",
       "Antonyms Vocabulary"
     ],
-    "topic": "Antonyms Vocabulary"
+    "topic": "Antonyms Vocabulary",
+    "keyword": "assertion"
   },
   {
     "y": 2023,
@@ -1976,8 +1996,7 @@ var PYQ_CDS_2023_II = [
   },
   {
     "y": 2023,
-    "s": "II",
-    "n": 95,
+    "s": "II",    "n": 95,
     "sec": "Prepositions",
     "q": "He raised several questions _________ the future of the organisation.",
     "o": [
@@ -1996,7 +2015,8 @@ var PYQ_CDS_2023_II = [
     "topic": "Prepositions Grammar"
   },
   {
-    "y": 2023,    "s": "II",
+    "y": 2023,
+    "s": "II",
     "n": 96,
     "sec": "Prepositions",
     "q": "He is the gentleman whose name is written _________ the board.",

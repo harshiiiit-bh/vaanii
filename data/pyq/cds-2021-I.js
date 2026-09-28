@@ -1289,7 +1289,8 @@ var PYQ_CDS_2021_I = [
       "Antonyms",
       "Antonyms Vocabulary"
     ],
-    "topic": "Antonyms Vocabulary"
+    "topic": "Antonyms Vocabulary",
+    "keyword": "bombastic"
   },
   {
     "y": 2021,
@@ -1310,7 +1311,8 @@ var PYQ_CDS_2021_I = [
       "Antonyms",
       "Antonyms Vocabulary"
     ],
-    "topic": "Antonyms Vocabulary"
+    "topic": "Antonyms Vocabulary",
+    "keyword": "absurd"
   },
   {
     "y": 2021,
@@ -1331,7 +1333,8 @@ var PYQ_CDS_2021_I = [
       "Antonyms",
       "Antonyms Vocabulary"
     ],
-    "topic": "Antonyms Vocabulary"
+    "topic": "Antonyms Vocabulary",
+    "keyword": "deceased"
   },
   {
     "y": 2021,
@@ -1352,7 +1355,8 @@ var PYQ_CDS_2021_I = [
       "Antonyms",
       "Antonyms Vocabulary"
     ],
-    "topic": "Antonyms Vocabulary"
+    "topic": "Antonyms Vocabulary",
+    "keyword": "solace"
   },
   {
     "y": 2021,
@@ -1373,7 +1377,8 @@ var PYQ_CDS_2021_I = [
       "Antonyms",
       "Antonyms Vocabulary"
     ],
-    "topic": "Antonyms Vocabulary"
+    "topic": "Antonyms Vocabulary",
+    "keyword": "contrary"
   },
   {
     "y": 2021,
@@ -1394,7 +1399,8 @@ var PYQ_CDS_2021_I = [
       "Antonyms",
       "Antonyms Vocabulary"
     ],
-    "topic": "Antonyms Vocabulary"
+    "topic": "Antonyms Vocabulary",
+    "keyword": "spontaneous"
   },
   {
     "y": 2021,
@@ -1415,7 +1421,8 @@ var PYQ_CDS_2021_I = [
       "Antonyms",
       "Antonyms Vocabulary"
     ],
-    "topic": "Antonyms Vocabulary"
+    "topic": "Antonyms Vocabulary",
+    "keyword": "asserting"
   },
   {
     "y": 2021,
@@ -1436,7 +1443,8 @@ var PYQ_CDS_2021_I = [
       "Antonyms",
       "Antonyms Vocabulary"
     ],
-    "topic": "Antonyms Vocabulary"
+    "topic": "Antonyms Vocabulary",
+    "keyword": "exonerated"
   },
   {
     "y": 2021,
@@ -1457,7 +1465,8 @@ var PYQ_CDS_2021_I = [
       "Antonyms",
       "Antonyms Vocabulary"
     ],
-    "topic": "Antonyms Vocabulary"
+    "topic": "Antonyms Vocabulary",
+    "keyword": "Persuasion"
   },
   {
     "y": 2021,
@@ -1478,7 +1487,8 @@ var PYQ_CDS_2021_I = [
       "Antonyms",
       "Antonyms Vocabulary"
     ],
-    "topic": "Antonyms Vocabulary"
+    "topic": "Antonyms Vocabulary",
+    "keyword": "distinctive"
   },
   {
     "y": 2021,
@@ -1709,7 +1719,8 @@ var PYQ_CDS_2021_I = [
       "Synonyms",
       "Synonyms Vocabulary"
     ],
-    "topic": "Synonyms Vocabulary"
+    "topic": "Synonyms Vocabulary",
+    "keyword": "commotion"
   },
   {
     "y": 2021,
@@ -1730,7 +1741,8 @@ var PYQ_CDS_2021_I = [
       "Synonyms",
       "Synonyms Vocabulary"
     ],
-    "topic": "Synonyms Vocabulary"
+    "topic": "Synonyms Vocabulary",
+    "keyword": "inherent"
   },
   {
     "y": 2021,
@@ -1751,7 +1763,8 @@ var PYQ_CDS_2021_I = [
       "Synonyms",
       "Synonyms Vocabulary"
     ],
-    "topic": "Synonyms Vocabulary"
+    "topic": "Synonyms Vocabulary",
+    "keyword": "reprimanded"
   },
   {
     "y": 2021,
@@ -1772,7 +1785,8 @@ var PYQ_CDS_2021_I = [
       "Synonyms",
       "Synonyms Vocabulary"
     ],
-    "topic": "Synonyms Vocabulary"
+    "topic": "Synonyms Vocabulary",
+    "keyword": "perpetual"
   },
   {
     "y": 2021,
@@ -1793,7 +1807,8 @@ var PYQ_CDS_2021_I = [
       "Synonyms",
       "Synonyms Vocabulary"
     ],
-    "topic": "Synonyms Vocabulary"
+    "topic": "Synonyms Vocabulary",
+    "keyword": "exemplify"
   },
   {
     "y": 2021,
@@ -1814,7 +1829,8 @@ var PYQ_CDS_2021_I = [
       "Synonyms",
       "Synonyms Vocabulary"
     ],
-    "topic": "Synonyms Vocabulary"
+    "topic": "Synonyms Vocabulary",
+    "keyword": "crux"
   },
   {
     "y": 2021,
@@ -1835,7 +1851,8 @@ var PYQ_CDS_2021_I = [
       "Synonyms",
       "Synonyms Vocabulary"
     ],
-    "topic": "Synonyms Vocabulary"
+    "topic": "Synonyms Vocabulary",
+    "keyword": "competency"
   },
   {
     "y": 2021,
@@ -1856,7 +1873,8 @@ var PYQ_CDS_2021_I = [
       "Synonyms",
       "Synonyms Vocabulary"
     ],
-    "topic": "Synonyms Vocabulary"
+    "topic": "Synonyms Vocabulary",
+    "keyword": "haughty"
   },
   {
     "y": 2021,
@@ -1877,7 +1895,8 @@ var PYQ_CDS_2021_I = [
       "Synonyms",
       "Synonyms Vocabulary"
     ],
-    "topic": "Synonyms Vocabulary"
+    "topic": "Synonyms Vocabulary",
+    "keyword": "industrious"
   },
   {
     "y": 2021,
@@ -1898,7 +1917,8 @@ var PYQ_CDS_2021_I = [
       "Synonyms",
       "Synonyms Vocabulary"
     ],
-    "topic": "Synonyms Vocabulary"
+    "topic": "Synonyms Vocabulary",
+    "keyword": "indignant"
   },
   {
     "y": 2021,
@@ -1976,8 +1996,7 @@ var PYQ_CDS_2021_I = [
     "ans": 0,
     "tags": [
       "CDS",
-      "English",
-      "Pronouns Grammar"
+      "English",      "Pronouns Grammar"
     ],
     "topic": "Pronouns Grammar"
   },
@@ -1996,7 +2015,8 @@ var PYQ_CDS_2021_I = [
     "ans": 1,
     "tags": [
       "CDS",
-      "English",      "Conjunctions Grammar"
+      "English",
+      "Conjunctions Grammar"
     ],
     "topic": "Conjunctions Grammar"
   },

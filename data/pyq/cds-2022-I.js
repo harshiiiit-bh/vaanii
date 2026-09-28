@@ -1069,7 +1069,8 @@ var PYQ_CDS_2022_I = [
       "Synonyms",
       "Synonyms Synonyms"
     ],
-    "topic": "Synonyms Synonyms"
+    "topic": "Synonyms Synonyms",
+    "keyword": "conversational"
   },
   {
     "y": 2022,
@@ -1090,7 +1091,8 @@ var PYQ_CDS_2022_I = [
       "Synonyms",
       "Synonyms Synonyms"
     ],
-    "topic": "Synonyms Synonyms"
+    "topic": "Synonyms Synonyms",
+    "keyword": "malicious"
   },
   {
     "y": 2022,
@@ -1111,7 +1113,8 @@ var PYQ_CDS_2022_I = [
       "Synonyms",
       "Synonyms Synonyms"
     ],
-    "topic": "Synonyms Synonyms"
+    "topic": "Synonyms Synonyms",
+    "keyword": "designation"
   },
   {
     "y": 2022,
@@ -1132,7 +1135,8 @@ var PYQ_CDS_2022_I = [
       "Synonyms",
       "Synonyms Synonyms"
     ],
-    "topic": "Synonyms Synonyms"
+    "topic": "Synonyms Synonyms",
+    "keyword": "endearment"
   },
   {
     "y": 2022,
@@ -1153,7 +1157,8 @@ var PYQ_CDS_2022_I = [
       "Synonyms",
       "Synonyms Synonyms"
     ],
-    "topic": "Synonyms Synonyms"
+    "topic": "Synonyms Synonyms",
+    "keyword": "forbearance"
   },
   {
     "y": 2022,
@@ -1174,7 +1179,8 @@ var PYQ_CDS_2022_I = [
       "Synonyms",
       "Synonyms Synonyms"
     ],
-    "topic": "Synonyms Synonyms"
+    "topic": "Synonyms Synonyms",
+    "keyword": "gibbous"
   },
   {
     "y": 2022,
@@ -1195,7 +1201,8 @@ var PYQ_CDS_2022_I = [
       "Synonyms",
       "Synonyms Synonyms"
     ],
-    "topic": "Synonyms Synonyms"
+    "topic": "Synonyms Synonyms",
+    "keyword": "tormented"
   },
   {
     "y": 2022,
@@ -1216,7 +1223,8 @@ var PYQ_CDS_2022_I = [
       "Synonyms",
       "Synonyms Synonyms"
     ],
-    "topic": "Synonyms Synonyms"
+    "topic": "Synonyms Synonyms",
+    "keyword": "peerless"
   },
   {
     "y": 2022,
@@ -1237,7 +1245,8 @@ var PYQ_CDS_2022_I = [
       "Synonyms",
       "Synonyms Synonyms"
     ],
-    "topic": "Synonyms Synonyms"
+    "topic": "Synonyms Synonyms",
+    "keyword": "mensuration"
   },
   {
     "y": 2022,
@@ -1258,7 +1267,8 @@ var PYQ_CDS_2022_I = [
       "Synonyms",
       "Synonyms Synonyms"
     ],
-    "topic": "Synonyms Synonyms"
+    "topic": "Synonyms Synonyms",
+    "keyword": "smothered"
   },
   {
     "y": 2022,
@@ -1279,7 +1289,8 @@ var PYQ_CDS_2022_I = [
       "Antonyms",
       "Antonyms Antonyms"
     ],
-    "topic": "Antonyms Antonyms"
+    "topic": "Antonyms Antonyms",
+    "keyword": "discontinued"
   },
   {
     "y": 2022,
@@ -1300,7 +1311,8 @@ var PYQ_CDS_2022_I = [
       "Antonyms",
       "Antonyms Antonyms"
     ],
-    "topic": "Antonyms Antonyms"
+    "topic": "Antonyms Antonyms",
+    "keyword": "chided"
   },
   {
     "y": 2022,
@@ -1321,7 +1333,8 @@ var PYQ_CDS_2022_I = [
       "Antonyms",
       "Antonyms Antonyms"
     ],
-    "topic": "Antonyms Antonyms"
+    "topic": "Antonyms Antonyms",
+    "keyword": "cherish"
   },
   {
     "y": 2022,
@@ -1342,7 +1355,8 @@ var PYQ_CDS_2022_I = [
       "Antonyms",
       "Antonyms Antonyms"
     ],
-    "topic": "Antonyms Antonyms"
+    "topic": "Antonyms Antonyms",
+    "keyword": "chaos"
   },
   {
     "y": 2022,
@@ -1363,7 +1377,8 @@ var PYQ_CDS_2022_I = [
       "Antonyms",
       "Antonyms Antonyms"
     ],
-    "topic": "Antonyms Antonyms"
+    "topic": "Antonyms Antonyms",
+    "keyword": "celestial"
   },
   {
     "y": 2022,
@@ -1384,7 +1399,8 @@ var PYQ_CDS_2022_I = [
       "Antonyms",
       "Antonyms Antonyms"
     ],
-    "topic": "Antonyms Antonyms"
+    "topic": "Antonyms Antonyms",
+    "keyword": "reticent"
   },
   {
     "y": 2022,
@@ -1405,7 +1421,8 @@ var PYQ_CDS_2022_I = [
       "Antonyms",
       "Antonyms Antonyms"
     ],
-    "topic": "Antonyms Antonyms"
+    "topic": "Antonyms Antonyms",
+    "keyword": "childish"
   },
   {
     "y": 2022,
@@ -1426,7 +1443,8 @@ var PYQ_CDS_2022_I = [
       "Antonyms",
       "Antonyms Antonyms"
     ],
-    "topic": "Antonyms Antonyms"
+    "topic": "Antonyms Antonyms",
+    "keyword": "magniloquent"
   },
   {
     "y": 2022,
@@ -1447,7 +1465,8 @@ var PYQ_CDS_2022_I = [
       "Antonyms",
       "Antonyms Antonyms"
     ],
-    "topic": "Antonyms Antonyms"
+    "topic": "Antonyms Antonyms",
+    "keyword": "clandestine"
   },
   {
     "y": 2022,
@@ -1468,7 +1487,8 @@ var PYQ_CDS_2022_I = [
       "Antonyms",
       "Antonyms Antonyms"
     ],
-    "topic": "Antonyms Antonyms"
+    "topic": "Antonyms Antonyms",
+    "keyword": "dormant"
   },
   {
     "y": 2022,
@@ -1976,8 +1996,7 @@ var PYQ_CDS_2022_I = [
       "at",
       "for"
     ],
-    "ans": 0,
-    "tags": [
+    "ans": 0,    "tags": [
       "CDS",
       "English",
       "Prepositions",
@@ -1996,7 +2015,8 @@ var PYQ_CDS_2022_I = [
       "with",
       "inside",
       "in"
-    ],    "ans": 3,
+    ],
+    "ans": 3,
     "tags": [
       "CDS",
       "English",

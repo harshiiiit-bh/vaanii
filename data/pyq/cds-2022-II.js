@@ -347,7 +347,8 @@ var PYQ_CDS_2022_II = [
       "Synonyms",
       "Synonyms Vocabulary"
     ],
-    "topic": "Synonyms Vocabulary"
+    "topic": "Synonyms Vocabulary",
+    "keyword": "harbinger"
   },
   {
     "y": 2022,
@@ -368,7 +369,8 @@ var PYQ_CDS_2022_II = [
       "Synonyms",
       "Synonyms Vocabulary"
     ],
-    "topic": "Synonyms Vocabulary"
+    "topic": "Synonyms Vocabulary",
+    "keyword": "vista"
   },
   {
     "y": 2022,
@@ -389,7 +391,8 @@ var PYQ_CDS_2022_II = [
       "Synonyms",
       "Synonyms Vocabulary"
     ],
-    "topic": "Synonyms Vocabulary"
+    "topic": "Synonyms Vocabulary",
+    "keyword": "lamentable"
   },
   {
     "y": 2022,
@@ -410,7 +413,8 @@ var PYQ_CDS_2022_II = [
       "Synonyms",
       "Synonyms Vocabulary"
     ],
-    "topic": "Synonyms Vocabulary"
+    "topic": "Synonyms Vocabulary",
+    "keyword": "endurance"
   },
   {
     "y": 2022,
@@ -431,7 +435,8 @@ var PYQ_CDS_2022_II = [
       "Synonyms",
       "Synonyms Vocabulary"
     ],
-    "topic": "Synonyms Vocabulary"
+    "topic": "Synonyms Vocabulary",
+    "keyword": "jaunt"
   },
   {
     "y": 2022,
@@ -992,12 +997,12 @@ var PYQ_CDS_2022_II = [
       "of"
     ],
     "ans": 3,
-    "passage": "Banking is _________ essential building block to reach greater prosperity and help build a better system _________ financial services can create a path out of poverty. However, big traditional banks often exclude low-income populations _________ requirements or by using historically discriminatory practices that keep _________ low-income customers _________ from formal finance. Modern lifestyles are predicated _________ debt. If you have a stable and reliable income, have a bank account with access to a range _________ modern financial products, you can manage your debts efficiently. This _________ what the entire financial system is for. But debt _________ a lifetime’s trap if you don’t have easy access to _________ financial products.",
-    "tags": [
+    "passage": "Banking is _________ essential building block to reach greater prosperity and help build a better system _________ financial services can create a path out of poverty. However, big traditional banks often exclude low-income populations _________ requirements or by using historically discriminatory practices that keep _________ low-income customers _________ from formal finance. Modern lifestyles are predicated _________ debt. If you have a stable and reliable income, have a bank account with access to a range _________ modern financial products, you can manage your debts efficiently. This _________ what the entire financial system is for. But debt _________ a lifetime’s trap if you don’t have easy access to _________ financial products.",    "tags": [
       "CDS",
       "English",
       "Cloze Test"
-    ],    "topic": "Cloze Test"
+    ],
+    "topic": "Cloze Test"
   },
   {
     "y": 2022,
@@ -1991,12 +1996,12 @@ var PYQ_CDS_2022_II = [
       "Evoke means to elicit a response and Invoke means to provoke",
       "Evoke means to call upon through an appeal and Invoke means to elicit a response",
       "Evoke means to provoke and Invoke means to call upon through an appeal",
-      "Evoke means to elicit a response and Invoke means to call upon through an appeal"
-    ],
+      "Evoke means to elicit a response and Invoke means to call upon through an appeal"    ],
     "ans": 3,
     "tags": [
       "CDS",
-      "English",      "Usage of Paired Words",
+      "English",
+      "Usage of Paired Words",
       "Usage of pairs Grammar"
     ],
     "topic": "Usage of pairs Grammar"

@@ -1499,7 +1499,8 @@ var PYQ_CDS_2021_II = [
       "Synonyms",
       "Synonyms Vocabulary"
     ],
-    "topic": "Synonyms Vocabulary"
+    "topic": "Synonyms Vocabulary",
+    "keyword": "drowned"
   },
   {
     "y": 2021,
@@ -1520,7 +1521,8 @@ var PYQ_CDS_2021_II = [
       "Synonyms",
       "Synonyms Vocabulary"
     ],
-    "topic": "Synonyms Vocabulary"
+    "topic": "Synonyms Vocabulary",
+    "keyword": "dry"
   },
   {
     "y": 2021,
@@ -1541,7 +1543,8 @@ var PYQ_CDS_2021_II = [
       "Synonyms",
       "Synonyms Vocabulary"
     ],
-    "topic": "Synonyms Vocabulary"
+    "topic": "Synonyms Vocabulary",
+    "keyword": "differences"
   },
   {
     "y": 2021,
@@ -1562,7 +1565,8 @@ var PYQ_CDS_2021_II = [
       "Synonyms",
       "Synonyms Vocabulary"
     ],
-    "topic": "Synonyms Vocabulary"
+    "topic": "Synonyms Vocabulary",
+    "keyword": "hindered"
   },
   {
     "y": 2021,
@@ -1583,7 +1587,8 @@ var PYQ_CDS_2021_II = [
       "Synonyms",
       "Synonyms Vocabulary"
     ],
-    "topic": "Synonyms Vocabulary"
+    "topic": "Synonyms Vocabulary",
+    "keyword": "complexity"
   },
   {
     "y": 2021,
@@ -1604,7 +1609,8 @@ var PYQ_CDS_2021_II = [
       "Synonyms",
       "Synonyms Vocabulary"
     ],
-    "topic": "Synonyms Vocabulary"
+    "topic": "Synonyms Vocabulary",
+    "keyword": "excessive"
   },
   {
     "y": 2021,
@@ -1625,7 +1631,8 @@ var PYQ_CDS_2021_II = [
       "Synonyms",
       "Synonyms Vocabulary"
     ],
-    "topic": "Synonyms Vocabulary"
+    "topic": "Synonyms Vocabulary",
+    "keyword": "initiated"
   },
   {
     "y": 2021,
@@ -1646,7 +1653,8 @@ var PYQ_CDS_2021_II = [
       "Synonyms",
       "Synonyms Vocabulary"
     ],
-    "topic": "Synonyms Vocabulary"
+    "topic": "Synonyms Vocabulary",
+    "keyword": "pale"
   },
   {
     "y": 2021,
@@ -1667,7 +1675,8 @@ var PYQ_CDS_2021_II = [
       "Synonyms",
       "Synonyms Vocabulary"
     ],
-    "topic": "Synonyms Vocabulary"
+    "topic": "Synonyms Vocabulary",
+    "keyword": "overrule"
   },
   {
     "y": 2021,
@@ -1688,7 +1697,8 @@ var PYQ_CDS_2021_II = [
       "Synonyms",
       "Synonyms Vocabulary"
     ],
-    "topic": "Synonyms Vocabulary"
+    "topic": "Synonyms Vocabulary",
+    "keyword": "shocked"
   },
   {
     "y": 2021,
@@ -1709,7 +1719,8 @@ var PYQ_CDS_2021_II = [
       "Antonyms",
       "Antonyms Vocabulary"
     ],
-    "topic": "Antonyms Vocabulary"
+    "topic": "Antonyms Vocabulary",
+    "keyword": "particular"
   },
   {
     "y": 2021,
@@ -1730,7 +1741,8 @@ var PYQ_CDS_2021_II = [
       "Antonyms",
       "Antonyms Vocabulary"
     ],
-    "topic": "Antonyms Vocabulary"
+    "topic": "Antonyms Vocabulary",
+    "keyword": "paunchy"
   },
   {
     "y": 2021,
@@ -1751,7 +1763,8 @@ var PYQ_CDS_2021_II = [
       "Antonyms",
       "Antonyms Vocabulary"
     ],
-    "topic": "Antonyms Vocabulary"
+    "topic": "Antonyms Vocabulary",
+    "keyword": "originates"
   },
   {
     "y": 2021,
@@ -1772,7 +1785,8 @@ var PYQ_CDS_2021_II = [
       "Antonyms",
       "Antonyms Vocabulary"
     ],
-    "topic": "Antonyms Vocabulary"
+    "topic": "Antonyms Vocabulary",
+    "keyword": "hilarious"
   },
   {
     "y": 2021,
@@ -1793,7 +1807,8 @@ var PYQ_CDS_2021_II = [
       "Antonyms",
       "Antonyms Vocabulary"
     ],
-    "topic": "Antonyms Vocabulary"
+    "topic": "Antonyms Vocabulary",
+    "keyword": "pandemonium"
   },
   {
     "y": 2021,
@@ -1814,7 +1829,8 @@ var PYQ_CDS_2021_II = [
       "Antonyms",
       "Antonyms Vocabulary"
     ],
-    "topic": "Antonyms Vocabulary"
+    "topic": "Antonyms Vocabulary",
+    "keyword": "detained"
   },
   {
     "y": 2021,
@@ -1835,7 +1851,8 @@ var PYQ_CDS_2021_II = [
       "Antonyms",
       "Antonyms Vocabulary"
     ],
-    "topic": "Antonyms Vocabulary"
+    "topic": "Antonyms Vocabulary",
+    "keyword": "despair"
   },
   {
     "y": 2021,
@@ -1856,7 +1873,8 @@ var PYQ_CDS_2021_II = [
       "Antonyms",
       "Antonyms Vocabulary"
     ],
-    "topic": "Antonyms Vocabulary"
+    "topic": "Antonyms Vocabulary",
+    "keyword": "accused"
   },
   {
     "y": 2021,
@@ -1877,7 +1895,8 @@ var PYQ_CDS_2021_II = [
       "Antonyms",
       "Antonyms Vocabulary"
     ],
-    "topic": "Antonyms Vocabulary"
+    "topic": "Antonyms Vocabulary",
+    "keyword": "boast"
   },
   {
     "y": 2021,
@@ -1898,7 +1917,8 @@ var PYQ_CDS_2021_II = [
       "Antonyms",
       "Antonyms Vocabulary"
     ],
-    "topic": "Antonyms Vocabulary"
+    "topic": "Antonyms Vocabulary",
+    "keyword": "eccentric"
   },
   {
     "y": 2021,
@@ -1976,8 +1996,7 @@ var PYQ_CDS_2021_II = [
     "tags": [
       "CDS",
       "English",
-      "Adjectives Grammar"
-    ],
+      "Adjectives Grammar"    ],
     "topic": "Adjectives Grammar"
   },
   {
@@ -1996,7 +2015,8 @@ var PYQ_CDS_2021_II = [
     "tags": [
       "CDS",
       "English",
-      "Interjections Grammar"    ],
+      "Interjections Grammar"
+    ],
     "topic": "Interjections Grammar"
   },
   {
