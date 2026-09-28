@@ -130,7 +130,7 @@ try {
     Object.keys(localStorage).filter(key => key.startsWith('vbv_veer_bhogya_account_')));
   assert.ok(savedAccountKeys.length > 0, 'Account data was not persisted before logout');
   page.once('dialog', dialog => dialog.accept());
-  await page.locator('.vp-logout-btn').click();
+  await page.locator('.vp-logout-btn:visible').first().click();
   await page.waitForSelector('#gate-stage-start', { state: 'visible', timeout: 15000 });
   const afterLogout = await page.evaluate(() => ({
     session: localStorage.getItem('vbv_session_code'),
