@@ -15,8 +15,8 @@ page.on('pageerror', error => pageErrors.push(error.stack || error.message));
 page.on('console', message => {
   if (message.type() !== 'error') return;
   const value = message.text();
-  if (/\\[VAANI\\].*(render error|uncaught error)/i.test(value) ||
-      /\\[VBV\\].*(error|failed)/i.test(value)) vaErrors.push(value);
+  if (/\[VAANI\].*(render error|uncaught error)/i.test(value) ||
+      /\[VBV\].*(error|failed)/i.test(value)) vaErrors.push(value);
 });
 
 async function textOf(selector) {
@@ -41,7 +41,7 @@ try {
   await page.locator('#gateBtn').click();
   await page.waitForSelector('#gate-stage-showcode', { state: 'visible', timeout: 15000 });
   const codeText = await textOf('#gate-code-display');
-  assert.match(codeText.replace(/\\s/g, ''), /^\\d{6}$/, 'New account code should contain six digits');
+  assert.match(codeText.replace(/\s/g, ''), /^\d{6}$/, 'New account code should contain six digits');
   await page.locator('#gate-stage-showcode .gate-btn').click();
   await page.waitForFunction(() => document.getElementById('gate')?.classList.contains('hide'), null, { timeout: 15000 });
   await page.waitForTimeout(900);
@@ -111,8 +111,8 @@ try {
 } catch (error) {
   try { await page.screenshot({ path: 'vaani-browser-smoke-failure.png', fullPage: true }); } catch {}
   console.error('Browser smoke test failed:', error.stack || error.message);
-  if (pageErrors.length) console.error('Browser exceptions:', pageErrors.join('\\n'));
-  if (vaErrors.length) console.error('Application render errors:', vaErrors.join('\\n'));
+  if (pageErrors.length) console.error('Browser exceptions:', pageErrors.join('\n'));
+  if (vaErrors.length) console.error('Application render errors:', vaErrors.join('\n'));
   process.exitCode = 1;
 } finally {
   await browser.close();
