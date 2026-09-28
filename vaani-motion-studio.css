@@ -63,10 +63,10 @@
 }
 .vfx-medal span{position:absolute;top:0;width:15px;height:32px;background:linear-gradient(90deg,rgba(70,130,124,.74),rgba(127,186,170,.52));clip-path:polygon(0 0,100% 0,86% 100%,50% 78%,14% 100%)}
 .vfx-medal span:last-child{transform:translateX(13px);background:linear-gradient(90deg,rgba(202,160,78,.75),rgba(235,203,135,.58))}
-@keyframes vfxFloat{0%,100%{translate:0 0}50%{translate:0 -13px}}
-@keyframes vfxCubeFloat{0%,100%{translate:0 0;rotate:0deg}50%{translate:0 -12px;rotate:7deg}}
+@keyframes vfxFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-13px)}}
+@keyframes vfxCubeFloat{0%,100%{transform:rotateX(-24deg) rotateY(32deg) rotateZ(0deg)}50%{transform:rotateX(-24deg) rotateY(32deg) rotateZ(7deg) translateY(-12px)}}
 @keyframes vfxOrbit{to{rotate:360deg}}
-@keyframes vfxMedalFloat{0%,100%{translate:0 0;rotate:-5deg}50%{translate:0 -9px;rotate:5deg}}
+@keyframes vfxMedalFloat{0%,100%{transform:rotate(-5deg) translateY(0)}50%{transform:rotate(5deg) translateY(-9px)}}
 
 /* Layer content above the atmospheric 3D accents without changing navigation. */
 header,.bottomnav,main{position:relative;z-index:2}
@@ -133,7 +133,7 @@ header,.bottomnav,main{position:relative;z-index:2}
 .vfx-dock-panel{
   margin-bottom:10px;padding:16px;border:1px solid rgba(190,151,80,.28);border-radius:18px;
   background:color-mix(in srgb,var(--panel,#fff) 92%,transparent);
-  box-shadow:0 22px 60px rgba(10,20,27,.23);backdrop-filter:blur(18px) saturate(130%);
+  box-shadow:0 22px 60px rgba(10,20,27,.23);max-height:calc(100dvh - 140px);overflow:auto;backdrop-filter:blur(18px) saturate(130%);
   -webkit-backdrop-filter:blur(18px) saturate(130%);pointer-events:auto;
   transform-origin:bottom right;animation:vfxPanelIn .28s var(--vfx-spring) both;
 }
