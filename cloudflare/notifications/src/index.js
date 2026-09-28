@@ -55,13 +55,13 @@ function upsertStatement(db, item, now) {
 async function syncPayload(request, env) {
   const expected = env.SYNC_SECRET;
   if (!expected) return json({ error: "SYNC_SECRET is not configured" }, 503);
-  if ((request.headers.get("authorization") || "") !== \`Bearer \${expected}\`) return json({ error: "Unauthorized" }, 401);
+  if ((request.headers.get("authorization") || "") !== "Bearer " + expected) return json({ error: "Unauthorized" }, 401);
 
   const body = await request.json();
   const items = Array.isArray(body.items) ? body.items : [];
   const archiveIds = Array.isArray(body.archiveIds) ? body.archiveIds : [];
   if (items.length > SYNC_CHUNK_LIMIT || archiveIds.length > SYNC_CHUNK_LIMIT) {
-    return json({ error: \`Sync accepts at most \${SYNC_CHUNK_LIMIT} items and archive IDs per request. Split the payload into smaller chunks.\` }, 413);
+    return json({ error: "Sync accepts at most " + SYNC_CHUNK_LIMIT + " items and archive IDs per request. Split the payload into smaller chunks." }, 413);
   }
 
   const now = new Date().toISOString();
