@@ -109,6 +109,17 @@ try {
   assert.ok(registerText.includes(capturedWord), 'Captured Vocabulary word did not appear in the Book Reading register: ' + capturedWord);
   console.log('PASS Book Reading: command centre and captured word appears in the shared register');
 
+  const bookNavRoutes = await page.locator('#vbv-mainnav button').evaluateAll(buttons => buttons.map(button => button.dataset.route));
+  assert.ok(!bookNavRoutes.includes('levels'), 'Levels is still present in Book Reading navigation');
+  assert.ok(!bookNavRoutes.includes('spoken'), 'Spoken English is still present in Book Reading navigation');
+  await page.locator('#vbv-mainnav button[data-route="academy"]').click();
+  await page.waitForSelector('#app .academy-page', { timeout: 15000 });
+  assert.equal(await page.locator('#app .academy-card').count(), 4, 'Academy gallery must show all four academies');
+  const academyImageResults = await page.locator('#app .academy-card-photo img').evaluateAll(images => images.map(img => ({ alt:img.alt, src:img.currentSrc||img.src, width:img.naturalWidth })));
+  assert.equal(academyImageResults.length, 4, 'Each academy needs its own image');
+  assert.ok(academyImageResults.every(image => image.alt && image.width > 0), 'One or more academy photos did not load: ' + JSON.stringify(academyImageResults));
+  console.log('PASS Book Reading Academy: four real academy photos load with accessible alt text and source credits');
+
   for (const view of ['grammar', 'compare', 'pyq', 'games', 'leaderboard', 'profile']) {
     await clickMainView(view);
     await page.waitForTimeout(250);
