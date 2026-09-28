@@ -227,7 +227,7 @@ async function saveData(){
 window.VaaniBookRegister = {
   add: async function(item){
     item = item && typeof item === 'object' ? item : {};
-    const word = String(item.word || '').replace(/\\s+/g,' ').trim().slice(0,160);
+    const word = String(item.word || '').replace(/\s+/g,' ').trim().slice(0,160);
     if(!word) return {ok:false,message:'Enter a word or phrase first.'};
     if(!ACTIVE_CODE || !dataLoaded) return {ok:false,message:'Sign in to Book Reading with your account code, then try again.'};
     DATA.vocab = Array.isArray(DATA.vocab) ? DATA.vocab : [];
