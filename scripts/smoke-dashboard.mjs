@@ -175,6 +175,46 @@ try {
     'Legacy NDA fragments were not mapped to the sentence');
   console.log('PASS PYQ presentation: NDA 2009-I legacy answer-fragment format displays labelled parts');
 
+  const fullPyqAudit = await page.evaluate(() => {
+    const previous = PV.session;
+    const issues = [];
+    let checked = 0;
+    try {
+      for (const q of PYQ_ALL) {
+        PV.session = {
+          mode:'practice', title:'PYQ presentation audit', questions:[q], index:0,
+          answers:{}, streak:0, bestStreak:0, remaining:null,
+          perQSeconds:null, timeLimitSec:null
+        };
+        const markup = pvSessionHTML();
+        const doc = new DOMParser().parseFromString(markup, 'text/html');
+        const prompt = doc.querySelector('.pv-qtext');
+        const options = [...doc.querySelectorAll('.pv-options .pv-option')];
+        if (!prompt || !prompt.textContent.trim()) issues.push(q._id+': missing prompt');
+        if (options.length !== (String(q._sourceSec||q.sec).trim().toLowerCase()==='spotting errors'?4:q.o.length)) {
+          issues.push(q._id+': expected '+(q.o.length)+' visible options, found '+options.length);
+        }
+        if (options.some(option => !option.querySelector('.ol') || !(option.textContent||'').trim())) {
+          issues.push(q._id+': option missing its letter or text');
+        }
+        if (q.passage && !doc.querySelector('.pv-passage-text')) issues.push(q._id+': passage missing from prompt');
+        if (String(q._sourceSec||q.sec).trim().toLowerCase()==='spotting errors') {
+          const labels = [...doc.querySelectorAll('.pv-error-segment-label')].map(el=>el.textContent.trim());
+          if (labels.join('|')!=='(a)|(b)|(c)') issues.push(q._id+': spotting parts missing or mislabelled: '+labels.join(','));
+        }
+        checked++;
+        if (issues.length >= 30) break;
+      }
+    } finally {
+      PV.session = previous;
+    }
+    return {checked,total:PYQ_ALL.length,issues};
+  });
+  assert.equal(fullPyqAudit.issues.length, 0, 'PYQ browser rendering issues: '+JSON.stringify(fullPyqAudit.issues));
+  assert.equal(fullPyqAudit.checked, fullPyqAudit.total, 'Not every PYQ was rendered by the browser audit');
+  console.log('PASS full-bank PYQ browser rendering: '+fullPyqAudit.checked+' questions checked across NDA and CDS');
+
+
 
 
   // Exercise every remaining Book Reading route, including empty states.
