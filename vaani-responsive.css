@@ -1,0 +1,139 @@
+/* VAANI responsive layout correction — loaded after all feature styles.
+   Keeps content fluid and prevents fixed-width modules from causing page overflow. */
+html { width:100%; max-width:100%; overflow-x:clip; }
+body { width:100%; min-width:320px; max-width:100%; overflow-x:clip; }
+*, *::before, *::after { box-sizing:border-box; }
+main { width:100%; max-width:1600px; min-width:0; margin-inline:auto; }
+.view, .view.active { width:100%; max-width:100%; min-width:0; }
+.view > *, .view .card, .view .panel, .view [class*="grid"] { min-width:0; }
+img, video, iframe { max-width:100%; }
+button, input, select, textarea { max-width:100%; }
+h1, h2, h3, h4, p, a, button, label { overflow-wrap:anywhere; }
+
+/* Dashboard hero: the IMA poster is now the full-bleed background, not a framed tile. */
+#view-dashboard .vd-hero {
+  position:relative;
+  display:flex;
+  align-items:center;
+  isolation:isolate;
+  width:100%;
+  min-height:clamp(360px, 37vw, 540px);
+  overflow:hidden;
+  border-radius:clamp(16px,2vw,28px);
+  background:#0b1119;
+}
+#view-dashboard .vd-hero::before {
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  background:
+    linear-gradient(90deg,rgba(5,9,14,.96) 0%,rgba(5,9,14,.86) 36%,rgba(5,9,14,.54) 68%,rgba(5,9,14,.28) 100%),
+    linear-gradient(0deg,rgba(5,9,14,.52),transparent 58%);
+}
+#view-dashboard .vd-hero-photo {
+  position:absolute;
+  inset:0;
+  z-index:0;
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center 34%;
+  opacity:.88;
+  mix-blend-mode:normal;
+  mask-image:none;
+  -webkit-mask-image:none;
+}
+#view-dashboard .vd-hero-compass { z-index:1; right:-5%; opacity:.10; }
+#view-dashboard .vd-hero-inner {
+  position:relative;
+  z-index:2;
+  width:min(100%,760px);
+  max-width:760px;
+  padding:clamp(24px,4.5vw,58px);
+}
+#view-dashboard .vd-hero-title {
+  font-size:clamp(1.8rem,4.1vw,3.2rem);
+  line-height:1.08;
+  max-width:16ch;
+  text-wrap:balance;
+}
+#view-dashboard .vd-hero-stats {
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:clamp(10px,2.5vw,28px);
+  width:min(100%,560px);
+}
+#view-dashboard .vd-stat { min-width:0; }
+#view-dashboard .vd-stat-num { font-size:clamp(1.2rem,2.2vw,1.7rem); }
+#view-dashboard .vd-stat-lbl { font-size:clamp(.55rem,.7vw,.68rem); line-height:1.35; }
+#view-dashboard .vd-hero .btn-row { display:flex; flex-wrap:wrap; gap:10px; }
+#view-dashboard .vd-hero .btn { min-height:44px; }
+
+/* Quick links and common card grids should reflow instead of scrolling off-screen. */
+#view-dashboard .vd-qa {
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:clamp(6px,1.2vw,12px);
+  overflow:visible;
+}
+#view-dashboard .vd-qa-btn { min-width:0; padding:clamp(9px,1.3vw,14px) 5px 10px; }
+#view-dashboard .vd-qa-btn span:last-child { text-align:center; }
+.grid-2, .grid-3, .grid-4 { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.grid-2 > *, .grid-3 > *, .grid-4 > * { min-width:0; }
+[class*="grid"] > * { min-width:0; }
+pre, code { max-width:100%; }
+pre { overflow-x:auto; }
+table { max-width:100%; }
+
+/* Tablet */
+@media (max-width:900px) {
+  main { padding-inline:clamp(10px,2vw,20px); }
+  #view-dashboard { padding:clamp(12px,2.2vw,22px); }
+  #view-dashboard .vd-hero { min-height:360px; }
+  #view-dashboard .vd-hero-inner { max-width: min(100%,680px); }
+}
+
+/* Phones */
+@media (max-width:600px) {
+  main { padding-inline:10px; }
+  #view-dashboard { border-radius:16px; padding:10px; }
+  #view-dashboard .vd-hero {
+    min-height:0;
+    align-items:flex-start;
+    border-radius:16px;
+  }
+  #view-dashboard .vd-hero::before {
+    background:
+      linear-gradient(90deg,rgba(5,9,14,.94),rgba(5,9,14,.80)),
+      linear-gradient(0deg,rgba(5,9,14,.58),rgba(5,9,14,.18));
+  }
+  #view-dashboard .vd-hero-photo { object-position:55% 28%; opacity:.72; }
+  #view-dashboard .vd-hero-compass { width:280px; height:280px; right:-28%; opacity:.07; }
+  #view-dashboard .vd-hero-inner { width:100%; max-width:100%; padding:24px 18px; }
+  #view-dashboard .vd-eyebrow { font-size:.58rem; letter-spacing:.12em; flex-wrap:wrap; }
+  #view-dashboard .vd-hero-title { margin:12px 0 20px; font-size:clamp(1.65rem,7vw,2.35rem); }
+  #view-dashboard .vd-hero-stats { grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px 18px; margin-bottom:20px; }
+  #view-dashboard .vd-stat-num { font-size:1.4rem; }
+  #view-dashboard .vd-stat-lbl { font-size:.58rem; letter-spacing:.07em; }
+  #view-dashboard .vd-hero .btn-row { display:grid; grid-template-columns:1fr; width:100%; }
+  #view-dashboard .vd-hero .btn-row .btn { width:100%; justify-content:center; }
+  #view-dashboard .vd-qa { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  .grid-2, .grid-3, .grid-4 { grid-template-columns:minmax(0,1fr); }
+  .vd-briefing-grid { grid-template-columns:minmax(0,1fr); }
+  .vd-briefing-head { align-items:flex-start; flex-wrap:wrap; padding:16px; }
+  .vd-brief-col { padding:18px 16px; }
+  .vd-brief-col + .vd-brief-col::before { left:16px; right:16px; }
+  .vd-card::before { left:16px; right:16px; }
+  .bottomnav { max-width:100vw; }
+}
+
+/* Very narrow devices */
+@media (max-width:360px) {
+  #view-dashboard .vd-hero-inner { padding:20px 14px; }
+  #view-dashboard .vd-hero-title { font-size:1.55rem; }
+  #view-dashboard .vd-qa { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  #view-dashboard .vd-stat-lbl { letter-spacing:.04em; }
+}
