@@ -115,6 +115,9 @@ try {
   await page.locator('#vbv-mainnav button[data-route="academy"]').click();
   await page.waitForSelector('#app .academy-page', { timeout: 15000 });
   assert.equal(await page.locator('#app .academy-card').count(), 4, 'Academy gallery must show all four academies');
+  const academyHash = await page.evaluate(() => location.hash);
+  await page.locator('#app .academy-hero-cta').click();
+  assert.equal(await page.evaluate(() => location.hash), academyHash, 'Academy gallery shortcut must not leave the Academy route');
   await page.locator('#app .academy-card-photo').evaluateAll(frames => Promise.all(frames.map(frame => {
     const img = frame.querySelector('img');
     if (!img || img.complete) return Promise.resolve();
