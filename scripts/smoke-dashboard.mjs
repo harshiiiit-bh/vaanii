@@ -142,6 +142,61 @@ try {
   assert.ok(await page.locator('.vp-logout-btn').count(), 'Profile logout control is missing');
   console.log('PASS navigation: all primary views opened; logout control is present');
 
+  // Exercise every remaining Book Reading route, including empty states.
+  await clickMainView('books');
+  for (const route of ['home','dashboard','board','library','ongoing','completed','upcoming','vocab','vocabtest','achievements','academy']) {
+    await page.locator('#vbv-mainnav button[data-route="' + route + '"]').click();
+    await page.waitForFunction(routeName => {
+      const current = (location.hash.replace('#/','').split('/')[0] || 'home');
+      return current === routeName && !!document.querySelector('#app .page');
+    }, route, { timeout: 10000 });
+    await page.waitForTimeout(230);
+    const pageText = ((await page.locator('#app').textContent()) || '').trim();
+    assert.ok(pageText.length > 20, 'Book Reading route has no meaningful content: ' + route);
+  }
+  console.log('PASS Book Reading routes: home, progress, board, library, ongoing, completed, upcoming, vocab, vocab test, medals and academy');
+
+  // End-to-end reading lifecycle: queue -> ongoing -> log/highlight -> completed -> searchable library.
+  await page.locator('#vbv-mainnav button[data-route="upcoming"]').click();
+  await page.locator('#up-title').fill('VAANI Regression Reading Journey');
+  await page.locator('#up-author').fill('Smoke Test Author');
+  await page.locator('#up-pages').fill('100');
+  await page.locator('#up-category').selectOption('Fiction');
+  await page.locator('#app button[onclick="addUpcoming()"]').click();
+  await page.waitForFunction(() => document.querySelector('#app .book-card h4')?.textContent?.includes('VAANI Regression Reading Journey'));
+  const queuedCard = page.locator('#app .book-card').filter({ hasText:'VAANI Regression Reading Journey' }).first();
+  await queuedCard.locator('button[onclick^="openStartModal("]').click();
+  await page.getByRole('button', { name:'Confirm Start' }).click();
+  await page.waitForFunction(() => location.hash.startsWith('#/ongoingDetail/'), null, { timeout:10000 });
+  await page.waitForSelector('#app #log-pages', { timeout:10000 });
+  assert.ok((await page.locator('#app').textContent()).includes('VAANI Regression Reading Journey'), 'Started book detail is missing its title');
+  await page.locator('#log-pages').fill('12');
+  await page.locator('#log-minutes').fill('25');
+  await page.locator('#vbv-book-log button[onclick^="addLog("]').click();
+  await page.waitForSelector('#app .logtable tbody tr', { timeout:10000 });
+  assert.ok((await page.locator('#app .logtable').textContent()).includes('12'), 'Reading log was not displayed after save');
+  await page.locator('#highlight-input').fill('Consistency compounds over time.');
+  await page.locator('#vbv-book-highlights button[onclick^="addHighlight("]').click();
+  await page.waitForFunction(() => document.querySelector('#app .highlight-item')?.textContent?.includes('Consistency compounds over time.'));
+  await page.locator('#app button[onclick^="openCompleteModal("]').click();
+  await page.locator('#complete-review').fill('Browser journey completed.');
+  await page.locator('#star-row span[data-val="4"]').click();
+  await page.getByRole('button', { name:'Confirm Completion' }).click();
+  await page.waitForFunction(() => location.hash === '#/completed', null, { timeout:10000 });
+  await page.waitForFunction(() => Array.from(document.querySelectorAll('#app .book-card h4')).some(el => el.textContent.includes('VAANI Regression Reading Journey')), null, { timeout:10000 });
+  const completedCard = page.locator('#app .book-card').filter({ hasText:'VAANI Regression Reading Journey' }).first();
+  assert.ok(await completedCard.count(), 'Completed book was not filed in Completed');
+  assert.ok((await completedCard.textContent()).includes('Browser journey completed.'), 'Completion review was not retained');
+  assert.ok((await completedCard.textContent()).includes('12 / 100'), 'Page count was not retained on completion');
+  await page.locator('#vbv-mainnav button[data-route="library"]').click();
+  await page.waitForSelector('#app #lib-search', { timeout:10000 });
+  await page.locator('#lib-search').fill('VAANI Regression Reading Journey');
+  assert.equal(await page.locator('#app #library-book-grid .book-card').count(), 1, 'Library search did not find the completed book');
+  await page.locator('#app #lib-status-row button[data-status="completed"]').click();
+  assert.equal(await page.locator('#app #library-book-grid .book-card').count(), 1, 'Library completed-stage filter hid the completed book');
+  await page.locator('#app #lib-sort').selectOption('title');
+  console.log('PASS reading lifecycle: add, start, log, highlight, complete, search, filter and sort');
+
   await page.setViewportSize({ width: 390, height: 844 });
   for (const view of ['dashboard', 'vocab', 'books', 'profile']) {
     await clickMainView(view);
@@ -158,6 +213,8 @@ try {
   assert.ok(academyMobile.scrollWidth <= academyMobile.width + 2, 'Horizontal overflow on mobile Academy: ' + JSON.stringify(academyMobile));
   console.log('PASS mobile Academy: all four cards fit a 390px viewport');
   await clickMainView('profile');
+
+
   console.log('PASS mobile layout: dashboard, vocabulary, Book Reading and profile fit a 390px viewport');
 
   const savedAccountKeys = await page.evaluate(() =>
