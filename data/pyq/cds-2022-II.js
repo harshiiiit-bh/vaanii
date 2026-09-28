@@ -2336,7 +2336,7 @@ var PYQ_CDS_2022_II = [
     "s": "II",
     "n": 111,
     "sec": "Parts of Speech",
-    "q": "He headed the Indian freedom struggle which paved the way for non-violent struggle for other countries in the 20th century.",
+    "keyword": "which", "q": "He headed the Indian freedom struggle which paved the way for non-violent struggle for other countries in the 20th century.",
     "o": [
       "Relative pronoun",
       "Adjective",
@@ -2357,7 +2357,7 @@ var PYQ_CDS_2022_II = [
     "s": "II",
     "n": 112,
     "sec": "Parts of Speech",
-    "q": "Where there is peace for some time, there will be prosperity.",
+    "keyword": "Where", "q": "Where there is peace for some time, there will be prosperity.",
     "o": [
       "Interrogative",
       "Adverb",
@@ -2378,7 +2378,7 @@ var PYQ_CDS_2022_II = [
     "s": "II",
     "n": 113,
     "sec": "Parts of Speech",
-    "q": "Alas ! We have been defeated.",
+    "keyword": "Alas", "q": "Alas ! We have been defeated.",
     "o": [
       "Adjective",
       "Connector",
@@ -2399,7 +2399,7 @@ var PYQ_CDS_2022_II = [
     "s": "II",
     "n": 114,
     "sec": "Parts of Speech",
-    "q": "A zero is a zero always.",
+    "keyword": "Zero", "q": "A zero is a zero always.",
     "o": [
       "Noun",
       "Compound noun",
@@ -2420,7 +2420,7 @@ var PYQ_CDS_2022_II = [
     "s": "II",
     "n": 115,
     "sec": "Parts of Speech",
-    "q": "May you be blessed with all good things of life.",
+    "keyword": "All", "q": "May you be blessed with all good things of life.",
     "o": [
       "Verb",
       "Adverb",
@@ -2441,7 +2441,7 @@ var PYQ_CDS_2022_II = [
     "s": "II",
     "n": 116,
     "sec": "Parts of Speech",
-    "q": "The lake is one of the more beautiful ones in the country.",
+    "keyword": "beautiful", "q": "The lake is one of the more beautiful ones in the country.",
     "o": [
       "Adjective",
       "Adverb",
@@ -2462,7 +2462,7 @@ var PYQ_CDS_2022_II = [
     "s": "II",
     "n": 117,
     "sec": "Parts of Speech",
-    "q": "Honesty is the best policy.",
+    "keyword": "Honesty", "q": "Honesty is the best policy.",
     "o": [
       "Countable noun",
       "Pronoun",
@@ -2483,7 +2483,7 @@ var PYQ_CDS_2022_II = [
     "s": "II",
     "n": 118,
     "sec": "Parts of Speech",
-    "q": "There is many a slip between the cup and the lip.",
+    "keyword": "between", "q": "There is many a slip between the cup and the lip.",
     "o": [
       "Preposition",
       "Adverb",
@@ -2504,7 +2504,7 @@ var PYQ_CDS_2022_II = [
     "s": "II",
     "n": 119,
     "sec": "Parts of Speech",
-    "q": "Ravi and Megha reached first, but Guha and Saavi finished third.",
+    "keyword": "but", "q": "Ravi and Megha reached first, but Guha and Saavi finished third.",
     "o": [
       "Interjection",
       "Conjunction",
@@ -2525,7 +2525,7 @@ var PYQ_CDS_2022_II = [
     "s": "II",
     "n": 120,
     "sec": "Parts of Speech",
-    "q": "He is the most sought after teacher in the school.",
+    "keyword": "The", "q": "He is the most sought after teacher in the school.",
     "o": [
       "Determiner",
       "Adverb",
