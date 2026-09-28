@@ -35,5 +35,8 @@ var PYQ_PAPER_FILES = [
   "2025-I","2025-II",
 
   // Only CDS papers whose source files are present in this repository.
+  "cds-2021-I","cds-2021-II",
+  "cds-2022-I","cds-2022-II",
+  "cds-2023-I","cds-2023-II",
   "cds-2024-I","cds-2024-II","cds-2025-I",
 ];
