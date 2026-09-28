@@ -1,4 +1,7 @@
 (function(){'use strict';
+const NOTIFICATIONS_API=(window.VAANI_NOTIFICATIONS_API||'').replace(/\/$/,'');
+const feedUrl=()=>NOTIFICATIONS_API?NOTIFICATIONS_API+'/api/notifications':'data/defence-notifications.json';
+const archiveUrl=()=>NOTIFICATIONS_API?NOTIFICATIONS_API+'/api/notifications/archive':'data/defence-notifications-archive.json';
 const root=document.getElementById('view-notifications');if(!root)return;
 let filter='all';
 const cards=[...root.querySelectorAll('.nc-card')],tabs=[...root.querySelectorAll('[data-nc-filter]')],search=root.querySelector('#ncSearch');
@@ -15,7 +18,7 @@ function addArchiveButton(section){
   section.appendChild(archive);
   const toggle=archive.querySelector('#ncArchiveToggle'),panel=archive.querySelector('#ncArchivePanel'),grid=archive.querySelector('#ncArchiveGrid'),count=archive.querySelector('#ncArchiveCount');
   toggle.addEventListener('click',()=>{panel.hidden=!panel.hidden;toggle.textContent=panel.hidden?'🗄️ View notification archive':'✕ Hide notification archive';});
-  fetch('data/defence-notifications-archive.json?v='+Date.now(),{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('archive '+r.status);return r.json();}).then(data=>{
+  fetch(archiveUrl(),{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('archive '+r.status);return r.json();}).then(data=>{
     const items=Array.isArray(data.items)?data.items:[];
     count.textContent=items.length+' archived';
     grid.innerHTML=items.length?items.slice(0,48).map(x=>'<article class="nc-live-card"><div class="nc-live-top"><span>'+esc(String(x.category||'DEFENCE').replace('_',' '))+'</span><small>ARCHIVED</small></div><h3>'+esc(x.title)+'</h3><p>'+esc(x.summary||'Historical notification. Open the official source for reference.')+'</p><div class="nc-live-meta"><span>'+esc(x.organization||'Official source')+'</span><span>Archived '+esc(x.archivedAt?new Date(x.archivedAt).toLocaleDateString('en-IN'):'')+'</span></div><a class="nc-btn" href="'+esc(x.url)+'" target="_blank" rel="noopener noreferrer">Open source ↗</a></article>').join(''):'<div class="nc-live-empty">No archived notifications yet.</div>';
@@ -45,7 +48,7 @@ function addLiveFeed(){
   }
   liveSearch.addEventListener('input',render);
   liveFilters.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{liveFilter=b.dataset.liveFilter;liveFilters.querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b));render();}));
-  fetch('data/defence-notifications.json?v='+Date.now(),{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('feed '+r.status);return r.json();}).then(data=>{
+  fetch(feedUrl(),{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('feed '+r.status);return r.json();}).then(data=>{
     items=Array.isArray(data.items)?data.items:[];
     const d=data.generatedAt?new Date(data.generatedAt):null;
     stamp.textContent=d&&!Number.isNaN(d.valueOf())?'Synced '+d.toLocaleString('en-IN',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):'Auto-synced';
