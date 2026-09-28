@@ -297,7 +297,8 @@ var PYQ_CDS_2021_II = [
       "Reading Comprehension",
       "Antonyms Reading Comprehension"
     ],
-    "topic": "Antonyms Reading Comprehension"
+    "topic": "Antonyms Reading Comprehension",
+    "keyword": "erudite"
   },
   {
     "y": 2021,
@@ -996,8 +997,8 @@ var PYQ_CDS_2021_II = [
       "Idioms and Phrases",
       "Phrases Vocabulary"
     ],
-    "topic": "Phrases Vocabulary"
-  },  {
+    "topic": "Phrases Vocabulary"  },
+  {
     "y": 2021,
     "s": "II",
     "n": 48,
@@ -1995,8 +1996,8 @@ var PYQ_CDS_2021_II = [
     "ans": 1,
     "tags": [
       "CDS",
-      "English",
-      "Adjectives Grammar"    ],
+      "English",      "Adjectives Grammar"
+    ],
     "topic": "Adjectives Grammar"
   },
   {
