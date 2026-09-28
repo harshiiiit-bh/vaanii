@@ -1481,7 +1481,7 @@ async function addVaaniCaptureToRegister(payload){
   if(existing)return {ok:true,duplicate:true,id:existing.id,word:existing.word};
   const cleanList=value=>Array.isArray(value)?[...new Set(value.map(v=>String(v||'').trim()).filter(Boolean))].slice(0,12):[];
   const source=String(item.source||'VAANI Vocabulary').trim().slice(0,80);
-  const fromBookReading=/^Book Reading(?:\\s*·|$)/i.test(source);
+  const fromBookReading=/^Book Reading(?:\s*·|$)/i.test(source);
   const kind=String(item.kind||'word').trim().slice(0,32);
   const entry={
     id:uid(),word:word,meaning:String(item.meaning||'').trim().slice(0,500)||(fromBookReading?'Saved from a Book Reading lesson. Add a meaning when you review this entry.':'Saved from VAANI. Add a meaning when you review this entry.'),
