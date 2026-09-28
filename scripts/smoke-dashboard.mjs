@@ -70,6 +70,80 @@ try {
   assert.ok(await page.locator('#focusSprintWidget .vd-focus-body').count() > 0, 'Focus Sprint did not render');
   console.log('PASS dashboard: hero, briefing, roadmap, missions, word, heatmap, badges and focus sprint');
 
+  // SAFE 3D REGRESSION — every section gets exactly one isolated model.
+  const threeDRegistry = await page.evaluate(() => ({
+    exists: !!window.VAANI_3D,
+    supported: window.VAANI_3D?.supported?.() ?? false,
+    validation: window.VAANI_3D?.validate?.(),
+    models: window.VAANI_3D?.models || [],
+    viewCount: document.querySelectorAll('.view').length
+  }));
+  assert.equal(threeDRegistry.exists, true, 'VAANI 3D registry did not initialize');
+  assert.equal(threeDRegistry.validation?.ok, true,
+    '3D registry validation failed: ' + JSON.stringify(threeDRegistry.validation));
+  assert.equal(threeDRegistry.models.length, 14, 'Expected 14 section-specific 3D models');
+  assert.equal(threeDRegistry.validation.total, 14, '3D model count mismatch');
+  assert.ok(threeDRegistry.viewCount >= 14, 'Expected all major views to be present');
+
+  const threeDViews = [
+    'dashboard','grammar','journey','topic','compare','compare-detail',
+    'vocab','worddetail','books','pyq','games','leaderboard','profile','notifications'
+  ];
+  for (const modelView of threeDViews) {
+    const info = await page.evaluate(view => {
+      const el=document.getElementById('view-'+view);
+      const model=el?.querySelector(':scope > .vaani-3d-model');
+      if(!el||!model) return {ok:false,reason:'missing '+view};
+      const rect=model.getBoundingClientRect();
+      const cs=getComputedStyle(model);
+      return {
+        ok:true, name:model.dataset['3dModel']||null,
+        pointerEvents:cs.pointerEvents, position:cs.position,
+        width:rect.width,height:rect.height,
+        finite:[rect.left,rect.top,rect.right,rect.bottom].every(Number.isFinite)
+      };
+    }, modelView);
+    assert.equal(info.ok,true,'Missing 3D model for '+modelView);
+    assert.equal(info.pointerEvents,'none','3D model intercepted input on '+modelView);
+    assert.equal(info.position,'absolute','3D model must be absolutely isolated on '+modelView);
+    assert.ok(info.width>0 && info.height>0,'3D model has zero size on '+modelView);
+    assert.equal(info.finite,true,'Invalid 3D geometry on '+modelView);
+  }
+  console.log('PASS 3D registry: 14 distinct section models, isolated pointer-events and finite geometry');
+
+  // 1009-cycle torture loop: repeatedly route-switch through the primary
+  // navigation while checking that the active model remains intact, unique,
+  // non-interactive, and within the document bounds.
+  const threeDCycleViews = ['dashboard','grammar','compare','vocab','books','pyq','games','leaderboard','profile','notifications'];
+  for (let cycle=0; cycle<1009; cycle++) {
+    const view=threeDCycleViews[cycle % threeDCycleViews.length];
+    await clickMainView(view);
+    const probe=await page.evaluate(expected => {
+      const active=document.querySelector('.view.active');
+      const model=active?.querySelector(':scope > .vaani-3d-model');
+      const rect=model?.getBoundingClientRect();
+      const cs=model ? getComputedStyle(model) : null;
+      return {
+        activeId:active?.id||null,
+        modelCount:active?.querySelectorAll(':scope > .vaani-3d-model').length||0,
+        pointerEvents:cs?.pointerEvents||null,
+        width:rect?.width||0,height:rect?.height||0,
+        documentWidth:document.documentElement.scrollWidth,
+        viewportWidth:innerWidth,
+        modelOverflow:rect ? (rect.left < -2 || rect.right > innerWidth + 2) : true
+      };
+    }, view);
+    assert.equal(probe.activeId,'view-'+view,'3D torture cycle navigated to wrong view: '+cycle);
+    assert.equal(probe.modelCount,1,'Duplicate/missing 3D model after cycle '+cycle+' ('+view+')');
+    assert.equal(probe.pointerEvents,'none','3D model captured input at cycle '+cycle+' ('+view+')');
+    assert.ok(probe.width>0 && probe.height>0,'3D model collapsed at cycle '+cycle+' ('+view+')');
+    assert.equal(probe.modelOverflow,false,'3D model escaped viewport at cycle '+cycle+' ('+view+'): '+JSON.stringify(probe));
+    assert.ok(probe.documentWidth <= probe.viewportWidth + 2,
+      '3D model caused horizontal overflow at cycle '+cycle+' ('+view+'): '+JSON.stringify(probe));
+  }
+  console.log('PASS 3D torture test: 1009 route/model cycles completed without duplicates, overflow or input interception');
+
+
   await clickMainView('notifications');
   await page.waitForTimeout(250);
   const notificationText = await page.locator('#view-notifications').innerText();
