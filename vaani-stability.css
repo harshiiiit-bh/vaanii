@@ -105,3 +105,14 @@ img{background-color:transparent}
 /* Hero image failure fallback is reinforced by a quiet background. */
 .vd-hero-photo.is-broken{display:none!important}
 .vd-hero-photo.is-loading{opacity:.04!important}
+
+
+/* Route stability: never fade the entire page or clip the destination view.
+   Content must exist on the first paint; motion belongs to individual controls. */
+.view,
+.view.active,
+.view.vfx-shape-enter{
+  animation:none!important;
+  clip-path:none!important;
+}
+.view.active .reveal{opacity:1!important;transform:none!important;}
