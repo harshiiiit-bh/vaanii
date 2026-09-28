@@ -8,19 +8,27 @@ const MAX_PER_SOURCE = 80;
 const sources = [
   { name:'UPSC — Active Examinations', url:'https://www.upsc.gov.in/examinations/active-examinations', categories:['NDA','CDS','CAPF'] },
   { name:'UPSC — Forthcoming Examinations', url:'https://www.upsc.gov.in/examinations/forthcoming-examinations', categories:['NDA','CDS','CAPF'] },
-  { name:'UPSC — Examination Notifications', url:'https://www.upsc.gov.in/exams-related-info/exam-notification', categories:['NDA','CDS','CAPF'] },
-  { name:'UPSC — Notification Archives', url:'https://www.upsc.gov.in/exams-related-info/exam-notification/archives', categories:['NDA','CDS','CAPF'] },
+  { name:'UPSC — Examination Notifications', url:'https://www.upsc.gov.in/exams-related-info/exam-notification', categories:['UPSC'] },
+  { name:'UPSC — Official Home', url:'https://www.upsc.gov.in/', categories:['UPSC'] },
   { name:'Indian Air Force — AFCAT', url:'https://afcat.edcil.co.in/', categories:['AFCAT'] },
   { name:'Indian Army — Join Indian Army', url:'https://joinindianarmy.nic.in/', categories:['AGNIVEER','ARMY_RALLY'] },
   { name:'Indian Navy — Join Indian Navy', url:'https://www.joinindiannavy.gov.in/', categories:['AGNIVEER','NAVY'] },
   { name:'Agniveervayu', url:'https://agnipathvayu.cdac.in/', categories:['AGNIVEER','AIR_FORCE'] },
   { name:'BSF Recruitment', url:'https://rectt.bsf.gov.in/', categories:['BSF'] },
   { name:'CRPF Recruitment', url:'https://rect.crpf.gov.in/', categories:['CRPF'] },
-  { name:'SSC — Constable GD', url:'https://ssc.gov.in/', categories:['BSF','CRPF','CISF','ITBP','SSB','ASSAM_RIFLES'] },
-  { name:'Indian Coast Guard', url:'https://joinindiancoastguard.cdac.in/', categories:['COAST_GUARD'] }
+  { name:'SSC — Official Notice Board', url:'https://ssc.gov.in/', categories:['SSC'] },
+  { name:'Railway Recruitment Boards — Employment Notices', url:'https://www.rrbcdg.gov.in/employment-notices.php', categories:['RAILWAYS'] },
+  { name:'IBPS — CRP Updates', url:'https://www.ibps.in/index.php/crp-updates/', categories:['BANKING'] },
+  { name:'SBI — Current Openings', url:'https://sbi.bank.in/en/web/careers/current-openings', categories:['BANKING'] },
+  { name:'CTET — Official Documents', url:'https://ctet.nic.in/documents/', categories:['TEACHING'] },
+  { name:'KVS — Recruitment Notices', url:'https://kvsangathan.nic.in/en/interview-notice/', categories:['TEACHING'] },
+  { name:'BPSC — Official Notices', url:'https://bpsc.bihar.gov.in/', categories:['STATE_PSC'] },
+  { name:'UPPSC — Official Notices', url:'https://uppsc.up.nic.in/', categories:['STATE_PSC'] },
+  { name:'ISRO — Current Opportunities', url:'https://www.isro.gov.in/ISRO_EN/ViewAllOpportunities.html', categories:['TECHNICAL'] },
+  { name:'DRDO — Vacancies', url:'https://www.drdo.gov.in/drdo/offerings/vacancies', categories:['TECHNICAL'] }
 ];
 
-const relevant = /(nda|national defence academy|naval academy|cds|combined defence services|afcat|air force common admission|capf|central armed police|agniveer|agniveervayu|agniveer vayu|recruitment rally|rally bharti|army recruitment|indian army|indian navy|navy recruitment|bsf|border security force|crpf|central reserve police|cisf|itbp|indo tibetan|ssb|assam rifles|coast guard|admit card|notification|advertisement|recruitment)/i;
+const relevant = /(nda|national defence academy|naval academy|cds|combined defence services|afcat|air force common admission|capf|central armed police|agniveer|agniveervayu|agniveer vayu|recruitment rally|rally bharti|army recruitment|indian army|indian navy|navy recruitment|bsf|border security force|crpf|central reserve police|cisf|itbp|indo tibetan|ssb|assam rifles|coast guard|ssc|staff selection|cgl|chsl|mts|stenographer|selection post|junior engineer|railway|rrb|ntpc|group[- ]?d|loco pilot|technician|ibps|sbi|rbi|bank|probationary officer|customer service associate|clerical cadre|ctet|kvs|navodaya|nvs|teacher|bpsc|uppsc|mppsc|rpsc|jpsc|state public service|isro|drdo|barc|airports authority|iocl|aiims|esic|admit card|notification|advertisement|recruitment)/i;
 const dateRx = /\b(?:0?[1-9]|[12]\d|3[01])[./-](?:0?[1-9]|1[0-2])[./-](?:20\d{2})\b|\b(?:20\d{2})-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\d|3[01])\b/g;
 
 function stripHtml(html){
@@ -48,21 +56,29 @@ function normalizeUrl(href, base){
 
 function categoryFor(text, fallback){
   const s = text.toLowerCase();
+  const family = fallback[0] || '';
+  if (['SSC','RAILWAYS','BANKING','TEACHING','STATE_PSC','TECHNICAL','UPSC'].includes(family)) return family;
   if (/afcat|air force common admission/.test(s)) return 'AFCAT';
-  if (/central armed police|capf/.test(s)) return 'CAPF';
-  if (/combined defence services|\bcds\b/.test(s)) return 'CDS';
-  if (/national defence academy|\bnda\b/.test(s)) return 'NDA';
+  if (/combined defence services|\\bcds\\b/.test(s)) return 'CDS';
+  if (/national defence academy|\\bnda\\b/.test(s)) return 'NDA';
   if (/agniveer vayu|agnipathvayu|air force agniveer/.test(s)) return 'AGNIVEER';
   if (/agniveer|join indian navy|navy recruitment/.test(s)) return 'AGNIVEER';
   if (/recruitment rally|rally bharti|army recruitment|join indian army/.test(s)) return 'ARMY_RALLY';
-  if (/border security force|\bbsf\b/.test(s)) return 'BSF';
-  if (/central reserve police|\bcrpf\b/.test(s)) return 'CRPF';
-  if (/central industrial security|\bcisf\b/.test(s)) return 'CISF';
-  if (/indo[- ]tibetan|\bitbp\b/.test(s)) return 'ITBP';
-  if (/sashastra seema bal|\bssb\b/.test(s)) return 'SSB';
+  if (/border security force|\\bbsf\\b/.test(s)) return 'BSF';
+  if (/central reserve police|\\bcrpf\\b/.test(s)) return 'CRPF';
+  if (/central industrial security|\\bcisf\\b/.test(s)) return 'CISF';
+  if (/indo[- ]tibetan|\\bitbp\\b/.test(s)) return 'ITBP';
+  if (/sashastra seema bal|\\bssb\\b/.test(s)) return 'SSB';
   if (/assam rifles/.test(s)) return 'ASSAM_RIFLES';
   if (/coast guard/.test(s)) return 'COAST_GUARD';
-  return fallback[0] || 'DEFENCE';
+  if (/railway|\\brrb\\b|ntpc|loco pilot|\\balp\\b|group[- ]?d/.test(s)) return 'RAILWAYS';
+  if (/ibps|\\bsbi\\b|\\brbi\\b|probationary officer|customer service associate|bank/.test(s)) return 'BANKING';
+  if (/ctet|kvs|navodaya|\\bnvs\\b|teacher eligibility|\\btet\\b/.test(s)) return 'TEACHING';
+  if (/\\bssc\\b|staff selection|\\bcgl\\b|\\bchsl\\b|\\bmts\\b|stenographer|selection post/.test(s)) return 'SSC';
+  if (/bpsc|uppsc|mppsc|rpsc|jpsc|state public service/.test(s)) return 'STATE_PSC';
+  if (/\\bupsc\\b|civil services|forest service|engineering services|geo-scientist|epfo/.test(s)) return 'UPSC';
+  if (/isro|drdo|barc|airports authority|\\baai\\b|\\biocl\\b|aiims|esic/.test(s)) return 'TECHNICAL';
+  return family || 'OTHER';
 }
 
 function statusFor(text){
@@ -83,21 +99,44 @@ function makeId(title,url){
 }
 
 async function fetchSource(source){
-  const res=await fetch(source.url,{headers:{'user-agent':USER_AGENT,'accept':'text/html,application/xhtml+xml'},redirect:'follow'});
-  if(!res.ok) throw new Error(`${res.status} ${res.statusText}`);
-  const html=await res.text();
-  const matches=[...html.matchAll(/<a\b[^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi)];
-  const out=[];
-  for(const m of matches){
-    if(out.length>=MAX_PER_SOURCE) break;
-    const label=stripHtml(m[2]);
-    const href=normalizeUrl(m[1],source.url);
-    if(!href || label.length<3) continue;
-    const context=label+' '+href;
-    if(!relevant.test(context)) continue;
-    out.push({label:titleFromAnchor(label),url:href,context:context.slice(0,900)});
+  const res = await fetch(source.url, {
+    headers: { 'user-agent': USER_AGENT, accept: 'text/html,application/xhtml+xml' },
+    redirect: 'follow',
+    signal: AbortSignal.timeout(20000)
+  });
+  if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+  const html = await res.text();
+  const matches = [...html.matchAll(/<a\\b[^>]*href=["']([^"']+)["'][^>]*>([\\s\\S]*?)<\\/a>/gi)];
+  const out = [];
+  for (const m of matches) {
+    if (out.length >= MAX_PER_SOURCE) break;
+    const label = stripHtml(m[2]);
+    const href = normalizeUrl(m[1], source.url);
+    if (!href || label.length < 2) continue;
+
+    let surroundingHtml = '';
+    const rowStart = html.lastIndexOf('<tr', m.index);
+    const rowEnd = html.indexOf('</tr>', m.index);
+    if (rowStart >= 0 && rowEnd >= 0 && m.index - rowStart < 2500 && rowEnd - m.index < 2500) {
+      surroundingHtml = html.slice(rowStart, rowEnd + 5);
+    } else {
+      const liStart = html.lastIndexOf('<li', m.index);
+      const liEnd = html.indexOf('</li>', m.index);
+      if (liStart >= 0 && liEnd >= 0 && m.index - liStart < 1200 && liEnd - m.index < 1200) {
+        surroundingHtml = html.slice(liStart, liEnd + 5);
+      } else {
+        surroundingHtml = html.slice(Math.max(0, m.index - 500), Math.min(html.length, m.index + 1000));
+      }
+    }
+    const nearby = stripHtml(surroundingHtml);
+    const context = [label, nearby, href].join(' ').slice(0, 1800);
+    if (!relevant.test(context)) continue;
+
+    const genericLabel = /^(click here|view|download|read more|more|apply online|apply now|here|details|know more)[\\s:—-]*$/i.test(label);
+    const title = titleFromAnchor(genericLabel && nearby.length > 12 ? nearby : label || source.name);
+    out.push({ label: title || source.name, url: href, context });
   }
-  return {out,checkedAt:new Date().toISOString()};
+  return { out, checkedAt: new Date().toISOString() };
 }
 
 function inferDates(context){
@@ -148,13 +187,22 @@ async function main(){
   const now=new Date();
   const archiveMap=new Map((archive.items||[]).map(x=>[x.id,x]));
   const live=[];
-  for(const item of byKey.values()){
-    const examDate=item.examDate?new Date(item.examDate):null;
-    const titleYear=(String(item.title).match(/20\\d{2}/)||[])[0];
-    const oldYear=titleYear && Number(titleYear)<now.getUTCFullYear();
-    if((examDate&&!Number.isNaN(examDate.valueOf())&&examDate<now)||oldYear){
-      archiveMap.set(item.id,{...item,archivedAt:archiveMap.get(item.id)?.archivedAt||now.toISOString(),archiveReason:examDate?'exam-date-passed':'older-cycle'});
-    }else live.push(item);
+  for (const item of byKey.values()) {
+    const examDate = item.examDate ? new Date(item.examDate) : null;
+    const deadline = item.lastDate ? new Date(item.lastDate) : null;
+    const itemStatus = String(item.status || item.type || '').toLowerCase();
+    const examPassed = examDate && !Number.isNaN(examDate.valueOf()) && examDate < now;
+    const applicationClosed = deadline && !Number.isNaN(deadline.valueOf()) && deadline < now && /notification|upcoming|application/.test(itemStatus);
+    const titleYear = (String(item.title).match(/20\\d{2}/) || [])[0];
+    const oldYear = titleYear && Number(titleYear) < now.getUTCFullYear();
+    if (examPassed || applicationClosed || oldYear) {
+      const reason = examPassed ? 'exam-date-passed' : applicationClosed ? 'application-deadline-passed' : 'older-cycle';
+      archiveMap.set(item.id, {
+        ...item,
+        archivedAt: archiveMap.get(item.id)?.archivedAt || now.toISOString(),
+        archiveReason: reason
+      });
+    } else live.push(item);
   }
   const items=live.filter(x=>x.title&&x.url).sort((a,b)=>String(b.lastSeen||b.firstSeen).localeCompare(String(a.lastSeen||a.firstSeen)));
   const archived=[...archiveMap.values()].sort((a,b)=>String(b.archivedAt||'').localeCompare(String(a.archivedAt||'')));
