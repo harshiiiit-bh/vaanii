@@ -28,10 +28,14 @@ async function assertVisibleText(selector, label) {
 }
 async function clickMainView(name) {
   const desktopButton = page.locator('#vaaniMainNav button[data-view="' + name + '"]');
+  const bottomButton = page.locator('#bottomNav button[data-view="' + name + '"]');
   if (await desktopButton.isVisible()) {
     await desktopButton.click();
+  } else if (await bottomButton.count()) {
+    await bottomButton.click();
   } else {
-    await page.locator('#bottomNav button[data-view="' + name + '"]').click();
+    await page.locator('#hamburgerBtn').click();
+    await desktopButton.click();
   }
   await page.waitForFunction(view => {
     const el = document.getElementById('view-' + view);
@@ -65,6 +69,18 @@ try {
   assert.ok(await page.locator('#dashBadgeGrid .badge').count() > 0, 'Dashboard achievements did not render');
   assert.ok(await page.locator('#focusSprintWidget .vd-focus-body').count() > 0, 'Focus Sprint did not render');
   console.log('PASS dashboard: hero, briefing, roadmap, missions, word, heatmap, badges and focus sprint');
+
+  await page.locator('#themeBtn').click();
+  const darkTheme = await page.evaluate(() => document.body.getAttribute('data-theme'));
+  assert.equal(darkTheme, 'dark', 'Theme toggle did not enter dark mode');
+  await assertVisibleText('#continueTitle', 'Dark-mode dashboard briefing');
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.waitForFunction(() => document.getElementById('gate')?.classList.contains('hide'), null, { timeout: 15000 });
+  await page.waitForTimeout(900);
+  await assertVisibleText('#continueTitle', 'Dashboard after saved-session reload');
+  assert.ok(await page.locator('#roadmapTrack .rm-node').count() > 0, 'Roadmap was empty after saved-session reload');
+  assert.ok(await page.locator('#missionList .mastery-row').count() >= 3, 'Missions were empty after saved-session reload');
+  console.log('PASS theme/session reload: dashboard remains populated in dark mode after reload');
 
   await clickMainView('vocab');
   assert.ok(await page.locator('#vocabGrid .word-card').count() > 0, 'Vocabulary word bank is empty');
