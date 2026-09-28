@@ -43,22 +43,41 @@ jobs:
           const fs = require('node:fs');
           const feed = JSON.parse(fs.readFileSync('data/defence-notifications.json','utf8'));
           const archive = JSON.parse(fs.readFileSync('data/defence-notifications-archive.json','utf8'));
-          const payload = JSON.stringify({
-            items: [...(feed.items || []), ...(archive.items || [])],
-            archiveIds: (archive.items || []).map(x => x.id)
-          });
-          fetch(process.env.VAANI_NOTIFICATIONS_API.replace(/\/$/, '') + '/api/notifications/sync', {
-            method: 'POST',
-            headers: {
-              'content-type': 'application/json',
-              'authorization': 'Bearer ' + process.env.VAANI_NOTIFICATIONS_SYNC_SECRET
-            },
-            body: payload
-          }).then(async r => {
-            const text = await r.text();
-            if (!r.ok) throw new Error('Cloudflare sync failed: ' + r.status + ' ' + text);
-            console.log(text);
-          }).catch(e => { console.error(e); process.exit(1); });
+          const archiveIds = new Set((archive.items || []).map(x => x.id));
+          const records = [...(feed.items || []), ...(archive.items || [])];
+          const chunkSize = 20;
+          const chunks = Math.ceil(records.length / chunkSize);
+          let synced = 0;
+          let archived = 0;
+          const endpoint = process.env.VAANI_NOTIFICATIONS_API.replace(/\/$/, '') + '/api/notifications/sync';
+
+          async function sendChunk(chunk, index) {
+            const ids = chunk.filter(x => archiveIds.has(x.id)).map(x => x.id);
+            const response = await fetch(endpoint, {
+              method: 'POST',
+              headers: {
+                'content-type': 'application/json',
+                'authorization': 'Bearer ' + process.env.VAANI_NOTIFICATIONS_SYNC_SECRET
+              },
+              body: JSON.stringify({ items: chunk, archiveIds: ids }),
+              signal: AbortSignal.timeout(60000)
+            });
+            const responseText = await response.text();
+            if (!response.ok) {
+              throw new Error('Cloudflare sync failed for chunk ' + (index + 1) + '/' + chunks + ': ' + response.status + ' ' + responseText.slice(0, 500));
+            }
+            const result = JSON.parse(responseText);
+            synced += Number(result.synced || 0);
+            archived += Number(result.archived || 0);
+            console.log('Synced chunk ' + (index + 1) + '/' + chunks + ': ' + (result.synced || 0) + ' records, ' + (result.archived || 0) + ' archive flags');
+          }
+
+          (async () => {
+            for (let offset = 0; offset < records.length; offset += chunkSize) {
+              await sendChunk(records.slice(offset, offset + chunkSize), Math.floor(offset / chunkSize));
+            }
+            console.log(JSON.stringify({ ok: true, chunks, synced, archived }));
+          })().catch(error => { console.error(error); process.exit(1); });
           NODE
 
       - name: Commit changed JSON snapshot
