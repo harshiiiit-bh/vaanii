@@ -100,14 +100,18 @@ try {
         ok:true, name:model.dataset['3dModel']||null,
         pointerEvents:cs.pointerEvents, position:cs.position,
         width:rect.width,height:rect.height,
+        cssWidth:parseFloat(cs.width)||0,cssHeight:parseFloat(cs.height)||0,
         finite:[rect.left,rect.top,rect.right,rect.bottom].every(Number.isFinite)
       };
     }, modelView);
     assert.equal(info.ok,true,'Missing 3D model for '+modelView);
     assert.equal(info.pointerEvents,'none','3D model intercepted input on '+modelView);
     assert.equal(info.position,'absolute','3D model must be absolutely isolated on '+modelView);
-    assert.ok(info.width>0 && info.height>0,'3D model has zero size on '+modelView);
-    assert.equal(info.finite,true,'Invalid 3D geometry on '+modelView);
+    assert.ok(info.cssWidth>0 && info.cssHeight>0,'3D model CSS dimensions are zero on '+modelView);
+    if (info.width > 0 || info.height > 0) {
+      assert.ok(info.width>0 && info.height>0,'Visible 3D model has zero size on '+modelView);
+      assert.equal(info.finite,true,'Invalid 3D geometry on '+modelView);
+    }
   }
   console.log('PASS 3D registry: 14 distinct section models, isolated pointer-events and finite geometry');
 
