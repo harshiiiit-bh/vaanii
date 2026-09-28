@@ -430,6 +430,7 @@ try {
     }
   }
   console.log('PASS responsive views: narrow phone, tablet, laptop and wide desktop layouts');
+  await clickMainView('profile');
 
   const savedAccountKeys = await page.evaluate(() =>
     Object.keys(localStorage).filter(key => key.startsWith('vbv_veer_bhogya_account_')));
