@@ -164,10 +164,10 @@ nav.mainnav button.active{
 }
 @media(max-width:1024px){
   .topbar{min-height:58px}
-  header .mainnav{display:none}
   .brand{font-size:1.04rem}
   .top-right .xp-pill{max-width:none}
 }
+@media(max-width:767px){header .mainnav{display:none}}
 @media(max-width:520px){
   .topbar{padding-inline:calc(10px + var(--safe-l,0px)) calc(10px + var(--safe-r,0px));gap:7px}
   .top-right{gap:4px}
