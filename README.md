@@ -11,7 +11,8 @@
 - **Comparisons:** a searchable library of commonly confused English pairs with explanations and practice.
 - **Previous Year Questions:** paper-wise NDA/CDS practice, timed sessions and review.
 - **Arena:** create or join timed matches and view match results.
-- **Book Reading:** manage a reading queue, log pages and time, save highlights, capture vocabulary, take level tests and practise spoken English.
+- **Book Reading:** manage a reading queue, log pages and time, save highlights and capture vocabulary in a shared register.
+- **The Academy:** explore an image-led overview of NDA, IMA, AFA and INA, with credited photographs.
 - **Dashboard, Profile and Service Record:** review learning activity, progress and earned milestones.
 
 ## Run locally
@@ -61,7 +62,7 @@ Keep data in the format used by neighbouring entries. PYQ questions should be tr
 
 - `index.html` — page structure, navigation and script loading.
 - `js/app.js` — main VAANI interface and learning logic.
-- `js/library.js` — Book Reading, its register and profile storage.
+- `js/library.js` — Book Reading, its register, profile storage and Academy gallery.
 - `js/vaani-arena.js` — Arena match flow and optional leaderboard adapter.
 - `styles.css`, `styles-vbv.css`, and `vaani-*.css` — shared and module-specific styling.
 - `scripts/check-quality.mjs` — data, markup and integration checks.
