@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
 
 const DATA_FILE = 'data/defence-notifications.json';
+const ARCHIVE_FILE = 'data/defence-notifications-archive.json';
 const USER_AGENT = 'VAANI-Defence-Notification-Bot/1.0 (+https://harshiiiit-bh.github.io/vaanii/)';
 const MAX_PER_SOURCE = 80;
 
@@ -105,7 +106,9 @@ function inferDates(context){
 
 async function main(){
   let existing={version:1,generatedAt:null,source:'VAANI Defence Notification Engine',items:[]};
+  let archive={version:1,generatedAt:null,source:'VAANI Defence Notification Archive',items:[]};
   try { existing=JSON.parse(await fs.readFile(DATA_FILE,'utf8')); } catch {}
+  try { archive=JSON.parse(await fs.readFile(ARCHIVE_FILE,'utf8')); } catch {}
   const byKey=new Map((existing.items||[]).map(x=>[x.id,x]));
   const runLog=[];
 
@@ -142,12 +145,23 @@ async function main(){
     }
   }
 
-  const items=[...byKey.values()]
-    .filter(x=>x.title&&x.url)
-    .sort((a,b)=>String(b.lastSeen||b.firstSeen).localeCompare(String(a.lastSeen||a.firstSeen)));
-
-  const output={version:1,generatedAt:new Date().toISOString(),source:'VAANI Defence Notification Engine',checkedSources:runLog,items};
+  const now=new Date();
+  const archiveMap=new Map((archive.items||[]).map(x=>[x.id,x]));
+  const live=[];
+  for(const item of byKey.values()){
+    const examDate=item.examDate?new Date(item.examDate):null;
+    const titleYear=(String(item.title).match(/20\\d{2}/)||[])[0];
+    const oldYear=titleYear && Number(titleYear)<now.getUTCFullYear();
+    if((examDate&&!Number.isNaN(examDate.valueOf())&&examDate<now)||oldYear){
+      archiveMap.set(item.id,{...item,archivedAt:archiveMap.get(item.id)?.archivedAt||now.toISOString(),archiveReason:examDate?'exam-date-passed':'older-cycle'});
+    }else live.push(item);
+  }
+  const items=live.filter(x=>x.title&&x.url).sort((a,b)=>String(b.lastSeen||b.firstSeen).localeCompare(String(a.lastSeen||a.firstSeen)));
+  const archived=[...archiveMap.values()].sort((a,b)=>String(b.archivedAt||'').localeCompare(String(a.archivedAt||'')));
+  const output={version:1,generatedAt:now.toISOString(),source:'VAANI Defence Notification Engine',checkedSources:runLog,items};
+  const archiveOutput={version:1,generatedAt:now.toISOString(),source:'VAANI Defence Notification Archive',items:archived};
   await fs.writeFile(DATA_FILE,JSON.stringify(output,null,2)+'\n');
+  await fs.writeFile(ARCHIVE_FILE,JSON.stringify(archiveOutput,null,2)+'\n');
   console.log(JSON.stringify({generatedAt:output.generatedAt,items:items.length,runLog},null,2));
 
   if(runLog.every(x=>!x.ok)) throw new Error('All notification sources failed; refusing to publish a blank refresh.');
