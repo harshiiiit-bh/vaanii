@@ -48,6 +48,8 @@ function stripHtml(html){
     .replace(/&amp;/gi,'&')
     .replace(/&#39;/gi,"'")
     .replace(/&quot;/gi,'"')
+    .replace(/&#(\d+);/g,(_,code)=>String.fromCodePoint(Number(code)))
+    .replace(/&#x([\da-f]+);/gi,(_,code)=>String.fromCodePoint(parseInt(code,16)))
     .replace(/\s+/g,' ')
     .trim();
 }
@@ -105,6 +107,43 @@ function makeId(title,url){
   return (title+'|'+url).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,110);
 }
 
+const navigationTitles = new Set([
+  'home','about us','about drdo','our team','technology clusters','corporate clusters',
+  'schemes and services','industry support','vacancies','competitions and awards',
+  'products','publications','avalanche warning bulletin','drdo in news','forms and manuals',
+  'press release','acts and policies','photos','videos','conference','contact us','rti',
+  'faqs','faq','more','login','sign in','administration','promotion','recruitment rules',
+  'direct recruitment','notifications/recruitment','notifications / recruitment',
+  'employment','syllabus','admit cards','results/misc/answer keys','circular',
+  'events calendar','event calendar','copyright statement','recruitment','notifications',
+  'notification','apply online','read more','view details','click here','download'
+]);
+
+function cleanNoticeTitle(value) {
+  let title = stripHtml(String(value || ''))
+    .replace(/\s*(?:read more|view details|click here|download pdf)\b[\s\S]*$/i, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (title.length > 180) {
+    const first = title.split(/(?<=[.!?])\s+/)[0];
+    title = first && first.length >= 18 ? first : title.slice(0, 180).trim();
+  }
+  return title.slice(0, 180);
+}
+
+function isNoticeTitle(value, href = '') {
+  const title = cleanNoticeTitle(value);
+  const normalized = title.toLowerCase().replace(/\s+/g, ' ').trim();
+  if (!title || title.length < 14 || navigationTitles.has(normalized)) return false;
+  if (/[{}]|\| translate \|/i.test(title)) return false;
+  if (/^(?:home|about|contact|login|dashboard|administration|promotion|manual|faq|more)\b/i.test(title)) return false;
+  if (/^(?:notifications?\s*\/\s*recruitment|results?\s*\/\s*misc|recruitment rules|direct recruitment)$/i.test(title)) return false;
+  if (/\b(?:copyright|privacy policy|terms of use|sitemap|site map|feedback|user manual|website policy)\b/i.test(title)) return false;
+  const noticeSignal = /\b(?:advt\.?|advertisement|notification|recruitment|vacanc(?:y|ies)|employment notice|admit cards?|e-?admit cards?|hall tickets?|answer keys?|results?|merit lists?|extension of (?:the )?(?:last )?date|inviting online applications?|apply online|examination|written exam(?:ination)?|interview|corrigendum|provisional|city intimation|application form|shortlist(?:ed)?)\b/i;
+  if (noticeSignal.test(title)) return true;
+  return /\.(?:pdf|html?)($|\?)/i.test(href) && /(?:notice|advt|advert|recruit|vacan|exam|result|admit|answer)/i.test(href);
+}
+
 async function fetchSource(source){
   const res = await fetch(source.url, {
     headers: { 'user-agent': USER_AGENT, accept: 'text/html,application/xhtml+xml' },
@@ -140,8 +179,9 @@ async function fetchSource(source){
     if (!relevant.test(context)) continue;
 
     const genericLabel = /^(click here|view|download|read more|more|apply online|apply now|here|details|know more)[\s:—-]*$/i.test(label);
-    const title = titleFromAnchor(genericLabel && nearby.length > 12 ? nearby : label || source.name);
-    out.push({ label: title || source.name, url: href, context });
+    const title = cleanNoticeTitle(titleFromAnchor(genericLabel && nearby.length > 12 ? nearby : label || source.name));
+    if (!isNoticeTitle(title, href)) continue;
+    out.push({ label: title, url: href, context });
   }
   return { out, checkedAt: new Date().toISOString() };
 }
@@ -155,7 +195,7 @@ async function main(){
   let archive={version:1,generatedAt:null,source:'VAANI Defence Notification Archive',items:[]};
   try { existing=JSON.parse(await fs.readFile(DATA_FILE,'utf8')); } catch {}
   try { archive=JSON.parse(await fs.readFile(ARCHIVE_FILE,'utf8')); } catch {}
-  const byKey=new Map((existing.items||[]).map(x=>[x.id,x]));
+  const byKey=new Map((existing.items||[]).filter(x=>isNoticeTitle(x.title,x.url)).map(x=>[x.id,x]));
   const runLog=[];
 
   for(const source of sources){
