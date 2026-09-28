@@ -213,6 +213,9 @@ try {
   assert.equal(fullPyqAudit.issues.length, 0, 'PYQ browser rendering issues: '+JSON.stringify(fullPyqAudit.issues));
   assert.equal(fullPyqAudit.checked, fullPyqAudit.total, 'Not every PYQ was rendered by the browser audit');
   console.log('PASS full-bank PYQ browser rendering: '+fullPyqAudit.checked+' questions checked across NDA and CDS');
+  await page.evaluate(() => pvExitSession());
+  assert.equal(await page.evaluate(() => document.body.classList.contains('pv-session-active')), false,
+    'PYQ regression test left the active practice-session state behind');
 
 
 
