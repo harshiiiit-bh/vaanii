@@ -69,7 +69,7 @@
 @keyframes vfxMedalFloat{0%,100%{transform:rotate(-5deg) translateY(0)}50%{transform:rotate(5deg) translateY(-9px)}}
 
 /* Layer content above the atmospheric 3D accents without changing navigation. */
-header,.bottomnav,main{position:relative;z-index:2}
+header{z-index:100}.bottomnav{z-index:90}main{position:relative;z-index:2}
 #gate{z-index:1000}
 #backToTop{z-index:80}
 #vaaniVfxDock{z-index:120}
