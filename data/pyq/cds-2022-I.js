@@ -7,6 +7,7 @@ var PYQ_CDS_2022_I = [
     "n": 1,
     "sec": "Spotting Errors",
     "q": "This task is being undertaken for the benefit of young people in needed at the instance of the Chief of the Group.",
+    "parts": ["This task is being undertaken","for the benefit of young people in needed","at the instance of the Chief of the Group."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -28,6 +29,7 @@ var PYQ_CDS_2022_I = [
     "n": 2,
     "sec": "Spotting Errors",
     "q": "If I am the principal of the school I would abolish all examinations.",
+    "parts": ["If I am","the principal of the school","I would abolish all examinations."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -49,6 +51,7 @@ var PYQ_CDS_2022_I = [
     "n": 3,
     "sec": "Spotting Errors",
     "q": "My mother is thinking that I should stop drinking.",
+    "parts": ["My mother is thinking","that I should","stop drinking."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -70,6 +73,7 @@ var PYQ_CDS_2022_I = [
     "n": 4,
     "sec": "Spotting Errors",
     "q": "The students have a good time in the class today",
+    "parts": ["The students have","a good time","in the class today"],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -91,6 +95,7 @@ var PYQ_CDS_2022_I = [
     "n": 5,
     "sec": "Spotting Errors",
     "q": "More than thirty lakh people were inoculated Covid 19 on March 15th.",
+    "parts": ["More than thirty lakh people","were inoculated Covid 19","on March 15th."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -112,6 +117,7 @@ var PYQ_CDS_2022_I = [
     "n": 6,
     "sec": "Spotting Errors",
     "q": "LIC was found on September 1, 1956 via the Life Insurance Corporation Act.",
+    "parts": ["LIC was found","on September 1, 1956","via the Life Insurance Corporation Act."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -133,6 +139,7 @@ var PYQ_CDS_2022_I = [
     "n": 7,
     "sec": "Spotting Errors",
     "q": "Full many a flower are born to blush unseen.",
+    "parts": ["Full many a flower","are born","to blush unseen."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -154,6 +161,7 @@ var PYQ_CDS_2022_I = [
     "n": 8,
     "sec": "Spotting Errors",
     "q": "I shall be glad to help every one of my boys in their studies.",
+    "parts": ["I shall be glad to help","every one of my boys","in their studies."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -175,6 +183,7 @@ var PYQ_CDS_2022_I = [
     "n": 9,
     "sec": "Spotting Errors",
     "q": "Most heart attacks involve discomfort in the cente or left side of the chest.",
+    "parts": ["Most heart attacks","involve discomfort","in the cente or left side of the chest."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -196,6 +205,7 @@ var PYQ_CDS_2022_I = [
     "n": 10,
     "sec": "Spotting Errors",
     "q": "For most food park marketing initiatives are restricted to a few hundred kilometers.",
+    "parts": ["For most food park","marketing initiatives are restricted to","a few hundred kilometers."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",

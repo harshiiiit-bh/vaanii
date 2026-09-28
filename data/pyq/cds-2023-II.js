@@ -847,6 +847,7 @@ var PYQ_CDS_2023_II = [
     "n": 41,
     "sec": "Spotting Errors",
     "q": "You should read the newspaper regularly to be update with current affairs.",
+    "parts": ["You should","read the newspaper regularly","to be update with current affairs."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -868,6 +869,7 @@ var PYQ_CDS_2023_II = [
     "n": 42,
     "sec": "Spotting Errors",
     "q": "Our grandparents will be visited by us this weekend",
+    "parts": ["Our grandparents","will be visited","by us this weekend"],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -889,6 +891,7 @@ var PYQ_CDS_2023_II = [
     "n": 43,
     "sec": "Spotting Errors",
     "q": "However, the task is from done, particularly in ensuring equity in the distribution of quality education.",
+    "parts": ["However, the task is from done,","particularly in ensuring equity in","the distribution of quality education."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -910,6 +913,7 @@ var PYQ_CDS_2023_II = [
     "n": 44,
     "sec": "Spotting Errors",
     "q": "Looking ahead, the university is expunging revenue generation opportunities to add more facilities for students and staff",
+    "parts": ["Looking ahead, the university","is expunging revenue generation","opportunities to add more facilities for students and staff"],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -931,6 +935,7 @@ var PYQ_CDS_2023_II = [
     "n": 45,
     "sec": "Spotting Errors",
     "q": "If you are interested in applying for the job, your application must received by Friday.",
+    "parts": ["If you are interested in","applying for the job, your application","must received by Friday."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -952,6 +957,7 @@ var PYQ_CDS_2023_II = [
     "n": 46,
     "sec": "Spotting Errors",
     "q": "Perhaps the biggest threat today is the impact of climate change on food systems and livelihoods of poor farmers",
+    "parts": ["Perhaps the biggest threat today","is the impact of climate change on food","systems and livelihoods of poor farmers"],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -973,6 +979,7 @@ var PYQ_CDS_2023_II = [
     "n": 47,
     "sec": "Spotting Errors",
     "q": "In such a volatile global environment, it is heartening that India demonstrated admirable resilence and achieved robust recovery.",
+    "parts": ["In such a volatile global environment,","it is heartening that India","demonstrated admirable resilence and achieved robust recovery."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -994,6 +1001,7 @@ var PYQ_CDS_2023_II = [
     "n": 48,
     "sec": "Spotting Errors",
     "q": "Write an email to your friend expressing you regret for not being able to attend his birthday party",
+    "parts": ["Write an email to your friend","expressing you regret for not being able","to attend his birthday party"],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -1014,6 +1022,7 @@ var PYQ_CDS_2023_II = [
     "n": 49,
     "sec": "Spotting Errors",
     "q": "Migrating elephant herds appear like West Bengal so much that they spend more time here than in the \"neighbouring states from where they cross over.",
+    "parts": ["Migrating elephant herds appear like","West Bengal so much that they spend more","time here than in the \"neighbouring states from where they cross over."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -1035,6 +1044,7 @@ var PYQ_CDS_2023_II = [
     "n": 50,
     "sec": "Spotting Errors",
     "q": "Trucked neatly under the pile of clothes in the cupboard are the letters written by my mother to my father thirty years ago",
+    "parts": ["Trucked neatly under the pile of clothes","in the cupboard are the letters written","by my mother to my father thirty years ago"],
     "o": [
       "Error in part (a)",
       "Error in part (b)",

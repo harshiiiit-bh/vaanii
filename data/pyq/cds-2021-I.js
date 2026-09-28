@@ -7,6 +7,7 @@ var PYQ_CDS_2021_I = [
     "n": 1,
     "sec": "Spotting Errors",
     "q": "He had been doing the job of a physician during the 1990s.",
+    "parts": ["He had been doing","the job of a physician","during the 1990s."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -28,6 +29,7 @@ var PYQ_CDS_2021_I = [
     "n": 2,
     "sec": "Spotting Errors",
     "q": "He said that he preferred coffee than tea.",
+    "parts": ["He said","that he preferred","coffee than tea."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -49,6 +51,7 @@ var PYQ_CDS_2021_I = [
     "n": 3,
     "sec": "Spotting Errors",
     "q": "All that glitters are not gold.",
+    "parts": ["All that","glitters","are not gold."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -70,6 +73,7 @@ var PYQ_CDS_2021_I = [
     "n": 4,
     "sec": "Spotting Errors",
     "q": "A species is considered endangered when it is in a very high risk of extinction in the world.",
+    "parts": ["A species is considered","endangered when it is","in a very high risk of extinction in the world."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -91,6 +95,7 @@ var PYQ_CDS_2021_I = [
     "n": 5,
     "sec": "Spotting Errors",
     "q": "Our greatest glory is not in never falling but in rising every time we fell.",
+    "parts": ["Our greatest glory","is not in never falling","but in rising every time we fell."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -112,6 +117,7 @@ var PYQ_CDS_2021_I = [
     "n": 6,
     "sec": "Spotting Errors",
     "q": "Language is an essential modes of communication and every language matters in communication.",
+    "parts": ["Language is","an essential modes of communication","and every language matters in communication."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -133,6 +139,7 @@ var PYQ_CDS_2021_I = [
     "n": 7,
     "sec": "Spotting Errors",
     "q": "The matter was been resolved after long deliberations among the members of the team.",
+    "parts": ["The matter was been resolved","after long deliberations","among the members of the team."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -154,6 +161,7 @@ var PYQ_CDS_2021_I = [
     "n": 8,
     "sec": "Spotting Errors",
     "q": "Care has been taken to ensure safety and security of the participants in the event.",
+    "parts": ["Care has been taken","to ensure safety and security","of the participants in the event."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -175,6 +183,7 @@ var PYQ_CDS_2021_I = [
     "n": 9,
     "sec": "Spotting Errors",
     "q": "Indian film industry is considered to be one of the symbol of cultural and social life",
+    "parts": ["Indian film industry","is considered to be","one of the symbol of cultural and social life"],
     "o": [
       "Error in part (a)",
       "Error in part (b)",
@@ -196,6 +205,7 @@ var PYQ_CDS_2021_I = [
     "n": 10,
     "sec": "Spotting Errors",
     "q": "It is still true that the Indian economy is dependent on monsoon.",
+    "parts": ["It is still true","that the Indian economy","is dependent on monsoon."],
     "o": [
       "Error in part (a)",
       "Error in part (b)",

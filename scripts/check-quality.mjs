@@ -145,6 +145,32 @@ try {
         throw new Error('Invalid question or answer index: ' + at);
       }
       if (typeof q.sec !== 'string' || !q.sec.trim()) throw new Error('Missing topic tag: ' + at);
+      if (String(q.sec).trim().toLowerCase() === 'spotting errors') {
+        if (q.o.length !== 4) throw new Error('Spotting Errors must expose four choices (a–d): ' + at);
+        const explicitParts = Array.isArray(q.parts) && q.parts.length === 3 &&
+          q.parts.every(part => typeof part === 'string' && part.trim());
+        const normalizeSegmentText = value => String(value).toLocaleLowerCase()
+          .replace(/[“”‘’]/g, "'").replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
+        if (explicitParts && normalizeSegmentText(q.parts.join(' ')) !== normalizeSegmentText(q.q)) {
+          throw new Error('Spotting Errors parts do not reconstruct the sentence: ' + at);
+        }
+        const inlineLabels = [...q.q.matchAll(/\(([abc])\)/gi)].map(match => match[1].toLowerCase()).slice(0, 3);
+        const hasInlineLabels = inlineLabels.join('') === 'abc';
+        const pipeParts = q.q.split(/\s*\|\s*/).map(part => part.trim()).filter(Boolean);
+        const hasPipeParts = pipeParts.length === 3;
+        let optionCursor = 0;
+        const optionParts = q.o.slice(0, 3).map(option => String(option).trim());
+        const hasChoiceParts = optionParts.length === 3 && optionParts.every(phrase => {
+          if (phrase.length <= 2 || /^\(?[abc]\)?\.?$/i.test(phrase)) return false;
+          const index = q.q.toLocaleLowerCase().indexOf(phrase.toLocaleLowerCase(), optionCursor);
+          if (index < 0) return false;
+          optionCursor = index + phrase.length;
+          return true;
+        });
+        if (!explicitParts && !hasInlineLabels && !hasPipeParts && !hasChoiceParts) {
+          throw new Error('Spotting Errors prompt has no identifiable (a)/(b)/(c) segments: ' + at);
+        }
+      }
       const id = exam + '-' + q.y + '-' + q.s + '-' + q.n;
       if (ids.has(id)) throw new Error('Duplicate PYQ question ID: ' + id);
       ids.add(id);

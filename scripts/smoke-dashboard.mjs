@@ -142,6 +142,84 @@ try {
   assert.ok(await page.locator('.vp-logout-btn').count(), 'Profile logout control is missing');
   console.log('PASS navigation: all primary views opened; logout control is present');
 
+  await clickMainView('pyq');
+  await page.evaluate(() => {
+    const question = PYQ_ALL.find(q => q._exam === 'CDS' && q.y === 2022 && q.s === 'I' &&
+      q.n === 1 && q.sec === 'Spotting Errors');
+    if (!question) throw new Error('CDS I 2022 spotting-error regression question was not loaded');
+    pvStartSession('section', [question], { title: 'CDS I 2022 · Spotting Errors' });
+  });
+  await page.waitForSelector('#view-pyq .pv-error-parts', { timeout: 10000 });
+  const renderedParts = await page.locator('#view-pyq .pv-error-segment-label').allTextContents();
+  assert.deepEqual(renderedParts, ['(a)', '(b)', '(c)'], 'Spotting Errors must show all three sentence-part labels');
+  const renderedPrompt = (await page.locator('#view-pyq .pv-error-parts').textContent()) || '';
+  assert.ok(renderedPrompt.includes('This task is being undertaken') &&
+    renderedPrompt.includes('for the benefit of young people in needed') &&
+    renderedPrompt.includes('at the instance of the Chief of the Group.'),
+    'Spotting Errors segment text was not preserved');
+  console.log('PASS PYQ presentation: CDS I 2022 spotting-error prompt displays labelled (a), (b), and (c) parts');
+
+  await page.evaluate(() => {
+    const question = PYQ_ALL.find(q => q._exam === 'NDA' && q.y === 2009 && q.s === 'I' &&
+      q.n === 17 && q.sec === 'Spotting Errors');
+    if (!question) throw new Error('NDA 2009-I legacy spotting-error question was not loaded');
+    pvStartSession('section', [question], { title: 'NDA I 2009 Spotting Errors' });
+  });
+  await page.waitForSelector('#view-pyq .pv-error-parts', { timeout: 10000 });
+  const ndaParts = await page.locator('#view-pyq .pv-error-segment-label').allTextContents();
+  assert.deepEqual(ndaParts, ['(a)', '(b)', '(c)'], 'Legacy NDA fragment choices must be rendered as marked parts');
+  const ndaPrompt = (await page.locator('#view-pyq .pv-error-parts').textContent()) || '';
+  assert.ok(ndaPrompt.includes('He hesitated to accept the post') &&
+    ndaPrompt.includes('as he did not think') &&
+    ndaPrompt.includes('that the salary would be enough'),
+    'Legacy NDA fragments were not mapped to the sentence');
+  console.log('PASS PYQ presentation: NDA 2009-I legacy answer-fragment format displays labelled parts');
+
+  const fullPyqAudit = await page.evaluate(() => {
+    const previous = PV.session;
+    const issues = [];
+    let checked = 0;
+    try {
+      for (const q of PYQ_ALL) {
+        PV.session = {
+          mode:'practice', title:'PYQ presentation audit', questions:[q], index:0,
+          answers:{}, streak:0, bestStreak:0, remaining:null,
+          perQSeconds:null, timeLimitSec:null
+        };
+        const markup = pvSessionHTML();
+        const doc = new DOMParser().parseFromString(markup, 'text/html');
+        const prompt = doc.querySelector('.pv-qtext');
+        const options = [...doc.querySelectorAll('.pv-options .pv-option')];
+        if (!prompt || !prompt.textContent.trim()) issues.push(q._id+': missing prompt');
+        if (options.length !== (String(q._sourceSec||q.sec).trim().toLowerCase()==='spotting errors'?4:q.o.length)) {
+          issues.push(q._id+': expected '+(q.o.length)+' visible options, found '+options.length);
+        }
+        if (options.some(option => !option.querySelector('.ol') || !(option.textContent||'').trim())) {
+          issues.push(q._id+': option missing its letter or text');
+        }
+        if (q.passage && !doc.querySelector('.pv-passage-text')) issues.push(q._id+': passage missing from prompt');
+        if (String(q._sourceSec||q.sec).trim().toLowerCase()==='spotting errors') {
+          const labels = [...doc.querySelectorAll('.pv-error-segment-label')].map(el=>el.textContent.trim());
+          if (labels.join('|')!=='(a)|(b)|(c)') issues.push(q._id+': spotting parts missing or mislabelled: '+labels.join(','));
+        }
+        checked++;
+        if (issues.length >= 30) break;
+      }
+    } finally {
+      PV.session = previous;
+    }
+    return {checked,total:PYQ_ALL.length,issues};
+  });
+  assert.equal(fullPyqAudit.issues.length, 0, 'PYQ browser rendering issues: '+JSON.stringify(fullPyqAudit.issues));
+  assert.equal(fullPyqAudit.checked, fullPyqAudit.total, 'Not every PYQ was rendered by the browser audit');
+  console.log('PASS full-bank PYQ browser rendering: '+fullPyqAudit.checked+' questions checked across NDA and CDS');
+  await page.evaluate(() => pvExitSession());
+  assert.equal(await page.evaluate(() => document.body.classList.contains('pv-session-active')), false,
+    'PYQ regression test left the active practice-session state behind');
+
+
+
+
   // Exercise every remaining Book Reading route, including empty states.
   await clickMainView('books');
   for (const route of ['home','dashboard','board','library','ongoing','completed','upcoming','vocab','vocabtest','achievements','academy']) {

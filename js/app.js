@@ -841,6 +841,65 @@ function pyqHi(q){
   return safe(text.slice(0,start))+'<mark class="pyq-vocab-hi pyq-keyword-highlight">'+safe(match[0])+'</mark>'+safe(text.slice(end));
 }
 
+/* Render spotting-error sentence boundaries as visible, labelled parts.
+   Sources vary: imported CDS banks may carry an explicit parts array,
+   older NDA banks place (a)/(b)/(c) inline, and newer CDS banks use |. */
+function pyqSpottingParts(q){
+  if(!q||typeof q.q!=='string')return null;
+  if(Array.isArray(q.parts)&&q.parts.length===3&&q.parts.every(p=>typeof p==='string'&&p.trim()))return q.parts.map(p=>p.trim());
+  const source=q.q;
+  if(/\s\|\s/.test(source)){
+    const split=source.split(/\s*\|\s*/).map(p=>p.trim()).filter(Boolean);
+    if(split.length===3)return split;
+  }
+  const matches=[...source.matchAll(/\(([abc])\)\s*\/?/gi)];
+  if(matches.length>=3){
+    const parts=[];let cursor=0;let valid=true;
+    for(let i=0;i<3;i++){
+      const m=matches[i];
+      if(m[1].toLowerCase()!==['a','b','c'][i]){valid=false;break;}
+      const part=source.slice(cursor,m.index).replace(/\s*\/\s*$/,'').trim();
+      if(!part){valid=false;break;}
+      parts.push(part);
+      cursor=m.index+m[0].length;
+    }
+    if(valid)return parts;
+  }
+  // Early NDA papers store the three underlined sentence fragments as
+  // answer choices, followed by "No error", instead of inline markers.
+  const choices=Array.isArray(q.o)?q.o.slice(0,3).map(value=>String(value).trim()):[];
+  if(choices.length===3&&choices.every(value=>value.length>2&&!/^\(?[abc]\)?\.?$/i.test(value))){
+    const lower=source.toLocaleLowerCase();let cursor=0;const parts=[];
+    for(const phrase of choices){
+      const index=lower.indexOf(phrase.toLocaleLowerCase(),cursor);
+      if(index<0)return null;
+      parts.push(source.slice(index,index+phrase.length));
+      cursor=index+phrase.length;
+    }
+    const tail=source.slice(cursor);
+    if(parts.length===3&&/^[\s.!?;:]*$/.test(tail))parts[2]+=tail.trim();
+    return parts;
+  }
+  return null;
+}
+function pyqOptionLabels(q){
+  if(!q||!Array.isArray(q.o))return [];
+  if(String(q._sourceSec||q.sec||'').trim().toLowerCase()==='spotting errors'){
+    return ['Error in part (a)','Error in part (b)','Error in part (c)','No error'];
+  }
+  return q.o;
+}
+function pyqPromptHTML(q){
+  if(!q||typeof q.q!=='string')return '';
+  if(String(q._sourceSec||q.sec||'').trim().toLowerCase()!=='spotting errors')return pyqHi(q);
+  const parts=pyqSpottingParts(q);
+  if(!parts)return '<span class="pv-error-unsegmented">'+pyqHi(q)+'</span>';
+  return '<span class="pv-error-parts" role="group" aria-label="Sentence parts a, b and c">'+
+    parts.map((part,i)=>'<span class="pv-error-segment"><span class="pv-error-segment-text">'+escapeHtmlVaani(part)+'</span><span class="pv-error-segment-label" aria-label="Part '+letters[i]+'">('+letters[i]+')</span></span>').join('<span class="pv-error-segment-divider" aria-hidden="true"> / </span>')+
+    '</span>';
+}
+
+
 /* ---- stats (persisted in State.pyqStats) ---- */
 function ensurePyqStats(){
   State.pyqStats = State.pyqStats || { attempts:{}, history:[] };
@@ -1377,7 +1436,7 @@ function pvHomeHTML(){
     return `<div class="pv-recent-item" onclick="pvReviewFromRecent('${h.qid}')">
       <div class="pv-recent-dot ${h.correct?'ok':'no'}">${h.correct?'✓':'✕'}</div>
       <div class="pv-recent-body">
-        <div class="pv-recent-q">${pyqHi(q)}</div>
+        <div class="pv-recent-q">${pyqPromptHTML(q)}</div>
         <div class="pv-recent-meta">${(PYQ_EXAM_INFO[q._exam]&&PYQ_EXAM_INFO[q._exam].short)||'NDA'} ${q.s} ${q.y} · ${q.sec}</div>
       </div>
     </div>`;
@@ -1737,12 +1796,13 @@ function pvSessionHTML(){
     </div>`;
   }
 
+  const displayOptions = pyqOptionLabels(q);
   let optsHTML = '';
   if(isRevisionLike){
-    optsHTML = q.o.map((opt,i)=>`<div class="pv-option ${i===q.ans?'correct':''}" style="cursor:default">
-      <span class="ol">${letters[i]}</span><span>${opt}</span></div>`).join('');
+    optsHTML = displayOptions.map((opt,i)=>`<div class="pv-option ${i===q.ans?'correct':''}" style="cursor:default">
+      <span class="ol">${letters[i]}</span><span>${escapeHtmlVaani(opt)}</span></div>`).join('');
   } else {
-    optsHTML = q.o.map((opt,i)=>{
+    optsHTML = displayOptions.map((opt,i)=>{
       let cls = '';
       if(answer && s.mode!=='exam'){
         if(i===q.ans) cls='correct';
@@ -1794,7 +1854,7 @@ function pvSessionHTML(){
         <button class="bm-star ${bookmarked?'active':''}" onclick="toggleBookmark('${bmId}', this)" title="Bookmark" style="margin-left:auto">★</button>
       </div>
       ${q.passage ? `<div class="pv-passage"><div class="pv-passage-label">Passage</div><div class="pv-passage-text">${escapeHtmlVaani(q.passage)}</div></div>` : ''}
-      <div class="pv-qtext">${pyqHi(q)}</div>
+      <div class="pv-qtext">${pyqPromptHTML(q)}</div>
       <div class="pv-answer-hint" ${answer||isRevisionLike?'hidden':''}>Select one option to continue.</div>
       <div class="pv-options">${optsHTML}</div>
       ${feedbackHTML}
@@ -1851,7 +1911,7 @@ function pvSummaryHTML(){
     const a = s.answers[q._id];
     const stat = (!a || a.choice===-1) ? '⬜' : (a.correct ? '✅' : '❌');
     return `<div class="pv-review-item" onclick="pvReviewExamQ(${i})">
-      <span class="idx">Q${i+1}</span><span class="q">${pyqHi(q)}</span><span class="stat">${stat}</span>
+      <span class="idx">Q${i+1}</span><span class="q">${pyqPromptHTML(q)}</span><span class="stat">${stat}</span>
     </div>`;
   }).join('');
 
@@ -1945,7 +2005,7 @@ function relatedPyqHTML(lessonId){
   const preview = related.slice(0,3);
   return `<div id="fs-pyq-real" class="panel-title" style="margin-top:24px"><span class="bar"></span>Real NDA PYQs On This Topic (${related.length})</div>
     ${preview.map(q=>`<div class="related-pyq-mini" onclick="openPyqByLesson('${lessonId}')">
-       <div class="rpm-meta">${(PYQ_EXAM_INFO[q._exam]&&PYQ_EXAM_INFO[q._exam].short)||'NDA'} ${q.s} ${q.y} · ${q.sub}</div>${pyqHi(q)}
+       <div class="rpm-meta">${(PYQ_EXAM_INFO[q._exam]&&PYQ_EXAM_INFO[q._exam].short)||'NDA'} ${q.s} ${q.y} · ${q.sub}</div>${pyqPromptHTML(q)}
      </div>`).join('')}
     <button class="btn ghost" style="margin-top:6px" onclick="openPyqByLesson('${lessonId}')">🎯 Solve All ${related.length} Previous Year Questions on this Topic</button>`;
 }
