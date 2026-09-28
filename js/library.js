@@ -785,8 +785,13 @@ function renderOngoingDetail(id){
       <h3 style="margin-bottom:14px;">Add a word to your Vocab Register</h3>
       <p style="font-size:13px; color:var(--navy-soft); margin-bottom:12px;">Type any new word you learnt from this book. It will be defined and sorted into the Vocab Register automatically — no need to open that tab.</p>
       <div class="form-row" style="grid-template-columns:2fr 1fr;">
-        <div><label>New word</label><input type="text" id="vocab-input" placeholder="e.g. Indefatigable"></div>
-        <div style="display:flex; align-items:flex-end;"><button class="vbv-btn btn-gold" style="width:100%;" id="vocab-add-btn" onclick="submitVocabWord('${b.id}')">Add Word</button></div>
+        <div><label>Word, idiom, or phrase</label><input type="text" id="vocab-input" placeholder="e.g. Indefatigable / break the ice"></div>
+        <div style="display:flex; align-items:flex-end;"><button class="vbv-btn btn-gold" style="width:100%;" id="vocab-add-btn" onclick="submitVocabWord('${b.id}')">Add with meaning</button></div>
+      </div>
+      <div class="vbv-capture-row">
+        <span>Select a word or phrase anywhere on this page, then capture it instantly.</span>
+        <button class="vbv-btn btn-outline btn-sm" onclick="captureSelectedVocab('${b.id}')">＋ Capture selection</button>
+        <button class="vbv-btn btn-outline btn-sm" onclick="quickCaptureVocab('${b.id}')">Quick-add typed text</button>
       </div>
     </div>
 
@@ -1240,6 +1245,32 @@ function findVocabWhoseAntonymsInclude(word){
 
 let __pendingVocab = null; // {bookId, word, result}
 let __manualPending = null; // {bookId, word}
+
+function quickCaptureVocab(bookId){
+  const input = document.getElementById('vocab-input');
+  const text = (input && input.value || '').trim().replace(/\\s+/g,' ');
+  if(!text){ vbvToast('Enter a word, idiom, or phrase first.', 'angry'); if(input) input.focus(); return; }
+  captureVocabEntry(bookId, text);
+}
+function captureSelectedVocab(bookId){
+  const selection = window.getSelection ? String(window.getSelection()).trim() : '';
+  if(!selection){ vbvToast('Select a word or phrase on this page first.', 'angry'); return; }
+  captureVocabEntry(bookId, selection);
+}
+async function captureVocabEntry(bookId, rawText){
+  const text = String(rawText||'').trim().replace(/\\s+/g,' ').slice(0,160);
+  if(!text) return;
+  const existing = DATA.vocab.find(v=>(v.word||'').trim().toLowerCase()===text.toLowerCase());
+  if(existing){ vbvToast('Already in your Vocab Register.', 'good'); return; }
+  const b = DATA.ongoing.find(x=>x.id===bookId);
+  const entry = {id:uid(),word:text,meaning:'Captured from reading. Add a meaning when you review this entry.',synonyms:[],antonyms:[],dateAdded:todayStr(),sourceBookId:bookId,sourceBookTitle:b?.title||''};
+  DATA.vocab.unshift(entry);
+  if(b){ b.vocabWordIds=b.vocabWordIds||[]; if(!b.vocabWordIds.includes(entry.id)) b.vocabWordIds.push(entry.id); }
+  await saveData();
+  const input=document.getElementById('vocab-input'); if(input) input.value='';
+  vbvToast('Captured in your Vocab Register.', 'good');
+  navigate();
+}
 
 async function submitVocabWord(bookId){
   const input = document.getElementById('vocab-input');
