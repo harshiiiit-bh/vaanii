@@ -45,38 +45,53 @@ jobs:
           const archive = JSON.parse(fs.readFileSync('data/defence-notifications-archive.json','utf8'));
           const archiveIds = new Set((archive.items || []).map(x => x.id));
           const records = [...(feed.items || []), ...(archive.items || [])];
+          const pruneIds = [...new Set(Array.isArray(feed.pruneIds) ? feed.pruneIds : [])];
           const chunkSize = 20;
           const chunks = Math.ceil(records.length / chunkSize);
+          const pruneChunks = Math.ceil(pruneIds.length / chunkSize);
           let synced = 0;
           let archived = 0;
+          let deleted = 0;
           const endpoint = process.env.VAANI_NOTIFICATIONS_API.replace(/\/$/, '') + '/api/notifications/sync';
+          const headers = {
+            'content-type': 'application/json',
+            'authorization': 'Bearer ' + process.env.VAANI_NOTIFICATIONS_SYNC_SECRET
+          };
 
-          async function sendChunk(chunk, index) {
-            const ids = chunk.filter(x => archiveIds.has(x.id)).map(x => x.id);
+          async function request(body, label) {
             const response = await fetch(endpoint, {
               method: 'POST',
-              headers: {
-                'content-type': 'application/json',
-                'authorization': 'Bearer ' + process.env.VAANI_NOTIFICATIONS_SYNC_SECRET
-              },
-              body: JSON.stringify({ items: chunk, archiveIds: ids }),
+              headers,
+              body: JSON.stringify(body),
               signal: AbortSignal.timeout(60000)
             });
             const responseText = await response.text();
             if (!response.ok) {
-              throw new Error('Cloudflare sync failed for chunk ' + (index + 1) + '/' + chunks + ': ' + response.status + ' ' + responseText.slice(0, 500));
+              throw new Error('Cloudflare sync failed for ' + label + ': ' + response.status + ' ' + responseText.slice(0, 500));
             }
-            const result = JSON.parse(responseText);
-            synced += Number(result.synced || 0);
-            archived += Number(result.archived || 0);
-            console.log('Synced chunk ' + (index + 1) + '/' + chunks + ': ' + (result.synced || 0) + ' records, ' + (result.archived || 0) + ' archive flags');
+            return JSON.parse(responseText);
           }
 
           (async () => {
             for (let offset = 0; offset < records.length; offset += chunkSize) {
-              await sendChunk(records.slice(offset, offset + chunkSize), Math.floor(offset / chunkSize));
+              const chunk = records.slice(offset, offset + chunkSize);
+              const ids = chunk.filter(x => archiveIds.has(x.id)).map(x => x.id);
+              const result = await request({ items: chunk, archiveIds: ids }, 'record chunk ' + (Math.floor(offset / chunkSize) + 1) + '/' + chunks);
+              synced += Number(result.synced || 0);
+              archived += Number(result.archived || 0);
+              console.log('Synced chunk ' + (Math.floor(offset / chunkSize) + 1) + '/' + chunks + ': ' + (result.synced || 0) + ' records, ' + (result.archived || 0) + ' archive flags');
             }
-            console.log(JSON.stringify({ ok: true, chunks, synced, archived }));
+            for (let offset = 0; offset < pruneIds.length; offset += chunkSize) {
+              const chunk = pruneIds.slice(offset, offset + chunkSize);
+              const result = await request({ pruneIds: chunk }, 'cleanup chunk ' + (Math.floor(offset / chunkSize) + 1) + '/' + pruneChunks);
+              deleted += Number(result.deleted || 0);
+              console.log('Removed rejected entries ' + (Math.floor(offset / chunkSize) + 1) + '/' + pruneChunks + ': ' + (result.deleted || 0));
+            }
+            if (pruneIds.length) {
+              feed.pruneIds = [];
+              fs.writeFileSync('data/defence-notifications.json', JSON.stringify(feed, null, 2) + '\n');
+            }
+            console.log(JSON.stringify({ ok: true, chunks, synced, archived, pruneChunks, deleted }));
           })().catch(error => { console.error(error); process.exit(1); });
           NODE
 
