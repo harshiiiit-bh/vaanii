@@ -177,3 +177,10 @@
   border-color:rgba(224,197,129,.48);
   background:rgba(201,162,75,.18);
 }
+
+/* Structured PYQ representations: preserve printed P/Q/R/S and S1/S6 labels. */
+#view-pyq .pv-structured-question{display:grid;gap:8px;width:100%;}
+#view-pyq .pv-structured-row{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--panel);}
+#view-pyq .pv-structured-label{display:inline-grid;place-items:center;min-width:38px;height:28px;padding:0 8px;border-radius:8px;background:rgba(201,162,75,.16);border:1px solid rgba(173,122,36,.42);color:var(--gold);font-size:.72rem;font-weight:800;letter-spacing:.06em;}
+#view-pyq .pv-structured-text{font-weight:500;line-height:1.65;}
+@media(max-width:640px){#view-pyq .pv-structured-row{grid-template-columns:1fr;gap:6px;}#view-pyq .pv-structured-label{width:max-content;}}
