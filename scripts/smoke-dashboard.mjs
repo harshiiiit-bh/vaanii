@@ -179,7 +179,6 @@ try {
   await page.locator('#vbv-book-highlights button[onclick^="addHighlight("]').click();
   await page.waitForFunction(() => document.querySelector('#app .highlight-item')?.textContent?.includes('Consistency compounds over time.'));
   await page.locator('#app button[onclick^="openCompleteModal("]').click();
-  await page.locator('#complete-total-pages').fill('100');
   await page.locator('#complete-review').fill('Browser journey completed.');
   await page.locator('#star-row span[data-val="4"]').click();
   await page.getByRole('button', { name:'Confirm Completion' }).click();
