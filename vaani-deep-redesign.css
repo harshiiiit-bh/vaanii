@@ -752,5 +752,14 @@ nav.mainnav button.active{
 /* Tablet/laptop nav must start at the leading edge when its buttons overflow.
    Centering an overflowing flex row can clip the first destinations. */
 @media(min-width:768px) and (max-width:1180px){
-  nav.mainnav{justify-content:flex-start}
+  .topbar{
+    display:grid;grid-template-columns:minmax(0,1fr) auto;
+    grid-template-areas:"brand actions" "nav nav";align-items:center;
+  }
+  .topbar>div:first-child{grid-area:brand;min-width:0}
+  .topbar>nav.mainnav{
+    grid-area:nav;order:initial;width:100%;max-width:100%;min-width:0;
+    justify-content:flex-start;overflow-x:auto;position:relative;z-index:2;
+  }
+  .topbar>.top-right{grid-area:actions;justify-self:end;min-width:0}
 }
