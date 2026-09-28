@@ -1,0 +1,71 @@
+{
+  "version": 1,
+  "generatedAt": "2026-09-28T12:00:00Z",
+  "source": "VAANI Defence Notification Engine",
+  "items": [
+    {
+      "id": "upsc-nda-ii-2026",
+      "title": "NDA & NA II 2026",
+      "organization": "UPSC",
+      "category": "NDA",
+      "type": "Official examination notification",
+      "status": "closed",
+      "notificationDate": "2026-05-20",
+      "lastDate": "2026-06-09",
+      "examDate": "2026-09-13",
+      "url": "https://www.upsc.gov.in/",
+      "sourceUrl": "https://www.upsc.gov.in/examinations/active-examinations",
+      "sourceName": "UPSC",
+      "official": true,
+      "summary": "NDA & NA II 2026 cycle. Verify all cycle-specific details in the official UPSC notice."
+    },
+    {
+      "id": "upsc-cds-ii-2026",
+      "title": "CDS II 2026",
+      "organization": "UPSC",
+      "category": "CDS",
+      "type": "Official examination notification",
+      "status": "closed",
+      "notificationDate": "2026-05-20",
+      "lastDate": "2026-06-09",
+      "examDate": "2026-09-13",
+      "url": "https://www.upsc.gov.in/",
+      "sourceUrl": "https://www.upsc.gov.in/examinations/active-examinations",
+      "sourceName": "UPSC",
+      "official": true,
+      "summary": "CDS II 2026 cycle. Verify all cycle-specific details in the official UPSC notice."
+    },
+    {
+      "id": "upsc-nda-i-2027-calendar",
+      "title": "NDA & NA I 2027 — Calendar Schedule",
+      "organization": "UPSC",
+      "category": "NDA",
+      "type": "Annual calendar",
+      "status": "upcoming",
+      "notificationDate": "2026-12-02",
+      "lastDate": "2026-12-22",
+      "examDate": "2027-04-11",
+      "url": "https://www.upsc.gov.in/content/annual-calendar-2027-0",
+      "sourceUrl": "https://www.upsc.gov.in/content/annual-calendar-2027-0",
+      "sourceName": "UPSC",
+      "official": true,
+      "summary": "Tentative calendar dates only. DOB, vacancies, eligibility and final instructions require the individual notification."
+    },
+    {
+      "id": "upsc-cds-i-2027-calendar",
+      "title": "CDS I 2027 — Calendar Schedule",
+      "organization": "UPSC",
+      "category": "CDS",
+      "type": "Annual calendar",
+      "status": "upcoming",
+      "notificationDate": "2026-12-02",
+      "lastDate": "2026-12-22",
+      "examDate": "2027-04-11",
+      "url": "https://www.upsc.gov.in/content/annual-calendar-2027-0",
+      "sourceUrl": "https://www.upsc.gov.in/content/annual-calendar-2027-0",
+      "sourceName": "UPSC",
+      "official": true,
+      "summary": "Tentative calendar dates only. Academy-specific eligibility must be checked in the individual notification."
+    }
+  ]
+}
