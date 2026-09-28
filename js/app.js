@@ -3409,6 +3409,16 @@ function renderProfileSnapshot(){
     }
   }
 }
+function renderDashboardMissions(){
+  const host=document.getElementById('missionList');
+  if(!host)return;
+  const missions=[
+    {label:'Clear 1 grammar topic',done:Object.keys(State.completedTopics||{}).length>=1},
+    {label:'Score 70%+ on any quiz',done:Object.values(State.quizScores||{}).some(s=>Number(s)>=70)},
+    {label:'Learn the word of the day',done:!!(State.vocabLearned||{})[new Date().toDateString()]}
+  ];
+  host.innerHTML=missions.map(m=>'<div class="mastery-row"><span style="width:auto;flex:1;color:'+(m.done?'var(--green)':'var(--muted)')+'">'+(m.done?'✓':'▫')+' '+m.label+'</span></div>').join('');
+}
 function refreshDashboard(){
   renderProfileSnapshot();
   document.getElementById('dashName').textContent = State.name;
@@ -4051,6 +4061,7 @@ function refreshAll(){
   safeCall(refreshDashboard, 'refreshDashboard');
   // Recover hero, mission and roadmap independently if a secondary dashboard widget fails.
   safeCall(refreshHomeV2, 'refreshHomeV2(recovery)');
+  safeCall(renderDashboardMissions, 'renderDashboardMissions(recovery)');
   safeCall(refreshDashboardPyqCard, 'refreshDashboardPyqCard');
   safeCall(renderLeaderboard, 'renderLeaderboard');
   safeCall(updateSpinState, 'updateSpinState');
