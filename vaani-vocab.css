@@ -90,3 +90,11 @@
   display:block; font-family:var(--mono); font-size:.62rem; letter-spacing:.1em;
   text-transform:uppercase; color:var(--gold); margin-bottom:4px;
 }
+
+
+/* Cross-link to the personal reading register. */
+.vv-book-link{display:flex;align-items:center;gap:8px 14px;flex-wrap:wrap;margin:18px 0 24px;padding:14px 16px;border:1px solid rgba(184,134,47,.28);border-left:3px solid var(--gold,#b8862f);border-radius:10px;background:linear-gradient(110deg,rgba(184,134,47,.09),rgba(255,255,255,.45));}
+.vv-book-link span:first-child{font:600 12px 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--gold,#b8862f);}
+.vv-book-link span:nth-child(2){font-size:12px;color:var(--text-muted,#77808a);flex:1 1 220px;}
+.vv-book-link button{margin-left:auto;}
+@media(max-width:600px){.vv-book-link button{width:100%;margin-left:0}}
