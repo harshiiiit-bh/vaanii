@@ -1255,7 +1255,7 @@ var PYQ_CDS_2022_II = [
     "y": 2022,
     "s": "II",
     "n": 60,
-    "sec": "Ordering of Sentences",
+    "sec": "Prepositions",
     "q": "System performance was demonstrated ________ the Drop Zone from an altitude of 5000 m.",
     "o": [
       "by",
@@ -1267,10 +1267,10 @@ var PYQ_CDS_2022_II = [
     "tags": [
       "CDS",
       "English",
-      "Ordering of Sentences",
-      "Ordering of sentences Grammar"
+      "Prepositions",
+      "Prepositions Grammar"
     ],
-    "topic": "Ordering of sentences Grammar"
+    "topic": "Prepositions Grammar"
   },
   {
     "y": 2022,
