@@ -6,7 +6,7 @@ var PYQ_CDS_2023_I = [
     "s": "I",
     "n": 1,
     "sec": "Parts of Speech",
-    "q": "I like that boy.",
+    "keyword": "that", "q": "I like that boy.",
     "o": [
       "Noun",
       "Demonstrative Pronoun",
@@ -27,7 +27,7 @@ var PYQ_CDS_2023_I = [
     "s": "I",
     "n": 2,
     "sec": "Parts of Speech",
-    "q": "Without health there is no happiness.",
+    "keyword": "happiness", "q": "Without health there is no happiness.",
     "o": [
       "Noun",
       "Pronoun",
@@ -48,7 +48,7 @@ var PYQ_CDS_2023_I = [
     "s": "I",
     "n": 3,
     "sec": "Parts of Speech",
-    "q": "You have no sense.",
+    "keyword": "no", "q": "You have no sense.",
     "o": [
       "Noun",
       "Determiner",
@@ -69,7 +69,7 @@ var PYQ_CDS_2023_I = [
     "s": "I",
     "n": 4,
     "sec": "Parts of Speech",
-    "q": "None of these cars is in use.",
+    "keyword": "None", "q": "None of these cars is in use.",
     "o": [
       "Reflexive Pronoun",
       "Demonstrative Pronoun",
@@ -90,7 +90,7 @@ var PYQ_CDS_2023_I = [
     "s": "I",
     "n": 5,
     "sec": "Parts of Speech",
-    "q": "We shall now begin to work.",
+    "keyword": "now", "q": "We shall now begin to work.",
     "o": [
       "Adverb",
       "Adjective",
@@ -111,7 +111,7 @@ var PYQ_CDS_2023_I = [
     "s": "I",
     "n": 6,
     "sec": "Parts of Speech",
-    "q": "Owing to his ill health, he retired from business.",
+    "keyword": "Owing to", "q": "Owing to his ill health, he retired from business.",
     "o": [
       "Conjunction",
       "Preposition",
@@ -132,7 +132,7 @@ var PYQ_CDS_2023_I = [
     "s": "I",
     "n": 7,
     "sec": "Parts of Speech",
-    "q": "My sister is just sixteen and therefore not eligible to vote.",
+    "keyword": "therefore", "q": "My sister is just sixteen and therefore not eligible to vote.",
     "o": [
       "Gerund",
       "Adverb",
@@ -153,7 +153,7 @@ var PYQ_CDS_2023_I = [
     "s": "I",
     "n": 8,
     "sec": "Parts of Speech",
-    "q": "They tried to find fault with us.",
+    "keyword": "to", "q": "They tried to find fault with us.",
     "o": [
       "Participle",
       "Verb",
@@ -174,7 +174,7 @@ var PYQ_CDS_2023_I = [
     "s": "I",
     "n": 9,
     "sec": "Parts of Speech",
-    "q": "Which way shall we go?",
+    "keyword": "which", "q": "Which way shall we go?",
     "o": [
       "Noun",
       "Gerund",
@@ -195,7 +195,7 @@ var PYQ_CDS_2023_I = [
     "s": "I",
     "n": 10,
     "sec": "Parts of Speech",
-    "q": "Alas! He is dead.",
+    "keyword": "Alas", "q": "Alas! He is dead.",
     "o": [
       "Determiner",
       "Conjunction",
