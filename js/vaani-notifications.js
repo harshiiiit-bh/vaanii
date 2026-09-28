@@ -15,6 +15,7 @@
   const liveList = root.querySelector('#ncLiveList');
   const liveStamp = root.querySelector('#ncLiveStamp');
   let filter = 'all';
+  let liveItems = [];
 
   function esc(value) {
     return String(value ?? '').replace(/[&<>"']/g, char => ({
@@ -35,6 +36,19 @@
       : date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
   }
 
+  function sectorForCategory(value) {
+    const category = String(value || '').toUpperCase().replace(/[ -]+/g, '_');
+    if (['NDA','CDS','AFCAT','AGNIVEER','ARMY_RALLY','CAPF','BSF','CRPF','CISF','ITBP','SSB','ASSAM_RIFLES','COAST_GUARD','NAVY','AIR_FORCE','DEFENCE'].includes(category)) return 'defence';
+    if (['SSC'].includes(category)) return 'ssc';
+    if (['RAILWAYS','RRB'].includes(category)) return 'railways';
+    if (['BANKING','IBPS','SBI','RBI'].includes(category)) return 'banking';
+    if (['TEACHING','CTET','KVS','NVS'].includes(category)) return 'teaching';
+    if (['UPSC'].includes(category)) return 'upsc';
+    if (['STATE_PSC','BPSC','UPPSC','MPPSC','RPSC','JPSC'].includes(category)) return 'state-psc';
+    if (['TECHNICAL','ISRO','DRDO','BARC','AAI'].includes(category)) return 'technical';
+    return 'other';
+  }
+
   function applyDirectoryFilters() {
     const query = (search?.value || '').trim().toLowerCase();
     let visible = 0;
@@ -46,6 +60,7 @@
     });
     if (count) count.textContent = visible + (visible === 1 ? ' exam family' : ' exam families');
     if (empty) empty.hidden = visible !== 0;
+    renderLive(liveItems);
   }
 
   tabs.forEach(tab => tab.addEventListener('click', () => {
@@ -97,7 +112,12 @@
 
   function renderLive(items) {
     if (!liveList) return;
-    const rows = items.slice(0, 8);
+    const query = (search?.value || '').trim().toLowerCase();
+    const rows = items.filter(item => {
+      const sectorMatch = filter === 'all' || sectorForCategory(item.category) === filter;
+      const text = [item.title, item.organization, item.category, item.summary, item.status].join(' ').toLowerCase();
+      return sectorMatch && (!query || text.includes(query));
+    }).slice(0, 8);
     liveList.innerHTML = rows.length ? rows.map(item => {
       const url = safeUrl(item.url);
       const category = String(item.category || 'Government').replace(/[_-]+/g, ' ');
@@ -127,7 +147,8 @@
       return response.json();
     })
     .then(data => {
-      const items = Array.isArray(data.items) ? data.items : [];
+      liveItems = Array.isArray(data.items) ? data.items : [];
+      const items = liveItems;
       const generated = data.generatedAt ? new Date(data.generatedAt) : null;
       liveStamp.textContent = generated && !Number.isNaN(generated.valueOf())
         ? 'Synced ' + generated.toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })
