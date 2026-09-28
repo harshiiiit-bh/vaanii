@@ -1285,7 +1285,7 @@ var PYQ_CDS_2023_I = [
     "s": "I",
     "n": 61,
     "sec": "Ordering of Sentences",
-    "q": "SI : Like many of its tropical counterparts, India was a colony of Britain, which ruled out any move to adjust the exchange rate. S6 : Banks were left with unrecove¬rable assets. P : Indebted business failed. Q : With devaluation made politically im possible, fall in export demand led to sustained and deep deflation. R : Indebted households liquidated a variety of assets to repay loans when they could. S : Real interest rates rose. The correct sequence should be",
+    "q": "S1: Like many of its tropical counterparts, India was a colony of Britain, which ruled out any move to adjust the exchange rate. S6 : Banks were left with unrecove¬rable assets. P : Indebted business failed. Q : With devaluation made politically im possible, fall in export demand led to sustained and deep deflation. R : Indebted households liquidated a variety of assets to repay loans when they could. S : Real interest rates rose. The correct sequence should be",
     "o": [
       "RSPQ",
       "QSRP",
@@ -1306,7 +1306,7 @@ var PYQ_CDS_2023_I = [
     "s": "I",
     "n": 62,
     "sec": "Ordering of Sentences",
-    "q": "SI : Consider the potential effect of just a small increase in the earth’s atmospheric temperature. S6 : If the sea level rose only a few feet, dozens of coastal cities would be destroyed and life would change utterly. P : Some deserts might anyway bloom. Q : But lands now fertile might turn to deserts, and many hot climates could become uninhabitable. R : A rise of only a few degrees could melt the polar ice caps and submerge the planet in a short time. S : Rainfall patterns would change. The correct sequence should be",
+    "q": "S1: Consider the potential effect of just a small increase in the earth’s atmospheric temperature. S6 : If the sea level rose only a few feet, dozens of coastal cities would be destroyed and life would change utterly. P : Some deserts might anyway bloom. Q : But lands now fertile might turn to deserts, and many hot climates could become uninhabitable. R : A rise of only a few degrees could melt the polar ice caps and submerge the planet in a short time. S : Rainfall patterns would change. The correct sequence should be",
     "o": [
       "SQPR",
       "RQSP",
@@ -1327,7 +1327,7 @@ var PYQ_CDS_2023_I = [
     "s": "I",
     "n": 63,
     "sec": "Ordering of Sentences",
-    "q": "SI : In the ancient times, the kings and the royal families had their own banner and seal. S6 : So the high officials commanded great respect because of the descent, ability and character. P : All the members of the royal family shared in the administration as far as possible. Q : The royal palace was maintained in a great state. R : The king was in theory an autocrat. S : There were opportunities to influence the king in the formulation of policies. The correct sequence should be",
+    "q": "S1: In the ancient times, the kings and the royal families had their own banner and seal. S6 : So the high officials commanded great respect because of the descent, ability and character. P : All the members of the royal family shared in the administration as far as possible. Q : The royal palace was maintained in a great state. R : The king was in theory an autocrat. S : There were opportunities to influence the king in the formulation of policies. The correct sequence should be",
     "o": [
       "RSPQ",
       "QRPS",
@@ -1348,7 +1348,7 @@ var PYQ_CDS_2023_I = [
     "s": "I",
     "n": 64,
     "sec": "Ordering of Sentences",
-    "q": "SI : The rise of East Asia in the late twentieth century may ultimately prove to be a more important world-historical event than the collapse of communism. S6 : Translated into political terms, this means that industrial capitalism is always accompanied by liberal democracy. P : In the final two decades of the twentieth century, economic growth rates on the western rim of the Pacific Basin were between two and four times higher than those in the ‘developed’ economies of Europe and North America. Q : The widespread assumption has been that modernization means westernization. R : Certainly, the balance of the world’s economy shifted markedly from the West to the East in this period. S : However, the notion that there is distinctively East Asian political form is less familiar one. The correct sequence should be",
+    "q": "S1: The rise of East Asia in the late twentieth century may ultimately prove to be a more important world-historical event than the collapse of communism. S6 : Translated into political terms, this means that industrial capitalism is always accompanied by liberal democracy. P : In the final two decades of the twentieth century, economic growth rates on the western rim of the Pacific Basin were between two and four times higher than those in the ‘developed’ economies of Europe and North America. Q : The widespread assumption has been that modernization means westernization. R : Certainly, the balance of the world’s economy shifted markedly from the West to the East in this period. S : However, the notion that there is distinctively East Asian political form is less familiar one. The correct sequence should be",
     "o": [
       "RSPQ",
       "PQSR",
@@ -1369,7 +1369,7 @@ var PYQ_CDS_2023_I = [
     "s": "I",
     "n": 65,
     "sec": "Ordering of Sentences",
-    "q": "SI : Manipur has a long and glorious history from before the beginning of the Christian Era. S6 : Manipur regained its independence in 1947 and merged into Indian Union in 1949. P : Then, Manipur came under the British rule in 1891. Q : The independence and sovereignty remai ned uninterrupted until the Burmese invasion and occupation for around seven years in the first quarter of the 19th century (1819-1826). R : The political history of Manipur could be traced back to 33 AD with the coronation of Nongda Lairen Pakhangba. S : After Pakhangba, a number of kings ruled over the Kingdom of Manipur. The correct sequence should be",
+    "q": "S1: Manipur has a long and glorious history from before the beginning of the Christian Era. S6 : Manipur regained its independence in 1947 and merged into Indian Union in 1949. P : Then, Manipur came under the British rule in 1891. Q : The independence and sovereignty remai ned uninterrupted until the Burmese invasion and occupation for around seven years in the first quarter of the 19th century (1819-1826). R : The political history of Manipur could be traced back to 33 AD with the coronation of Nongda Lairen Pakhangba. S : After Pakhangba, a number of kings ruled over the Kingdom of Manipur. The correct sequence should be",
     "o": [
       "RSPQ",
       "PQRS",
@@ -1390,7 +1390,7 @@ var PYQ_CDS_2023_I = [
     "s": "I",
     "n": 66,
     "sec": "Ordering of Sentences",
-    "q": "SI : In agriculture, water is mainly used for irrigation. S6 : Hence, it is difficult to practice agriculture without assured irrigation during dry seasons. P : The large tracts of the country are deficient in rainfall and are drought prone. Q : Winter and summer seasons are more or less dry in most part of the country. R : Irrigation is needed because of spatio- temporal variability in rainfall in the country. S : North-Western India and Deccan Plateau constitute such areas. The correct sequence should be",
+    "q": "S1: In agriculture, water is mainly used for irrigation. S6 : Hence, it is difficult to practice agriculture without assured irrigation during dry seasons. P : The large tracts of the country are deficient in rainfall and are drought prone. Q : Winter and summer seasons are more or less dry in most part of the country. R : Irrigation is needed because of spatio- temporal variability in rainfall in the country. S : North-Western India and Deccan Plateau constitute such areas. The correct sequence should be",
     "o": [
       "RPSQ",
       "RSPQ",
@@ -1411,7 +1411,7 @@ var PYQ_CDS_2023_I = [
     "s": "I",
     "n": 67,
     "sec": "Ordering of Sentences",
-    "q": "SI : Vijayanagara or ‘city of victory’ was the name of both a city and an empire. S6 : They remembered it as Hampi, a name derived from that of the local Mother Goddess, Pampadevi. P : In its heyday, it stretched from the river Krishna in the North to the extreme South of the peninsula. Q : The empire was founded in the fourteenth century. R : In 1565, the city was destroyed and subsequently deserted. S : Although it fell into ruin in the seventeenth- eighteenth centuries, it lived on in the memories of people living in the Krishna- Tungabhadra Doab. The correct sequence should be",
+    "q": "S1: Vijayanagara or ‘city of victory’ was the name of both a city and an empire. S6 : They remembered it as Hampi, a name derived from that of the local Mother Goddess, Pampadevi. P : In its heyday, it stretched from the river Krishna in the North to the extreme South of the peninsula. Q : The empire was founded in the fourteenth century. R : In 1565, the city was destroyed and subsequently deserted. S : Although it fell into ruin in the seventeenth- eighteenth centuries, it lived on in the memories of people living in the Krishna- Tungabhadra Doab. The correct sequence should be",
     "o": [
       "PRQS",
       "SPRQ",
@@ -1432,7 +1432,7 @@ var PYQ_CDS_2023_I = [
     "s": "I",
     "n": 68,
     "sec": "Ordering of Sentences",
-    "q": "SI : During the past two decades, many organizations in both the manufacturing and service sectors have faced dramatic changes in their business environment. S6 : These changes have had a significant influence on management accounting systems. P : To succeed in today’s highly competitive environment, companies have made cus tomer satisfaction an overriding priority. Q : They have also adopted new management approaches and manufacturing companies have changed their manufacturing systems and invested in new technologies. R : Deregulation and extensive competition from overseas companies in domestic markets have resulted in a situation in which most companies now operate in a highly competitive global market. S : At the same time there has been a significant reduction in product life cycles arising from technological innovations and the need to meet increasingly discriminating customer demands. The correct sequence should be",
+    "q": "S1: During the past two decades, many organizations in both the manufacturing and service sectors have faced dramatic changes in their business environment. S6 : These changes have had a significant influence on management accounting systems. P : To succeed in today’s highly competitive environment, companies have made cus tomer satisfaction an overriding priority. Q : They have also adopted new management approaches and manufacturing companies have changed their manufacturing systems and invested in new technologies. R : Deregulation and extensive competition from overseas companies in domestic markets have resulted in a situation in which most companies now operate in a highly competitive global market. S : At the same time there has been a significant reduction in product life cycles arising from technological innovations and the need to meet increasingly discriminating customer demands. The correct sequence should be",
     "o": [
       "PQRS",
       "RSPQ",
@@ -1453,7 +1453,7 @@ var PYQ_CDS_2023_I = [
     "s": "I",
     "n": 69,
     "sec": "Ordering of Sentences",
-    "q": "SI : Gregor Johann Mendel was bom on July 22, 1822 in Austria. S6 : Based on his experiments on a total of seven characteristics in garden pea, he established Law of Segregation and Law of Independent Assortment. P : His pioneering work laid the foundation of science of genetics and therefore, he is known as the ‘Father of Genetics’. Q : There he was exposed to the lab facilities and got interested in research and teaching. R : In 1843, Mendel began studying even while being a monk at St. Thomas Monastery in Brno. S : His experiments focussed on cross-breeding of pea plants and gathering data on the variations of several generations. The correct sequence should be",
+    "q": "S1: Gregor Johann Mendel was bom on July 22, 1822 in Austria. S6 : Based on his experiments on a total of seven characteristics in garden pea, he established Law of Segregation and Law of Independent Assortment. P : His pioneering work laid the foundation of science of genetics and therefore, he is known as the ‘Father of Genetics’. Q : There he was exposed to the lab facilities and got interested in research and teaching. R : In 1843, Mendel began studying even while being a monk at St. Thomas Monastery in Brno. S : His experiments focussed on cross-breeding of pea plants and gathering data on the variations of several generations. The correct sequence should be",
     "o": [
       "RSPQ",
       "PQSR",
@@ -1474,7 +1474,7 @@ var PYQ_CDS_2023_I = [
     "s": "I",
     "n": 70,
     "sec": "Ordering of Sentences",
-    "q": "SI : Mahatma Gandhi found in salt a powerful symbol that could unite the nation. S6 : The tax on salt and the government monopoly over its production, Mahatma Gandhi declared, revealed the most oppressive face of the British rule. P : On 31 January, 1930, he sent a letter to Viceroy Irwin stating eleven demands. Q : The idea was to make the demands wide- ranging, so that all classes within Indian society could identify with them and everyone could be brought together in a united campaign. R : Salt was something consumed by the rich and the poor alike, and it was one of the most essential /items of food. S : The most stirring of all was the demand to abolish the salt tax. The correct sequence should be",
+    "q": "S1: Mahatma Gandhi found in salt a powerful symbol that could unite the nation. S6 : The tax on salt and the government monopoly over its production, Mahatma Gandhi declared, revealed the most oppressive face of the British rule. P : On 31 January, 1930, he sent a letter to Viceroy Irwin stating eleven demands. Q : The idea was to make the demands wide- ranging, so that all classes within Indian society could identify with them and everyone could be brought together in a united campaign. R : Salt was something consumed by the rich and the poor alike, and it was one of the most essential /items of food. S : The most stirring of all was the demand to abolish the salt tax. The correct sequence should be",
     "o": [
       "PQSR",
       "SRQP",
