@@ -25,7 +25,14 @@ const sources = [
   { name:'BPSC — Official Notices', url:'https://bpsc.bihar.gov.in/', categories:['STATE_PSC'] },
   { name:'UPPSC — Official Notices', url:'https://uppsc.up.nic.in/', categories:['STATE_PSC'] },
   { name:'ISRO — Current Opportunities', url:'https://www.isro.gov.in/ISRO_EN/ViewAllOpportunities.html', categories:['TECHNICAL'] },
-  { name:'DRDO — Vacancies', url:'https://www.drdo.gov.in/drdo/offerings/vacancies', categories:['TECHNICAL'] }
+  { name:'DRDO — Vacancies', url:'https://www.drdo.gov.in/drdo/offerings/vacancies', categories:['TECHNICAL'] },
+  { name:'NTA — Official Exam Directory', url:'https://www.nta.ac.in/', categories:['ENTRANCE'] },
+  { name:'JEE Main — Official Notices', url:'https://jeemain.nta.nic.in/', categories:['ENTRANCE'] },
+  { name:'NEET UG — Official Notices', url:'https://neet.nta.nic.in/', categories:['ENTRANCE'] },
+  { name:'UGC NET — Official Notices', url:'https://ugcnet.nta.nic.in/', categories:['ENTRANCE'] },
+  { name:'CSBC Bihar — Police Recruitment', url:'https://csbc.bihar.gov.in/', categories:['POLICE'] },
+  { name:'BPSSC Bihar — Police Recruitment', url:'https://bpssc.bihar.gov.in/', categories:['POLICE'] },
+  { name:'UPPRPB — Police Recruitment', url:'https://uppbpb.gov.in/', categories:['POLICE'] }
 ];
 
 const relevant = /(nda|national defence academy|naval academy|cds|combined defence services|afcat|air force common admission|capf|central armed police|agniveer|agniveervayu|agniveer vayu|recruitment rally|rally bharti|army recruitment|indian army|indian navy|navy recruitment|bsf|border security force|crpf|central reserve police|cisf|itbp|indo tibetan|ssb|assam rifles|coast guard|ssc|staff selection|cgl|chsl|mts|stenographer|selection post|junior engineer|railway|rrb|ntpc|group[- ]?d|loco pilot|technician|ibps|sbi|rbi|bank|probationary officer|customer service associate|clerical cadre|ctet|kvs|navodaya|nvs|teacher|bpsc|uppsc|mppsc|rpsc|jpsc|state public service|isro|drdo|barc|airports authority|iocl|aiims|esic|admit card|notification|advertisement|recruitment)/i;
@@ -57,7 +64,7 @@ function normalizeUrl(href, base){
 function categoryFor(text, fallback){
   const s = text.toLowerCase();
   const family = fallback[0] || '';
-  if (['SSC','RAILWAYS','BANKING','TEACHING','STATE_PSC','TECHNICAL','UPSC'].includes(family)) return family;
+  if (['SSC','RAILWAYS','BANKING','TEACHING','STATE_PSC','TECHNICAL','UPSC','ENTRANCE','POLICE'].includes(family)) return family;
   if (/afcat|air force common admission/.test(s)) return 'AFCAT';
   if (/combined defence services|\\bcds\\b/.test(s)) return 'CDS';
   if (/national defence academy|\\bnda\\b/.test(s)) return 'NDA';
