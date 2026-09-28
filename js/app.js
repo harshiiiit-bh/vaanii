@@ -856,33 +856,42 @@ function pyqSpottingParts(q){
   const markers=[...source.matchAll(/\(([abcd])\)\s*\/?/gi)];
   if(markers.length>=3){
     const sequence=markers.map(m=>m[1].toLowerCase()).join('');
-    const fourIsNoError=sequence.startsWith('abcd')&&/^no\s+error[.!]?$/i.test(source.slice(markers[2].index+markers[2][0].length,markers[3].index).trim());
-    const count=sequence.startsWith('abcd')&&!fourIsNoError?4:sequence.startsWith('abc')?3:0;
-    if(count){
-      const parts=[];let cursor=0;
-      for(let i=0;i<count;i++){
-        const m=markers[i];
-        const part=source.slice(cursor,m.index).replace(/\s*\/\s*$/,'').trim();
-        if(!part)return null;
-        parts.push(part);
-        cursor=m.index+m[0].length;
+    const atFront=!source.slice(0,markers[0].index).trim();
+    if(atFront){
+      const blocks=markers.map((m,i)=>source.slice(m.index+m[0].length,i+1<markers.length?markers[i+1].index:source.length).trim());
+      const startsAbcd=sequence.startsWith('abcd');
+      if(startsAbcd&&/^no\s+error[.!?]?$/i.test(blocks[3]||''))return blocks.slice(0,3).filter(Boolean);
+      const count=startsAbcd?4:sequence.startsWith('abc')?3:0;
+      if(count&&blocks.slice(0,count).every(part=>part))return blocks.slice(0,count);
+    }else{
+      const startsAbcd=sequence.startsWith('abcd');
+      const fourth=startsAbcd?source.slice(markers[2].index+markers[2][0].length,markers[3].index).replace(/\s*\/\s*$/,'').trim():'';
+      const fourIsNoError=startsAbcd&&/^no\s+error[.!?]?$/i.test(fourth);
+      const count=startsAbcd&&!fourIsNoError?4:sequence.startsWith('abc')?3:0;
+      if(count){
+        const parts=[];let cursor=0;
+        for(let i=0;i<count;i++){
+          const m=markers[i];
+          const part=source.slice(cursor,m.index).replace(/\s*\/\s*$/,'').trim();
+          if(!part)return null;
+          parts.push(part);cursor=m.index+m[0].length;
+        }
+        const tail=source.slice(cursor);
+        if(/^[\s.!?;:]*$/.test(tail)&&tail.trim())parts[parts.length-1]+=tail.trim();
+        return parts;
       }
-      const tail=source.slice(cursor);
-      if(/^[\s.!?;:]*$/.test(tail)&&tail.trim())parts[parts.length-1]+=tail.trim();
-      return parts;
     }
   }
   // Legacy NDA banks store sentence fragments in q.o, followed by No error.
   const choices=Array.isArray(q.o)?q.o.map(value=>String(value).trim()):[];
-  const hasNoError=choices.length>0&&/^no\s+error$/i.test(choices[choices.length-1]);
+  const hasNoError=choices.length>0&&/^no\s+error[.!?]?$/i.test(choices[choices.length-1]);
   const count=choices.length-(hasNoError?1:0);
   if((count===3||count===4)&&choices.slice(0,count).every(value=>value.length>2&&!/^error in part/i.test(value))){
     const lower=source.toLocaleLowerCase();let cursor=0;const parts=[];
     for(const phrase of choices.slice(0,count)){
       const index=lower.indexOf(phrase.toLocaleLowerCase(),cursor);
       if(index<0)return null;
-      parts.push(source.slice(index,index+phrase.length));
-      cursor=index+phrase.length;
+      parts.push(source.slice(index,index+phrase.length));cursor=index+phrase.length;
     }
     const tail=source.slice(cursor);
     if(/^[\s.!?;:]*$/.test(tail)&&tail.trim())parts[parts.length-1]+=tail.trim();
