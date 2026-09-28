@@ -142,23 +142,6 @@ try {
   assert.ok(await page.locator('.vp-logout-btn').count(), 'Profile logout control is missing');
   console.log('PASS navigation: all primary views opened; logout control is present');
 
-  await page.setViewportSize({ width: 390, height: 844 });
-  for (const view of ['dashboard', 'vocab', 'books', 'profile']) {
-    await clickMainView(view);
-    await page.waitForTimeout(250);
-    if (view === 'books') await page.waitForSelector('#app .page', { timeout: 15000 });
-    const dimensions = await page.evaluate(() => ({ width: innerWidth, scrollWidth: document.documentElement.scrollWidth }));
-    assert.ok(dimensions.scrollWidth <= dimensions.width + 2, 'Horizontal overflow on mobile ' + view + ': ' + JSON.stringify(dimensions));
-  }
-  await clickMainView('books');
-  await page.locator('#vbv-mainnav button[data-route="academy"]').click();
-  await page.waitForSelector('#app .academy-page', { timeout: 15000 });
-  assert.equal(await page.locator('#app .academy-card').count(), 4, 'Mobile Academy gallery is incomplete');
-  const academyMobile = await page.evaluate(() => ({ width:innerWidth, scrollWidth:document.documentElement.scrollWidth }));
-  assert.ok(academyMobile.scrollWidth <= academyMobile.width + 2, 'Horizontal overflow on mobile Academy: ' + JSON.stringify(academyMobile));
-  console.log('PASS mobile Academy: all four cards fit a 390px viewport');
-  await clickMainView('profile');
-
   // Exercise every remaining Book Reading route, including empty states.
   await clickMainView('books');
   for (const route of ['home','dashboard','board','library','ongoing','completed','upcoming','vocab','vocabtest','achievements','academy']) {
@@ -167,6 +150,7 @@ try {
       const current = (location.hash.replace('#/','').split('/')[0] || 'home');
       return current === routeName && !!document.querySelector('#app .page');
     }, route, { timeout: 10000 });
+    await page.waitForTimeout(230);
     const pageText = ((await page.locator('#app').textContent()) || '').trim();
     assert.ok(pageText.length > 20, 'Book Reading route has no meaningful content: ' + route);
   }
@@ -212,6 +196,24 @@ try {
   assert.equal(await page.locator('#app #library-book-grid .book-card').count(), 1, 'Library completed-stage filter hid the completed book');
   await page.locator('#app #lib-sort').selectOption('title');
   console.log('PASS reading lifecycle: add, start, log, highlight, complete, search, filter and sort');
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  for (const view of ['dashboard', 'vocab', 'books', 'profile']) {
+    await clickMainView(view);
+    await page.waitForTimeout(250);
+    if (view === 'books') await page.waitForSelector('#app .page', { timeout: 15000 });
+    const dimensions = await page.evaluate(() => ({ width: innerWidth, scrollWidth: document.documentElement.scrollWidth }));
+    assert.ok(dimensions.scrollWidth <= dimensions.width + 2, 'Horizontal overflow on mobile ' + view + ': ' + JSON.stringify(dimensions));
+  }
+  await clickMainView('books');
+  await page.locator('#vbv-mainnav button[data-route="academy"]').click();
+  await page.waitForSelector('#app .academy-page', { timeout: 15000 });
+  assert.equal(await page.locator('#app .academy-card').count(), 4, 'Mobile Academy gallery is incomplete');
+  const academyMobile = await page.evaluate(() => ({ width:innerWidth, scrollWidth:document.documentElement.scrollWidth }));
+  assert.ok(academyMobile.scrollWidth <= academyMobile.width + 2, 'Horizontal overflow on mobile Academy: ' + JSON.stringify(academyMobile));
+  console.log('PASS mobile Academy: all four cards fit a 390px viewport');
+  await clickMainView('profile');
+
 
   console.log('PASS mobile layout: dashboard, vocabulary, Book Reading and profile fit a 390px viewport');
 
