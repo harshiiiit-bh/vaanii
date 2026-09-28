@@ -1246,6 +1246,14 @@ function findVocabWhoseAntonymsInclude(word){
 let __pendingVocab = null; // {bookId, word, result}
 let __manualPending = null; // {bookId, word}
 
+function notifyVaaniVocab(entry){
+  if(!entry || !entry.word) return;
+  try{
+    window.dispatchEvent(new CustomEvent('vbv:vocab-added',{detail:{
+      word:entry.word,meaning:entry.meaning||'',book:entry.sourceBookTitle||''
+    }}));
+  }catch(e){ console.warn('Vocabulary bridge unavailable:',e); }
+}
 function quickCaptureVocab(bookId){
   const input = document.getElementById('vocab-input');
   const text = (input && input.value || '').trim().replace(/\\s+/g,' ');
@@ -1267,8 +1275,9 @@ async function captureVocabEntry(bookId, rawText){
   DATA.vocab.unshift(entry);
   if(b){ b.vocabWordIds=b.vocabWordIds||[]; if(!b.vocabWordIds.includes(entry.id)) b.vocabWordIds.push(entry.id); }
   await saveData();
+  notifyVaaniVocab(entry);
   const input=document.getElementById('vocab-input'); if(input) input.value='';
-  vbvToast('Captured in your Vocab Register.', 'good');
+  vbvToast('Captured in your Vocab Register and Vocabulary bank.', 'good');
   navigate();
 }
 
@@ -1453,9 +1462,10 @@ async function finalizeVocabAdd(mergeIntoId){
   const b = DATA.ongoing.find(x=>x.id===bookId);
   if(b){ b.vocabWordIds = b.vocabWordIds||[]; b.vocabWordIds.push(entry.id); }
   await saveData();
+  notifyVaaniVocab(entry);
   const input = document.getElementById('vocab-input');
   if(input) input.value = '';
-  vbvToast(`"${word}" added to your Vocab Register.`, 'good');
+  vbvToast(`"${word}" added to your Vocab Register and Vocabulary bank.`, 'good');
   navigate();
 }
 
