@@ -120,7 +120,7 @@ try {
   for (const view of ['dashboard', 'vocab', 'books', 'profile']) {
     await clickMainView(view);
     await page.waitForTimeout(250);
-    if (view === 'books') await page.waitForSelector('#app .vbv-command-center', { timeout: 15000 });
+    if (view === 'books') await page.waitForSelector('#app .vbv-scope .page', { timeout: 15000 });
     const dimensions = await page.evaluate(() => ({ width: innerWidth, scrollWidth: document.documentElement.scrollWidth }));
     assert.ok(dimensions.scrollWidth <= dimensions.width + 2, 'Horizontal overflow on mobile ' + view + ': ' + JSON.stringify(dimensions));
   }
