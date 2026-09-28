@@ -853,17 +853,34 @@ function pyqSpottingParts(q){
     if(split.length===3)return split;
   }
   const matches=[...source.matchAll(/\(([abc])\)\s*\/?/gi)];
-  if(matches.length<3)return null;
-  const parts=[];let cursor=0;
-  for(let i=0;i<3;i++){
-    const m=matches[i];
-    if(m[1].toLowerCase()!==['a','b','c'][i])return null;
-    const part=source.slice(cursor,m.index).replace(/\s*\/\s*$/,'').trim();
-    if(!part)return null;
-    parts.push(part);
-    cursor=m.index+m[0].length;
+  if(matches.length>=3){
+    const parts=[];let cursor=0;let valid=true;
+    for(let i=0;i<3;i++){
+      const m=matches[i];
+      if(m[1].toLowerCase()!==['a','b','c'][i]){valid=false;break;}
+      const part=source.slice(cursor,m.index).replace(/\s*\/\s*$/,'').trim();
+      if(!part){valid=false;break;}
+      parts.push(part);
+      cursor=m.index+m[0].length;
+    }
+    if(valid)return parts;
   }
-  return parts;
+  // Early NDA papers store the three underlined sentence fragments as
+  // answer choices, followed by "No error", instead of inline markers.
+  const choices=Array.isArray(q.o)?q.o.slice(0,3).map(value=>String(value).trim()):[];
+  if(choices.length===3&&choices.every(value=>value.length>2&&!/^\(?[abc]\)?\.?$/i.test(value))){
+    const lower=source.toLocaleLowerCase();let cursor=0;const parts=[];
+    for(const phrase of choices){
+      const index=lower.indexOf(phrase.toLocaleLowerCase(),cursor);
+      if(index<0)return null;
+      parts.push(source.slice(index,index+phrase.length));
+      cursor=index+phrase.length;
+    }
+    const tail=source.slice(cursor);
+    if(parts.length===3&&/^[\s.!?;:]*$/.test(tail))parts[2]+=tail.trim();
+    return parts;
+  }
+  return null;
 }
 function pyqPromptHTML(q){
   if(!q||typeof q.q!=='string')return '';

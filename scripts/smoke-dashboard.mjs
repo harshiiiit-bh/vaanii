@@ -159,6 +159,23 @@ try {
     'Spotting Errors segment text was not preserved');
   console.log('PASS PYQ presentation: CDS I 2022 spotting-error prompt displays labelled (a), (b), and (c) parts');
 
+  await page.evaluate(() => {
+    const question = PYQ_ALL.find(q => q._exam === 'NDA' && q.y === 2009 && q.s === 'I' &&
+      q.n === 17 && q.sec === 'Spotting Errors');
+    if (!question) throw new Error('NDA 2009-I legacy spotting-error question was not loaded');
+    pvStartSession('section', [question], { title: 'NDA I 2009 Spotting Errors' });
+  });
+  await page.waitForSelector('#view-pyq .pv-error-parts', { timeout: 10000 });
+  const ndaParts = await page.locator('#view-pyq .pv-error-segment-label').allTextContents();
+  assert.deepEqual(ndaParts, ['(a)', '(b)', '(c)'], 'Legacy NDA fragment choices must be rendered as marked parts');
+  const ndaPrompt = (await page.locator('#view-pyq .pv-error-parts').textContent()) || '';
+  assert.ok(ndaPrompt.includes('He hesitated to accept the post') &&
+    ndaPrompt.includes('as he did not think') &&
+    ndaPrompt.includes('that the salary would be enough'),
+    'Legacy NDA fragments were not mapped to the sentence');
+  console.log('PASS PYQ presentation: NDA 2009-I legacy answer-fragment format displays labelled parts');
+
+
 
   // Exercise every remaining Book Reading route, including empty states.
   await clickMainView('books');

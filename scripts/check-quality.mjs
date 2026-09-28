@@ -158,7 +158,16 @@ try {
         const hasInlineLabels = inlineLabels.join('') === 'abc';
         const pipeParts = q.q.split(/\s*\|\s*/).map(part => part.trim()).filter(Boolean);
         const hasPipeParts = pipeParts.length === 3;
-        if (!explicitParts && !hasInlineLabels && !hasPipeParts) {
+        let optionCursor = 0;
+        const optionParts = q.o.slice(0, 3).map(option => String(option).trim());
+        const hasChoiceParts = optionParts.length === 3 && optionParts.every(phrase => {
+          if (phrase.length <= 2 || /^\(?[abc]\)?\.?$/i.test(phrase)) return false;
+          const index = q.q.toLocaleLowerCase().indexOf(phrase.toLocaleLowerCase(), optionCursor);
+          if (index < 0) return false;
+          optionCursor = index + phrase.length;
+          return true;
+        });
+        if (!explicitParts && !hasInlineLabels && !hasPipeParts && !hasChoiceParts) {
           throw new Error('Spotting Errors prompt has no identifiable (a)/(b)/(c) segments: ' + at);
         }
       }
