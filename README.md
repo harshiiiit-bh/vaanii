@@ -77,6 +77,6 @@ find . -type f -name '*.js' -not -path './.git/*' -not -path './node_modules/*' 
 node scripts/check-quality.mjs
 ```
 
-The first command checks JavaScript syntax. The second checks page IDs, local file references and the project’s learning-data and integration rules.
+The first command checks JavaScript syntax. The second checks page IDs, local file references and the project’s learning-data and integration rules. GitHub Actions also runs a Playwright Chromium smoke test across the dashboard, Book Reading, Academy images, mobile layout and account flows.
 
 When adding a feature, preserve existing account data, keep controls keyboard-accessible, and test the affected page at desktop and mobile widths.
