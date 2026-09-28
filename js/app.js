@@ -4049,6 +4049,8 @@ function refreshAll(){
   safeCall(renderTestsGrid, 'renderTestsGrid');
   safeCall(initMatchGame, 'initMatchGame');
   safeCall(refreshDashboard, 'refreshDashboard');
+  // Recover hero, mission and roadmap independently if a secondary dashboard widget fails.
+  safeCall(refreshHomeV2, 'refreshHomeV2(recovery)');
   safeCall(refreshDashboardPyqCard, 'refreshDashboardPyqCard');
   safeCall(renderLeaderboard, 'renderLeaderboard');
   safeCall(updateSpinState, 'updateSpinState');
