@@ -157,6 +157,48 @@ try {
   assert.ok(await page.locator('.vp-logout-btn').count(), 'Profile logout control is missing');
   console.log('PASS navigation: all primary views opened; logout control is present');
 
+  // Grammar Studio regression: verify the restored contrast and every new practice route.
+  await clickMainView('grammar');
+  await page.waitForSelector('#view-grammar #gtStudioPanel .gt-drill-card', { timeout:10000 });
+  const grammarHero = await page.locator('#view-grammar .gt-header').evaluate(el => ({
+    titleFill:getComputedStyle(el.querySelector('.gt-title')).webkitTextFillColor,
+    background:getComputedStyle(el).backgroundImage
+  }));
+  assert.equal(grammarHero.titleFill, 'rgb(244, 248, 249)', 'Grammar hero heading lost its high-contrast light text');
+  assert.match(grammarHero.background, /linear-gradient/, 'Grammar hero lost its dark command-centre background');
+  // This suite normally emulates reduced motion; temporarily enable motion to
+  // confirm the cube animation exists, then restore the accessible preference.
+  await page.emulateMedia({ reducedMotion:'no-preference' });
+  const cubeAnimation = await page.locator('#view-grammar .gt-grammar-cube').evaluate(el => ({
+    name:getComputedStyle(el).animationName,
+    running:el.getAnimations().some(animation => animation.animationName === 'gtsCube')
+  }));
+  assert.equal(cubeAnimation.name, 'gtsCube', 'Grammar 3D cube animation is not declared');
+  assert.equal(cubeAnimation.running, true, 'Grammar 3D cube animation is not running');
+  await page.emulateMedia({ reducedMotion:'reduce' });
+  assert.equal(await page.locator('#gtStudioLab .gt-studio-tab').count(), 4, 'Grammar Studio is missing a practice mode');
+  await page.locator('#gtStudioLab [data-gts-tab="scanner"]').click();
+  await page.locator('#gtStudioLab [data-gts-scan="C"]').click();
+  assert.ok(await page.locator('#gtStudioPanel .gt-studio-feedback.bad').count(), 'Sentence scanner did not show wrong-answer feedback');
+  await page.locator('#gtStudioLab [data-gts-tab="mistakes"]').click();
+  assert.ok(await page.locator('#gtStudioPanel .gt-mistake-card').count() > 0, 'Mistake replay did not save a missed scanner answer');
+  await page.locator('#gtStudioPanel [data-gts-retry="0"]').click();
+  await page.locator('#gtStudioPanel [data-gts-scan="B"]').click();
+  assert.ok(await page.locator('#gtStudioPanel .gt-studio-feedback.good').count(), 'Retried scanner answer did not show correct feedback');
+  await page.locator('#gtStudioLab [data-gts-tab="rules"]').click();
+  await page.locator('#gtStudioPanel [data-gts-rule-option="2"]').click();
+  assert.ok(await page.locator('#gtStudioPanel .gt-studio-feedback.good').count(), 'Micro-lesson quick check did not validate its correct option');
+  await page.locator('#gtStudioLab [data-gts-tab="drill"]').click();
+  await page.locator('#gtStudioPanel [data-gts-drill-option="1"]').click();
+  assert.ok(await page.locator('#gtStudioPanel .gt-studio-feedback').count(), 'Daily drill did not show instant feedback');
+  await page.locator('#gtStudioPanel [data-gts-sprint-start]').click();
+  await page.locator('#gtStudioPanel [data-gts-sprint-option="0"]').click();
+  assert.ok((await page.locator('#gtStudioPanel .gt-mode-chip').innerText()).toLowerCase().includes('5-question sprint'), 'Sprint did not start');
+  await page.locator('#gtStudioPanel [data-gts-sprint-next]').click();
+  assert.ok((await page.locator('#gtStudioPanel .gt-mode-chip').innerText()).toLowerCase().includes('2 of 5'), 'Sprint did not advance to question two');
+  await page.locator('#gtStudioPanel [data-gts-sprint-exit]').click();
+  console.log('PASS Grammar Studio: contrast, animated 3D hero, daily drill, sprint, scanner, micro-lessons and mistake replay');
+
   await clickMainView('pyq');
   await page.evaluate(() => {
     const question = PYQ_ALL.find(q => q._exam === 'CDS' && q.y === 2022 && q.s === 'I' &&
@@ -399,7 +441,7 @@ try {
     console.log('RESPONSIVE CHECK viewport=' + width);
     await page.setViewportSize({ width, height: 900 });
     const views = width === 320
-      ? ['dashboard', 'vocab', 'books', 'profile', 'notifications']
+      ? ['dashboard', 'grammar', 'vocab', 'books', 'profile', 'notifications']
       : ['dashboard', 'grammar', 'compare', 'vocab', 'pyq', 'games', 'leaderboard', 'profile', 'notifications', 'books'];
     for (const view of views) {
       await clickMainView(view);

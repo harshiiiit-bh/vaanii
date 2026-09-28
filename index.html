@@ -31,8 +31,11 @@
 <link rel="stylesheet" href="vaani-site-refresh.css">
 <link rel="stylesheet" href="vaani-notifications.css?v=20260928-2">
 <link rel="stylesheet" href="vaani-defence-feed.css?v=20260928-3">
-<link rel="stylesheet" href="vaani-responsive.css?v=20260928-1">
-<link rel="stylesheet" href="vaani-deep-redesign.css?v=20260928-deep5">
+<link rel="stylesheet" href="vaani-responsive.css?v=20260929-mobile2">
+<link rel="stylesheet" href="vaani-deep-redesign.css?v=20260929-deep6">
+<link rel="stylesheet" href="vaani-grammar-studio.css?v=20260929-2">
+<link rel="stylesheet" href="vaani-motion-studio.css?v=20260929-motion2">
+<link rel="stylesheet" href="vaani-stability.css?v=20260929-stability2">
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-4MRM51W1PW"></script>
 <script>
@@ -341,7 +344,7 @@
       <circle cx="200" cy="200" r="5" fill="currentColor"/>
       <text x="200" y="26" text-anchor="middle" class="vd-compass-n">N</text>
     </svg>
-    <img class="vd-hero-photo" src="assets/ima-hero-poster.webp" alt="" aria-hidden="true" loading="eager" decoding="async">
+    <img class="vd-hero-photo is-loading" src="assets/ima-hero-poster.webp" alt="" aria-hidden="true" loading="eager" fetchpriority="high" decoding="async">
     <div class="vd-hero-inner">
       <span class="vd-eyebrow">NDA English Command &middot; <span id="heroDate"></span></span>
       <h1 class="vd-hero-title">Welcome back,<br><span id="dashName">Cadet</span></h1>
@@ -488,9 +491,45 @@
 
 <!-- ============ GRAMMAR TREE — PHASE 1 ============ -->
 <section class="view gt-root" id="view-grammar">
-  <div class="gt-header">
-    <div class="gt-eyebrow">English Command Center</div>
-    <h2 class="gt-title">Grammar</h2>
+  <div class="gt-header gt-studio-hero">
+    <div class="gt-hero-copy">
+      <div class="gt-eyebrow">English Command Center · Adaptive Grammar</div>
+      <h2 class="gt-title">Grammar <span>in command.</span></h2>
+      <p class="gt-hero-sub">Build rule recall, spot sentence traps, and turn every lesson into exam-ready confidence.</p>
+      <div class="gt-hero-actions">
+        <button class="gt-hero-primary" type="button" onclick="gtStartLearning()">Resume learning <span aria-hidden="true">↗</span></button>
+        <button class="gt-hero-secondary" type="button" onclick="gtStudioGo('drill')">Open quick drill <span aria-hidden="true">↓</span></button>
+      </div>
+    </div>
+    <div class="gt-hero-stage" aria-hidden="true">
+      <svg class="gt-orbit-svg" viewBox="0 0 340 256" role="presentation">
+        <defs>
+          <linearGradient id="gtsOrbitGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#39dbc8"/>
+            <stop offset="100%" stop-color="#e6bd69"/>
+          </linearGradient>
+        </defs>
+        <ellipse class="gt-orbit-track" cx="170" cy="128" rx="143" ry="51" transform="rotate(-24 170 128)"/>
+        <ellipse class="gt-orbit-track" cx="170" cy="128" rx="111" ry="78" transform="rotate(36 170 128)"/>
+        <g class="gt-orbit-rotor">
+          <path class="gt-orbit-line" d="M27 128 C58 55 109 45 170 128 S279 201 313 128"/>
+          <circle class="gt-orbit-node" r="4" cx="313" cy="128"/>
+        </g>
+        <circle class="gt-orbit-pulse" cx="170" cy="128" r="69"/>
+      </svg>
+      <div class="gt-cube-scene">
+        <div class="gt-grammar-cube">
+          <span class="gt-cube-face gt-cube-front">SUBJECT</span>
+          <span class="gt-cube-face gt-cube-back">VAANI</span>
+          <span class="gt-cube-face gt-cube-right">VERB</span>
+          <span class="gt-cube-face gt-cube-left">TENSE</span>
+          <span class="gt-cube-face gt-cube-top">RULE</span>
+          <span class="gt-cube-face gt-cube-bottom">A / B</span>
+        </div>
+      </div>
+      <span class="gt-orbit-label one">SUBJECT · VERB</span>
+      <span class="gt-orbit-label two">RULE / RECALL</span>
+    </div>
     <div class="gt-headchips">
       <div class="gt-chip"><span class="gt-chip-num" id="gtChipTopics">0</span><span class="gt-chip-lbl">Topics</span></div>
       <div class="gt-chip"><span class="gt-chip-num" id="gtChipCovered">0%</span><span class="gt-chip-lbl">Covered</span></div>
@@ -539,9 +578,27 @@
   </div>
 
   <div class="gt-quickactions">
-    <button class="gt-qa-btn primary" onclick="gtStartLearning()">▶ Start Learning</button>
-    <button class="gt-qa-btn" onclick="gtTopicTest()">📝 Topic Test</button>
-    <button class="gt-qa-btn" onclick="gtSmartRevision()">🔄 Smart Revision</button>
+    <button class="gt-qa-btn primary" type="button" onclick="gtStartLearning()">▶ Start Learning</button>
+    <button class="gt-qa-btn" type="button" onclick="gtTopicTest()">📝 Topic Test</button>
+    <button class="gt-qa-btn" type="button" onclick="gtSmartRevision()">🔄 Smart Revision</button>
+  </div>
+
+  <div class="gt-studio-lab" id="gtStudioLab" aria-labelledby="gtStudioTitle">
+    <div class="gt-studio-heading">
+      <div>
+        <span class="gt-studio-kicker">Interactive practice bay · New</span>
+        <h3 id="gtStudioTitle">Train your grammar instincts</h3>
+        <p>Short drills, exam-style error scans and high-yield micro-lessons—all with instant explanations.</p>
+      </div>
+      <div class="gt-studio-stats" id="gtStudioStats" aria-label="Practice statistics"></div>
+    </div>
+    <div class="gt-studio-tabs" role="group" aria-label="Choose a practice mode">
+      <button type="button" class="gt-studio-tab" data-gts-tab="drill" aria-pressed="true">⚡ Daily drill</button>
+      <button type="button" class="gt-studio-tab" data-gts-tab="scanner" aria-pressed="false">⌕ Sentence scanner</button>
+      <button type="button" class="gt-studio-tab" data-gts-tab="rules" aria-pressed="false">✦ Micro-lessons</button>
+      <button type="button" class="gt-studio-tab" data-gts-tab="mistakes" aria-pressed="false">↺ Mistake replay</button>
+    </div>
+    <div class="gt-studio-panel" id="gtStudioPanel"></div>
   </div>
 </section>
 
@@ -1325,6 +1382,7 @@
      and add one more <script src="..."> line above. Nothing else to change. -->
 <script src="js/vaani-pyq-taxonomy.js?v=20260928-pyq8"></script>
 <script src="js/app.js?v=20260928-pyq8"></script>
+<script src="js/vaani-grammar-studio.js?v=20260929-1"></script>
 <script src="js/vaani-testkit.js"></script>
 <script src="js/vaani-arena.js"></script>
 <script src="js/vaani-vocab-bridge.js"></script>
@@ -1332,6 +1390,8 @@
 <script src="js/vaani-writing-coach.js"></script>
 <script>window.VAANI_NOTIFICATIONS_API = "https://vaani-notifications-api.harshitchaubey127.workers.dev";</script>
 <script src="js/vaani-notifications.js?v=20260928-5"></script>
+<script src="js/vaani-motion-studio.js?v=20260929-motion2"></script>
+<script src="js/vaani-stability.js?v=20260929-stability2"></script>
 
 <!-- ============================================================
      ARENA — LIVE LEADERBOARDS (Supabase)
