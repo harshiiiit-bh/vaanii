@@ -1277,7 +1277,7 @@ var PYQ_CDS_2022_II = [
     "s": "II",
     "n": 61,
     "sec": "Ordering of Sentences",
-    "q": "SI: A license who wants to surrender his license shall apply in Form X to the licensing officer. P: This shall not entitle the licensee to any compensation by way of license fee in any form. Q: If the licensing officer is satisfied, he may accept the surrender. R: The license shall be deemed to have been terminated from the date of such acceptance. S: The application shall be accompanied by a declaration of stock in Form V. S6: The licensee who has surrendered his license shall be allowed to sell the antiquities declared to another licensee or a recognized museum in India.",
+    "q": "S1: A license who wants to surrender his license shall apply in Form X to the licensing officer. P: This shall not entitle the licensee to any compensation by way of license fee in any form. Q: If the licensing officer is satisfied, he may accept the surrender. R: The license shall be deemed to have been terminated from the date of such acceptance. S: The application shall be accompanied by a declaration of stock in Form V. S6: The licensee who has surrendered his license shall be allowed to sell the antiquities declared to another licensee or a recognized museum in India.",
     "o": [
       "PQRS",
       "SRQP",
@@ -1298,7 +1298,7 @@ var PYQ_CDS_2022_II = [
     "s": "II",
     "n": 62,
     "sec": "Ordering of Sentences",
-    "q": "SI: Haryana has achieved the 2nd rank among States in Logistics Ease Across Different States (LEADS) - 2021 report. P: This makes Haryana a top performer in the northern cluster of land-locked States. Q: The State has taken a leap from the 6th overall position in the previous evaluation (2019). R: The improvement in ranking reflects focused initiatives by the State in improving the infrastructure. S: The report aims to evaluate and rank States / UTs based on the efficiency of their logistics and initiatives taken. S6: LEADS 2021 framework evaluated States / UTs on 21 indicators, including 17 perceptions and four objectives-based indicators.",
+    "q": "S1: Haryana has achieved the 2nd rank among States in Logistics Ease Across Different States (LEADS) - 2021 report. P: This makes Haryana a top performer in the northern cluster of land-locked States. Q: The State has taken a leap from the 6th overall position in the previous evaluation (2019). R: The improvement in ranking reflects focused initiatives by the State in improving the infrastructure. S: The report aims to evaluate and rank States / UTs based on the efficiency of their logistics and initiatives taken. S6: LEADS 2021 framework evaluated States / UTs on 21 indicators, including 17 perceptions and four objectives-based indicators.",
     "o": [
       "QRPS",
       "QSPR",
@@ -1319,7 +1319,7 @@ var PYQ_CDS_2022_II = [
     "s": "II",
     "n": 63,
     "sec": "Ordering of Sentences",
-    "q": "SI: Wind power is an inexhaustible source of clean energy. P: During the last decade, power production from the wind increased more than 25%. 33 Q: Although the cost of electrical energy produced by the wind depends on favourable sites for the location of wind turbines, wind power is already cost competitive with power produced from fossil fuels. R: Much of the growth was in Europe, where most of the world’s 17,000 megawatts of wind power is generated. S: One expert calls wind generation the fastest-growing electricity-producing technology in the world. S6: As examples, 13% of Denmark’s power and more than 20% of power in the Netherlands, Spain and Germany is supplied by the wind.",
+    "q": "S1: Wind power is an inexhaustible source of clean energy. P: During the last decade, power production from the wind increased more than 25%. 33 Q: Although the cost of electrical energy produced by the wind depends on favourable sites for the location of wind turbines, wind power is already cost competitive with power produced from fossil fuels. R: Much of the growth was in Europe, where most of the world’s 17,000 megawatts of wind power is generated. S: One expert calls wind generation the fastest-growing electricity-producing technology in the world. S6: As examples, 13% of Denmark’s power and more than 20% of power in the Netherlands, Spain and Germany is supplied by the wind.",
     "o": [
       "PQRS",
       "SRPQ",
@@ -1340,7 +1340,7 @@ var PYQ_CDS_2022_II = [
     "s": "II",
     "n": 64,
     "sec": "Ordering of Sentences",
-    "q": "SI: Education, it is believed, is inseparable from our societal aspirations. P: Education, as many would argue, was for realization of the Ultimate and the Absolute. Q: In ancient times, for example, there was a distinctive spiritual meaning associated with education. R: As these aspirations / world views undergo a process of transformation with the changing times, so does the meaning for education. S: It was to overcome the finiteness of existence: all earthly temptations and desires. S6: But, for a modern / technical mind, this preoccupation with supreme spiritual knowledge may not hold such fascination.",
+    "q": "S1: Education, it is believed, is inseparable from our societal aspirations. P: Education, as many would argue, was for realization of the Ultimate and the Absolute. Q: In ancient times, for example, there was a distinctive spiritual meaning associated with education. R: As these aspirations / world views undergo a process of transformation with the changing times, so does the meaning for education. S: It was to overcome the finiteness of existence: all earthly temptations and desires. S6: But, for a modern / technical mind, this preoccupation with supreme spiritual knowledge may not hold such fascination.",
     "o": [
       "RPSQ",
       "SRQP",
@@ -1361,7 +1361,7 @@ var PYQ_CDS_2022_II = [
     "s": "II",
     "n": 65,
     "sec": "Ordering of Sentences",
-    "q": "SI: He resisted colonial education not just because it came from the West. P: Essentially, he disliked its inherent elitism, its irrelevance as far as the needs of India’s rural masses were concerned. Q: For example, it was difficult for him to accept English as the medium of instruction, because he felt that it has created a permanent bar between the highly educated few and the uneducated many. R: Moreover, with his profound pedagogic sensitivity he could see the damaging effect of colonial education. 34 S: He also felt that English made one a stranger in one’s own land. S6: Besides, with this kind of education, one could not appreciate the dignity of manual labour.",
+    "q": "S1: He resisted colonial education not just because it came from the West. P: Essentially, he disliked its inherent elitism, its irrelevance as far as the needs of India’s rural masses were concerned. Q: For example, it was difficult for him to accept English as the medium of instruction, because he felt that it has created a permanent bar between the highly educated few and the uneducated many. R: Moreover, with his profound pedagogic sensitivity he could see the damaging effect of colonial education. 34 S: He also felt that English made one a stranger in one’s own land. S6: Besides, with this kind of education, one could not appreciate the dignity of manual labour.",
     "o": [
       "PRQS",
       "SQPR",
@@ -1382,7 +1382,7 @@ var PYQ_CDS_2022_II = [
     "s": "II",
     "n": 66,
     "sec": "Ordering of Sentences",
-    "q": "SI: A corpus is an abundant source of samples of English usage. P: If this is to be of the meaning that has been previously explained, they cannot just be picked out of the corpus at random. Q: If they are to function as examples, however, then we need to ask just what it is they are intended to be examples of. R: Samples of the language, isolated from their natural context of use, will not normally exemplify word meanings, but will simply show one instance of the word’s actual occurrence. S: This is because the context will usually make it unnecessary to spell the meaning out. S6: It is not only the previously explained meaning of the word that we might want a sample to exemplify, however, but also its collocational tendencies.",
+    "q": "S1: A corpus is an abundant source of samples of English usage. P: If this is to be of the meaning that has been previously explained, they cannot just be picked out of the corpus at random. Q: If they are to function as examples, however, then we need to ask just what it is they are intended to be examples of. R: Samples of the language, isolated from their natural context of use, will not normally exemplify word meanings, but will simply show one instance of the word’s actual occurrence. S: This is because the context will usually make it unnecessary to spell the meaning out. S6: It is not only the previously explained meaning of the word that we might want a sample to exemplify, however, but also its collocational tendencies.",
     "o": [
       "QPSR",
       "RPSQ",
@@ -1403,7 +1403,7 @@ var PYQ_CDS_2022_II = [
     "s": "II",
     "n": 67,
     "sec": "Ordering of Sentences",
-    "q": "SI: Historians have often explained religious and social reform in India in the nineteenth century as a result of the Western impact upon the minds of men. P: With that purpose, we seek to analyze the thoughts and activities of individuals who were both religious reformers and vernacular publicists. Q: The equation of westernization and modernization has given way to a search for the indigenous sources of social changes. R: Recognizing the modernity of tradition is one thing however, whereas understanding the intellectual processes that produced indigenously generated change is another. S: Others have recognized that this was entirely too simple an explanation for the intellectual and social changes that took place in India and other places that fell under the foreign colonial rule. S6: Each of these vernacular-using reformers derived his arguments from within his own tradition.",
+    "q": "S1: Historians have often explained religious and social reform in India in the nineteenth century as a result of the Western impact upon the minds of men. P: With that purpose, we seek to analyze the thoughts and activities of individuals who were both religious reformers and vernacular publicists. Q: The equation of westernization and modernization has given way to a search for the indigenous sources of social changes. R: Recognizing the modernity of tradition is one thing however, whereas understanding the intellectual processes that produced indigenously generated change is another. S: Others have recognized that this was entirely too simple an explanation for the intellectual and social changes that took place in India and other places that fell under the foreign colonial rule. S6: Each of these vernacular-using reformers derived his arguments from within his own tradition.",
     "o": [
       "QRSP",
       "RQPS",
@@ -1424,7 +1424,7 @@ var PYQ_CDS_2022_II = [
     "s": "II",
     "n": 68,
     "sec": "Ordering of Sentences",
-    "q": "SI: The country has experienced unprecedented economic development since the adoption of the New Economic Policy in the year 1999. P: The middle classes have been the greatest beneficiary of the policy, who today enjoy far greater levels of income than their previous generations. Q: In the immediate aftermath of the newly announced policy, there was apprehension in the minds of the people. R: Within a few years, however, the beneficial impact of the newly announced policy became manifest through higher GDP and a thriving economy. S: Faced with a critical foreign exchange crisis, the country adopted the policy in the Union Budget presented in the year 1999. S6: If the country dreams of a much larger economy today, much of the optimism is due to the policy changes that took place in the year 1999.",
+    "q": "S1: The country has experienced unprecedented economic development since the adoption of the New Economic Policy in the year 1999. P: The middle classes have been the greatest beneficiary of the policy, who today enjoy far greater levels of income than their previous generations. Q: In the immediate aftermath of the newly announced policy, there was apprehension in the minds of the people. R: Within a few years, however, the beneficial impact of the newly announced policy became manifest through higher GDP and a thriving economy. S: Faced with a critical foreign exchange crisis, the country adopted the policy in the Union Budget presented in the year 1999. S6: If the country dreams of a much larger economy today, much of the optimism is due to the policy changes that took place in the year 1999.",
     "o": [
       "SQRP",
       "RQSP",
@@ -1445,7 +1445,7 @@ var PYQ_CDS_2022_II = [
     "s": "II",
     "n": 69,
     "sec": "Ordering of Sentences",
-    "q": "SI: The Indian co-operative movement is probably one of the largest, strongest and the oldest in the world with widespread spatial coverage, diversified business activities and ample success stories. P: It has celebrated its Centenary very recently. Q: It is structured around the Rochdale Principles and Raiffeisen Model in wake of miseries of peasantry. R: It is termed as the “economic miracle” of the last century. S: Ever since the officially sponsored Act of 1904, the Movement has passed through a number of phases. S6: Co-operatives have been organized in areas like credit, marketing, distribution, dairy development, industry, sugar and so on.",
+    "q": "S1: The Indian co-operative movement is probably one of the largest, strongest and the oldest in the world with widespread spatial coverage, diversified business activities and ample success stories. P: It has celebrated its Centenary very recently. Q: It is structured around the Rochdale Principles and Raiffeisen Model in wake of miseries of peasantry. R: It is termed as the “economic miracle” of the last century. S: Ever since the officially sponsored Act of 1904, the Movement has passed through a number of phases. S6: Co-operatives have been organized in areas like credit, marketing, distribution, dairy development, industry, sugar and so on.",
     "o": [
       "QRPS",
       "RPQS",
