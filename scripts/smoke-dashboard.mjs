@@ -70,10 +70,12 @@ try {
   assert.ok(await page.locator('#confuseTableBody .cw-card').count() > 0, 'Confused-word section is empty');
   console.log('PASS vocabulary: bank, daily sets, micro-lessons and confused-word cards');
 
-  const capture = page.locator('#vocabGrid .word-card .v-book-capture').first();
+  const firstWordCard = page.locator('#vocabGrid .word-card').first();
+  const capturedWord = (await firstWordCard.locator('h3').textContent() || '').trim();
+  const capture = firstWordCard.locator('.v-book-capture');
   assert.ok(await capture.count(), 'Vocabulary-to-Book-Reading capture button is missing');
   await capture.click();
-  await page.waitForFunction(el => /Saved|In Register/.test(el.textContent || ''), await capture.elementHandle(), { timeout: 10000 });
+  await page.waitForFunction(el => /Added to Register|In Register/.test(el.textContent || ''), await capture.elementHandle(), { timeout: 10000 });
   console.log('PASS vocabulary bridge: capture action returned a saved/duplicate state');
 
   await clickMainView('books');
@@ -82,7 +84,9 @@ try {
   await page.locator('#vbv-mainnav button[data-route="vocab"]').click();
   await page.waitForTimeout(300);
   assert.ok(await page.locator('#app .vocab-card').count() > 0, 'Book Reading Vocab Register did not render');
-  console.log('PASS Book Reading: command centre and vocabulary register');
+  const registerText = (await page.locator('#app').textContent()) || '';
+  assert.ok(registerText.includes(capturedWord), 'Captured Vocabulary word did not appear in the Book Reading register: ' + capturedWord);
+  console.log('PASS Book Reading: command centre and captured word appears in the shared register');
 
   for (const view of ['grammar', 'compare', 'pyq', 'games', 'leaderboard', 'profile']) {
     await clickMainView(view);
@@ -90,6 +94,16 @@ try {
   }
   assert.ok(await page.locator('.vp-logout-btn').count(), 'Profile logout control is missing');
   console.log('PASS navigation: all primary views opened; logout control is present');
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  for (const view of ['dashboard', 'vocab', 'books', 'profile']) {
+    await clickMainView(view);
+    await page.waitForTimeout(250);
+    if (view === 'books') await page.waitForSelector('#app .vbv-command-center', { timeout: 15000 });
+    const dimensions = await page.evaluate(() => ({ width: innerWidth, scrollWidth: document.documentElement.scrollWidth }));
+    assert.ok(dimensions.scrollWidth <= dimensions.width + 2, 'Horizontal overflow on mobile ' + view + ': ' + JSON.stringify(dimensions));
+  }
+  console.log('PASS mobile layout: dashboard, vocabulary, Book Reading and profile fit a 390px viewport');
 
   const savedAccountKeys = await page.evaluate(() =>
     Object.keys(localStorage).filter(key => key.startsWith('vbv_veer_bhogya_account_')));
