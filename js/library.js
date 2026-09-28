@@ -1256,7 +1256,7 @@ function notifyVaaniVocab(entry){
 }
 function quickCaptureVocab(bookId){
   const input = document.getElementById('vocab-input');
-  const text = (input && input.value || '').trim().replace(/\\s+/g,' ');
+  const text = (input && input.value || '').trim().replace(/\s+/g,' ');
   if(!text){ vbvToast('Enter a word, idiom, or phrase first.', 'angry'); if(input) input.focus(); return; }
   captureVocabEntry(bookId, text);
 }
@@ -1266,7 +1266,7 @@ function captureSelectedVocab(bookId){
   captureVocabEntry(bookId, selection);
 }
 async function captureVocabEntry(bookId, rawText){
-  const text = String(rawText||'').trim().replace(/\\s+/g,' ').slice(0,160);
+  const text = String(rawText||'').trim().replace(/\s+/g,' ').slice(0,160);
   if(!text) return;
   const existing = DATA.vocab.find(v=>(v.word||'').trim().toLowerCase()===text.toLowerCase());
   if(existing){ vbvToast('Already in your Vocab Register.', 'good'); return; }
