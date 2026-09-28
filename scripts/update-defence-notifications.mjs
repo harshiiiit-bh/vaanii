@@ -107,6 +107,13 @@ function makeId(title,url){
   return (title+'|'+url).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,110);
 }
 
+const curatedIds = new Set([
+  'upsc-nda-i-2027-calendar','upsc-cds-i-2027-calendar',
+  'ssc-cgl-2026-city-admission-certificate','ssc-cgl-2026-tentative-vacancies',
+  'ssc-stenographer-2026-answer-key','sbi-sco-2026-27-20',
+  'isro-sac-02-2026-research-roles','drdo-pxe-apprentice-2026-27'
+]);
+
 const navigationTitles = new Set([
   'home','about us','about drdo','our team','technology clusters','corporate clusters',
   'schemes and services','industry support','vacancies','competitions and awards',
@@ -139,9 +146,13 @@ function isNoticeTitle(value, href = '') {
   if (/^(?:home|about|contact|login|dashboard|administration|promotion|manual|faq|more)\b/i.test(title)) return false;
   if (/^(?:notifications?\s*\/\s*recruitment|results?\s*\/\s*misc|recruitment rules|direct recruitment)$/i.test(title)) return false;
   if (/\b(?:copyright|privacy policy|terms of use|sitemap|site map|feedback|user manual|website policy)\b/i.test(title)) return false;
-  const noticeSignal = /\b(?:advt\.?|advertisement|notification|recruitment|vacanc(?:y|ies)|employment notice|admit cards?|e-?admit cards?|hall tickets?|answer keys?|results?|merit lists?|extension of (?:the )?(?:last )?date|inviting online applications?|apply online|examination|written exam(?:ination)?|interview|corrigendum|provisional|city intimation|application form|shortlist(?:ed)?)\b/i;
+  const noticeSignal = /\b(?:advt\.?|advertisement|notification|recruitment|vacanc(?:y|ies)|employment notice|admit cards?|e-?admit cards?|hall tickets?|answer keys?|results?|merit lists?|extension of (?:the )?(?:last )?date|inviting online applications?|apply online|examination|written exam(?:ination)?|interview|corrigendum|provisional|city intimation|application form|shortlist(?:ed)?)\b|calendar schedule/i;
   if (noticeSignal.test(title)) return true;
   return /\.(?:pdf|html?)($|\?)/i.test(href) && /(?:notice|advt|advert|recruit|vacan|exam|result|admit|answer)/i.test(href);
+}
+
+function isNoticeRecord(item) {
+  return Boolean(item && (curatedIds.has(String(item.id || '')) || isNoticeTitle(item.title, item.url)));
 }
 
 async function fetchSource(source){
@@ -195,7 +206,9 @@ async function main(){
   let archive={version:1,generatedAt:null,source:'VAANI Defence Notification Archive',items:[]};
   try { existing=JSON.parse(await fs.readFile(DATA_FILE,'utf8')); } catch {}
   try { archive=JSON.parse(await fs.readFile(ARCHIVE_FILE,'utf8')); } catch {}
-  const byKey=new Map((existing.items||[]).filter(x=>isNoticeTitle(x.title,x.url)).map(x=>[x.id,x]));
+  const rejectedIds=(existing.items||[]).filter(x=>!isNoticeRecord(x)).map(x=>String(x.id)).filter(Boolean);
+  const pruneIds=[...new Set([...(Array.isArray(existing.pruneIds)?existing.pruneIds:[]),...rejectedIds])];
+  const byKey=new Map((existing.items||[]).filter(isNoticeRecord).map(x=>[x.id,x]));
   const runLog=[];
 
   for(const source of sources){
@@ -253,7 +266,7 @@ async function main(){
   }
   const items=live.filter(x=>x.title&&x.url).sort((a,b)=>String(b.lastSeen||b.firstSeen).localeCompare(String(a.lastSeen||a.firstSeen)));
   const archived=[...archiveMap.values()].sort((a,b)=>String(b.archivedAt||'').localeCompare(String(a.archivedAt||'')));
-  const output={version:1,generatedAt:now.toISOString(),source:'VAANI Defence Notification Engine',checkedSources:runLog,items};
+  const output={version:1,generatedAt:now.toISOString(),source:'VAANI Government & Defence Notification Engine',checkedSources:runLog,pruneIds,items};
   const archiveOutput={version:1,generatedAt:now.toISOString(),source:'VAANI Defence Notification Archive',items:archived};
   await fs.writeFile(DATA_FILE,JSON.stringify(output,null,2)+'\n');
   await fs.writeFile(ARCHIVE_FILE,JSON.stringify(archiveOutput,null,2)+'\n');
