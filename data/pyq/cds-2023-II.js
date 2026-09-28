@@ -6,7 +6,7 @@ var PYQ_CDS_2023_II = [
     "s": "II",
     "n": 1,
     "sec": "Parts of Speech",
-    "q": "The artist pranced around the stage singing enthusiastically.",
+    "keyword": "pranced", "q": "The artist pranced around the stage singing enthusiastically.",
     "o": [
       "Noun",
       "Adjective",
@@ -27,7 +27,7 @@ var PYQ_CDS_2023_II = [
     "s": "II",
     "n": 2,
     "sec": "Parts of Speech",
-    "q": "Put the fork and knife in the cutlery box.",
+    "keyword": "in", "q": "Put the fork and knife in the cutlery box.",
     "o": [
       "Preposition",
       "Verb",
@@ -48,7 +48,7 @@ var PYQ_CDS_2023_II = [
     "s": "II",
     "n": 3,
     "sec": "Parts of Speech",
-    "q": "She came slowly up to the main door.",
+    "keyword": "slowly", "q": "She came slowly up to the main door.",
     "o": [
       "Adjective",
       "Adverb",
@@ -69,7 +69,7 @@ var PYQ_CDS_2023_II = [
     "s": "II",
     "n": 4,
     "sec": "Parts of Speech",
-    "q": "Oh no! I am getting late for the function.",
+    "keyword": "Oh no", "q": "Oh no! I am getting late for the function.",
     "o": [
       "Preposition",
       "Article",
@@ -90,7 +90,7 @@ var PYQ_CDS_2023_II = [
     "s": "II",
     "n": 5,
     "sec": "Parts of Speech",
-    "q": "They are all going to attend the function.",
+    "keyword": "they", "q": "They are all going to attend the function.",
     "o": [
       "Noun",
       "Adverb",
@@ -111,7 +111,7 @@ var PYQ_CDS_2023_II = [
     "s": "II",
     "n": 6,
     "sec": "Parts of Speech",
-    "q": "The sun shone through the dull grey clouds.",
+    "keyword": "dull", "q": "The sun shone through the dull grey clouds.",
     "o": [
       "Noun",
       "Adverb",
@@ -132,7 +132,7 @@ var PYQ_CDS_2023_II = [
     "s": "II",
     "n": 7,
     "sec": "Parts of Speech",
-    "q": "The Principal is presiding over the meeting.",
+    "keyword": "over", "q": "The Principal is presiding over the meeting.",
     "o": [
       "Verb",
       "Noun",
@@ -153,7 +153,7 @@ var PYQ_CDS_2023_II = [
     "s": "II",
     "n": 8,
     "sec": "Parts of Speech",
-    "q": "Cash machines permit people to withdraw money at any time.",
+    "keyword": "permit", "q": "Cash machines permit people to withdraw money at any time.",
     "o": [
       "Verb",
       "Noun",
@@ -174,7 +174,7 @@ var PYQ_CDS_2023_II = [
     "s": "II",
     "n": 9,
     "sec": "Parts of Speech",
-    "q": "The novel is loosely based on his childhood in England.",
+    "keyword": "loosely", "q": "The novel is loosely based on his childhood in England.",
     "o": [
       "Verb",
       "Adverb",
@@ -195,7 +195,7 @@ var PYQ_CDS_2023_II = [
     "s": "II",
     "n": 10,
     "sec": "Parts of Speech",
-    "q": "Since children have so much homework to do their playtime is very limited.",
+    "keyword": "playtime", "q": "Since children have so much homework to do their playtime is very limited.",
     "o": [
       "Verb",
       "Adjective",
