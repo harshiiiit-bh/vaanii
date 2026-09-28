@@ -183,6 +183,7 @@ try {
   await page.locator('#star-row span[data-val="4"]').click();
   await page.getByRole('button', { name:'Confirm Completion' }).click();
   await page.waitForFunction(() => location.hash === '#/completed', null, { timeout:10000 });
+  await page.waitForFunction(() => Array.from(document.querySelectorAll('#app .book-card h4')).some(el => el.textContent.includes('VAANI Regression Reading Journey')), null, { timeout:10000 });
   const completedCard = page.locator('#app .book-card').filter({ hasText:'VAANI Regression Reading Journey' }).first();
   assert.ok(await completedCard.count(), 'Completed book was not filed in Completed');
   assert.ok((await completedCard.textContent()).includes('Browser journey completed.'), 'Completion review was not retained');
