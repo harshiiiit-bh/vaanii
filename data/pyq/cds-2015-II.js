@@ -21,7 +21,7 @@ var PYQ_CDS_2015_II = [
   {y:2015,s:'II',n:17,sec:'Selecting Words',q:'This most ___ question continually torments the parents.',o:['joyous','distressing','distracting','No answer'],ans:1},
   {y:2015,s:'II',n:18,sec:'Selecting Words',q:'The parents of these ___ children.',o:['unethical','unnatural','unfortunate','No answer'],ans:2},
   {y:2015,s:'II',n:19,sec:'Selecting Words',q:'They are mainly interested in ___ some kind of vocational training for them.',o:['providing','making','giving','No answer'],ans:0},
-  {y:2015,s:'II',n:20,sec:'Selecting Words',q:'___ special schools for such children, spread all over the world, lay emphasis on vocational training.',o:['But','Yet','Hence','No answer'],ans:0},
+  {y:2015,s:'II',n:20,sec:'Selecting Words',q:'___ special schools for such children, spread all over the world, lay emphasis on vocational training.',o:['But','Yet','Hence'],ans:2},
   {y:2015,s:'II',n:21,sec:'Selecting Words',q:'Special schools for such children, spread all ___ the world.',o:['above','under','over','No answer'],ans:2},
   {y:2015,s:'II',n:22,sec:'Selecting Words',q:'___ special schools for such children, spread all over the world, lay emphasis on vocational training.',o:['However','Accordingly','Similarly'],ans:1},
   {y:2015,s:'II',n:23,sec:'Selecting Words',q:'They are taught to make paper bags, ___ wall hangings etc.',o:['dubious','simple','clumsy','No answer'],ans:1},
