@@ -257,3 +257,48 @@ try {
   console.error('Site refresh validation failed:', error.message);
   process.exitCode = 1;
 }
+
+
+/* Book Reading and cross-module vocabulary integration checks. */
+try {
+  const appSource = readFileSync('js/app.js', 'utf8');
+  const pageSource = readFileSync('index.html', 'utf8');
+  const librarySource = readFileSync('js/library.js', 'utf8');
+  const bookCss = readFileSync('vaani-bookreading.css', 'utf8');
+  const readmeSource = readFileSync('README.md', 'utf8');
+  for (const required of [
+    'window.VaaniBookRegister.add=addVaaniCaptureToRegister',
+    'function filterVbvRegister()',
+    'function renderHomeCommandCenter()',
+    'function filterLibraryBooks()',
+    'function sortLibraryBooks(mode)',
+    'vbv-book-jumpbar'
+  ]) {
+    if (!librarySource.includes(required)) throw new Error('Book Reading feature is missing: ' + required);
+  }
+  for (const required of [
+    'function addVaaniItemToBookRegister(',
+    'function makeBookRegisterButton(',
+    'function openCompare(id){',
+    'Save to Book Register'
+  ]) {
+    if (!appSource.includes(required)) throw new Error('VAANI → Book Register link is missing: ' + required);
+  }
+  for (const id of ['dashWordToBook', 'wdAddToBookRegister']) {
+    if (!pageSource.includes('id="' + id + '"')) throw new Error('Missing one-click capture control: ' + id);
+  }
+  if (pageSource.includes('data-route="flashcards"') || librarySource.includes('flashcards: renderFlashcardsHome') ||
+      librarySource.includes('function renderFlashcardsHome(') || librarySource.includes('Review Flashcards')) {
+    throw new Error('The removed flashcard drill is still wired into Book Reading.');
+  }
+  for (const required of ['.vbv-command-center', '.vbv-register-capture', '.vbv-library-toolbar', '.vbv-book-jumpbar']) {
+    if (!bookCss.includes(required)) throw new Error('Book Reading styling is missing: ' + required);
+  }
+  for (const heading of ['## What’s inside', '## Run locally', '## Deploy with GitHub Pages', '## Data and privacy', '## Content files', '## Check changes']) {
+    if (!readmeSource.includes(heading)) throw new Error('README guide section is missing: ' + heading);
+  }
+  console.log('Book Reading: unified register, one-click capture, searchable library, reading desk navigation, responsive styles and concise README validated');
+} catch (error) {
+  console.error('Book Reading validation failed:', error.message);
+  process.exitCode = 1;
+}
