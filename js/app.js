@@ -831,7 +831,17 @@ function pyqHighlightText(text, keyword){
   keyword=String(keyword||'').trim();
   const safe=value=>escapeHtmlVaani(String(value)).replace(/\r\n?/g,'\n');
   if(!keyword)return safe(text);
-  const specials=['.','*','+','?','^','
+  const at=text.toLocaleLowerCase().indexOf(keyword.toLocaleLowerCase());
+  if(at<0)return safe(text);
+  const endAt=at+keyword.length;
+  return safe(text.slice(0,at))+'<mark class="pyq-vocab-hi pyq-keyword-highlight">'+safe(text.slice(at,endAt))+'</mark>'+safe(text.slice(endAt));
+}
+function pyqHi(q){
+  if(!q||typeof q.q!=='string')return '';
+  const keyword=window.VaaniPyqTaxonomy&&typeof window.VaaniPyqTaxonomy.keyword==='function'
+    ?window.VaaniPyqTaxonomy.keyword(q):String(q.keyword||'').trim();
+  return pyqHighlightText(q.q,keyword);
+}
 /* Render spotting-error sentence boundaries as visible, labelled parts.
    Sources vary: imported CDS banks may carry an explicit parts array,
    older NDA banks place (a)/(b)/(c) inline, and newer CDS banks use |. */
