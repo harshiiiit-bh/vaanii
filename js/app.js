@@ -301,6 +301,15 @@ function switchView(name){
   if(name==='leaderboard') safeCall(renderLeaderboard,'renderLeaderboard');
   if(name==='pyq') safeCall(renderPyqView,'renderPyqView');
   if(name==='books') safeCall(mountLibrarySection,'mountLibrarySection');
+  // Rebuild the vocabulary hub after it becomes visible. Its daily panels depend
+  // on the active page being mounted; refreshing here also recovers from a prior
+  // partial render without requiring a hard reload.
+  if(name==='vocab'){
+    safeCall(renderVocabGrid,'renderVocabGrid(switchView)');
+    safeCall(renderDailySetTabs,'renderDailySetTabs(switchView)');
+    safeCall(renderDailySingles,'renderDailySingles(switchView)');
+    safeCall(renderConfuseTable,'renderConfuseTable(switchView)');
+  }
   if(name==='grammar'){
     // Defer to the next animation frame: the 'active' class change above must be committed
     // to layout first, so the container (aspect-ratio box) has a real, measurable size
@@ -3055,7 +3064,9 @@ function renderDailySetTabs(){
     {key:'military',label:'Military Vocabulary',cat:'military',offset:4},
     {key:'foreign',label:'Foreign Phrases',cat:'foreign',offset:5}
   ];
-  const tabs=document.getElementById('dailySetTabs'); tabs.innerHTML='';
+  const tabs=document.getElementById('dailySetTabs');
+  if(!tabs){console.warn('[VAANI] dailySetTabs container is missing');return;}
+  tabs.innerHTML='';
   sets.forEach((s,i)=>{
     const b=document.createElement('button'); b.className='daily-tab-btn'+(i===0?' active':''); b.textContent=s.label; b.dataset.key=s.key;
     b.onclick=()=>{document.querySelectorAll('.daily-tab-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');renderDailySetGrid(s);};
@@ -3064,7 +3075,10 @@ function renderDailySetTabs(){
   renderDailySetGrid(sets[0]);
 }
 function renderDailySetGrid(setDef){
-  const grid=document.getElementById('dailySetGrid'); grid.innerHTML='';
+  const grid=document.getElementById('dailySetGrid');
+  if(!grid){console.warn('[VAANI] dailySetGrid container is missing');return;}
+  grid.innerHTML='';
+  if(!setDef){grid.innerHTML='<div class="empty-state">Choose a daily set to begin.</div>';return;}
   if(setDef.key==='foreign'){
     const picks = pickDaily(FOREIGN_PHRASES,5,setDef.offset);
     picks.forEach(p=>{
@@ -3098,10 +3112,12 @@ function renderDailySingles(){
     {label:'Suffix of the Day',tag:'SUF',d:pickDaily(DAILY_SUFFIXES,1,12)[0]},
     {label:'Root Word of the Day',tag:'ROOT',d:pickDaily(DAILY_ROOTS,1,13)[0]}
   ];
-  items.forEach(it=>{
+  const available=items.filter(it=>it.d&&it.d.t);
+  if(!available.length){strip.innerHTML='<div class="empty-state">Daily lessons are temporarily unavailable. Please try again shortly.</div>';return;}
+  available.forEach(it=>{
     const div=document.createElement('div'); div.className='single-card';
-    div.innerHTML=`<div class="sc-badge">${it.tag}</div><div class="sc-label">${it.label.toUpperCase()}</div><div class="sc-word">${it.d.t}</div><div class="sc-mean">${it.d.mean}</div>`;
-    div.appendChild(makeBookRegisterButton({word:it.d.t,meaning:it.d.mean,example:it.d.ex,kind:it.label.toLowerCase().replace(/ of the day$/,''),source:'VAANI '+it.label},'＋ Book Register'));
+    div.innerHTML=`<div class="sc-badge">${it.tag}</div><div class="sc-label">${it.label.toUpperCase()}</div><div class="sc-word">${it.d.t}</div><div class="sc-mean">${it.d.mean||''}</div>`;
+    div.appendChild(makeBookRegisterButton({word:it.d.t,meaning:it.d.mean||'',example:it.d.ex||'',kind:it.label.toLowerCase().replace(/ of the day$/,''),source:'VAANI '+it.label},'＋ Book Register'));
     strip.appendChild(div);
   });
 }
