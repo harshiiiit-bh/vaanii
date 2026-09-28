@@ -1,6 +1,43 @@
 {
   "version": 1,
-  "generatedAt": null,
+  "generatedAt": "2026-09-28T13:55:52.922Z",
   "source": "VAANI Defence Notification Archive",
-  "items": []
+  "items": [
+    {
+      "id": "upsc-nda-ii-2026",
+      "title": "NDA & NA II 2026",
+      "organization": "UPSC",
+      "category": "NDA",
+      "type": "Official examination notification",
+      "status": "closed",
+      "notificationDate": "2026-05-20",
+      "lastDate": "2026-06-09",
+      "examDate": "2026-09-13",
+      "url": "https://www.upsc.gov.in/",
+      "sourceUrl": "https://www.upsc.gov.in/examinations/active-examinations",
+      "sourceName": "UPSC",
+      "official": true,
+      "summary": "NDA & NA II 2026 cycle. Verify all cycle-specific details in the official UPSC notice.",
+      "archivedAt": "2026-09-28T13:55:52.922Z",
+      "archiveReason": "exam-date-passed"
+    },
+    {
+      "id": "upsc-cds-ii-2026",
+      "title": "CDS II 2026",
+      "organization": "UPSC",
+      "category": "CDS",
+      "type": "Official examination notification",
+      "status": "closed",
+      "notificationDate": "2026-05-20",
+      "lastDate": "2026-06-09",
+      "examDate": "2026-09-13",
+      "url": "https://www.upsc.gov.in/",
+      "sourceUrl": "https://www.upsc.gov.in/examinations/active-examinations",
+      "sourceName": "UPSC",
+      "official": true,
+      "summary": "CDS II 2026 cycle. Verify all cycle-specific details in the official UPSC notice.",
+      "archivedAt": "2026-09-28T13:55:52.922Z",
+      "archiveReason": "exam-date-passed"
+    }
+  ]
 }

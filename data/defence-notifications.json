@@ -1,40 +1,70 @@
 {
   "version": 1,
-  "generatedAt": "2026-09-28T12:00:00Z",
+  "generatedAt": "2026-09-28T13:55:52.922Z",
   "source": "VAANI Defence Notification Engine",
+  "checkedSources": [
+    {
+      "source": "UPSC — Active Examinations",
+      "ok": false,
+      "error": "403 Forbidden"
+    },
+    {
+      "source": "UPSC — Forthcoming Examinations",
+      "ok": false,
+      "error": "403 Forbidden"
+    },
+    {
+      "source": "UPSC — Examination Notifications",
+      "ok": false,
+      "error": "403 Forbidden"
+    },
+    {
+      "source": "UPSC — Notification Archives",
+      "ok": false,
+      "error": "403 Forbidden"
+    },
+    {
+      "source": "Indian Air Force — AFCAT",
+      "ok": false,
+      "error": "403 Forbidden"
+    },
+    {
+      "source": "Indian Army — Join Indian Army",
+      "ok": false,
+      "error": "fetch failed"
+    },
+    {
+      "source": "Indian Navy — Join Indian Navy",
+      "ok": false,
+      "error": "fetch failed"
+    },
+    {
+      "source": "Agniveervayu",
+      "ok": false,
+      "error": "fetch failed"
+    },
+    {
+      "source": "BSF Recruitment",
+      "ok": false,
+      "error": "403 Forbidden"
+    },
+    {
+      "source": "CRPF Recruitment",
+      "ok": false,
+      "error": "fetch failed"
+    },
+    {
+      "source": "SSC — Constable GD",
+      "ok": true,
+      "found": 0
+    },
+    {
+      "source": "Indian Coast Guard",
+      "ok": false,
+      "error": "fetch failed"
+    }
+  ],
   "items": [
-    {
-      "id": "upsc-nda-ii-2026",
-      "title": "NDA & NA II 2026",
-      "organization": "UPSC",
-      "category": "NDA",
-      "type": "Official examination notification",
-      "status": "closed",
-      "notificationDate": "2026-05-20",
-      "lastDate": "2026-06-09",
-      "examDate": "2026-09-13",
-      "url": "https://www.upsc.gov.in/",
-      "sourceUrl": "https://www.upsc.gov.in/examinations/active-examinations",
-      "sourceName": "UPSC",
-      "official": true,
-      "summary": "NDA & NA II 2026 cycle. Verify all cycle-specific details in the official UPSC notice."
-    },
-    {
-      "id": "upsc-cds-ii-2026",
-      "title": "CDS II 2026",
-      "organization": "UPSC",
-      "category": "CDS",
-      "type": "Official examination notification",
-      "status": "closed",
-      "notificationDate": "2026-05-20",
-      "lastDate": "2026-06-09",
-      "examDate": "2026-09-13",
-      "url": "https://www.upsc.gov.in/",
-      "sourceUrl": "https://www.upsc.gov.in/examinations/active-examinations",
-      "sourceName": "UPSC",
-      "official": true,
-      "summary": "CDS II 2026 cycle. Verify all cycle-specific details in the official UPSC notice."
-    },
     {
       "id": "upsc-nda-i-2027-calendar",
       "title": "NDA & NA I 2027 — Calendar Schedule",
