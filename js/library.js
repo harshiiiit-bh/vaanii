@@ -222,6 +222,43 @@ async function saveData(){
   }
 }
 
+/* Public bridge for VAANI's main Vocabulary cards. Keep this API available
+   even before the Book Reading tab is opened; the account gate populates DATA. */
+window.VaaniBookRegister = {
+  add: async function(item){
+    item = item && typeof item === 'object' ? item : {};
+    const word = String(item.word || '').replace(/\s+/g,' ').trim().slice(0,160);
+    if(!word) return {ok:false,message:'Enter a word or phrase first.'};
+    if(!ACTIVE_CODE || !dataLoaded) return {ok:false,message:'Sign in to Book Reading with your account code, then try again.'};
+    DATA.vocab = Array.isArray(DATA.vocab) ? DATA.vocab : [];
+    const existing = findVocabByWord(word);
+    if(existing) return {ok:true,duplicate:true,id:existing.id};
+    const entry = {
+      id:uid(), word, meaning:String(item.meaning||'').trim(),
+      synonyms:Array.isArray(item.synonyms)?item.synonyms:[],
+      antonyms:Array.isArray(item.antonyms)?item.antonyms:[],
+      dateAdded:todayStr(), mastery:0,
+      sourceBookTitle:String(item.source||'VAANI Vocabulary').trim(),
+      sourceKind:String(item.kind||'word')
+    };
+    DATA.vocab.unshift(entry);
+    const newlyUnlocked = checkAndUnlockAchievements();
+    const ok = await persistCombinedAccount();
+    if(!ok){
+      DATA.vocab = DATA.vocab.filter(v=>v.id!==entry.id);
+      return {ok:false,message:'Could not save to your account. Please check storage and try again.'};
+    }
+    window.dispatchEvent(new CustomEvent('vbv:vocab-added',{detail:{
+      word:entry.word,meaning:entry.meaning,book:entry.sourceBookTitle,example:String(item.example||'')
+    }}));
+    if(newlyUnlocked.length){
+      celebrate();
+      newlyUnlocked.forEach((a,i)=>setTimeout(()=>vbvToast(`Medal earned: ${a.icon} ${a.title}`,'good'),i*650));
+    }
+    return {ok:true,duplicate:false,id:entry.id};
+  }
+};
+
 /* ---- API key (device-level setting, not tied to any one account; only needed once this page lives outside Claude) ---- */
 async function getApiKey(){
   try{ const res = await Store.get('anthropic_api_key', false); return (res && res.value) ? res.value : ''; }
