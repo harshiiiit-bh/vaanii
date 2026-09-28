@@ -375,7 +375,7 @@ try {
   const hasLabeledBlocks=q=>{
     const text=String(q.q||'');
     const inline=[...text.matchAll(/\(([PQRS])\)\s*\/?\s*/g)].length;
-    const prefix=[...text.matchAll(/(?:^|\n|\s|[\/\|]\s*)(S1|S2|S3|S6|P|Q|R|S)\s*:\s*/g)].length;
+    const prefix=[...text.matchAll(/(?:^|\n|\s|[\/\|]\s*)(S1|S2|S3|S6|P|Q|R|S)\s*[\.:]\s*/g)].length;
     const sec=String(q.sec||'').trim().toLowerCase();
     if(sec==='sentence arrangement (pqrs)')return inline>=4||prefix>=4;
     if(sec==='ordering of sentences')return prefix>=6;
