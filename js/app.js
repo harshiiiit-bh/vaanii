@@ -3275,7 +3275,7 @@ function openPractice(p){
   switchView('topic');
 }
 function renderReadingGrid(){
-  const grid=document.getElementById('readingGrid'); grid.innerHTML='';
+  const grid=document.getElementById('readingGrid'); if(!grid)return; grid.innerHTML='';
   READING.forEach(r=>{
     const div=document.createElement('div'); div.className='card topic-card';
     div.innerHTML=`<div class="icon">${r.icon}</div><h3>${r.title}</h3><p>Comprehension passage with analytical questions.</p>
@@ -3305,7 +3305,7 @@ function openReading(r){
   switchView('topic');
 }
 function renderTestsGrid(){
-  const grid=document.getElementById('testsGrid'); grid.innerHTML='';
+  const grid=document.getElementById('testsGrid'); if(!grid)return; grid.innerHTML='';
   TESTS.forEach(t=>{
     const div=document.createElement('div'); div.className='card topic-card';
     div.innerHTML=`<div class="icon">${t.icon}</div><h3>${t.title}</h3><p>${t.desc}</p>
@@ -3758,9 +3758,17 @@ function refreshHomeV2(){
     });
   }
 
-  const qi = dayIndex()%QUOTES_OF_DAY.length;
-  const qEl=document.getElementById('quoteText'); if(qEl) qEl.textContent = QUOTES_OF_DAY[qi].q;
-  const qaEl=document.getElementById('quoteAuthor'); if(qaEl) qaEl.textContent = '— '+QUOTES_OF_DAY[qi].a;
+  const now=new Date();
+  const quoteDay=Math.floor((Date.UTC(now.getFullYear(),now.getMonth(),now.getDate())-Date.UTC(now.getFullYear(),0,1))/86400000);
+  const qEl=document.getElementById('quoteText'),qaEl=document.getElementById('quoteAuthor');
+  if(Array.isArray(QUOTES_OF_DAY)&&QUOTES_OF_DAY.length){
+    const qi=((quoteDay%QUOTES_OF_DAY.length)+QUOTES_OF_DAY.length)%QUOTES_OF_DAY.length;
+    if(qEl)qEl.textContent=QUOTES_OF_DAY[qi].q||'Keep showing up and keep learning.';
+    if(qaEl)qaEl.textContent='— '+(QUOTES_OF_DAY[qi].a||'VAANI');
+  }else{
+    if(qEl)qEl.textContent='Keep showing up and keep learning.';
+    if(qaEl)qaEl.textContent='— VAANI';
+  }
 
   const lvl2 = Math.floor(State.xp/100)+1;
   const ranks2=['Recruit','Cadet','Lance Naik','Naik','Havildar','Subedar','Lieutenant','Captain','Major','Colonel'];
@@ -4041,35 +4049,34 @@ function refreshAll(){
   // Each call below is isolated: if one throws, every subsequent call still runs.
   // renderGrammarTree in particular must never be skipped just because an earlier,
   // unrelated render function failed.
-  safeCall(refreshTopBar, 'refreshTopBar');
+  safeCall(()=>refreshTopBar(), 'refreshTopBar');
   safeCall(()=>renderGrammarTree(), 'renderGrammarTree');
   safeCall(()=>{
     const vj = document.getElementById('view-journey');
     if(vj && vj.classList.contains('active')) renderGrammarJourney();
   }, 'renderGrammarJourney');
-  safeCall(renderCompareGrid, 'renderCompareGrid');
-  safeCall(renderVocabGrid, 'renderVocabGrid');
-  safeCall(renderFlash, 'renderFlash');
-  safeCall(renderWOD, 'renderWOD');
-  safeCall(renderDailySetTabs, 'renderDailySetTabs');
-  safeCall(renderDailySingles, 'renderDailySingles');
-  safeCall(renderConfuseTable, 'renderConfuseTable');
-  safeCall(renderPracticeGrid, 'renderPracticeGrid');
-  safeCall(renderReadingGrid, 'renderReadingGrid');
-  safeCall(renderTestsGrid, 'renderTestsGrid');
-  safeCall(initMatchGame, 'initMatchGame');
-  safeCall(refreshDashboard, 'refreshDashboard');
+  safeCall(()=>renderCompareGrid(), 'renderCompareGrid');
+  safeCall(()=>renderVocabGrid(), 'renderVocabGrid');
+  safeCall(()=>renderWOD(), 'renderWOD');
+  safeCall(()=>renderDailySetTabs(), 'renderDailySetTabs');
+  safeCall(()=>renderDailySingles(), 'renderDailySingles');
+  safeCall(()=>renderConfuseTable(), 'renderConfuseTable');
+  safeCall(()=>renderPracticeGrid(), 'renderPracticeGrid');
+  safeCall(()=>renderReadingGrid(), 'renderReadingGrid');
+  safeCall(()=>renderTestsGrid(), 'renderTestsGrid');
+  safeCall(()=>initMatchGame(), 'initMatchGame');
+  safeCall(()=>refreshDashboard(), 'refreshDashboard');
   // Recover hero, mission and roadmap independently if a secondary dashboard widget fails.
-  safeCall(refreshHomeV2, 'refreshHomeV2(recovery)');
-  safeCall(renderDashboardMissions, 'renderDashboardMissions(recovery)');
-  safeCall(refreshDashboardPyqCard, 'refreshDashboardPyqCard');
-  safeCall(renderLeaderboard, 'renderLeaderboard');
-  safeCall(updateSpinState, 'updateSpinState');
+  safeCall(()=>refreshHomeV2(), 'refreshHomeV2(recovery)');
+  safeCall(()=>renderDashboardMissions(), 'renderDashboardMissions(recovery)');
+  safeCall(()=>refreshDashboardPyqCard(), 'refreshDashboardPyqCard');
+  safeCall(()=>renderLeaderboard(), 'renderLeaderboard');
+  safeCall(()=>updateSpinState(), 'updateSpinState');
   safeCall(()=>{
     const stw = document.getElementById('skillTreeWrap');
     if(stw && stw.style.display!=='none') renderSkillTree();
   }, 'renderSkillTree');
-  setTimeout(()=>safeCall(initMagnetic,'initMagnetic'), 60);
+  setTimeout(()=>safeCall(()=>initMagnetic(),'initMagnetic'), 60);
 }
 /* ============================================================
    COMPARISONS — render + quiz logic
