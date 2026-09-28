@@ -193,9 +193,9 @@ try {
   assert.ok(await page.locator('#gtStudioPanel .gt-studio-feedback').count(), 'Daily drill did not show instant feedback');
   await page.locator('#gtStudioPanel [data-gts-sprint-start]').click();
   await page.locator('#gtStudioPanel [data-gts-sprint-option="0"]').click();
-  assert.ok((await page.locator('#gtStudioPanel .gt-mode-chip').innerText()).includes('5-question sprint'), 'Sprint did not start');
+  assert.ok((await page.locator('#gtStudioPanel .gt-mode-chip').innerText()).toLowerCase().includes('5-question sprint'), 'Sprint did not start');
   await page.locator('#gtStudioPanel [data-gts-sprint-next]').click();
-  assert.ok((await page.locator('#gtStudioPanel .gt-mode-chip').innerText()).includes('2 of 5'), 'Sprint did not advance to question two');
+  assert.ok((await page.locator('#gtStudioPanel .gt-mode-chip').innerText()).toLowerCase().includes('2 of 5'), 'Sprint did not advance to question two');
   await page.locator('#gtStudioPanel [data-gts-sprint-exit]').click();
   console.log('PASS Grammar Studio: contrast, animated 3D hero, daily drill, sprint, scanner, micro-lessons and mistake replay');
 
