@@ -201,17 +201,44 @@ try {
     const first=arena.questionsFor(decoded,'Smoke Cadet').map(question=>question._id);
     const second=arena.questionsFor(arena.decode(code),'Smoke Cadet').map(question=>question._id);
     const boardKey='smoke-regression-arena';
-    await arena.sync.submit(boardKey,{pid:'smoke-player',name:'Smoke Cadet',score:6,seconds:60,total:8,at:1,answers:{}});
-    const rows=await arena.sync.fetch(boardKey);localStorage.removeItem('vx_arena_board_'+boardKey);
-    return {code,decoded,first,second,rows,adapter:arena.sync.name,live:arena.sync.live,remoteAdapter:typeof arena.supabaseAdapter};
+    const testEntry={pid:'smoke-player',name:'Smoke Cadet',score:6,seconds:60,total:8,at:1,answers:{}};
+    await arena.sync.submit(boardKey,testEntry);
+    const localRows=JSON.parse(localStorage.getItem('vx_arena_board_'+boardKey)||'[]');
+
+    // Shared adapter must read remote standings without sending score writes.
+    const originalFetch=window.fetch;
+    let request=null;
+    window.fetch=(url,options={})=>{
+      request={url:String(url),method:String(options.method||'GET'),body:options.body||null};
+      return Promise.resolve({ok:true,json:()=>Promise.resolve([
+        {code:boardKey,pid:'remote-player',name:'Remote Cadet',score:7,seconds:45,total:8,at:2,expires_at:null}
+      ])});
+    };
+    let sharedRows=[];
+    try { sharedRows=await arena.sync.fetch(boardKey); }
+    finally {
+      window.fetch=originalFetch;
+      localStorage.removeItem('vx_arena_board_'+boardKey);
+    }
+    return {code,decoded,first,second,localRows,sharedRows,request,
+      adapter:arena.sync.name,live:arena.sync.live,shared:arena.sync.shared,
+      remoteAdapter:typeof arena.supabaseAdapter};
   });
   assert.equal(arenaSecurity.code.length,32,'Arena match code did not round-trip');
   assert.equal(arenaSecurity.decoded?.seed,482731,'Arena match code lost its seed');
   assert.deepEqual(arenaSecurity.first,arenaSecurity.second,'Arena question selection changed for an identical match seed');
-  assert.equal(arenaSecurity.rows.length,1,'Local Arena score was not available on this device');
-  assert.equal(arenaSecurity.adapter,'local');assert.equal(arenaSecurity.live,false);
+  assert.equal(arenaSecurity.localRows.length,1,'Arena score was not saved locally on this device');
+  assert.equal(arenaSecurity.localRows[0].pid,'smoke-player','Local Arena submission changed the player identity');
+  assert.equal(arenaSecurity.sharedRows.length,1,'Shared Arena leaderboard read did not return the server standings');
+  assert.equal(arenaSecurity.sharedRows[0].pid,'remote-player','Shared Arena read returned the wrong row');
+  assert.equal(arenaSecurity.adapter,'shared-read','Shared read adapter was not configured');
+  assert.equal(arenaSecurity.live,false,'Shared read must not enable browser score writes');
+  assert.equal(arenaSecurity.shared,true,'Arena must identify its shared read-only board');
+  assert.equal(arenaSecurity.request.method,'GET','Shared Arena leaderboard must use read-only GET');
+  assert.match(arenaSecurity.request.url,/\/rest\/v1\/arena_scores\?code=eq\./,'Shared Arena leaderboard did not query the existing score table');
+  assert.equal(arenaSecurity.request.body,null,'Shared Arena leaderboard read unexpectedly sent a request body');
   assert.equal(arenaSecurity.remoteAdapter,'undefined','Browser score writes must not expose the removed Supabase adapter');
-  console.log('PASS Arena security: deterministic local match, local-only score board and no public Supabase writer');
+  console.log('PASS Arena security: shared read-only standings, local-only submission, deterministic match and no public Supabase writer');
 
   await clickMainView('grammar');
   await page.waitForFunction(() => document.querySelectorAll('#grammarAcademyCatalog .ga-stage-card').length === 4);
