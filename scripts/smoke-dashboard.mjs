@@ -202,9 +202,13 @@ try {
   assert.ok(await page.locator('#confuseTableBody .cw-card').count() > 0, 'Confused-word section is empty');
   console.log('PASS vocabulary: bank, daily sets, micro-lessons and confused-word cards');
 
+  // Start from Home so the browser-history assertions cover the exact journey
+  // below, rather than inheriting the earlier Vocabulary route from this test.
+  await clickMainView('dashboard');
+  await page.setViewportSize({ width: 390, height: 844 });
+
   // Full mobile bottom-nav back journey: Home → Grammar → Vocab → PYQ → Updates
   // and then Back must walk that exact path without closing the document.
-  await page.setViewportSize({ width: 390, height: 844 });
   await page.waitForTimeout(200);
   const mobileNavJourney = ['grammar','vocab','pyq','notifications'];
   for (const view of mobileNavJourney) {
