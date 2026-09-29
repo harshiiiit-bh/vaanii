@@ -278,32 +278,37 @@
     fetch: function (code) { return Promise.resolve(this.read(code)); }
   };
 
-  /* Shared historical reads are served by a narrow Edge Function. The
-     browser key is publishable; score submissions remain device-local until
-     a trusted validation endpoint is implemented. */
-  var SHARED_BOARD_ENDPOINT = 'https://pccavdwwhykwyeitxixc.supabase.co/functions/v1/arena-leaderboard';
+  /* Shared historical reads come directly from the existing public
+     read-only arena_scores policy. The browser key is publishable; score
+     submissions remain device-local until a trusted validation endpoint
+     exists. */
+  var SHARED_BOARD_REST = 'https://pccavdwwhykwyeitxixc.supabase.co/rest/v1/arena_scores';
   var SHARED_BOARD_API_KEY = 'sb_publishable_VfRmr2xFvu4Iv8sfSJReQQ_qzr5z_MI';
   var SharedReadAdapter = {
     name: 'shared-read',
-    live: true,
+    live: false,
+    shared: true,
     submit: function (code, entry) {
       return LocalAdapter.submit(code, entry);
     },
     fetch: function (code) {
       if (typeof global.fetch !== 'function') return Promise.reject(new Error('Shared leaderboard fetch is unavailable'));
-      return global.fetch(SHARED_BOARD_ENDPOINT, {
-        method: 'POST',
+      var url = SHARED_BOARD_REST +
+        '?code=eq.' + encodeURIComponent(code) +
+        '&select=code,pid,name,score,seconds,total,at,expires_at' +
+        '&limit=' + MAX_PLAYERS;
+      return global.fetch(url, {
+        method: 'GET',
         headers: {
-          'Content-Type': 'application/json',
+          'Accept': 'application/json',
           'apikey': SHARED_BOARD_API_KEY
-        },
-        body: JSON.stringify({ code: code })
+        }
       }).then(function (response) {
         if (!response.ok) throw new Error('Shared leaderboard returned HTTP ' + response.status);
         return response.json();
-      }).then(function (payload) {
-        if (!payload || !Array.isArray(payload.rows)) throw new Error('Shared leaderboard response is invalid');
-        return payload.rows;
+      }).then(function (rows) {
+        if (!Array.isArray(rows)) throw new Error('Shared leaderboard response is invalid');
+        return rows;
       });
     }
   };
