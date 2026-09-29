@@ -203,6 +203,15 @@ try {
   console.log('PASS vocabulary: bank, daily sets, micro-lessons and confused-word cards');
 
   // Browser/Android-style back must traverse VAANI SPA views instead of leaving the site.
+  await page.locator('#vaaniMainNav button[data-view="vocab"]').click();
+  await page.waitForFunction(() => document.getElementById('view-vocab')?.classList.contains('active'));
+  await page.goBack();
+  await page.waitForFunction(() => document.getElementById('view-dashboard')?.classList.contains('active'));
+  assert.equal(await page.evaluate(() => history.state?.vaaniView), 'dashboard',
+    'Browser back did not return to Dashboard from Vocabulary');
+
+  await page.locator('#vaaniMainNav button[data-view="vocab"]').click();
+  await page.waitForFunction(() => document.getElementById('view-vocab')?.classList.contains('active'));
   await page.locator('#vocabGrid .word-card').first().locator('h3').click();
   await page.waitForFunction(() => document.getElementById('view-worddetail')?.classList.contains('active'));
   assert.equal(await page.evaluate(() => history.state?.vaaniView), 'worddetail',
@@ -211,14 +220,7 @@ try {
   await page.waitForFunction(() => document.getElementById('view-vocab')?.classList.contains('active'));
   assert.equal(await page.evaluate(() => history.state?.vaaniView), 'vocab',
     'Browser back did not return to Vocabulary from Word Detail');
-  await page.goBack();
-  await page.waitForFunction(() => document.getElementById('view-dashboard')?.classList.contains('active'));
-  assert.equal(await page.evaluate(() => history.state?.vaaniView), 'dashboard',
-    'Browser back did not return to Dashboard from Vocabulary');
-  console.log('PASS SPA browser back: Word Detail → Vocabulary → Dashboard');
-
-  await page.locator('#vaaniMainNav button[data-view="vocab"]').click();
-  await page.waitForFunction(() => document.getElementById('view-vocab')?.classList.contains('active'));
+  console.log('PASS SPA browser back: Vocabulary → Dashboard and Word Detail → Vocabulary');
 
   const firstWordCard = page.locator('#vocabGrid .word-card').first();
   const capturedWord = (await firstWordCard.locator('h3').textContent() || '').trim();
