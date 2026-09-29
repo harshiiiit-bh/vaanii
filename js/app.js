@@ -1221,7 +1221,7 @@ function reviewDueItems(kindFilter){
   const queue=ensureReviewQueue();
   if((!kindFilter||kindFilter==='grammar')&&window.VaaniGrammarAcademy){
     window.VaaniGrammarAcademy.getAdaptiveItems(State).filter(entry=>entry.priority==='weak').forEach(entry=>{
-      if(!findReviewItem('grammar',entry.ref))queue.push({kind:'grammar',ref:entry.ref,box:0,wrongCount:0,rightCount:0,addedAt:new Date().toISOString(),nextReview:new Date().toISOString(),source:'weak-mastery'});
+      if(!findReviewItem('grammar',entry.ref))queue.push({kind:'grammar',ref:entry.ref,box:0,wrongCount:0,rightCount:0,addedAt:new Date(now).toISOString(),nextReview:new Date(now).toISOString(),source:'weak-mastery'});
     });
   }
   return queue.filter(x=> (!kindFilter || x.kind===kindFilter) && new Date(x.nextReview).getTime() <= now);
