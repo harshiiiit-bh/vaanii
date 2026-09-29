@@ -286,13 +286,104 @@ function toast(msg){
    NAV
 =============================================================*/
 let lastListView='grammar';
+let __grammarNavPending = false;
+let __vaaniNavHistoryReady = false;
+
+function __vaaniBaseUrl(){
+  const u = new URL(window.location.href);
+  u.hash = '';
+  return u.pathname + u.search;
+}
+
+function __vaaniActiveView(){
+  const active = document.querySelector('.view.active');
+  return active ? active.id.replace(/^view-/, '') : 'dashboard';
+}
+
+/*
+ * The main VAANI UI is an SPA layered over a real document. Previously,
+ * switchView() only changed CSS classes, so the Android/browser back action
+ * had no in-app history to return to and could leave the site immediately.
+ *
+ * Main views now get real History API entries. Book Reading is intentionally
+ * left to its own hash router; we bridge the two routers so browser back
+ * remains coherent instead of fighting each other.
+ */
+function initVaaniNavigationHistory(){
+  if(__vaaniNavHistoryReady) return;
+  __vaaniNavHistoryReady = true;
+
+  const hasBookRoute = location.hash.startsWith('#/');
+  if(hasBookRoute){
+    switchView('books',{history:false,preserveScroll:true});
+  }
+
+  const initialView = hasBookRoute ? 'books' : __vaaniActiveView();
+  history.replaceState(
+    Object.assign({}, history.state || {}, {vaaniView:initialView}),
+    '',
+    location.href
+  );
+
+  window.addEventListener('popstate',()=>{
+    /*
+     * Book Reading owns all #/… routes. Let library.js consume those
+     * transitions; only handle popstate when we are returning to a main
+     * VAANI view entry.
+     */
+    if(location.hash.startsWith('#/') &&
+       document.getElementById('view-books')?.classList.contains('active')){
+      return;
+    }
+    const state = history.state || {};
+    const name = state.vaaniView;
+    if(name && document.getElementById('view-'+name)){
+      switchView(name,{history:false,preserveScroll:true});
+    }
+  });
+}
+
 document.querySelectorAll('#vaaniMainNav button').forEach(b=>{
   b.addEventListener('click',()=>switchView(b.dataset.view));
 });
-let __grammarNavPending = false;
-function switchView(name){
+
+function switchView(name, options={}){
   const target = document.getElementById('view-'+name);
   if(!target) return; // unknown view name — nothing to switch to, avoid throwing
+
+  const fromName = __vaaniActiveView();
+
+  if(__vaaniNavHistoryReady && options.history !== false){
+    if(name==='books'){
+      /*
+       * Book Reading already uses a hash router. Use one hash entry when
+       * entering it, and mark that entry as belonging to the books view.
+       * A specific route can be requested by links such as "Vocab Register".
+       */
+      const requestedRoute = String(options.bookRoute || '').replace(/^\/#?/, '').replace(/^#\//,'');
+      const currentRoute = location.hash.startsWith('#/') ? location.hash.slice(2) : '';
+      const route = requestedRoute || currentRoute || 'home';
+      const desiredHash = '#/'+route;
+      if(location.hash !== desiredHash) location.hash = desiredHash;
+      history.replaceState(
+        Object.assign({}, history.state || {}, {vaaniView:'books'}),
+        '',
+        location.href
+      );
+    } else if(fromName !== name){
+      /*
+       * Leaving Book Reading must strip its hash so the next browser-back
+       * lands on the actual previous application view rather than an
+       * invisible library route.
+       */
+      history.pushState(
+        Object.assign({}, history.state || {}, {vaaniView:name}),
+        '',
+        __vaaniBaseUrl()
+      );
+    }
+  }
+
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   target.classList.add('active');
   document.querySelectorAll('#vaaniMainNav button').forEach(b=>b.classList.toggle('active',b.dataset.view===name));
@@ -324,7 +415,7 @@ function switchView(name){
   }
   if(name==='journey') setTimeout(()=>safeCall(renderGrammarJourney,'renderGrammarJourney'), 30);
   closeMobileNav();
-  window.scrollTo({top:0,behavior:'smooth'});
+  if(!options.preserveScroll) window.scrollTo({top:0,behavior:'smooth'});
   setTimeout(()=>{
     if(typeof initTilt==='function') safeCall(initTilt,'initTilt');
     if(typeof initReveal==='function') safeCall(initReveal,'initReveal');
@@ -4952,6 +5043,7 @@ function bootApp(){
   if(window.__vaaniBooted) return; // guards against this script block ever running twice
   window.__vaaniBooted = true;
   safeCall(loadState, 'loadState');
+  safeCall(initVaaniNavigationHistory, 'initVaaniNavigationHistory(boot)');
   safeCall(refreshAll, 'refreshAll(boot)');
   safeCall(initGateSession, 'initGateSession(boot)');
 }
