@@ -278,7 +278,40 @@
     fetch: function (code) { return Promise.resolve(this.read(code)); }
   };
 
-  A.sync = LocalAdapter;
+  /* Shared historical reads use the existing read-only Supabase policy.
+     Browser submissions stay local until a trusted validation endpoint exists. */
+  var SHARED_BOARD_REST = 'https://pccavdwwhykwyeitxixc.supabase.co/rest/v1/arena_scores';
+  var SHARED_BOARD_API_KEY = 'sb_publishable_VfRmr2xFvu4Iv8sfSJReQQ_qzr5z_MI';
+  var SharedReadAdapter = {
+    name: 'shared-read',
+    live: false,
+    shared: true,
+    submit: function (code, entry) {
+      return LocalAdapter.submit(code, entry);
+    },
+    fetch: function (code) {
+      if (typeof global.fetch !== 'function') return Promise.reject(new Error('Shared leaderboard fetch is unavailable'));
+      var url = SHARED_BOARD_REST +
+        '?code=eq.' + encodeURIComponent(code) +
+        '&select=code,pid,name,score,seconds,total,at,expires_at' +
+        '&limit=' + MAX_PLAYERS;
+      return global.fetch(url, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'apikey': SHARED_BOARD_API_KEY
+        }
+      }).then(function (response) {
+        if (!response.ok) throw new Error('Shared leaderboard returned HTTP ' + response.status);
+        return response.json();
+      }).then(function (rows) {
+        if (!Array.isArray(rows)) throw new Error('Shared leaderboard response is invalid');
+        return rows;
+      });
+    }
+  };
+
+  A.sync = SharedReadAdapter;
   A.useSync = function (adapter) { A.sync = adapter; };
 
   function rankRows(rows) {
@@ -1283,7 +1316,7 @@
       '<p>One match. One result. See how your performance ranks.</p>' +
       '<div class="vx-championship-status ' + (A.sync.live ? 'is-live' : 'is-local') + '">' +
         '<span class="vx-championship-status-dot" aria-hidden="true"></span>' +
-        (A.sync.live ? 'SHARED LIVE' : 'THIS DEVICE · LOCAL BOARD') +
+        (A.sync.live ? 'SHARED LIVE' : (A.sync.shared ? 'SHARED READ · LOCAL SUBMIT' : 'THIS DEVICE · LOCAL BOARD')) +
       '</div>';
     championshipHero.appendChild(heroCopy);
 
