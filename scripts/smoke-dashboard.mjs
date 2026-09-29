@@ -1063,7 +1063,7 @@ try {
     const championshipDesign = await page.evaluate(() => ({
       hero: document.querySelectorAll('#view-games .vx-championship-hero').length,
       svg: document.querySelectorAll('#view-games .vx-championship-svg').length,
-      svgHidden: document.querySelector('#view-games .vx-championship-svg')?.getAttribute('aria-hidden'),
+      svgHidden: document.querySelector('#view-games .vx-championship-art')?.getAttribute('aria-hidden'),
       podium: document.querySelectorAll('#view-games .vx-championship-podium-card').length,
       listHeading: document.querySelector('#view-games .vx-championship-list-head')?.textContent
     }));
