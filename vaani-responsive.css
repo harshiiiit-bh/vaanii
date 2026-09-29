@@ -342,3 +342,27 @@ button{touch-action:manipulation}
     grid-template-columns:1fr;
   }
 }
+
+
+/* Mobile gate stability patch: reduce GPU-heavy backdrop/continuous motion that can
+   visibly shimmer/flicker on some Android Chromium/WebView devices. */
+@media (max-width:760px), (pointer:coarse){
+  #gate .gate-card{
+    -webkit-backdrop-filter:none;
+    backdrop-filter:none;
+  }
+  #gate .gate-logo-wrap,
+  #gate .gate-content,
+  #gate .gate-jets img,
+  #gate .gate-credit .gc-name,
+  #gate .gate-field-particles span,
+  #gate .hud-chevrons span,
+  #gate #cadetName{
+    animation:none!important;
+  }
+  #gate .gate-content{transform:none!important;}
+  #gate .gate-jets img{transform:translateY(6%);}
+  #gate #cadetName:focus{
+    box-shadow:0 0 0 2px rgba(232,207,143,.18);
+  }
+}
