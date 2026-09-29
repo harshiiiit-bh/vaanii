@@ -27,6 +27,10 @@ jobs:
           find . -type f -name '*.js' -not -path './.git/*' -not -path './node_modules/*' -print0 | xargs -0 -r -n1 node --check
           node --check scripts/smoke-dashboard.mjs
           node --check scripts/update-defence-notifications.mjs
+          node --check scripts/test-arena-leaderboard.mjs
+          node --check supabase/functions/_shared/arena-leaderboard.mjs
+      - name: Test Arena leaderboard contract
+        run: node scripts/test-arena-leaderboard.mjs
       - name: Check HTML IDs and local dependencies
         run: node scripts/check-quality.mjs
 
