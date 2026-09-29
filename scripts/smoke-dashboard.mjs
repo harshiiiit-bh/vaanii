@@ -204,6 +204,8 @@ try {
 
   // Full mobile bottom-nav back journey: Home → Grammar → Vocab → PYQ → Updates
   // and then Back must walk that exact path without closing the document.
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.waitForTimeout(200);
   const mobileNavJourney = ['grammar','vocab','pyq','notifications'];
   for (const view of mobileNavJourney) {
     await page.locator('#bottomNav button[data-view="' + view + '"]').click();
