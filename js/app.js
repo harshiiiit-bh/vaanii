@@ -289,10 +289,11 @@ let lastListView='grammar';
 let __grammarNavPending = false;
 let __vaaniNavHistoryReady = false;
 
-function __vaaniBaseUrl(){
+function __vaaniViewUrl(view, hash=''){
   const u = new URL(window.location.href);
-  u.hash = '';
-  return u.pathname + u.search;
+  u.searchParams.set('v', view);
+  u.hash = hash || '';
+  return u.pathname + u.search + u.hash;
 }
 
 function __vaaniActiveView(){
@@ -313,32 +314,43 @@ function initVaaniNavigationHistory(){
   if(__vaaniNavHistoryReady) return;
   __vaaniNavHistoryReady = true;
 
+  const params = new URLSearchParams(location.search);
+  const queryView = params.get('v');
   const hasBookRoute = location.hash.startsWith('#/');
+  const initialView = hasBookRoute ? 'books' :
+    (queryView && document.getElementById('view-'+queryView) ? queryView : __vaaniActiveView());
+
   if(hasBookRoute){
     switchView('books',{history:false,preserveScroll:true});
+  } else if(initialView !== __vaaniActiveView()){
+    switchView(initialView,{history:false,preserveScroll:true});
   }
 
-  const initialView = hasBookRoute ? 'books' : __vaaniActiveView();
+  /*
+   * Give every top-level VAANI view a distinct URL. This is deliberate:
+   * some mobile browsers/WebViews are unreliable when an SPA repeatedly
+   * pushStates the exact same URL. A tiny ?v= route makes every navigation
+   * a real, distinguishable session-history entry while still remaining
+   * the same document.
+   */
   history.replaceState(
     Object.assign({}, history.state || {}, {vaaniView:initialView}),
     '',
-    location.href
+    __vaaniViewUrl(initialView, hasBookRoute ? location.hash : '')
   );
 
-  window.addEventListener('popstate',()=>{
-    /*
-     * Book Reading owns all #/… routes. Let library.js consume those
-     * transitions; only handle popstate when we are returning to a main
-     * VAANI view entry.
-     */
+  window.addEventListener('popstate',(event)=>{
     if(location.hash.startsWith('#/') &&
        document.getElementById('view-books')?.classList.contains('active')){
       return;
     }
-    const state = history.state || {};
-    const name = state.vaaniView;
+    const state = event.state || history.state || {};
+    const params = new URLSearchParams(location.search);
+    const name = state.vaaniView || params.get('v');
     if(name && document.getElementById('view-'+name)){
       switchView(name,{history:false,preserveScroll:true});
+    } else if(!location.hash.startsWith('#/')){
+      switchView('dashboard',{history:false,preserveScroll:true});
     }
   });
 }
@@ -368,7 +380,7 @@ function switchView(name, options={}){
       history.replaceState(
         Object.assign({}, history.state || {}, {vaaniView:'books'}),
         '',
-        location.href
+        __vaaniViewUrl('books', desiredHash)
       );
     } else if(fromName !== name){
       /*
@@ -379,7 +391,7 @@ function switchView(name, options={}){
       history.pushState(
         Object.assign({}, history.state || {}, {vaaniView:name}),
         '',
-        __vaaniBaseUrl()
+        __vaaniViewUrl(name)
       );
     }
   }
