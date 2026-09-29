@@ -10,10 +10,9 @@
    bank, so it lands on the same questions in the same order.
    Nothing is fetched, nothing can drift.
 
-   What a server would add: a shared live leaderboard across
-   devices. Until one is connected, boards are per-device.
-   See ArenaSync at the bottom — swap in the Supabase adapter
-   and every board becomes live for all players.
+   What a verified server can add later: a shared leaderboard.
+   Until attempts are authenticated and validated server-side,
+   boards remain local to this device.
    ============================================================ */
 (function (global) {
   'use strict';
@@ -501,7 +500,7 @@
     note.style.marginTop = '18px';
     note.innerHTML = A.sync.live
       ? 'Leaderboards are shared live across every player.'
-      : 'Right now the leaderboard shows attempts made on this device. Connect a database to make boards live for everyone — see the integration notes.';
+      : 'This board contains attempts saved on this device. Shared scores are disabled until a signed-in server verifies each attempt.';
     w.appendChild(note);
   }
 
@@ -1628,136 +1627,10 @@
       if (m) { S.match = m; S.screen = 'briefing'; rememberMatch(m); }
     }
     if (host() && host().offsetParent !== null) render();
-    // once per page load: ask the sync adapter to drop rows for matches
-    // whose deadline has already passed, so Supabase storage doesn't
-    // just grow forever. Fire-and-forget — never blocks the page.
-    if (A.sync.cleanupExpired) A.sync.cleanupExpired();
+    // Local boards need no remote cleanup; a future verified adapter owns its retention policy.
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();
-
-  /* =========================================================
-     OPTIONAL: live leaderboards via Supabase
-     ---------------------------------------------------------
-     1. Create a free project at supabase.com
-     2. Run this SQL:
-          create table arena_scores (
-            id bigserial primary key,
-            code text not null,
-            pid text not null,
-            name text not null,
-            score int not null,
-            seconds int not null,
-            total int not null,
-            at bigint not null,
-            answers jsonb,
-            expires_at bigint,
-            unique (code, pid)
-          );
-          alter table arena_scores enable row level security;
-          create policy "read"   on arena_scores for select using (true);
-          create policy "insert" on arena_scores for insert with check (true);
-          -- Rows can only ever be deleted once their own match has
-          -- closed (expires_at in the past). The anon key is public
-          -- in this file, so this keeps that key from being able to
-          -- wipe a leaderboard that's still live, on purpose or not —
-          -- it can only ever clear out matches that already ended.
-          create policy "cleanup_expired" on arena_scores for delete
-            using (expires_at is not null and expires_at < (extract(epoch from now()) * 1000));
-     3. Paste your project URL and anon key below and call:
-          VX.arena.useSync(VX.arena.supabaseAdapter(URL, ANON_KEY));
-
-     Already have the table from before this comment was updated? Run
-     just this once to catch it up:
-          alter table arena_scores add column expires_at bigint;
-          create policy "cleanup_expired" on arena_scores for delete
-            using (expires_at is not null and expires_at < (extract(epoch from now()) * 1000));
-     ========================================================= */
-  A.supabaseAdapter = function (url, anonKey) {
-    var base = url.replace(/\/$/, '') + '/rest/v1/arena_scores';
-    var headers = {
-      'apikey': anonKey,
-      'Authorization': 'Bearer ' + anonKey,
-      'Content-Type': 'application/json',
-      'Prefer': 'resolution=merge-duplicates'
-    };
-    return {
-      name: 'supabase',
-      live: true,
-      submit: function (code, e) {
-  console.log('[Arena Supabase] SUBMIT', {
-    code: code,
-    pid: e.pid,
-    name: e.name,
-    score: e.score,
-    seconds: e.seconds,
-    total: e.total
-  });
-
-  return fetch(base, {
-    method: 'POST',
-    headers: headers,
-    body: JSON.stringify({
-      code: code,
-      pid: e.pid,
-      name: e.name,
-      score: e.score,
-      seconds: e.seconds,
-      total: e.total,
-      at: e.at,
-      answers: e.answers || {},
-      expires_at: e.expiresAt || null
-    })
-  }).then(function (r) {
-    return r.text().then(function (body) {
-      console.log('[Arena Supabase] POST', r.status, body);
-
-      if (!r.ok) {
-        throw new Error(
-          'Supabase POST failed: HTTP ' + r.status + ' — ' + body
-        );
-      }
-
-      return true;
-    });
-  });
-},
-
-fetch: function (code) {
-  console.log('[Arena Supabase] FETCH BOARD', code);
-
-  return fetch(
-    base + '?code=eq.' + encodeURIComponent(code) +
-    '&order=score.desc,seconds.asc&limit=' + MAX_PLAYERS,
-    { headers: headers }
-  ).then(function (r) {
-    return r.text().then(function (body) {
-      console.log('[Arena Supabase] GET', r.status, body);
-
-      if (!r.ok) {
-        throw new Error(
-          'Supabase GET failed: HTTP ' + r.status + ' — ' + body
-        );
-      }
-
-           return JSON.parse(body);
-    });
-  });
-},
-
-/* Storage-saving sweep: deletes every row, across every match code,
-   whose own expires_at has already passed. RLS (see the SQL above)
-   enforces the "already expired" part server-side too, so this can
-   only ever remove sessions that have already ended. Silent on
-   failure — a missed sweep just means the next visit tries again. */
-cleanupExpired: function () {
-  return fetch(base + '?expires_at=lt.' + Date.now(), {
-    method: 'DELETE',
-    headers: headers
-  }).catch(function () {});
-}
-    };
-  };
 
 })(window);

@@ -280,3 +280,49 @@
   #view-grammar .gt-sidebar{grid-template-columns:1fr}
   #view-grammar .gt-weightage-card{grid-column:auto}
 }
+
+/* Progressive Academy: readable cards, explicit focus, and a linear text
+   equivalent for every diagram so touch and keyboard users get the same lesson. */
+.ga-catalog{margin:34px auto 12px;padding:clamp(16px,3vw,30px);max-width:1200px;border:1px solid rgba(120,170,190,.27);border-radius:24px;background:linear-gradient(145deg,rgba(15,29,42,.96),rgba(8,15,24,.98));color:#eaf2f5}
+.ga-catalog-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:22px}
+.ga-catalog-head h3{margin:5px 0 8px;font:700 clamp(1.25rem,2.6vw,1.9rem)/1.15 var(--serif);color:#f2f6f8}
+.ga-catalog-head p,.ga-stage-heading p{max-width:70ch;margin:0;color:#bac8d0;font-size:.86rem;line-height:1.65}
+.ga-eyebrow,.ga-stage-number{color:#f0c874;font:700 .67rem/1.4 var(--mono);letter-spacing:.1em;text-transform:uppercase}
+.ga-stage-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.ga-stage-card{min-width:0;padding:16px;border:1px solid rgba(158,185,199,.22);border-radius:16px;background:rgba(255,255,255,.035)}
+.ga-stage-heading{display:flex;align-items:flex-start;gap:12px}
+.ga-stage-heading h4{margin:0 0 5px;color:#fff;font:700 1rem/1.25 var(--serif)}
+.ga-stage-number{display:grid;place-items:center;width:32px;height:32px;flex:none;border:1px solid rgba(240,200,116,.45);border-radius:10px}
+.ga-stage-count{margin-left:auto;white-space:nowrap;color:#91e9dd;font:.68rem/1.5 var(--mono)}
+.ga-stage-lessons{display:flex;flex-wrap:wrap;gap:7px;margin-top:13px}
+.ga-lesson-link{max-width:100%;padding:8px 10px;border:1px solid rgba(150,180,194,.25);border-radius:999px;background:rgba(4,10,17,.52);color:#e3edf1;font:600 .73rem/1.35 var(--body);text-align:left;cursor:pointer}
+.ga-lesson-link:hover{border-color:#2fd7c4;color:#fff}
+.ga-catalog :focus-visible,.ga-lesson :focus-visible{outline:3px solid #f0c874;outline-offset:3px}
+.ga-lesson{display:grid;gap:18px;margin:20px 0;padding:clamp(16px,3vw,28px);border:1px solid rgba(47,215,196,.25);border-radius:20px;background:linear-gradient(145deg,rgba(10,23,34,.96),rgba(8,13,21,.97));color:#e8f0f3}
+.ga-lesson-top>span,.ga-example>span,.ga-misconception>b{color:#8ff4e7;font:700 .64rem/1.4 var(--mono);letter-spacing:.08em;text-transform:uppercase}
+.ga-lesson-top p{margin:8px 0 0;color:#f0f4f6;font-size:1rem;line-height:1.65}
+.ga-lesson-columns,.ga-examples,.ga-mistakes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.ga-lesson-section,.ga-example,.ga-misconception,.ga-diagram,.ga-exercises,.ga-analysis{min-width:0;padding:14px;border:1px solid rgba(158,185,199,.19);border-radius:13px;background:rgba(255,255,255,.035)}
+.ga-lesson h4{margin:0 0 8px;color:#f0c874;font:700 .94rem/1.4 var(--serif)}
+.ga-lesson-section p,.ga-example p,.ga-misconception p,.ga-diagram p,.ga-exercises li,.ga-analysis p{margin:0;color:#d2dfe4;font-size:.82rem;line-height:1.65;overflow-wrap:anywhere}
+.ga-example.is-counterexample{border-color:rgba(226,87,90,.45)}
+.ga-example.is-counterexample>span{color:#ffb2b3}
+.ga-example small,.ga-misconception small,.ga-diagram small{display:block;margin-top:7px;color:#afc0c8;font-size:.75rem;line-height:1.55}
+.ga-exercises ol,.ga-diagram ol,.ga-analysis ol,.ga-analysis ul{display:grid;gap:9px;margin:10px 0 0;padding-left:22px}
+.ga-exercises li{padding-left:2px}
+.ga-exercises details{margin-top:8px}
+.ga-exercises summary{width:max-content;max-width:100%;color:#8ff4e7;font-size:.76rem;cursor:pointer}
+.ga-exercises details p{margin:7px 0;color:#c2d0d7;font-size:.78rem;line-height:1.6}
+.ga-diagram li{padding-left:3px;color:#d5e0e4;font-size:.78rem;line-height:1.5}
+.ga-diagram li span{display:inline-grid;place-items:center;width:22px;height:22px;margin-right:7px;border-radius:50%;background:#163a42;color:#8ff4e7;font-weight:700}
+.ga-diagram li small{margin-left:31px}
+.ga-analysis label{display:block;margin:12px 0 5px;color:#f2f6f8;font-size:.78rem;font-weight:700}
+.ga-analysis textarea{display:block;width:100%;min-height:72px;padding:10px;border:1px solid rgba(158,185,199,.4);border-radius:10px;background:#080f18;color:#fff;font:inherit;resize:vertical}
+.ga-analysis-output{margin-top:12px;color:#d6e1e5;font-size:.78rem;line-height:1.6;overflow-wrap:anywhere}
+.ga-analysis-output h5{margin:12px 0 0;color:#f0c874;font-size:.8rem}
+.ga-choice-reasons{display:grid;gap:4px;margin:9px 0 0;padding-left:20px;color:inherit;font-size:.77rem;line-height:1.5}
+.ga-provenance{margin:0;color:#adc0c8;font-size:.72rem;line-height:1.5}
+.ga-catalog .btn,.ga-analysis .btn{min-height:42px}
+@media(max-width:760px){.ga-catalog-head{align-items:flex-start;flex-direction:column}.ga-stage-grid{grid-template-columns:1fr}}
+@media(max-width:520px){.ga-lesson-columns,.ga-examples,.ga-mistakes{grid-template-columns:1fr}.ga-stage-card{padding:13px}.ga-catalog{border-radius:16px}.ga-stage-count{font-size:.6rem}}
+@media(prefers-reduced-motion:reduce){.ga-lesson-link{scroll-behavior:auto;transition:none;animation:none}}

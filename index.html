@@ -545,6 +545,10 @@
     <button class="gt-qa-btn" onclick="gtTopicTest()">📝 Topic Test</button>
     <button class="gt-qa-btn" onclick="gtSmartRevision()">🔄 Smart Revision</button>
   </div>
+  <section class="ga-catalog" aria-labelledby="gaCatalogTitle">
+    <div class="ga-catalog-head"><div><span class="ga-eyebrow">Advanced Grammar Academy</span><h3 id="gaCatalogTitle">A progressive grammar curriculum</h3><p>Move from reliable foundations to precise analysis and mixed exam practice. Each lesson includes worked examples, common traps, and original practice.</p></div><button class="btn" type="button" onclick="startGrammarMixedChallenge()">Mixed-concept challenge</button></div>
+    <div id="grammarAcademyCatalog" class="ga-stage-grid" aria-live="polite"></div>
+  </section>
 </section>
 
 <!-- ---- Grammar Tree: topic Command Dossier (fullscreen) ---- -->
@@ -1303,6 +1307,7 @@
 
 <script src="data/grammar.js"></script>
 <script src="data/grammar-basics.js"></script>
+<script src="data/grammar-academy.js"></script>
 <script src="data/vocab.js"></script>
 <script src="data/comparisons-extra.js"></script>
 <script src="data/pyq/manifest.js?v=20260928-pyq8"></script>
@@ -1325,6 +1330,7 @@
 <!-- To add a new PYQ paper: drop data/pyq/<year>-<session>.js in the folder
      and add one more <script src="..."> line above. Nothing else to change. -->
 <script src="js/vaani-pyq-taxonomy.js?v=20260928-pyq8"></script>
+<script src="js/vaani-grammar-academy.js"></script>
 <script src="js/app.js?v=20260928-pyq8"></script>
 <script src="js/vaani-testkit.js"></script>
 <script src="js/vaani-arena.js"></script>
@@ -1335,35 +1341,6 @@
 <script src="js/vaani-notifications.js?v=20260928-5"></script>
 <script src="js/vaani-3d-safe.js?v=20260928-3d1"></script>
 
-<!-- ============================================================
-     ARENA — LIVE LEADERBOARDS (Supabase)
-     ------------------------------------------------------------
-     Leave this exactly as it is and Arena works fully — matches,
-     shared questions, deadlines, everyone's own view of the board.
-     The only thing this section turns on is SHARING that board
-     live across every player's device instead of just this one.
-
-     To turn it on:
-       1. Replace the two placeholder strings below with your real
-          Supabase Project URL and anon public key (Settings → API
-          in your Supabase project).
-       2. Save. That's it — nothing else in this file changes.
-
-     Full step-by-step setup: see SETUP-GUIDE.md in this same folder.
-     ============================================================ -->
-<script>
-(function(){
-  var SUPABASE_URL = 'https://pccavdwwhykwyeitxixc.supabase.co';
-  var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBjY2F2ZHd3aHlrd3llaXR4aXhjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA0Mjg2NjksImV4cCI6MjEwNjAwNDY2OX0.RYFwLKViepJ_53cdj0LYisfMIRRFQ0XMpQ9oFAwYe1s';
-
-  var configured = SUPABASE_URL.indexOf('YOUR_SUPABASE_URL') === -1 &&
-                    SUPABASE_ANON_KEY.indexOf('YOUR_SUPABASE_ANON_KEY') === -1;
-  if (configured && window.VX && window.VX.arena) {
-    VX.arena.useSync(VX.arena.supabaseAdapter(SUPABASE_URL, SUPABASE_ANON_KEY));
-  }
-  // not configured yet -> silently does nothing, Arena keeps working
-  // exactly as it does today (per-device boards)
-})();
-</script>
+<!-- Shared Arena scoring is disabled until an authenticated server validates each attempt. Local play remains available. -->
 </body>
 </html>

@@ -29,6 +29,7 @@ const Store = INSIDE_CLAUDE ? window.storage : {
 };
 
 const LEGACY_DATA_KEY = 'veer_bhogya_data_v1'; // pre-account single-profile key, migrated on first boot
+const LEGACY_PYQ_BOOKMARK_MIGRATION_KEY = 'vaani_pyq_bookmark_migration_v1';
 const DEFAULT_DATA = { completed: [], ongoing: [], upcoming: [], vocab: [], achievements: [], goal: { monthlyBooks: 2, dailyPages: 20 }, cadetName: '', quizHistory: [], createdAt: '',
   levels: { viewed: { basic:{vocab:[],grammar:[]}, intermediate:{vocab:[],grammar:[]}, advanced:{vocab:[],grammar:[]} }, quizScores: { basic:null, intermediate:null, advanced:null } }
 };
@@ -141,6 +142,29 @@ function setSessionCode(code){ try{ localStorage.setItem('vbv_session_code', cod
 function getSessionCode(){ try{ return localStorage.getItem('vbv_session_code'); }catch(e){ return null; } }
 function clearSessionCode(){ try{ localStorage.removeItem('vbv_session_code'); }catch(e){} }
 
+function migrateLegacyPyqBookmarks(code, account){
+  const isRecord=value=>!!value&&typeof value==='object'&&!Array.isArray(value);
+  const vaaniPart=isRecord(account&&account.vaani)?account.vaani:{};
+  if(Object.prototype.hasOwnProperty.call(vaaniPart,'pyqBookmarks'))return false;
+  try{
+    const raw=localStorage.getItem('vaani_bookmarks');
+    if(!raw)return false;
+    const parsed=JSON.parse(raw);
+    if(!Array.isArray(parsed))return false;
+    const bookmarks=Array.from(new Set(parsed.filter(id=>typeof id==='string'&&id)));
+    if(!bookmarks.length)return false;
+    let owner=localStorage.getItem(LEGACY_PYQ_BOOKMARK_MIGRATION_KEY);
+    if(owner&&owner!==code)return false;
+    if(!owner){
+      localStorage.setItem(LEGACY_PYQ_BOOKMARK_MIGRATION_KEY,code);
+      owner=localStorage.getItem(LEGACY_PYQ_BOOKMARK_MIGRATION_KEY);
+    }
+    if(owner!==code)return false;
+    State.pyqBookmarks=bookmarks;
+    return true;
+  }catch(e){ return false; }
+}
+
 function applyLoadedAccount(code, parsed){
   const isRecord=value=>!!value&&typeof value==='object'&&!Array.isArray(value);
   const account=isRecord(parsed)?parsed:{};
@@ -153,18 +177,37 @@ function applyLoadedAccount(code, parsed){
   // Clone defaults per account: a shallow Object.assign would share mutable
   // arrays (books, vocab, achievements, quiz history) between new profiles.
   const cleanDefaults = JSON.parse(JSON.stringify(DEFAULT_DATA));
-  DATA = Object.assign(cleanDefaults, vbvPart);
+  DATA = Object.assign({}, cleanDefaults, vbvPart);
   DATA.goal = Object.assign({}, cleanDefaults.goal, isRecord(vbvPart.goal)?vbvPart.goal:{});
+  ['monthlyBooks','dailyPages'].forEach(key=>{
+    const value=Number(DATA.goal[key]);
+    DATA.goal[key]=Number.isFinite(value)?Math.max(0,Math.floor(value)):cleanDefaults.goal[key];
+  });
   DATA.levels = Object.assign({}, cleanDefaults.levels, isRecord(vbvPart.levels)?vbvPart.levels:{});
   DATA.levels.viewed = Object.assign(
     JSON.parse(JSON.stringify(cleanDefaults.levels.viewed)),
     isRecord(DATA.levels.viewed)?DATA.levels.viewed:{}
   );
+  LEVELS.forEach(level=>{
+    const saved=isRecord(DATA.levels.viewed[level])?DATA.levels.viewed[level]:{};
+    DATA.levels.viewed[level]=Object.assign({},cleanDefaults.levels.viewed[level],saved);
+    ['vocab','grammar'].forEach(key=>{
+      DATA.levels.viewed[level][key]=Array.isArray(saved[key])?saved[key].filter(item=>typeof item==='string'):[];
+    });
+  });
   DATA.levels.quizScores = Object.assign(
     {}, cleanDefaults.levels.quizScores,
     isRecord(DATA.levels.quizScores)?DATA.levels.quizScores:{}
   );
-  if(!DATA.createdAt) DATA.createdAt = new Date().toISOString();
+  Object.keys(DEFAULT_DATA.levels.quizScores).forEach(level=>{
+    const value=DATA.levels.quizScores[level];
+    DATA.levels.quizScores[level]=value===null?null:(Number.isFinite(Number(value))?Math.max(0,Math.min(100,Number(value))):null);
+  });
+  ['completed','ongoing','upcoming','vocab','achievements','quizHistory'].forEach(key=>{
+    DATA[key]=Array.isArray(DATA[key])?DATA[key].filter(isRecord):[];
+  });
+  if(typeof DATA.cadetName!=='string') DATA.cadetName='';
+  if(typeof DATA.createdAt!=='string'||!DATA.createdAt) DATA.createdAt = new Date().toISOString();
   dataLoaded = true;
 }
 
@@ -177,11 +220,15 @@ async function loginWithCode(rawCode){
   const code = (rawCode||'').replace(/\D/g,'').slice(0,6);
   if(code.length !== 6) return { ok:false, msg:'Enter all 6 digits.' };
   try{
+    if(ACTIVE_CODE&&ACTIVE_CODE!==code&&!await persistCombinedAccount()){
+      return { ok:false, msg:'Your current account could not be saved. Please try again before switching.' };
+    }
     const res = await Store.get(accountKey(code), true);
     if(res && typeof res.value==='string' && res.value){
       const parsed=JSON.parse(res.value);
       if(!parsed||typeof parsed!=='object'||Array.isArray(parsed)) throw new Error('Invalid account record');
       applyLoadedAccount(code, parsed);
+      if(migrateLegacyPyqBookmarks(code,parsed)) await persistCombinedAccount();
       setSessionCode(code);
       try{ localStorage.setItem('vaani_account_migration_v1','done'); }catch(e){}
       return { ok:true };
@@ -203,6 +250,7 @@ async function pickFreeCode(){
   throw new Error('Could not find an unused account code. Please try again.');
 }
 async function createNewAccount(){
+  if(ACTIVE_CODE&&!await persistCombinedAccount())throw new Error('Could not save the current account before switching.');
   const code = await pickFreeCode();
   applyLoadedAccount(code, {});
   if(!await saveData()) throw new Error('Could not save the new account. Please try again.');
@@ -223,6 +271,16 @@ async function tryMigrateLegacyData(){
       const parsedVaani=JSON.parse(rawVaani);
       if(parsedVaani&&typeof parsedVaani==='object'&&!Array.isArray(parsedVaani)) legacyVaani=parsedVaani;
     }
+    const rawBookmarks=localStorage.getItem('vaani_bookmarks');
+    if(rawBookmarks&&!Object.prototype.hasOwnProperty.call(legacyVaani,'pyqBookmarks')){
+      try{
+        const parsedBookmarks=JSON.parse(rawBookmarks);
+        if(Array.isArray(parsedBookmarks)){
+          const bookmarks=Array.from(new Set(parsedBookmarks.filter(id=>typeof id==='string'&&id)));
+          if(bookmarks.length)legacyVaani.pyqBookmarks=bookmarks;
+        }
+      }catch(e){}
+    }
     let legacyVbv={};
     try{
       const res=await Store.get(LEGACY_DATA_KEY,false);
@@ -236,7 +294,10 @@ async function tryMigrateLegacyData(){
       applyLoadedAccount(code, { vaani:legacyVaani, vbv:legacyVbv });
       if(!await saveData()) return null;
       setSessionCode(code);
-      localStorage.setItem('vaani_account_migration_v1','done');
+      try{ localStorage.setItem('vaani_account_migration_v1','done'); }catch(e){}
+      if(Array.isArray(legacyVaani.pyqBookmarks)&&legacyVaani.pyqBookmarks.length){
+        try{ localStorage.setItem(LEGACY_PYQ_BOOKMARK_MIGRATION_KEY,code); }catch(e){}
+      }
       return code;
     }
   }catch(e){ /* no legacy data — nothing to migrate */ }
@@ -272,10 +333,30 @@ async function setApiKeyStored(key){
   try{ await Store.set('anthropic_api_key', key, false); return true; } catch(e){ return false; }
 }
 
-function logout(){
+async function logout(){
+  // Snapshot the current account first, then erase its live in-memory view
+  // before reload so a subsequent profile cannot observe stale progress.
+  if(ACTIVE_CODE){
+    try{
+      if(!await persistCombinedAccount()){
+        toast('This account could not be saved. Please try again before logging out.');
+        return false;
+      }
+    }catch(e){
+      console.warn('[VAANI] Account progress could not be saved before logout:',e);
+      toast('This account could not be saved. Please try again before logging out.');
+      return false;
+    }
+  }
   clearSessionCode();
+  ACTIVE_CODE = null;
+  dataLoaded = false;
+  if(typeof resetStateForAccount==='function') resetStateForAccount();
+  DATA = JSON.parse(JSON.stringify(DEFAULT_DATA));
+  if(typeof currentTopic!=='undefined') currentTopic = null;
   closeModal();
   location.reload();
+  return true;
 }
 
 /* ---- Backup / restore ---- */
@@ -1744,7 +1825,7 @@ function renderAcademy(){
   const cards = academies.map(a=>`
     <article class="academy-card">
       <div class="academy-card-photo is-missing" aria-label="${escapeHtml(a.alt)}">
-        <img src="${a.img}" alt="${escapeHtml(a.alt)}" loading="eager" decoding="async" onload="this.parentElement.classList.remove('is-missing')" onerror="this.remove();this.parentElement.classList.add('is-missing')">
+        <img src="${a.img}" alt="${escapeHtml(a.alt)}" loading="eager" decoding="async" onload="this.parentElement.classList.remove('is-missing')" onerror="this.parentElement?.classList.add('is-missing');this.remove()">
         <span class="academy-card-index">${a.index}</span>
         <span class="academy-card-field">${a.field}</span>
       </div>
