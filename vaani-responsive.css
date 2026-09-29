@@ -281,3 +281,64 @@ button{touch-action:manipulation}
   html{scroll-behavior:auto}
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
+
+
+/* ===== FINAL MOBILE VOCAB LAYOUT GUARD ===== */
+/*
+ * The base stylesheet defines .singles-strip later than its earlier media
+ * queries, which can reset phones/tablets back to a 4-column grid.
+ * These final rules deliberately win and also prevent the Book Register
+ * button from wrapping one character per line.
+ */
+#view-vocab .singles-strip{
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  min-width:0;
+}
+#view-vocab .single-card{
+  min-width:0;
+  overflow:hidden;
+}
+#view-vocab .single-card .sc-label,
+#view-vocab .single-card .sc-word,
+#view-vocab .single-card .sc-mean{
+  min-width:0;
+  overflow-wrap:anywhere;
+}
+#view-vocab .single-card .v-book-capture{
+  width:100%;
+  min-width:0;
+  justify-content:center;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  padding-inline:10px;
+}
+@media (max-width:1023px){
+  #view-vocab .singles-strip{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+  }
+}
+@media (max-width:767px){
+  #view-vocab .singles-strip{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+  #view-vocab .single-card{
+    padding:14px !important;
+  }
+  #view-vocab .single-card .sc-label{
+    max-width:calc(100% - 44px);
+    line-height:1.45;
+  }
+  #view-vocab .single-card .sc-word{
+    font-size:clamp(.98rem,4vw,1.12rem);
+  }
+  #view-vocab .single-card .v-book-capture{
+    font-size:.72rem;
+    padding:9px 8px;
+  }
+}
+@media (max-width:360px){
+  #view-vocab .singles-strip{
+    grid-template-columns:1fr;
+  }
+}
