@@ -301,6 +301,17 @@ try {
 
   // Full mobile bottom-nav back journey: Home → Grammar → Vocab → PYQ → Updates
   // and then Back must walk that exact path without closing the document.
+  await navPage.evaluate(() => {
+    window.__vaaniTestPopTrace = [];
+    window.addEventListener('popstate', event => {
+      window.__vaaniTestPopTrace.push({
+        eventState:event.state,
+        state:history.state,
+        url:location.href,
+        active:document.querySelector('.view.active')?.id || null
+      });
+    });
+  });
   const mobileNavJourney = ['grammar','vocab','pyq','notifications'];
   for (const view of mobileNavJourney) {
     await navPage.locator('#bottomNav button[data-view="' + view + '"]').click();
@@ -316,8 +327,24 @@ try {
   assert.ok(journeyState.length >= 5, 'Mobile navigation did not create enough history entries: ' + JSON.stringify(journeyState));
 
   for (const expected of ['pyq','vocab','grammar','dashboard']) {
+    const beforeBack = await navPage.evaluate(() => ({
+      url:location.href, state:history.state, active:document.querySelector('.view.active')?.id||null, length:history.length
+    }));
     await navPage.goBack();
-    await navPage.waitForFunction(v => document.getElementById('view-' + v)?.classList.contains('active'), expected);
+    const afterBack = await navPage.evaluate(() => ({
+      url:location.href, state:history.state, active:document.querySelector('.view.active')?.id||null,
+      length:history.length, popTrace:window.__vaaniTestPopTrace.slice()
+    }));
+    console.log('MOBILE BACK TRACE', JSON.stringify({expected,beforeBack,afterBack}));
+    await navPage.waitForFunction(v => document.getElementById('view-' + v)?.classList.contains('active'), expected, {timeout:10000})
+      .catch(async error => {
+        const actual = await navPage.evaluate(() => ({
+          url:location.href, state:history.state, active:document.querySelector('.view.active')?.id||null,
+          length:history.length, popTrace:window.__vaaniTestPopTrace.slice()
+        }));
+        throw new Error('Browser back expected ' + expected + '; actual=' + JSON.stringify(actual) +
+          '; previous=' + JSON.stringify(afterBack) + '; cause=' + error.message);
+      });
     assert.equal(await navPage.evaluate(() => history.state?.vaaniView), expected,
       'Browser back did not return to ' + expected);
   }
