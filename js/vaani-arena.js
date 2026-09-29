@@ -1145,13 +1145,35 @@
   /* ---------------------------------------------------------
      RESULT + BOARD
      --------------------------------------------------------- */
+  /* The local result is also stored under vx_arena_done_<code>. A board
+     adapter can temporarily return an empty list (for example, after a
+     storage write failed or while recovering an older attempt). Keep the
+     completed local attempt visible instead of showing a false empty board.
+     This fallback is display-only; it does not make a score remotely verified. */
+  function reconcileLocalAttempt(rows) {
+    var out = Array.isArray(rows) ? rows.slice() : [];
+    if (!A.sync.live && S.match) {
+      var own = S.result || previousAttempt(S.match.code);
+      if (own && typeof own.pid === 'string' && own.pid) {
+        var index = out.findIndex(function (row) { return row && row.pid === own.pid; });
+        if (index < 0) out.push(own);
+        else if (Number(own.at) >= Number(out[index].at || 0)) out[index] = own;
+      }
+    }
+    return rankRows(out);
+  }
+
   function loadBoard() {
     if (!S.match) { S.rows = []; S._boardError = true; return Promise.resolve(S.rows); }
     S._boardError = false;
     return Promise.resolve().then(function () { return A.sync.fetch(S.match.code); }).then(function (rows) {
-      S.rows = rankRows(Array.isArray(rows) ? rows : []);
+      S.rows = reconcileLocalAttempt(rows);
       return S.rows;
-    }, function () { S.rows = []; S._boardError = true; return S.rows; });
+    }, function () {
+      S.rows = reconcileLocalAttempt([]);
+      S._boardError = true;
+      return S.rows;
+    });
   }
 
   function scheduleResultExpiry(match) {
