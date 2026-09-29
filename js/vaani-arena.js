@@ -1139,7 +1139,11 @@
     recordAttempt(m.code, entry);
     if (typeof global.addXP === 'function') global.addXP(score * 2, 'Arena match');
     A.sync.submit(m.code, entry).then(loadBoard).then(function () { go('result'); },
-      function () { S._boardError = true; go('result'); });
+      function () {
+        S._boardError = true;
+        S.rows = reconcileLocalAttempt([]);
+        go('result');
+      });
   }
 
   /* ---------------------------------------------------------
