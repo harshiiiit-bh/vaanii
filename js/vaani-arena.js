@@ -1394,7 +1394,7 @@
     toolbar.appendChild(refresh);
     championship.appendChild(toolbar);
 
-    var podiumHead = el('div','vx-championship-section-head');
+    var podiumHead = el('div','vx-championship-section-head vx-board-heading');
     podiumHead.innerHTML='<div><span>THE PODIUM</span><p>Standout performances from this match</p></div><span class="vx-championship-count">'+entries.length+' '+(entries.length===1?'attempt':'attempts')+'</span>';
     championship.appendChild(podiumHead);
     var podium = el('div', 'vx-podium vx-championship-podium');
