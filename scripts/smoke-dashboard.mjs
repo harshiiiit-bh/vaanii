@@ -232,16 +232,17 @@ try {
     const second=arena.questionsFor(arena.decode(code),'Smoke Cadet').map(question=>question._id);
     const boardKey='smoke-regression-arena';
     await arena.sync.submit(boardKey,{pid:'smoke-player',name:'Smoke Cadet',score:6,seconds:60,total:8,at:1,answers:{}});
-    const rows=await arena.sync.fetch(boardKey);localStorage.removeItem('vx_arena_board_'+boardKey);
+    const rows=JSON.parse(localStorage.getItem('vx_arena_board_'+boardKey)||'[]');
+    localStorage.removeItem('vx_arena_board_'+boardKey);
     return {code,decoded,first,second,rows,adapter:arena.sync.name,live:arena.sync.live,remoteAdapter:typeof arena.supabaseAdapter};
   });
   assert.equal(arenaSecurity.code.length,32,'Arena match code did not round-trip');
   assert.equal(arenaSecurity.decoded?.seed,482731,'Arena match code lost its seed');
   assert.deepEqual(arenaSecurity.first,arenaSecurity.second,'Arena question selection changed for an identical match seed');
   assert.equal(arenaSecurity.rows.length,1,'Local Arena score was not available on this device');
-  assert.equal(arenaSecurity.adapter,'local');assert.equal(arenaSecurity.live,false);
+  assert.equal(arenaSecurity.adapter,'shared-read');assert.equal(arenaSecurity.live,true);
   assert.equal(arenaSecurity.remoteAdapter,'undefined','Browser score writes must not expose the removed Supabase adapter');
-  console.log('PASS Arena security: deterministic local match, local-only score board and no public Supabase writer');
+  console.log('PASS Arena security: deterministic local match, device-local submission, shared read-only board and no public Supabase writer');
 
   await clickMainView('grammar');
   await page.waitForFunction(() => document.querySelectorAll('#grammarAcademyCatalog .ga-stage-card').length === 4);
