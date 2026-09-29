@@ -1,4 +1,5 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { normalizeArenaMatchCode, sanitizeArenaRows } from "../_shared/arena-leaderboard.mjs";
 
 const ALLOWED_ORIGINS = [
   "https://harshiiiit-bh.github.io",
@@ -39,80 +40,19 @@ function jsonResponse(status: number, body: unknown, origin: string | null): Res
   });
 }
 
-function checksum(body: string): string {
-  let hash = 2166136261 >>> 0;
-  for (let i = 0; i < body.length; i++) {
-    hash ^= body.charCodeAt(i);
-    hash = Math.imul(hash, 16777619) >>> 0;
-  }
-  return (hash % 1296).toString(36).toUpperCase().padStart(2, "0");
-}
-
-function validMatchCode(value: unknown): value is string {
-  if (typeof value !== "string" || !/^[0-9A-Z]{32}$/.test(value)) return false;
-  return value[0] === "2" && checksum(value.slice(0, 30)) === value.slice(30);
-}
-
 function serviceCredentials(): { apiKey: string; authorization?: string } | null {
   const legacy = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
   if (legacy) return { apiKey: legacy, authorization: "Bearer " + legacy };
 
-  // New Supabase secret keys are JSON encoded by the platform. They are
-  // server-only and must never be copied to the browser.
   try {
     const configured = JSON.parse(Deno.env.get("SUPABASE_SECRET_KEYS") || "{}");
     if (typeof configured.default === "string" && configured.default.startsWith("sb_secret_")) {
       return { apiKey: configured.default };
     }
   } catch {
-    // A missing or malformed secret is handled as an unavailable service.
+    // Missing or malformed secrets are handled as an unavailable service.
   }
   return null;
-}
-
-type ArenaRow = {
-  code: string;
-  pid: string;
-  name: string;
-  score: number;
-  seconds: number;
-  total: number;
-  at: number;
-};
-
-function sanitizeRows(input: unknown, code: string): ArenaRow[] {
-  if (!Array.isArray(input)) return [];
-  const byPlayer = new Map<string, ArenaRow>();
-  for (const value of input) {
-    if (!value || typeof value !== "object") continue;
-    const row = value as Record<string, unknown>;
-    const pid = typeof row.pid === "string" ? row.pid.trim().slice(0, 80) : "";
-    const name = typeof row.name === "string"
-      ? row.name.replace(/[\x00-\x1f\x7f]/g, " ").replace(/\s+/g, " ").trim().slice(0, 48)
-      : "Cadet";
-    const score = Number(row.score);
-    const seconds = Number(row.seconds);
-    const total = Number(row.total);
-    const at = Number(row.at);
-    if (!pid || !Number.isFinite(score) || !Number.isFinite(seconds) ||
-        !Number.isFinite(total) || !Number.isFinite(at) || at <= 0 ||
-        total < 1 || total > 100 || seconds < 0 || seconds > 86400 ||
-        score < -total || score > total) continue;
-    const cleaned: ArenaRow = {
-      code,
-      pid,
-      name: name || "Cadet",
-      score,
-      seconds: Math.floor(seconds),
-      total: Math.floor(total),
-      at: Math.floor(at)
-    };
-    const previous = byPlayer.get(pid);
-    if (!previous || cleaned.at >= previous.at) byPlayer.set(pid, cleaned);
-  }
-  return [...byPlayer.values()]
-    .sort((a, b) => b.score - a.score || a.seconds - b.seconds || a.at - b.at)
-    .slice(0, 100);
 }
 
 Deno.serve(async (request: Request) => {
@@ -140,10 +80,11 @@ Deno.serve(async (request: Request) => {
   } catch {
     return jsonResponse(400, { error: "Invalid JSON" }, origin);
   }
-  const code = body && typeof body === "object"
+  const requestedCode = body && typeof body === "object"
     ? (body as Record<string, unknown>).code
     : null;
-  if (!validMatchCode(code)) return jsonResponse(400, { error: "Invalid match code" }, origin);
+  const code = normalizeArenaMatchCode(requestedCode);
+  if (!code) return jsonResponse(400, { error: "Invalid match code" }, origin);
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL");
   const credentials = serviceCredentials();
@@ -168,9 +109,7 @@ Deno.serve(async (request: Request) => {
       console.error("Arena leaderboard database read failed:", response.status);
       return jsonResponse(502, { error: "Unable to load leaderboard" }, origin);
     }
-    const rows = sanitizeRows(await response.json(), code);
-    // These historic entries were created before server-side score
-    // verification. Return only public standings fields; never expose answers.
+    const rows = sanitizeArenaRows(await response.json(), code);
     return jsonResponse(200, { rows, verified: false, source: "historical" }, origin);
   } catch (error) {
     console.error("Arena leaderboard request failed:", error instanceof Error ? error.message : "unknown error");
