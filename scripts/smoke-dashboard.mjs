@@ -304,8 +304,31 @@ try {
   assert.ok(journeyState.length >= 5, 'Mobile navigation did not create enough history entries: ' + JSON.stringify(journeyState));
 
   for (const expected of ['pyq','vocab','grammar','dashboard']) {
+    const beforeBack = await page.evaluate(() => ({
+      url: location.href,
+      view: history.state?.vaaniView,
+      active: document.querySelector('.view.active')?.id || null,
+      length: history.length
+    }));
     await page.goBack();
-    await page.waitForFunction(v => document.getElementById('view-' + v)?.classList.contains('active'), expected);
+    const afterBack = await page.evaluate(() => ({
+      url: location.href,
+      view: history.state?.vaaniView,
+      active: document.querySelector('.view.active')?.id || null,
+      length: history.length
+    }));
+    console.log('MOBILE BACK TRACE', JSON.stringify({expected,beforeBack,afterBack}));
+    await page.waitForFunction(v => document.getElementById('view-' + v)?.classList.contains('active'), expected, {timeout:10000})
+      .catch(async error => {
+        const actual = await page.evaluate(() => ({
+          url: location.href,
+          view: history.state?.vaaniView,
+          active: document.querySelector('.view.active')?.id || null,
+          length: history.length
+        }));
+        throw new Error('Browser back expected ' + expected + ' but timed out; actual=' +
+          JSON.stringify(actual) + '; previous=' + JSON.stringify(afterBack) + '; cause=' + error.message);
+      });
     assert.equal(await page.evaluate(() => history.state?.vaaniView), expected,
       'Browser back did not return to ' + expected);
   }
