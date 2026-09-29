@@ -2022,7 +2022,7 @@ body.mode-sepia main{line-height:1.8}
 .vp-logout-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;flex:0 0 auto;padding:10px 14px;border:1px solid var(--line);border-radius:999px;background:var(--panel);color:var(--red);font:600 12px/1 inherit;letter-spacing:.04em;cursor:pointer;transition:background .18s,border-color .18s,transform .18s;}
 .vp-logout-btn:hover{background:var(--bg2);border-color:var(--red);transform:translateY(-1px);}
 .vp-logout-btn:focus-visible{outline:3px solid var(--gold);outline-offset:3px;}
-@media(max-width:560px){.vp-logout-btn{padding:9px 11px}.vp-logout-btn span{display:none}}
+@media(max-width:560px){.vp-logout-btn{padding:9px 12px;min-width:96px}.vp-logout-btn span{display:inline;font-size:11px;letter-spacing:.06em}}
 
 
 /* Profile account action */
@@ -2030,4 +2030,4 @@ body.mode-sepia main{line-height:1.8}
 .vp-logout-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;flex:0 0 auto;padding:10px 14px;border:1px solid var(--line);border-radius:999px;background:var(--panel);color:var(--red);font:600 12px/1 inherit;letter-spacing:.04em;cursor:pointer;transition:background .18s,border-color .18s,transform .18s;}
 .vp-logout-btn:hover{background:var(--bg2);border-color:var(--red);transform:translateY(-1px);}
 .vp-logout-btn:focus-visible{outline:3px solid var(--gold);outline-offset:3px;}
-@media(max-width:560px){.vp-logout-btn{padding:9px 11px}.vp-logout-btn span{display:none}}
+@media(max-width:560px){.vp-logout-btn{padding:9px 12px;min-width:96px}.vp-logout-btn span{display:inline;font-size:11px;letter-spacing:.06em}}
