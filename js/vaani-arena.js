@@ -1269,30 +1269,91 @@
     var entries = S.rows.slice(0, MAX_PLAYERS).map(function (row, i) { return { row: row, rank: i + 1 }; });
     var myRank = entries.findIndex(function (entry) { return entry.row.pid === playerId(); }) + 1;
     var topScore = entries.length ? String(entries[0].row.score) + '/' + String(entries[0].row.total) : '—';
-    var boardHeading = el('div', 'vx-board-heading');
-    boardHeading.innerHTML =
-      '<div><span class="vx-section-kicker">MATCH STANDINGS</span><h3>Leaderboard</h3>' +
-      '<p>Ranked by score, with completion time as the tie-breaker.</p></div>' +
-      '<span class="vx-board-live">' + (A.sync.live ? '● Shared live' : '● This device') + '</span>';
-    w.appendChild(boardHeading);
-    var boardSummary = el('div', 'vx-board-summary');
+
+    /* A new championship-style board: all interaction hooks remain local
+       to this result view; the inline artwork is self-contained and offline-safe. */
+    var championship = el('section', 'vx-championship');
+    championship.setAttribute('aria-label', 'Match leaderboard');
+
+    var championshipHero = el('div', 'vx-championship-hero');
+    var heroCopy = el('div', 'vx-championship-hero-copy');
+    heroCopy.innerHTML =
+      '<span class="vx-championship-kicker"><i aria-hidden="true"></i> ARENA · FINAL STANDINGS</span>' +
+      '<h3>Every second counts.</h3>' +
+      '<p>One match. One result. See how your performance ranks.</p>' +
+      '<div class="vx-championship-status ' + (A.sync.live ? 'is-live' : 'is-local') + '">' +
+        '<span class="vx-championship-status-dot" aria-hidden="true"></span>' +
+        (A.sync.live ? 'SHARED LIVE' : 'THIS DEVICE · LOCAL BOARD') +
+      '</div>';
+    championshipHero.appendChild(heroCopy);
+
+    var heroArt = el('div', 'vx-championship-art');
+    heroArt.setAttribute('aria-hidden', 'true');
+    heroArt.innerHTML =
+      '<svg class="vx-championship-svg" viewBox="0 0 440 286" xmlns="http://www.w3.org/2000/svg" focusable="false">' +
+        '<defs>' +
+          '<linearGradient id="vxChampCup" x1="0" y1="0" x2="1" y2="1">' +
+            '<stop offset="0" stop-color="#fff0a8"/><stop offset=".34" stop-color="#e4b84d"/><stop offset=".7" stop-color="#a86f20"/><stop offset="1" stop-color="#f7d97b"/>' +
+          '</linearGradient>' +
+          '<linearGradient id="vxChampCupSide" x1="0" y1="0" x2="1" y2="0">' +
+            '<stop offset="0" stop-color="#a66b1d"/><stop offset=".55" stop-color="#dba83c"/><stop offset="1" stop-color="#fff0a4"/>' +
+          '</linearGradient>' +
+          '<linearGradient id="vxChampBase" x1="0" y1="0" x2="1" y2="1">' +
+            '<stop offset="0" stop-color="#d8e4f2"/><stop offset=".45" stop-color="#7791af"/><stop offset="1" stop-color="#263c5a"/>' +
+          '</linearGradient>' +
+          '<radialGradient id="vxChampGlow">' +
+            '<stop offset="0" stop-color="#e6b94e" stop-opacity=".34"/><stop offset="1" stop-color="#e6b94e" stop-opacity="0"/>' +
+          '</radialGradient>' +
+          '<filter id="vxChampShadow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="9"/></filter>' +
+        '</defs>' +
+        '<ellipse cx="235" cy="242" rx="157" ry="31" fill="url(#vxChampGlow)"/>' +
+        '<g fill="none" stroke="#7ed8ef" stroke-opacity=".23">' +
+          '<ellipse cx="235" cy="141" rx="184" ry="57" transform="rotate(-13 235 141)"/>' +
+          '<ellipse cx="235" cy="141" rx="150" ry="43" transform="rotate(19 235 141)" stroke-dasharray="3 8"/>' +
+        '</g>' +
+        '<g fill="#d7f5ff" opacity=".9"><path d="M88 67l2.5 7.5L98 77l-7.5 2.5L88 87l-2.5-7.5L78 77l7.5-2.5z"/><path d="M353 56l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/><circle cx="333" cy="191" r="2"/><circle cx="115" cy="194" r="1.8"/></g>' +
+        '<g class="vx-championship-cup-float">' +
+          '<path d="M174 57h-27c0 29 13 48 39 54M266 57h27c0 29-13 48-39 54" fill="none" stroke="#c99534" stroke-width="13" stroke-linecap="round"/>' +
+          '<path d="M147 57h-10c0 35 16 57 46 63" fill="none" stroke="#ffe69a" stroke-opacity=".75" stroke-width="4" stroke-linecap="round"/>' +
+          '<path d="M293 57h10c0 35-16 57-46 63" fill="none" stroke="#ffe69a" stroke-opacity=".75" stroke-width="4" stroke-linecap="round"/>' +
+          '<path d="M174 47h92l-8 69c-4 29-18 48-38 48s-34-19-38-48z" fill="url(#vxChampCup)" stroke="#ffe39a" stroke-width="1.2"/>' +
+          '<path d="M220 48h46l-8 68c-4 29-18 48-38 48z" fill="url(#vxChampCupSide)" opacity=".62"/>' +
+          '<path d="M181 57h78" stroke="#fff5c3" stroke-width="4" stroke-linecap="round" opacity=".8"/>' +
+          '<path d="M206 90l14-17 14 17-5 23h-18z" fill="#fff3bf" opacity=".9"/>' +
+          '<path d="M220 77v35" stroke="#bf8628" stroke-width="2" opacity=".72"/>' +
+          '<path d="M209 94h22" stroke="#bf8628" stroke-width="2" opacity=".72"/>' +
+          '<path d="M209 164h22l5 25h-32z" fill="url(#vxChampBase)"/>' +
+          '<path d="M204 188h32l9 13h-50z" fill="#7b91ac"/>' +
+          '<path d="M195 201h50l10 13h-70z" fill="url(#vxChampBase)" stroke="#adbed0" stroke-opacity=".62"/>' +
+          '<path d="M220 202v11" stroke="#edf6ff" stroke-opacity=".65" stroke-width="2"/>' +
+        '</g>' +
+        '<g class="vx-championship-particles" fill="#9be8f7">' +
+          '<circle cx="121" cy="111" r="2.5"/><circle cx="321" cy="110" r="2"/><circle cx="343" cy="150" r="3"/><circle cx="137" cy="164" r="2"/>' +
+        '</g>' +
+        '<g fill="none" stroke="#8bd9ec" stroke-opacity=".5" stroke-width="1.2"><path d="M105 220l30-13 22 13-30 13z"/><path d="M281 229l28-16 28 16-28 16z"/></g>' +
+      '</svg>';
+    championshipHero.appendChild(heroArt);
+    championship.appendChild(championshipHero);
+
+    var boardSummary = el('div', 'vx-board-summary vx-championship-metrics');
     [
-      {label:'Attempts',value:String(entries.length)},
-      {label:'Top score',value:topScore},
-      {label:'Your position',value:myRank>0?'#'+myRank:'—'}
-    ].forEach(function (item) {
-      var card=el('div','vx-board-summary-card');
-      card.innerHTML='<span>'+esc(item.label)+'</span><strong>'+esc(item.value)+'</strong>';
+      {label:'Attempts',value:String(entries.length),hint:'Recorded on this board'},
+      {label:'Top score',value:topScore,hint:'Current match lead'},
+      {label:'Your position',value:myRank>0?'#'+myRank:'—',hint:myRank>0?'Your standing':'Not ranked yet'}
+    ].forEach(function (item, i) {
+      var card=el('div','vx-board-summary-card vx-championship-metric metric-'+(i+1));
+      card.innerHTML='<span>'+esc(item.label)+'</span><strong>'+esc(item.value)+'</strong><small>'+esc(item.hint)+'</small>';
       boardSummary.appendChild(card);
     });
-    w.appendChild(boardSummary);
-    var toolbar = el('div', 'vx-board-toolbar');
-    var search = el('input', 'vx-board-search');
+    championship.appendChild(boardSummary);
+
+    var toolbar = el('div', 'vx-board-toolbar vx-championship-toolbar');
+    var search = el('input', 'vx-board-search vx-championship-search');
     search.type = 'search';
-    search.placeholder = 'Search players…';
+    search.placeholder = 'Find a cadet by name…';
     search.setAttribute('aria-label', 'Search leaderboard players');
     search.autocomplete = 'off';
-    var filters = el('div', 'vx-board-filters');
+    var filters = el('div', 'vx-board-filters vx-championship-filters');
     var activeFilter = 'all';
     var filterDefs = [
       { id: 'all', label: 'All' },
@@ -1301,7 +1362,7 @@
     ];
     var filterButtons = {};
     filterDefs.forEach(function (def) {
-      var b = el('button', 'vx-board-filter', def.label);
+      var b = el('button', 'vx-board-filter vx-championship-filter', def.label);
       b.type = 'button';
       b.setAttribute('aria-pressed', String(def.id === activeFilter));
       b.addEventListener('click', function () {
@@ -1314,7 +1375,7 @@
       filterButtons[def.id] = b;
       filters.appendChild(b);
     });
-    var refresh = el('button', 'vx-btn ghost vx-board-refresh', '↻ Refresh board');
+    var refresh = el('button', 'vx-btn ghost vx-board-refresh vx-championship-refresh', '↻ Refresh board');
     refresh.type = 'button';
     refresh.addEventListener('click', function () {
       if (refresh.disabled || Date.now() >= Number(m.expiresAt)) { if (Date.now() >= Number(m.expiresAt)) go('result'); return; }
@@ -1331,15 +1392,22 @@
     toolbar.appendChild(search);
     toolbar.appendChild(filters);
     toolbar.appendChild(refresh);
-    w.appendChild(toolbar);
+    championship.appendChild(toolbar);
 
-    var podium = el('div', 'vx-podium');
-    var board = el('div', 'vx-board');
-    var status = el('p', 'vx-board-status');
+    var podiumHead = el('div','vx-championship-section-head vx-board-heading');
+    podiumHead.innerHTML='<div><span>THE PODIUM</span><p>Standout performances from this match</p></div><span class="vx-championship-count">'+entries.length+' '+(entries.length===1?'attempt':'attempts')+'</span>';
+    championship.appendChild(podiumHead);
+    var podium = el('div', 'vx-podium vx-championship-podium');
+    var listHead = el('div','vx-championship-list-head');
+    listHead.innerHTML='<span>RANK & CADET</span><span>SCORE</span><span>TIME</span>';
+    var board = el('div', 'vx-board vx-championship-board');
+    var status = el('p', 'vx-board-status vx-championship-statusline');
     status.setAttribute('aria-live', 'polite');
-    w.appendChild(podium);
-    w.appendChild(board);
-    w.appendChild(status);
+    championship.appendChild(podium);
+    championship.appendChild(listHead);
+    championship.appendChild(board);
+    championship.appendChild(status);
+    w.appendChild(championship);
 
     function drawBoard() {
       podium.innerHTML = '';
@@ -1357,13 +1425,17 @@
       podium.hidden = podiumEntries.length === 0;
       podiumEntries.forEach(function (entry) {
         var medals = { 1: '🥇', 2: '🥈', 3: '🥉' };
-        var card = el('button', 'vx-podium-card rank-' + entry.rank);
+        var podiumName = String(entry.row.name || 'Cadet');
+        var initials = podiumName.trim().slice(0, 1).toUpperCase() || 'C';
+        var card = el('button', 'vx-podium-card vx-championship-podium-card rank-' + entry.rank);
         card.type = 'button';
         card.innerHTML =
           '<span class="vx-podium-medal" aria-hidden="true">' + medals[entry.rank] + '</span>' +
-          '<span class="vx-podium-rank">#' + entry.rank + '</span>' +
-          '<strong class="vx-podium-name">' + esc(entry.row.name || 'Cadet') + '</strong>' +
-          '<span class="vx-podium-score">' + esc(String(entry.row.score)) + ' / ' + esc(String(entry.row.total)) + '</span>';
+          '<span class="vx-podium-rank">RANK ' + entry.rank + '</span>' +
+          '<span class="vx-championship-podium-avatar">' + esc(initials) + '</span>' +
+          '<strong class="vx-podium-name">' + esc(podiumName) + '</strong>' +
+          '<span class="vx-podium-score">' + esc(String(entry.row.score)) + ' / ' + esc(String(entry.row.total)) + '</span>' +
+          '<span class="vx-championship-podium-time">' + esc(fmtClock(entry.row.seconds)) + ' · FINISH</span>';
         card.setAttribute('aria-label', (entry.row.name || 'Cadet') + ', rank ' + entry.rank + '. View details.');
         card.addEventListener('click', function () { openPlayerSheet(entry.row, entry.rank); });
         podium.appendChild(card);
@@ -1378,16 +1450,22 @@
       } else {
         visible.forEach(function (entry) {
           var row = entry.row, rank = entry.rank;
-          var tr = el('div', 'vx-row vx-row-tap' + (row.pid === playerId() ? ' is-you' : '') + (rank <= 3 ? ' is-podium' : ''));
+          var rowName = String(row.name || 'Cadet');
+          var rowInitial = rowName.trim().slice(0, 1).toUpperCase() || 'C';
+          var tr = el('div', 'vx-row vx-row-tap vx-championship-row' + (row.pid === playerId() ? ' is-you' : '') + (rank <= 3 ? ' is-podium' : ''));
           tr.innerHTML =
-            '<span class="vx-rank">' + rank + '</span>' +
-            '<span class="vx-player-name">' + esc(row.name || 'Cadet') + (row.pid === playerId() ? ' <span class="vx-time">you</span>' : '') + '</span>' +
-            '<span class="vx-score">' + esc(String(row.score)) + '/' + esc(String(row.total)) + '</span>' +
-            '<span class="vx-time">' + esc(fmtClock(row.seconds)) + '</span>' +
-            '<span class="vx-row-chevron" aria-hidden="true">&rsaquo;</span>';
+            '<span class="vx-rank"><span class="vx-championship-rank-pill">' + rank + '</span></span>' +
+            '<span class="vx-championship-player">' +
+              '<span class="vx-championship-avatar" aria-hidden="true">' + esc(rowInitial) + '</span>' +
+              '<span class="vx-championship-player-copy"><strong class="vx-player-name">' + esc(rowName) + '</strong>' +
+              (row.pid === playerId() ? '<small class="vx-championship-you">YOUR RESULT</small>' : '<small class="vx-championship-player-label">CADET</small>') +
+              '</span></span>' +
+            '<span class="vx-championship-score"><strong class="vx-score">' + esc(String(row.score)) + '<small> / ' + esc(String(row.total)) + '</small></strong></span>' +
+            '<span class="vx-time vx-championship-time"><small>TIME</small><strong>' + esc(fmtClock(row.seconds)) + '</strong></span>' +
+            '<span class="vx-row-chevron" aria-hidden="true">›</span>';
           tr.setAttribute('role', 'button');
           tr.tabIndex = 0;
-          tr.setAttribute('aria-label', row.name + ', rank ' + rank + ', ' + row.score + ' out of ' + row.total + '. View details.');
+          tr.setAttribute('aria-label', rowName + ', rank ' + rank + ', ' + row.score + ' out of ' + row.total + '. View details.');
           tr.addEventListener('click', function () { openPlayerSheet(row, rank); });
           tr.addEventListener('keydown', function (e) {
             if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openPlayerSheet(row, rank); }
