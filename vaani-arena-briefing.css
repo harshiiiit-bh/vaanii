@@ -46,3 +46,219 @@
 @media(max-width:720px){.vx-briefing{padding:15px;border-radius:18px}.vx-briefing-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.vx-briefing-stat{padding:12px}.vx-briefing-lower{grid-template-columns:1fr}.vx-briefing-deploy{min-height:245px}.vx-briefing-code{margin-left:0}}
 @media(max-width:380px){.vx-briefing-stat{grid-template-columns:26px 1fr;column-gap:7px}.vx-briefing-stat-icon{width:26px;height:26px}.vx-briefing-title{font-size:1.7rem}}
 @media(prefers-reduced-motion:reduce){.vx-briefing-start span{transition:none}}
+
+
+
+/* ============================================================
+   ARENA CHAMPIONSHIP BOARD — immersive standings redesign
+   Self-contained vector artwork keeps the hero crisp/offline-safe.
+   ============================================================ */
+#view-games .vx-championship{
+  position:relative;isolation:isolate;overflow:hidden;
+  margin:clamp(18px,3vw,30px) 0 20px;padding:clamp(14px,2.5vw,28px);
+  border:1px solid rgba(196,158,69,.32);border-radius:26px;
+  background:
+    radial-gradient(ellipse at 83% 8%,rgba(44,178,209,.14),transparent 34%),
+    radial-gradient(ellipse at 9% 94%,rgba(191,144,51,.12),transparent 35%),
+    linear-gradient(145deg,#081421 0%,#0d1d2d 49%,#101b2a 100%);
+  box-shadow:0 22px 55px rgba(5,13,23,.17),inset 0 1px 0 rgba(255,255,255,.07);
+  color:#f5f7fb;
+}
+#view-games .vx-championship::before,
+#view-games .vx-championship::after{
+  content:"";position:absolute;z-index:-1;pointer-events:none;border-radius:50%;
+}
+#view-games .vx-championship::before{
+  width:340px;height:340px;right:-185px;top:88px;
+  border:1px solid rgba(99,205,226,.12);box-shadow:0 0 0 28px rgba(99,205,226,.025),0 0 0 58px rgba(99,205,226,.018);
+}
+#view-games .vx-championship::after{
+  width:220px;height:220px;left:-148px;bottom:-120px;
+  border:1px solid rgba(223,184,94,.12);box-shadow:0 0 0 25px rgba(223,184,94,.025);
+}
+#view-games .vx-championship-hero{
+  position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(190px,34%);
+  align-items:center;gap:12px;min-height:190px;padding:clamp(12px,2vw,22px) clamp(4px,1vw,12px) 22px;
+  border-bottom:1px solid rgba(206,222,238,.12);
+}
+#view-games .vx-championship-hero-copy{min-width:0;position:relative;z-index:1}
+#view-games .vx-championship-kicker{
+  display:inline-flex;align-items:center;gap:9px;color:#e0bd66;
+  font:800 .65rem/1.3 var(--vx-font-mono);letter-spacing:.19em;text-transform:uppercase;
+}
+#view-games .vx-championship-kicker i{width:7px;height:7px;display:inline-block;border-radius:50%;background:#66d6e8;box-shadow:0 0 0 4px rgba(102,214,232,.12),0 0 12px rgba(102,214,232,.55)}
+#view-games .vx-championship-hero h3{
+  max-width:620px;margin:11px 0 8px;color:#f6f7fb;
+  font-family:var(--vx-font-display);font-size:clamp(1.7rem,3.5vw,3rem);
+  font-weight:900;line-height:1.02;letter-spacing:-.035em;
+}
+#view-games .vx-championship-hero p{max-width:44ch;margin:0;color:#aab9ca;font-size:clamp(.78rem,1.4vw,.94rem);line-height:1.6}
+#view-games .vx-championship-status{
+  display:inline-flex;align-items:center;gap:8px;margin-top:18px;padding:7px 11px;
+  border:1px solid rgba(255,255,255,.13);border-radius:999px;
+  background:rgba(255,255,255,.055);color:#b9c8d7;
+  font:700 .61rem/1.2 var(--vx-font-mono);letter-spacing:.12em;
+}
+#view-games .vx-championship-status.is-live{color:#9df1cd;border-color:rgba(90,222,164,.28);background:rgba(30,155,106,.12)}
+#view-games .vx-championship-status-dot{width:6px;height:6px;border-radius:50%;background:#e4b94f;box-shadow:0 0 10px currentColor}
+#view-games .vx-championship-status.is-live .vx-championship-status-dot{background:#5ce0a4}
+#view-games .vx-championship-art{position:relative;justify-self:stretch;display:grid;place-items:center;min-width:0;min-height:174px}
+#view-games .vx-championship-art::before{content:"";position:absolute;width:74%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(226,180,69,.17),rgba(43,163,194,.055) 48%,transparent 72%);filter:blur(4px)}
+#view-games .vx-championship-svg{position:relative;display:block;width:min(100%,310px);height:auto;overflow:visible;filter:drop-shadow(0 14px 19px rgba(0,0,0,.32))}
+#view-games .vx-championship-cup-float{transform-origin:220px 140px;animation:vx-championship-float 6s ease-in-out infinite}
+#view-games .vx-championship-particles{animation:vx-championship-glow 4.2s ease-in-out infinite alternate}
+@keyframes vx-championship-float{0%,100%{transform:translate3d(0,0,0) rotate(-1deg)}50%{transform:translate3d(0,-6px,0) rotate(1deg)}}
+@keyframes vx-championship-glow{from{opacity:.45}to{opacity:1}}
+#view-games .vx-championship-metrics{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:16px 0 18px;
+}
+#view-games .vx-championship-metric{
+  min-width:0;min-height:88px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:5px;
+  padding:13px 15px;border:1px solid rgba(196,213,231,.14);border-radius:15px;
+  background:linear-gradient(140deg,rgba(255,255,255,.075),rgba(255,255,255,.028));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.035);
+}
+#view-games .vx-championship-metric span{color:#91a7bb;font:700 .61rem/1.3 var(--vx-font-mono);letter-spacing:.12em;text-transform:uppercase}
+#view-games .vx-championship-metric strong{max-width:100%;overflow:hidden;text-overflow:ellipsis;color:#f8fafc;font-family:var(--vx-font-display);font-size:clamp(1.12rem,2.2vw,1.65rem);font-weight:850;line-height:1.05;font-variant-numeric:tabular-nums}
+#view-games .vx-championship-metric small{color:#8195a9;font-size:.67rem;line-height:1.35}
+#view-games .vx-championship-metric.metric-2 strong{color:#f0ca69}
+#view-games .vx-championship-metric.metric-3 strong{color:#8ee3ec}
+#view-games .vx-championship-toolbar{display:grid;grid-template-columns:minmax(180px,1fr) auto auto;align-items:center;gap:9px;margin:0 0 20px}
+#view-games .vx-championship-search{
+  min-height:42px;padding:10px 14px;border:1px solid rgba(195,212,228,.17);border-radius:12px;
+  background:rgba(2,10,19,.3);color:#f4f7fb;font-size:.8rem;
+  box-shadow:inset 0 1px 5px rgba(0,0,0,.14);
+}
+#view-games .vx-championship-search::placeholder{color:#8295a9}
+#view-games .vx-championship-search:focus{border-color:#70d4e4;outline:2px solid rgba(112,212,228,.25);outline-offset:1px}
+#view-games .vx-championship-filters{gap:6px;flex-wrap:nowrap}
+#view-games .vx-championship-filter{
+  padding:9px 12px;border:1px solid rgba(195,212,228,.16);background:rgba(255,255,255,.045);
+  color:#aebdcd;font-size:.68rem;white-space:nowrap;
+}
+#view-games .vx-championship-filter[aria-pressed="true"]{
+  border-color:rgba(230,190,83,.75);background:linear-gradient(135deg,#f0ca70,#c89432);
+  color:#17202b;box-shadow:0 5px 16px rgba(202,153,55,.19);
+}
+#view-games .vx-championship-filter:focus-visible,#view-games .vx-championship-refresh:focus-visible{outline:2px solid #81deeb;outline-offset:3px}
+#view-games .vx-championship-refresh{
+  min-height:40px;padding:9px 13px;border:1px solid rgba(196,213,231,.18);border-radius:12px;
+  background:rgba(255,255,255,.045);color:#dce6f0;font-size:.72rem;font-weight:750;
+}
+#view-games .vx-championship-refresh:hover:not(:disabled){border-color:rgba(117,214,231,.6);background:rgba(73,181,204,.11)}
+#view-games .vx-championship-section-head,#view-games .vx-championship-list-head{
+  display:flex;align-items:flex-end;justify-content:space-between;gap:10px;
+}
+#view-games .vx-championship-section-head{margin:0 0 12px}
+#view-games .vx-championship-section-head>div{min-width:0}
+#view-games .vx-championship-section-head>div>span{
+  display:block;color:#e3bd65;font:800 .62rem/1.3 var(--vx-font-mono);letter-spacing:.18em;
+}
+#view-games .vx-championship-section-head p{margin:4px 0 0;color:#8196aa;font-size:.76rem;line-height:1.45}
+#view-games .vx-championship-count{color:#9aabbd;font:600 .68rem var(--vx-font-mono);white-space:nowrap}
+#view-games .vx-championship-podium{
+  grid-template-columns:repeat(3,minmax(0,1fr));grid-template-areas:"second first third";
+  align-items:end;gap:10px;margin:0 0 23px;
+}
+#view-games .vx-championship-podium-card{
+  position:relative;isolation:isolate;overflow:hidden;min-width:0;min-height:145px;
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:5px;
+  padding:14px 9px 16px;border:1px solid rgba(197,215,233,.18);border-radius:17px;
+  background:linear-gradient(150deg,rgba(35,58,80,.96),rgba(18,34,51,.98));
+  color:#f3f7fa;box-shadow:0 9px 22px rgba(0,0,0,.14),inset 0 1px 0 rgba(255,255,255,.07);
+  transform:translateZ(0);
+}
+#view-games .vx-championship-podium-card::before{content:"";position:absolute;z-index:-1;inset:0;background:radial-gradient(ellipse at 50% 0,rgba(105,195,216,.12),transparent 68%);pointer-events:none}
+#view-games .vx-championship-podium-card::after{content:"";position:absolute;left:13%;right:13%;bottom:0;height:4px;border-radius:4px 4px 0 0;background:linear-gradient(90deg,transparent,#8ca3ba,transparent);opacity:.58}
+#view-games .vx-championship-podium-card.rank-1{grid-area:first;min-height:184px;border-color:rgba(233,190,83,.62);background:linear-gradient(155deg,rgba(91,68,30,.68),rgba(25,39,53,.99) 68%);box-shadow:0 12px 28px rgba(0,0,0,.23),0 0 24px rgba(214,169,57,.09),inset 0 1px 0 rgba(255,244,203,.13)}
+#view-games .vx-championship-podium-card.rank-1::before{background:radial-gradient(ellipse at 50% 4%,rgba(243,194,75,.22),transparent 68%)}
+#view-games .vx-championship-podium-card.rank-2{grid-area:second}
+#view-games .vx-championship-podium-card.rank-3{grid-area:third}
+#view-games .vx-championship-podium-card:hover{transform:translateY(-4px);border-color:rgba(124,215,230,.65);box-shadow:0 14px 28px rgba(0,0,0,.26)}
+#view-games .vx-championship-podium-card:focus-visible{outline:2px solid #84ddeb;outline-offset:3px}
+#view-games .vx-championship-podium-card .vx-podium-medal{font-size:1.15rem;line-height:1}
+#view-games .vx-championship-podium-card.rank-1 .vx-podium-medal{font-size:1.45rem}
+#view-games .vx-championship-podium-card .vx-podium-rank{color:#93a8ba;font-size:.58rem;letter-spacing:.13em}
+#view-games .vx-championship-podium-card.rank-1 .vx-podium-rank{color:#f0cb70}
+#view-games .vx-championship-podium-avatar{
+  display:grid;place-items:center;width:31px;height:31px;border:1px solid rgba(200,219,236,.28);border-radius:50%;
+  background:linear-gradient(145deg,#45617b,#1a2a3b);color:#e7f3fb;font:800 .78rem var(--vx-font-display);
+  box-shadow:0 4px 11px rgba(0,0,0,.23);
+}
+#view-games .vx-championship-podium-card.rank-1 .vx-championship-podium-avatar{width:40px;height:40px;border-color:rgba(238,198,99,.7);background:linear-gradient(145deg,#f1cf77,#9a692a);color:#182333;font-size:.95rem}
+#view-games .vx-championship-podium-card .vx-podium-name{max-width:100%;color:#f0f4f8;font-size:.79rem;font-weight:800}
+#view-games .vx-championship-podium-card.rank-1 .vx-podium-name{color:#ffdf91;font-size:.9rem}
+#view-games .vx-championship-podium-card .vx-podium-score{color:#c2d0dd;font-size:.71rem}
+#view-games .vx-championship-podium-time{color:#8094a8;font:600 .55rem/1.3 var(--vx-font-mono);letter-spacing:.08em}
+#view-games .vx-championship-list-head{margin:2px 2px 7px;color:#8fa3b7;font:700 .58rem/1.3 var(--vx-font-mono);letter-spacing:.13em;text-transform:uppercase}
+#view-games .vx-championship-list-head span:first-child{flex:1}
+#view-games .vx-championship-list-head span:nth-child(2){width:88px;text-align:right}
+#view-games .vx-championship-list-head span:nth-child(3){width:72px;text-align:right}
+#view-games .vx-championship-board{display:grid;gap:7px;overflow:visible;border:0;border-radius:0;background:transparent}
+#view-games .vx-championship-board .vx-championship-row{
+  grid-template-columns:42px minmax(0,1fr) 88px 72px 14px;gap:10px;
+  min-width:0;padding:11px 13px;border:1px solid rgba(193,212,230,.11);border-radius:13px;
+  background:linear-gradient(110deg,rgba(255,255,255,.065),rgba(255,255,255,.025));
+  color:#e9eff5;box-shadow:inset 0 1px 0 rgba(255,255,255,.025);
+  transition:transform .16s ease,border-color .16s ease,background .16s ease;
+}
+#view-games .vx-championship-board .vx-championship-row:last-child{border-bottom:1px solid rgba(193,212,230,.11)}
+#view-games .vx-championship-board .vx-championship-row:hover{transform:translateX(2px);border-color:rgba(120,213,230,.4);background:rgba(67,158,182,.12)}
+#view-games .vx-championship-board .vx-championship-row.is-you{border-color:rgba(230,190,83,.43);background:linear-gradient(100deg,rgba(207,163,65,.16),rgba(255,255,255,.035))}
+#view-games .vx-championship-board .vx-rank{display:grid;place-items:center}
+#view-games .vx-championship-rank-pill{display:grid;place-items:center;width:29px;height:29px;border:1px solid rgba(185,204,221,.17);border-radius:9px;background:rgba(0,0,0,.16);color:#a9bacb;font:800 .69rem var(--vx-font-mono)}
+#view-games .vx-championship-row.is-podium .vx-championship-rank-pill{border-color:rgba(222,181,74,.35);background:rgba(222,181,74,.1);color:#edc66d}
+#view-games .vx-championship-player{display:flex;align-items:center;gap:10px;min-width:0}
+#view-games .vx-championship-avatar{display:grid;place-items:center;flex:none;width:33px;height:33px;border:1px solid rgba(178,202,224,.24);border-radius:11px;background:linear-gradient(145deg,#405c75,#1b2b3e);color:#e7f4fa;font:800 .75rem var(--vx-font-display)}
+#view-games .vx-championship-player-copy{display:flex;flex-direction:column;gap:2px;min-width:0}
+#view-games .vx-championship-player-copy .vx-player-name{color:#e8eff6;font-size:.78rem;font-weight:750;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#view-games .vx-championship-player-label{color:#7d94aa;font:600 .52rem var(--vx-font-mono);letter-spacing:.12em}
+#view-games .vx-championship-you{color:#edca73;font:800 .52rem var(--vx-font-mono);letter-spacing:.1em}
+#view-games .vx-championship-score{text-align:right;min-width:0}
+#view-games .vx-championship-score .vx-score{color:#e9c569;font:800 .84rem var(--vx-font-display);white-space:nowrap}
+#view-games .vx-championship-score .vx-score small{color:#8195a9;font-size:.63rem;font-weight:600}
+#view-games .vx-championship-time{display:flex;flex-direction:column;align-items:flex-end;gap:2px}
+#view-games .vx-championship-time small{color:#71869a;font:700 .5rem var(--vx-font-mono);letter-spacing:.1em}
+#view-games .vx-championship-time strong{color:#afc0ce;font:600 .68rem var(--vx-font-mono);font-variant-numeric:tabular-nums}
+#view-games .vx-championship-row .vx-row-chevron{color:#748aa0;font-size:1.3rem}
+#view-games .vx-championship-statusline{margin:10px 2px 0;color:#8094a8;font:600 .61rem var(--vx-font-mono);letter-spacing:.04em}
+#view-games .vx-championship-board .vx-empty{padding:32px 18px;border:1px dashed rgba(177,199,219,.2);border-radius:14px;background:rgba(255,255,255,.025);color:#a5b4c3;font-size:.8rem}
+
+@media(max-width:760px){
+  #view-games .vx-championship{padding:13px;border-radius:21px}
+  #view-games .vx-championship-hero{grid-template-columns:minmax(0,1fr) minmax(116px,31%);gap:4px;min-height:154px;padding:10px 2px 16px}
+  #view-games .vx-championship-hero h3{font-size:clamp(1.35rem,5vw,2rem)}
+  #view-games .vx-championship-art{min-height:132px}
+  #view-games .vx-championship-toolbar{grid-template-columns:minmax(0,1fr) auto;gap:8px}
+  #view-games .vx-championship-search{grid-column:1/-1}
+  #view-games .vx-championship-filters{grid-column:1;grid-row:2;flex-wrap:wrap}
+  #view-games .vx-championship-refresh{grid-column:2;grid-row:2}
+  #view-games .vx-championship-metrics{gap:7px}
+  #view-games .vx-championship-metric{min-height:77px;padding:10px}
+  #view-games .vx-championship-metric small{font-size:.59rem}
+  #view-games .vx-championship-podium{gap:7px;margin-bottom:19px}
+  #view-games .vx-championship-podium-card{min-height:132px;padding:10px 5px 12px}
+  #view-games .vx-championship-podium-card.rank-1{min-height:158px}
+  #view-games .vx-championship-board .vx-championship-row{grid-template-columns:34px minmax(0,1fr) 72px 14px;gap:7px;padding:10px 8px}
+  #view-games .vx-championship-time{display:none}
+  #view-games .vx-championship-list-head span:nth-child(3){display:none}
+  #view-games .vx-championship-list-head span:nth-child(2){width:72px}
+}
+@media(max-width:380px){
+  #view-games .vx-championship{padding:10px}
+  #view-games .vx-championship-hero{grid-template-columns:minmax(0,1fr) 98px;min-height:132px}
+  #view-games .vx-championship-art{min-height:112px}
+  #view-games .vx-championship-kicker{font-size:.53rem;letter-spacing:.12em}
+  #view-games .vx-championship-metrics{gap:5px}
+  #view-games .vx-championship-metric{padding:9px 7px}
+  #view-games .vx-championship-podium{gap:5px}
+  #view-games .vx-championship-podium-card{padding:9px 3px 11px}
+  #view-games .vx-championship-podium-card .vx-podium-name{font-size:.68rem}
+  #view-games .vx-championship-podium-card .vx-podium-score{font-size:.63rem}
+  #view-games .vx-championship-podium-time{font-size:.48rem}
+}
+@media(prefers-reduced-motion:reduce){
+  #view-games .vx-championship-cup-float,#view-games .vx-championship-particles{animation:none!important}
+  #view-games .vx-championship-podium-card,#view-games .vx-championship-board .vx-championship-row{transition:none!important}
+  #view-games .vx-championship-podium-card:hover,#view-games .vx-championship-board .vx-championship-row:hover{transform:none}
+}
