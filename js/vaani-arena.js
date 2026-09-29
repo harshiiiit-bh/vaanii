@@ -1311,7 +1311,7 @@
           '<ellipse cx="235" cy="141" rx="184" ry="57" transform="rotate(-13 235 141)"/>' +
           '<ellipse cx="235" cy="141" rx="150" ry="43" transform="rotate(19 235 141)" stroke-dasharray="3 8"/>' +
         '</g>' +
-        '<g fill="#d7f5ff" opacity=".9"><path d="M seventy 0" opacity="0"/><path d="M88 67l2.5 7.5L98 77l-7.5 2.5L88 87l-2.5-7.5L78 77l7.5-2.5z"/><path d="M353 56l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/><circle cx="333" cy="191" r="2"/><circle cx="115" cy="194" r="1.8"/></g>' +
+        '<g fill="#d7f5ff" opacity=".9"><path d="M88 67l2.5 7.5L98 77l-7.5 2.5L88 87l-2.5-7.5L78 77l7.5-2.5z"/><path d="M353 56l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/><circle cx="333" cy="191" r="2"/><circle cx="115" cy="194" r="1.8"/></g>' +
         '<g class="vx-championship-cup-float">' +
           '<path d="M174 57h-27c0 29 13 48 39 54M266 57h27c0 29-13 48-39 54" fill="none" stroke="#c99534" stroke-width="13" stroke-linecap="round"/>' +
           '<path d="M147 57h-10c0 35 16 57 46 63" fill="none" stroke="#ffe69a" stroke-opacity=".75" stroke-width="4" stroke-linecap="round"/>' +
@@ -1425,13 +1425,17 @@
       podium.hidden = podiumEntries.length === 0;
       podiumEntries.forEach(function (entry) {
         var medals = { 1: '🥇', 2: '🥈', 3: '🥉' };
-        var card = el('button', 'vx-podium-card rank-' + entry.rank);
+        var podiumName = String(entry.row.name || 'Cadet');
+        var initials = podiumName.trim().slice(0, 1).toUpperCase() || 'C';
+        var card = el('button', 'vx-podium-card vx-championship-podium-card rank-' + entry.rank);
         card.type = 'button';
         card.innerHTML =
           '<span class="vx-podium-medal" aria-hidden="true">' + medals[entry.rank] + '</span>' +
-          '<span class="vx-podium-rank">#' + entry.rank + '</span>' +
-          '<strong class="vx-podium-name">' + esc(entry.row.name || 'Cadet') + '</strong>' +
-          '<span class="vx-podium-score">' + esc(String(entry.row.score)) + ' / ' + esc(String(entry.row.total)) + '</span>';
+          '<span class="vx-podium-rank">RANK ' + entry.rank + '</span>' +
+          '<span class="vx-championship-podium-avatar">' + esc(initials) + '</span>' +
+          '<strong class="vx-podium-name">' + esc(podiumName) + '</strong>' +
+          '<span class="vx-podium-score">' + esc(String(entry.row.score)) + ' / ' + esc(String(entry.row.total)) + '</span>' +
+          '<span class="vx-championship-podium-time">' + esc(fmtClock(entry.row.seconds)) + ' · FINISH</span>';
         card.setAttribute('aria-label', (entry.row.name || 'Cadet') + ', rank ' + entry.rank + '. View details.');
         card.addEventListener('click', function () { openPlayerSheet(entry.row, entry.rank); });
         podium.appendChild(card);
@@ -1446,16 +1450,22 @@
       } else {
         visible.forEach(function (entry) {
           var row = entry.row, rank = entry.rank;
-          var tr = el('div', 'vx-row vx-row-tap' + (row.pid === playerId() ? ' is-you' : '') + (rank <= 3 ? ' is-podium' : ''));
+          var rowName = String(row.name || 'Cadet');
+          var rowInitial = rowName.trim().slice(0, 1).toUpperCase() || 'C';
+          var tr = el('div', 'vx-row vx-row-tap vx-championship-row' + (row.pid === playerId() ? ' is-you' : '') + (rank <= 3 ? ' is-podium' : ''));
           tr.innerHTML =
-            '<span class="vx-rank">' + rank + '</span>' +
-            '<span class="vx-player-name">' + esc(row.name || 'Cadet') + (row.pid === playerId() ? ' <span class="vx-time">you</span>' : '') + '</span>' +
-            '<span class="vx-score">' + esc(String(row.score)) + '/' + esc(String(row.total)) + '</span>' +
-            '<span class="vx-time">' + esc(fmtClock(row.seconds)) + '</span>' +
-            '<span class="vx-row-chevron" aria-hidden="true">&rsaquo;</span>';
+            '<span class="vx-rank"><span class="vx-championship-rank-pill">' + rank + '</span></span>' +
+            '<span class="vx-championship-player">' +
+              '<span class="vx-championship-avatar" aria-hidden="true">' + esc(rowInitial) + '</span>' +
+              '<span class="vx-championship-player-copy"><strong class="vx-player-name">' + esc(rowName) + '</strong>' +
+              (row.pid === playerId() ? '<small class="vx-championship-you">YOUR RESULT</small>' : '<small class="vx-championship-player-label">CADET</small>') +
+              '</span></span>' +
+            '<span class="vx-championship-score"><strong class="vx-score">' + esc(String(row.score)) + '<small> / ' + esc(String(row.total)) + '</small></strong></span>' +
+            '<span class="vx-time vx-championship-time"><small>TIME</small><strong>' + esc(fmtClock(row.seconds)) + '</strong></span>' +
+            '<span class="vx-row-chevron" aria-hidden="true">›</span>';
           tr.setAttribute('role', 'button');
           tr.tabIndex = 0;
-          tr.setAttribute('aria-label', row.name + ', rank ' + rank + ', ' + row.score + ' out of ' + row.total + '. View details.');
+          tr.setAttribute('aria-label', rowName + ', rank ' + rank + ', ' + row.score + ' out of ' + row.total + '. View details.');
           tr.addEventListener('click', function () { openPlayerSheet(row, rank); });
           tr.addEventListener('keydown', function (e) {
             if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openPlayerSheet(row, rank); }
