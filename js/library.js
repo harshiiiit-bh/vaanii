@@ -142,15 +142,28 @@ function getSessionCode(){ try{ return localStorage.getItem('vbv_session_code');
 function clearSessionCode(){ try{ localStorage.removeItem('vbv_session_code'); }catch(e){} }
 
 function applyLoadedAccount(code, parsed){
+  const isRecord=value=>!!value&&typeof value==='object'&&!Array.isArray(value);
+  const account=isRecord(parsed)?parsed:{};
+  const vaaniPart=isRecord(account.vaani)?account.vaani:{};
+  const vbvPart=isRecord(account.vbv)?account.vbv:{};
+  if(typeof resetStateForAccount==='function') resetStateForAccount();
   ACTIVE_CODE = code;
-  const vaaniPart = (parsed && parsed.vaani) || {};
-  const vbvPart = (parsed && parsed.vbv) || {};
   if(typeof State !== 'undefined') Object.assign(State, vaaniPart);
-  DATA = Object.assign({}, DEFAULT_DATA, vbvPart);
-  DATA.goal = Object.assign({}, DEFAULT_DATA.goal, vbvPart.goal||{});
-  DATA.levels = Object.assign({}, DEFAULT_DATA.levels, vbvPart.levels||{});
-  DATA.levels.viewed = Object.assign({basic:{vocab:[],grammar:[]},intermediate:{vocab:[],grammar:[]},advanced:{vocab:[],grammar:[]}}, DATA.levels.viewed||{});
-  DATA.levels.quizScores = Object.assign({basic:null,intermediate:null,advanced:null}, DATA.levels.quizScores||{});
+  if(typeof normalizeState==='function') normalizeState();
+  // Clone defaults per account: a shallow Object.assign would share mutable
+  // arrays (books, vocab, achievements, quiz history) between new profiles.
+  const cleanDefaults = JSON.parse(JSON.stringify(DEFAULT_DATA));
+  DATA = Object.assign(cleanDefaults, vbvPart);
+  DATA.goal = Object.assign({}, cleanDefaults.goal, isRecord(vbvPart.goal)?vbvPart.goal:{});
+  DATA.levels = Object.assign({}, cleanDefaults.levels, isRecord(vbvPart.levels)?vbvPart.levels:{});
+  DATA.levels.viewed = Object.assign(
+    JSON.parse(JSON.stringify(cleanDefaults.levels.viewed)),
+    isRecord(DATA.levels.viewed)?DATA.levels.viewed:{}
+  );
+  DATA.levels.quizScores = Object.assign(
+    {}, cleanDefaults.levels.quizScores,
+    isRecord(DATA.levels.quizScores)?DATA.levels.quizScores:{}
+  );
   if(!DATA.createdAt) DATA.createdAt = new Date().toISOString();
   dataLoaded = true;
 }
@@ -165,38 +178,65 @@ async function loginWithCode(rawCode){
   if(code.length !== 6) return { ok:false, msg:'Enter all 6 digits.' };
   try{
     const res = await Store.get(accountKey(code), true);
-    if(res && res.value){
-      applyLoadedAccount(code, JSON.parse(res.value));
+    if(res && typeof res.value==='string' && res.value){
+      const parsed=JSON.parse(res.value);
+      if(!parsed||typeof parsed!=='object'||Array.isArray(parsed)) throw new Error('Invalid account record');
+      applyLoadedAccount(code, parsed);
       setSessionCode(code);
+      try{ localStorage.setItem('vaani_account_migration_v1','done'); }catch(e){}
       return { ok:true };
     }
-  }catch(e){ /* not found */ }
-  return { ok:false, msg:'No account found with that code. Check the digits, or create a new one.' };
+  }catch(e){ /* missing, unreadable, or malformed account */ }
+  return { ok:false, msg:'No usable account was found with that code. Check the digits, or create a new one.' };
 }
 function generateCode(){ return String(Math.floor(100000 + Math.random()*900000)); }
 async function pickFreeCode(){
   for(let i=0;i<6;i++){
     const code = generateCode();
     try{ await Store.get(accountKey(code), true); }
-    catch(e){ return code; }
+    catch(e){
+      if(e&&e.notFound===true) return code;
+      if(/not found|does not exist|missing/i.test(String(e&&e.message||''))) return code;
+      throw e;
+    }
   }
-  return generateCode();
+  throw new Error('Could not find an unused account code. Please try again.');
 }
 async function createNewAccount(){
   const code = await pickFreeCode();
   applyLoadedAccount(code, {});
-  await saveData();
+  if(!await saveData()) throw new Error('Could not save the new account. Please try again.');
   setSessionCode(code);
+  try{ localStorage.setItem('vaani_account_migration_v1','done'); }catch(e){}
   return code;
 }
 async function tryMigrateLegacyData(){
+  // The old single-profile Vaani cache is migratable only before any local
+  // account has been created. Otherwise it may be stale data from a prior user.
   try{
-    const res = await Store.get(LEGACY_DATA_KEY, false);
-    if(res && res.value){
+    const hasLocalAccount=Object.keys(localStorage).some(key=>key.startsWith('vbv_veer_bhogya_account_'));
+    const migrationDone=localStorage.getItem('vaani_account_migration_v1')==='done';
+    if(hasLocalAccount||migrationDone) return null;
+    let legacyVaani={};
+    const rawVaani=localStorage.getItem('vaani_state');
+    if(rawVaani){
+      const parsedVaani=JSON.parse(rawVaani);
+      if(parsedVaani&&typeof parsedVaani==='object'&&!Array.isArray(parsedVaani)) legacyVaani=parsedVaani;
+    }
+    let legacyVbv={};
+    try{
+      const res=await Store.get(LEGACY_DATA_KEY,false);
+      if(res&&res.value){
+        const parsedVbv=JSON.parse(res.value);
+        if(parsedVbv&&typeof parsedVbv==='object'&&!Array.isArray(parsedVbv)) legacyVbv=parsedVbv;
+      }
+    }catch(e){}
+    if(Object.keys(legacyVaani).length||Object.keys(legacyVbv).length){
       const code = await pickFreeCode();
-      applyLoadedAccount(code, { vaani:{}, vbv: JSON.parse(res.value) });
-      await saveData();
+      applyLoadedAccount(code, { vaani:legacyVaani, vbv:legacyVbv });
+      if(!await saveData()) return null;
       setSessionCode(code);
+      localStorage.setItem('vaani_account_migration_v1','done');
       return code;
     }
   }catch(e){ /* no legacy data — nothing to migrate */ }

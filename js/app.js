@@ -37,13 +37,17 @@ document.addEventListener('mousemove',(e)=>{
 /* ============================================================
    STATE
 =============================================================*/
-const State = {
-  name:'Cadet', xp:0, streak:0, lastActive:null,
-  completedTopics:{}, quizScores:{}, vocabLearned:{}, theme:'light', missions:{},
-  dailyActivity:{}, focusSessions:{}, mysteryBoxesClaimed:0, reviewQueue:[],
-  personalBests:{ bestCombo:0, longestStreak:0, highestQuizScore:0, fastestQuizSeconds:null, fastestQuizLabel:'', totalQuizzesTaken:0 },
-  pyqStats:{ attempts:{} }
-};
+function createDefaultState(){
+  return {
+    name:'Cadet', xp:0, streak:0, lastActive:null,
+    completedTopics:{}, quizScores:{}, vocabLearned:{}, theme:'light', missions:{},
+    dailyActivity:{}, focusSessions:{}, mysteryBoxesClaimed:0, reviewQueue:[],
+    personalBests:{ bestCombo:0, longestStreak:0, highestQuizScore:0, fastestQuizSeconds:null, fastestQuizLabel:'', totalQuizzesTaken:0 },
+    pyqStats:{ attempts:{} }, topicProgress:{}, topicLastAttempt:{}, bookmarkedTopics:{}, topicNotes:{},
+    pyqContinue:null, lastSpinDate:null, activity:[]
+  };
+}
+const State = createDefaultState();
 function loadState(){
   try{const s = JSON.parse(localStorage.getItem('vaani_state'));if(s)Object.assign(State,s);}catch(e){}
   normalizeState();
@@ -81,6 +85,10 @@ function saveState(){
   try{if(typeof persistCombinedAccount==='function')persistCombinedAccount();}
   catch(err){console.warn('[VAANI] Account sync could not save progress:',err);}
   return saved;
+}
+function resetStateForAccount(){
+  Object.keys(State).forEach(key=>delete State[key]);
+  Object.assign(State,createDefaultState());
 }
 
 /* ============================================================
@@ -196,9 +204,12 @@ async function initGateSession(){
     showGateStage('showcode');
     return;
   }
+  // No account or legacy profile was restored. Clear the device-wide cache from
+  // memory and never prefill a new profile with the previous user's name.
+  if(typeof resetStateForAccount==='function') resetStateForAccount();
   showGateStage('start');
   const inp = document.getElementById('cadetName');
-  if(inp && State.name && State.name!=='Cadet') inp.value = State.name; // convenience pre-fill only
+  if(inp) inp.value = '';
 }
 async function handleGateLogin(){
   const btn = document.getElementById('gate-login-btn');
@@ -223,9 +234,17 @@ async function handleGateCreate(){
   }
   const btn = document.getElementById('gateBtn');
   btn.disabled = true;
-  const code = await createNewAccount(); // seeds the new account from any State already loaded (see applyLoadedAccount)
-  State.name = v;
-  saveState();
+  let code;
+  try{
+    code = await createNewAccount();
+    State.name = v;
+    saveState();
+  }catch(err){
+    const errEl=document.getElementById('gate-login-error');
+    if(errEl) errEl.textContent='Could not create your account. Please try again.';
+    btn.disabled=false;
+    return;
+  }
   btn.disabled = false;
   document.getElementById('gate-showcode-heading').textContent = 'Your account code — save this somewhere safe';
   document.getElementById('gate-code-display').textContent = code.slice(0,3)+' '+code.slice(3);
@@ -4864,8 +4883,8 @@ addXP = function(n, reason){
 
 /* extend switchView to re-bind magnetic shine layers + scroll-to-top on route change */
 const _origSwitchView = switchView;
-switchView = function(name){
-  _origSwitchView(name);
+switchView = function(name, options){
+  _origSwitchView(name, options);
   setTimeout(initMagnetic, 70);
 };
 

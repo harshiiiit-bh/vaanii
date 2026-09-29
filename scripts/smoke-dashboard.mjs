@@ -46,6 +46,7 @@ async function clickMainView(name) {
 try {
   await page.goto(baseURL, { waitUntil: 'domcontentloaded' });
   await page.waitForSelector('#gate-stage-start', { state: 'visible', timeout: 15000 });
+  await page.evaluate(() => { generateCode=()=> '123456'; });
   await page.locator('#cadetName').fill('VAANI Smoke Cadet');
   await page.locator('#gateBtn').click();
   await page.waitForSelector('#gate-stage-showcode', { state: 'visible', timeout: 15000 });
@@ -69,6 +70,84 @@ try {
   assert.ok(await page.locator('#dashBadgeGrid .badge').count() > 0, 'Dashboard achievements did not render');
   assert.ok(await page.locator('#focusSprintWidget .vd-focus-body').count() > 0, 'Focus Sprint did not render');
   console.log('PASS dashboard: hero, briefing, roadmap, missions, word, heatmap, badges and focus sprint');
+
+  // Account isolation regression: seed account A, logout, create account B in
+  // the same browser, then switch repeatedly and verify each saved profile.
+  const accountA = await page.evaluate(async () => {
+    const code=localStorage.getItem('vbv_session_code');
+    State.xp=321; State.completedTopics={'account-a-topic':true};
+    State.quizScores={'account-a-quiz':87};
+    const vbvSeed={
+      completed:[{id:'account-a-completed',title:'A completed book'}],
+      ongoing:[{id:'account-a-ongoing',title:'A current book',logs:[]}],
+      upcoming:[{id:'account-a-upcoming',title:'A planned book'}],
+      vocab:[{id:'account-a-vocab',word:'A-only'}],
+      achievements:[{id:'account-a-achievement'}],
+      quizHistory:[{id:'account-a-quiz-history',date:'2026-09-29',total:1,correct:1,percent:100,type:'regression',timedOut:false}]
+    };
+    Object.entries(vbvSeed).forEach(([key,rows])=>DATA[key].push(...rows));
+    saveState();
+    await saveData();
+    return code;
+  });
+  assert.match(accountA || '', /^\d{6}$/, 'Initial account code missing');
+  await Promise.all([
+    page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
+    page.evaluate(() => logout())
+  ]);
+  await page.waitForSelector('#gate-stage-start', { state: 'visible', timeout: 15000 });
+  assert.equal(await page.locator('#cadetName').inputValue(), '',
+    'New-account form retained the previous account name after logout');
+  const accountB = await page.evaluate(async () => {
+    generateCode=()=> '654321';
+    return await createNewAccount();
+  });
+  assert.notEqual(accountB, accountA, 'Regression accounts unexpectedly share a code');
+  const cleanB = await page.evaluate(() => ({xp:State.xp,completed:State.completedTopics,scores:State.quizScores,
+    books:Object.fromEntries(['completed','ongoing','upcoming','vocab','achievements','quizHistory'].map(key=>[key,DATA[key].map(item=>item.id)]))}));
+  assert.equal(cleanB.xp, 0, 'New account inherited XP from the prior account');
+  assert.deepEqual(cleanB.completed, {}, 'New account inherited completed topics');
+  assert.deepEqual(cleanB.scores, {}, 'New account inherited quiz scores');
+  for(const [key,id] of Object.entries({completed:'account-a-completed',ongoing:'account-a-ongoing',upcoming:'account-a-upcoming',vocab:'account-a-vocab',achievements:'account-a-achievement',quizHistory:'account-a-quiz-history'})){
+    assert.equal(cleanB.books[key].includes(id), false, 'New account inherited Book Reading '+key);
+  }
+  await page.evaluate(async () => {
+    State.xp=12; State.vocabLearned={'account-b-word':true};
+    await saveData();
+  });
+  const restoredA = await page.evaluate(async code => {
+    const result=await loginWithCode(code);
+    return {result,xp:State.xp,completed:State.completedTopics,scores:State.quizScores,
+      books:Object.fromEntries(['completed','ongoing','upcoming','vocab','achievements','quizHistory'].map(key=>[key,DATA[key].map(item=>item.id)]))};
+  }, accountA);
+  assert.equal(restoredA.result.ok, true, 'Existing account A failed to log in');
+  assert.equal(restoredA.xp, 321, 'Account A XP was not restored');
+  assert.equal(restoredA.completed['account-a-topic'], true, 'Account A topic progress was not restored');
+  assert.equal(restoredA.scores['account-a-quiz'], 87, 'Account A quiz progress was not restored');
+  for(const [key,id] of Object.entries({completed:'account-a-completed',ongoing:'account-a-ongoing',upcoming:'account-a-upcoming',vocab:'account-a-vocab',achievements:'account-a-achievement',quizHistory:'account-a-quiz-history'})){
+    assert.equal(restoredA.books[key].includes(id), true, 'Account A Book Reading '+key+' was not restored');
+  }
+  const restoredB = await page.evaluate(async code => {
+    const result=await loginWithCode(code);
+    return {result,xp:State.xp,completed:State.completedTopics,scores:State.quizScores,vocab:State.vocabLearned,
+      books:Object.fromEntries(['completed','ongoing','upcoming','vocab','achievements','quizHistory'].map(key=>[key,DATA[key].map(item=>item.id)]))};
+  }, accountB);
+  assert.equal(restoredB.result.ok, true, 'Existing account B failed to log in');
+  assert.equal(restoredB.xp, 12, 'Account B XP was not restored');
+  assert.deepEqual(restoredB.completed, {}, 'Switching to account B leaked account A topics');
+  assert.deepEqual(restoredB.scores, {}, 'Switching to account B leaked account A quiz progress');
+  assert.equal(restoredB.vocab['account-b-word'], true, 'Account B vocabulary progress was not restored');
+  for(const [key,id] of Object.entries({completed:'account-a-completed',ongoing:'account-a-ongoing',upcoming:'account-a-upcoming',vocab:'account-a-vocab',achievements:'account-a-achievement',quizHistory:'account-a-quiz-history'})){
+    assert.equal(restoredB.books[key].includes(id), false, 'Switching to account B leaked account A Book Reading '+key);
+  }
+  const rejectedCorrupt = await page.evaluate(async code => {
+    localStorage.setItem('vbv_veer_bhogya_account_111111','[]');
+    return await loginWithCode('111111');
+  });
+  assert.equal(rejectedCorrupt.ok, false, 'Malformed account record was accepted');
+  assert.equal(await page.evaluate(() => State.xp), 12, 'Malformed account login changed the active profile');
+  await page.evaluate(() => finishGateEntry());
+  console.log('PASS account isolation: create, logout, restore, switch and reject malformed records');
 
   // SAFE 3D REGRESSION — every section gets exactly one isolated model.
   const threeDRegistry = await page.evaluate(() => ({
@@ -121,7 +200,9 @@ try {
   const threeDCycleViews = ['dashboard','grammar','compare','vocab','books','pyq','games','leaderboard','profile','notifications'];
   for (let cycle=0; cycle<1009; cycle++) {
     const view=threeDCycleViews[cycle % threeDCycleViews.length];
-    await clickMainView(view);
+    // Keep this rendering stress loop out of the browser's session history.
+    // The dedicated mobile Back journey below tests real history entries.
+    await page.evaluate(viewName => switchView(viewName, {history:false}), view);
     await page.waitForFunction(viewName => {
       const active=document.getElementById('view-'+viewName);
       return !!active?.querySelector(':scope > .vaani-3d-model');
@@ -202,20 +283,41 @@ try {
   assert.ok(await page.locator('#confuseTableBody .cw-card').count() > 0, 'Confused-word section is empty');
   console.log('PASS vocabulary: bank, daily sets, micro-lessons and confused-word cards');
 
-  // Start from Home so the browser-history assertions cover the exact journey
-  // below, rather than inheriting the earlier Vocabulary route from this test.
-  await clickMainView('dashboard');
-  await page.setViewportSize({ width: 390, height: 844 });
+  // Use a fresh tab for browser-history assertions so the 1,009-cycle
+  // rendering stress test above cannot exhaust Chromium's per-tab history cap.
+  // Tabs in this context share localStorage, so the same saved test account loads.
+  const navPage = await context.newPage();
+  navPage.on('pageerror', error => pageErrors.push(error.stack || error.message));
+  navPage.on('console', message => {
+    if (message.type() !== 'error') return;
+    const value = message.text();
+    if (/\[VAANI\].*(render error|uncaught error)/i.test(value) ||
+        /\[VBV\].*(error|failed)/i.test(value)) vaErrors.push(value);
+  });
+  await navPage.setViewportSize({ width: 390, height: 844 });
+  await navPage.goto(baseURL, { waitUntil: 'domcontentloaded' });
+  await navPage.waitForFunction(() => document.getElementById('gate')?.classList.contains('hide'), null, { timeout: 15000 });
+  await navPage.waitForFunction(() => document.getElementById('view-dashboard')?.classList.contains('active'));
 
   // Full mobile bottom-nav back journey: Home → Grammar → Vocab → PYQ → Updates
   // and then Back must walk that exact path without closing the document.
-  await page.waitForTimeout(200);
+  await navPage.evaluate(() => {
+    window.__vaaniTestPopTrace = [];
+    window.addEventListener('popstate', event => {
+      window.__vaaniTestPopTrace.push({
+        eventState:event.state,
+        state:history.state,
+        url:location.href,
+        active:document.querySelector('.view.active')?.id || null
+      });
+    });
+  });
   const mobileNavJourney = ['grammar','vocab','pyq','notifications'];
   for (const view of mobileNavJourney) {
-    await page.locator('#bottomNav button[data-view="' + view + '"]').click();
-    await page.waitForFunction(v => document.getElementById('view-' + v)?.classList.contains('active'), view);
+    await navPage.locator('#bottomNav button[data-view="' + view + '"]').click();
+    await navPage.waitForFunction(v => document.getElementById('view-' + v)?.classList.contains('active'), view);
   }
-  const journeyState = await page.evaluate(() => ({
+  const journeyState = await navPage.evaluate(() => ({
     view: history.state?.vaaniView,
     url: location.href,
     length: history.length
@@ -225,28 +327,44 @@ try {
   assert.ok(journeyState.length >= 5, 'Mobile navigation did not create enough history entries: ' + JSON.stringify(journeyState));
 
   for (const expected of ['pyq','vocab','grammar','dashboard']) {
-    await page.goBack();
-    await page.waitForFunction(v => document.getElementById('view-' + v)?.classList.contains('active'), expected);
-    assert.equal(await page.evaluate(() => history.state?.vaaniView), expected,
+    const beforeBack = await navPage.evaluate(() => ({
+      url:location.href, state:history.state, active:document.querySelector('.view.active')?.id||null, length:history.length
+    }));
+    await navPage.goBack();
+    const afterBack = await navPage.evaluate(() => ({
+      url:location.href, state:history.state, active:document.querySelector('.view.active')?.id||null,
+      length:history.length, popTrace:window.__vaaniTestPopTrace.slice()
+    }));
+    console.log('MOBILE BACK TRACE', JSON.stringify({expected,beforeBack,afterBack}));
+    await navPage.waitForFunction(v => document.getElementById('view-' + v)?.classList.contains('active'), expected, {timeout:10000})
+      .catch(async error => {
+        const actual = await navPage.evaluate(() => ({
+          url:location.href, state:history.state, active:document.querySelector('.view.active')?.id||null,
+          length:history.length, popTrace:window.__vaaniTestPopTrace.slice()
+        }));
+        throw new Error('Browser back expected ' + expected + '; actual=' + JSON.stringify(actual) +
+          '; previous=' + JSON.stringify(afterBack) + '; cause=' + error.message);
+      });
+    assert.equal(await navPage.evaluate(() => history.state?.vaaniView), expected,
       'Browser back did not return to ' + expected);
   }
-  assert.equal(await page.evaluate(() => history.state?.vaaniView), 'dashboard',
+  assert.equal(await navPage.evaluate(() => history.state?.vaaniView), 'dashboard',
     'Final back state is not Dashboard');
   console.log('PASS full mobile back journey: Updates → PYQ → Vocab → Grammar → Home');
 
-  // Re-enter Vocabulary for the remaining vocabulary bridge checks.
-  await page.locator('#vaaniMainNav button[data-view="vocab"]').click();
-  await page.waitForFunction(() => document.getElementById('view-vocab')?.classList.contains('active'));
-
-  await page.locator('#vocabGrid .word-card').first().locator('h3').click();
-  await page.waitForFunction(() => document.getElementById('view-worddetail')?.classList.contains('active'));
-  assert.equal(await page.evaluate(() => history.state?.vaaniView), 'worddetail',
+  // Word-detail browser Back is also exercised in the isolated tab.
+  await navPage.locator('#bottomNav button[data-view="vocab"]').click();
+  await navPage.waitForFunction(() => document.getElementById('view-vocab')?.classList.contains('active'));
+  await navPage.locator('#vocabGrid .word-card').first().locator('h3').click();
+  await navPage.waitForFunction(() => document.getElementById('view-worddetail')?.classList.contains('active'));
+  assert.equal(await navPage.evaluate(() => history.state?.vaaniView), 'worddetail',
     'Word-detail navigation did not create an in-app history state');
-  await page.goBack();
-  await page.waitForFunction(() => document.getElementById('view-vocab')?.classList.contains('active'));
-  assert.equal(await page.evaluate(() => history.state?.vaaniView), 'vocab',
+  await navPage.goBack();
+  await navPage.waitForFunction(() => document.getElementById('view-vocab')?.classList.contains('active'));
+  assert.equal(await navPage.evaluate(() => history.state?.vaaniView), 'vocab',
     'Browser back did not return to Vocabulary from Word Detail');
   console.log('PASS SPA browser back: Vocabulary → Dashboard and Word Detail → Vocabulary');
+  await navPage.close();
 
   const firstWordCard = page.locator('#vocabGrid .word-card').first();
   const capturedWord = (await firstWordCard.locator('h3').textContent() || '').trim();
