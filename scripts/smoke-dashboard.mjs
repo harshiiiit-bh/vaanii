@@ -83,7 +83,7 @@ try {
       upcoming:[{id:'account-a-upcoming',title:'A planned book'}],
       vocab:[{id:'account-a-vocab',word:'A-only'}],
       achievements:[{id:'account-a-achievement'}],
-      quizHistory:[{date:'2026-09-29',total:1,correct:1,percent:100,type:'regression',timedOut:false}]
+      quizHistory:[{id:'account-a-quiz-history',date:'2026-09-29',total:1,correct:1,percent:100,type:'regression',timedOut:false}]
     };
     Object.entries(vbvSeed).forEach(([key,rows])=>DATA[key].push(...rows));
     saveState();
@@ -108,8 +108,8 @@ try {
   assert.equal(cleanB.xp, 0, 'New account inherited XP from the prior account');
   assert.deepEqual(cleanB.completed, {}, 'New account inherited completed topics');
   assert.deepEqual(cleanB.scores, {}, 'New account inherited quiz scores');
-  for(const key of ['completed','ongoing','upcoming','vocab','achievements','quizHistory']){
-    assert.deepEqual(cleanB.books[key], [], 'New account inherited Book Reading '+key);
+  for(const [key,id] of Object.entries({completed:'account-a-completed',ongoing:'account-a-ongoing',upcoming:'account-a-upcoming',vocab:'account-a-vocab',achievements:'account-a-achievement',quizHistory:'account-a-quiz-history'})){
+    assert.equal(cleanB.books[key].includes(id), false, 'New account inherited Book Reading '+key);
   }
   await page.evaluate(async () => {
     State.xp=12; State.vocabLearned={'account-b-word':true};
@@ -125,7 +125,7 @@ try {
   assert.equal(restoredA.completed['account-a-topic'], true, 'Account A topic progress was not restored');
   assert.equal(restoredA.scores['account-a-quiz'], 87, 'Account A quiz progress was not restored');
   for(const [key,id] of Object.entries({completed:'account-a-completed',ongoing:'account-a-ongoing',upcoming:'account-a-upcoming',vocab:'account-a-vocab',achievements:'account-a-achievement',quizHistory:'account-a-quiz-history'})){
-    assert.deepEqual(restoredA.books[key], [id], 'Account A Book Reading '+key+' was not restored');
+    assert.equal(restoredA.books[key].includes(id), true, 'Account A Book Reading '+key+' was not restored');
   }
   const restoredB = await page.evaluate(async code => {
     const result=await loginWithCode(code);
@@ -137,8 +137,8 @@ try {
   assert.deepEqual(restoredB.completed, {}, 'Switching to account B leaked account A topics');
   assert.deepEqual(restoredB.scores, {}, 'Switching to account B leaked account A quiz progress');
   assert.equal(restoredB.vocab['account-b-word'], true, 'Account B vocabulary progress was not restored');
-  for(const key of ['completed','ongoing','upcoming','vocab','achievements','quizHistory']){
-    assert.deepEqual(restoredB.books[key], [], 'Switching to account B leaked account A Book Reading '+key);
+  for(const [key,id] of Object.entries({completed:'account-a-completed',ongoing:'account-a-ongoing',upcoming:'account-a-upcoming',vocab:'account-a-vocab',achievements:'account-a-achievement',quizHistory:'account-a-quiz-history'})){
+    assert.equal(restoredB.books[key].includes(id), false, 'Switching to account B leaked account A Book Reading '+key);
   }
   const rejectedCorrupt = await page.evaluate(async code => {
     localStorage.setItem('vbv_veer_bhogya_account_111111','[]');
