@@ -4883,8 +4883,8 @@ addXP = function(n, reason){
 
 /* extend switchView to re-bind magnetic shine layers + scroll-to-top on route change */
 const _origSwitchView = switchView;
-switchView = function(name){
-  _origSwitchView(name);
+switchView = function(name, options){
+  _origSwitchView(name, options);
   setTimeout(initMagnetic, 70);
 };
 
