@@ -303,7 +303,11 @@ try {
   vm.runInNewContext(readFileSync('data/comparisons-extra.js', 'utf8'), extrasContext, { timeout: 1500 });
   const extras = extrasContext.window.VAANI_COMPARISON_EXTRA;
   if (!Array.isArray(extras) || extras.length !== 72) throw new Error('Expected 72 curated additional comparison pairs.');
-  if (arenaSource.includes('A.supabaseAdapter') || arenaSource.includes('/rest/v1/arena_scores') || pageSource.includes('useSync(VX.arena.supabaseAdapter')) {
+  if (
+    arenaSource.includes('A.supabaseAdapter') ||
+    pageSource.includes('useSync(VX.arena.supabaseAdapter') ||
+    /(?:\.from\(['"]arena_scores['"]\)|\/rest\/v1\/arena_scores)[\s\S]{0,900}(?:\.insert\(|\.upsert\(|\.update\(|\.delete\(|method:\s*['"](?:POST|PUT|PATCH|DELETE)['"])/i.test(arenaSource)
+  ) {
     throw new Error('Arena direct browser score writes are still enabled.');
   }
   if (!arenaSource.includes('var LocalAdapter') || !arenaSource.includes('var live = false') && !arenaSource.includes('live: false')) {
