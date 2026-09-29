@@ -278,7 +278,37 @@
     fetch: function (code) { return Promise.resolve(this.read(code)); }
   };
 
-  A.sync = LocalAdapter;
+  /* Shared historical reads are served by a narrow Edge Function. The
+     browser key is publishable; score submissions remain device-local until
+     a trusted validation endpoint is implemented. */
+  var SHARED_BOARD_ENDPOINT = 'https://pccavdwwhykwyeitxixc.supabase.co/functions/v1/arena-leaderboard';
+  var SHARED_BOARD_API_KEY = 'sb_publishable_VfRmr2xFvu4Iv8sfSJReQQ_qzr5z_MI';
+  var SharedReadAdapter = {
+    name: 'shared-read',
+    live: true,
+    submit: function (code, entry) {
+      return LocalAdapter.submit(code, entry);
+    },
+    fetch: function (code) {
+      if (typeof global.fetch !== 'function') return Promise.reject(new Error('Shared leaderboard fetch is unavailable'));
+      return global.fetch(SHARED_BOARD_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SHARED_BOARD_API_KEY
+        },
+        body: JSON.stringify({ code: code })
+      }).then(function (response) {
+        if (!response.ok) throw new Error('Shared leaderboard returned HTTP ' + response.status);
+        return response.json();
+      }).then(function (payload) {
+        if (!payload || !Array.isArray(payload.rows)) throw new Error('Shared leaderboard response is invalid');
+        return payload.rows;
+      });
+    }
+  };
+
+  A.sync = SharedReadAdapter;
   A.useSync = function (adapter) { A.sync = adapter; };
 
   function rankRows(rows) {
@@ -1156,7 +1186,7 @@
      This fallback is display-only; it does not make a score remotely verified. */
   function reconcileLocalAttempt(rows) {
     var out = Array.isArray(rows) ? rows.slice() : [];
-    if (!A.sync.live && S.match) {
+    if (S.match) {
       var own = S.result || previousAttempt(S.match.code);
       if (own && typeof own.pid === 'string' && own.pid) {
         var index = out.findIndex(function (row) { return row && row.pid === own.pid; });
@@ -1280,10 +1310,10 @@
     heroCopy.innerHTML =
       '<span class="vx-championship-kicker"><i aria-hidden="true"></i> ARENA · FINAL STANDINGS</span>' +
       '<h3>Every second counts.</h3>' +
-      '<p>One match. One result. See how your performance ranks.</p>' +
+      '<p>Prior shared attempts are shown read-only. New submissions stay on this device until secure score validation is available.</p>' +
       '<div class="vx-championship-status ' + (A.sync.live ? 'is-live' : 'is-local') + '">' +
         '<span class="vx-championship-status-dot" aria-hidden="true"></span>' +
-        (A.sync.live ? 'SHARED LIVE' : 'THIS DEVICE · LOCAL BOARD') +
+        (A.sync.live ? 'SHARED READ · HISTORICAL ATTEMPTS' : 'THIS DEVICE · LOCAL BOARD') +
       '</div>';
     championshipHero.appendChild(heroCopy);
 
