@@ -150,11 +150,20 @@ function applyLoadedAccount(code, parsed){
   ACTIVE_CODE = code;
   if(typeof State !== 'undefined') Object.assign(State, vaaniPart);
   if(typeof normalizeState==='function') normalizeState();
-  DATA = Object.assign({}, DEFAULT_DATA, vbvPart);
-  DATA.goal = Object.assign({}, DEFAULT_DATA.goal, vbvPart.goal||{});
-  DATA.levels = Object.assign({}, DEFAULT_DATA.levels, vbvPart.levels||{});
-  DATA.levels.viewed = Object.assign({basic:{vocab:[],grammar:[]},intermediate:{vocab:[],grammar:[]},advanced:{vocab:[],grammar:[]}}, DATA.levels.viewed||{});
-  DATA.levels.quizScores = Object.assign({basic:null,intermediate:null,advanced:null}, DATA.levels.quizScores||{});
+  // Clone defaults per account: a shallow Object.assign would share mutable
+  // arrays (books, vocab, achievements, quiz history) between new profiles.
+  const cleanDefaults = JSON.parse(JSON.stringify(DEFAULT_DATA));
+  DATA = Object.assign(cleanDefaults, vbvPart);
+  DATA.goal = Object.assign({}, cleanDefaults.goal, isRecord(vbvPart.goal)?vbvPart.goal:{});
+  DATA.levels = Object.assign({}, cleanDefaults.levels, isRecord(vbvPart.levels)?vbvPart.levels:{});
+  DATA.levels.viewed = Object.assign(
+    JSON.parse(JSON.stringify(cleanDefaults.levels.viewed)),
+    isRecord(DATA.levels.viewed)?DATA.levels.viewed:{}
+  );
+  DATA.levels.quizScores = Object.assign(
+    {}, cleanDefaults.levels.quizScores,
+    isRecord(DATA.levels.quizScores)?DATA.levels.quizScores:{}
+  );
   if(!DATA.createdAt) DATA.createdAt = new Date().toISOString();
   dataLoaded = true;
 }
