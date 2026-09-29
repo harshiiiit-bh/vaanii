@@ -278,7 +278,37 @@
     fetch: function (code) { return Promise.resolve(this.read(code)); }
   };
 
-  A.sync = LocalAdapter;
+  /* Shared historical reads are served by a narrow Edge Function. The
+     browser key is publishable; score submissions remain device-local until
+     a trusted validation endpoint is implemented. */
+  var SHARED_BOARD_ENDPOINT = 'https://pccavdwwhykwyeitxixc.supabase.co/functions/v1/arena-leaderboard';
+  var SHARED_BOARD_API_KEY = 'sb_publishable_VfRmr2xFvu4Iv8sfSJReQQ_qzr5z_MI';
+  var SharedReadAdapter = {
+    name: 'shared-read',
+    live: true,
+    submit: function (code, entry) {
+      return LocalAdapter.submit(code, entry);
+    },
+    fetch: function (code) {
+      if (typeof global.fetch !== 'function') return Promise.reject(new Error('Shared leaderboard fetch is unavailable'));
+      return global.fetch(SHARED_BOARD_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SHARED_BOARD_API_KEY
+        },
+        body: JSON.stringify({ code: code })
+      }).then(function (response) {
+        if (!response.ok) throw new Error('Shared leaderboard returned HTTP ' + response.status);
+        return response.json();
+      }).then(function (payload) {
+        if (!payload || !Array.isArray(payload.rows)) throw new Error('Shared leaderboard response is invalid');
+        return payload.rows;
+      });
+    }
+  };
+
+  A.sync = SharedReadAdapter;
   A.useSync = function (adapter) { A.sync = adapter; };
 
   function rankRows(rows) {
@@ -1156,7 +1186,7 @@
      This fallback is display-only; it does not make a score remotely verified. */
   function reconcileLocalAttempt(rows) {
     var out = Array.isArray(rows) ? rows.slice() : [];
-    if (!A.sync.live && S.match) {
+    if (S.match) {
       var own = S.result || previousAttempt(S.match.code);
       if (own && typeof own.pid === 'string' && own.pid) {
         var index = out.findIndex(function (row) { return row && row.pid === own.pid; });
@@ -1266,9 +1296,7 @@
       return;
     }
 
-    var entries = S.rows.slice(0, MAX_PLAYERS).map(function (row, i) { return { row: row, rank: i + 1 }; });
-    var myRank = entries.findIndex(function (entry) { return entry.row.pid === playerId(); }) + 1;
-    var topScore = entries.length ? String(entries[0].row.score) + '/' + String(entries[0].row.total) : '—';
+    var entries = [];
 
     /* A new championship-style board: all interaction hooks remain local
        to this result view; the inline artwork is self-contained and offline-safe. */
@@ -1280,11 +1308,27 @@
     heroCopy.innerHTML =
       '<span class="vx-championship-kicker"><i aria-hidden="true"></i> ARENA · FINAL STANDINGS</span>' +
       '<h3>Every second counts.</h3>' +
-      '<p>One match. One result. See how your performance ranks.</p>' +
-      '<div class="vx-championship-status ' + (A.sync.live ? 'is-live' : 'is-local') + '">' +
-        '<span class="vx-championship-status-dot" aria-hidden="true"></span>' +
-        (A.sync.live ? 'SHARED LIVE' : 'THIS DEVICE · LOCAL BOARD') +
-      '</div>';
+      '<p>Prior shared attempts are shown as unverified history. New submissions stay on this device until secure score validation is available.</p>';
+    var championshipStatus = el('div', 'vx-championship-status');
+    var championshipStatusDot = el('span', 'vx-championship-status-dot');
+    championshipStatusDot.setAttribute('aria-hidden', 'true');
+    var championshipStatusText = el('span');
+    championshipStatus.appendChild(championshipStatusDot);
+    championshipStatus.appendChild(championshipStatusText);
+    function updateChampionshipStatus() {
+      if (A.sync.live && !S._boardError) {
+        championshipStatus.className = 'vx-championship-status is-shared';
+        championshipStatusText.textContent = 'SHARED READ · UNVERIFIED HISTORY';
+      } else if (A.sync.live) {
+        championshipStatus.className = 'vx-championship-status is-error';
+        championshipStatusText.textContent = 'SHARED READ OFFLINE · LOCAL FALLBACK';
+      } else {
+        championshipStatus.className = 'vx-championship-status is-local';
+        championshipStatusText.textContent = 'THIS DEVICE · LOCAL BOARD';
+      }
+    }
+    updateChampionshipStatus();
+    heroCopy.appendChild(championshipStatus);
     championshipHero.appendChild(heroCopy);
 
     var heroArt = el('div', 'vx-championship-art');
@@ -1336,15 +1380,6 @@
     championship.appendChild(championshipHero);
 
     var boardSummary = el('div', 'vx-board-summary vx-championship-metrics');
-    [
-      {label:'Attempts',value:String(entries.length),hint:'Recorded on this board'},
-      {label:'Top score',value:topScore,hint:'Current match lead'},
-      {label:'Your position',value:myRank>0?'#'+myRank:'—',hint:myRank>0?'Your standing':'Not ranked yet'}
-    ].forEach(function (item, i) {
-      var card=el('div','vx-board-summary-card vx-championship-metric metric-'+(i+1));
-      card.innerHTML='<span>'+esc(item.label)+'</span><strong>'+esc(item.value)+'</strong><small>'+esc(item.hint)+'</small>';
-      boardSummary.appendChild(card);
-    });
     championship.appendChild(boardSummary);
 
     var toolbar = el('div', 'vx-board-toolbar vx-championship-toolbar');
@@ -1395,7 +1430,7 @@
     championship.appendChild(toolbar);
 
     var podiumHead = el('div','vx-championship-section-head vx-board-heading');
-    podiumHead.innerHTML='<div><span>THE PODIUM</span><p>Standout performances from this match</p></div><span class="vx-championship-count">'+entries.length+' '+(entries.length===1?'attempt':'attempts')+'</span>';
+    podiumHead.innerHTML='<div><span>THE PODIUM</span><p>Standout performances from this match</p></div><span class="vx-championship-count">0 attempts</span>';
     championship.appendChild(podiumHead);
     var podium = el('div', 'vx-podium vx-championship-podium');
     var listHead = el('div','vx-championship-list-head');
@@ -1410,6 +1445,24 @@
     w.appendChild(championship);
 
     function drawBoard() {
+      entries = S.rows.slice(0, MAX_PLAYERS).map(function (row, i) { return { row: row, rank: i + 1 }; });
+      var myRank = entries.findIndex(function (entry) { return entry.row.pid === playerId(); }) + 1;
+      var topScore = entries.length ? String(entries[0].row.score) + '/' + String(entries[0].row.total) : '—';
+      boardSummary.innerHTML = '';
+      [
+        {label:'Attempts',value:String(entries.length),hint:'Recorded on this board'},
+        {label:'Top score',value:topScore,hint:'Current match lead'},
+        {label:'Your position',value:myRank>0?'#'+myRank:'—',hint:myRank>0?'Your standing':'Not ranked yet'}
+      ].forEach(function (item, i) {
+        var card=el('div','vx-board-summary-card vx-championship-metric metric-'+(i+1));
+        card.innerHTML='<span>'+esc(item.label)+'</span><strong>'+esc(item.value)+'</strong><small>'+esc(item.hint)+'</small>';
+        boardSummary.appendChild(card);
+      });
+      var count = podiumHead.querySelector('.vx-championship-count');
+      if (count) count.textContent = entries.length + ' ' + (entries.length === 1 ? 'attempt' : 'attempts');
+      var resultRank = w.querySelector('.vx-result-rank strong');
+      if (resultRank) resultRank.textContent = myRank > 0 ? '#' + myRank : '—';
+      updateChampionshipStatus();
       podium.innerHTML = '';
       board.innerHTML = '';
       var query = String(search.value || '').trim().toLowerCase();
