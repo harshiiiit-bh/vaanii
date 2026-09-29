@@ -10,6 +10,36 @@ const context = await browser.newContext({
   reducedMotion: 'reduce'
 });
 const page = await context.newPage();
+const sharedArenaFixture = Array.from({ length: 12 }, (_, i) => ({
+  code: '',
+  pid: 'legacy-cadet-' + String(i + 1).padStart(2, '0'),
+  name: 'Legacy Cadet ' + String(i + 1).padStart(2, '0'),
+  score: 15 - (i % 6),
+  seconds: 48 + i * 7,
+  total: 15,
+  at: 1790500000000 + i
+}));
+await page.route('https://pccavdwwhykwyeitxixc.supabase.co/functions/v1/arena-leaderboard', async route => {
+  const request = route.request();
+  const cors = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'apikey, content-type, x-client-info',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS'
+  };
+  if (request.method() === 'OPTIONS') {
+    await route.fulfill({ status: 200, headers: cors, body: 'ok' });
+    return;
+  }
+  let requestedCode = '';
+  try { requestedCode = request.postDataJSON()?.code || ''; } catch {}
+  const rows = sharedArenaFixture.map(row => ({ ...row, code: requestedCode }));
+  await route.fulfill({
+    status: 200,
+    headers: cors,
+    contentType: 'application/json',
+    body: JSON.stringify({ rows, verified: false, source: 'historical' })
+  });
+});
 const pageErrors = [];
 const vaErrors = [];
 let academyImageResults = null;
@@ -1108,6 +1138,21 @@ try {
       }
     });
   }
+
+  await page.locator('#view-games .vx-championship-refresh').click();
+  await page.waitForFunction(() =>
+    document.querySelectorAll('#view-games .vx-championship-row').length >= 12
+  , { timeout: 10000 });
+  const sharedBoard = await page.evaluate(() => ({
+    attempts: document.querySelector('#view-games .vx-championship-metric strong')?.textContent,
+    rows: document.querySelectorAll('#view-games .vx-championship-row').length,
+    state: document.querySelector('#view-games .vx-championship-status')?.textContent
+  }));
+  assert.ok(Number(sharedBoard.attempts) >= 12, 'Historical shared attempts did not appear in the board summary');
+  assert.ok(sharedBoard.rows >= 12, 'Historical shared players did not appear in the leaderboard');
+  assert.match(sharedBoard.state || '', /SHARED READ.*UNVERIFIED HISTORY/i,
+    'Shared historical results are not clearly marked as unverified');
+  console.log('PASS Arena shared-read standings: 12 historical players render alongside local result');
 
   await clickMainView('profile');
 
