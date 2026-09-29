@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-09-29T01:00:19.416Z",
+  "generatedAt": "2026-09-29T06:55:46.712Z",
   "source": "VAANI Government & Defence Notification Engine",
   "checkedSources": [
     {
@@ -55,8 +55,8 @@
     },
     {
       "source": "SSC — Official Notice Board",
-      "ok": true,
-      "found": 0
+      "ok": false,
+      "error": "fetch failed"
     },
     {
       "source": "Railway Recruitment Boards — Employment Notices",
@@ -70,18 +70,18 @@
     },
     {
       "source": "SBI — Current Openings",
-      "ok": true,
-      "found": 80
+      "ok": false,
+      "error": "fetch failed"
     },
     {
       "source": "CTET — Official Documents",
-      "ok": true,
-      "found": 6
+      "ok": false,
+      "error": "fetch failed"
     },
     {
       "source": "KVS — Recruitment Notices",
-      "ok": true,
-      "found": 4
+      "ok": false,
+      "error": "fetch failed"
     },
     {
       "source": "BPSC — Official Notices",
@@ -90,8 +90,8 @@
     },
     {
       "source": "UPPSC — Official Notices",
-      "ok": true,
-      "found": 1
+      "ok": false,
+      "error": "fetch failed"
     },
     {
       "source": "ISRO — Current Opportunities",
@@ -100,8 +100,8 @@
     },
     {
       "source": "DRDO — Vacancies",
-      "ok": true,
-      "found": 1
+      "ok": false,
+      "error": "fetch failed"
     },
     {
       "source": "NTA — Official Exam Directory",
@@ -135,8 +135,8 @@
     },
     {
       "source": "UPPRPB — Police Recruitment",
-      "ok": true,
-      "found": 0
+      "ok": false,
+      "error": "fetch failed"
     }
   ],
   "pruneIds": [],
@@ -186,7 +186,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-09-29T01:00:17.591Z",
+      "lastSeen": "2026-09-29T06:55:36.228Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -202,7 +202,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-09-29T01:00:17.591Z",
+      "lastSeen": "2026-09-29T06:55:36.228Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -218,7 +218,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:54:55.687Z",
-      "lastSeen": "2026-09-29T01:00:17.591Z",
+      "lastSeen": "2026-09-29T06:55:36.228Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -234,7 +234,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:54:55.687Z",
-      "lastSeen": "2026-09-29T01:00:17.591Z",
+      "lastSeen": "2026-09-29T06:55:36.228Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -250,7 +250,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:54:55.687Z",
-      "lastSeen": "2026-09-29T01:00:17.591Z",
+      "lastSeen": "2026-09-29T06:55:36.228Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -266,7 +266,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:54:55.687Z",
-      "lastSeen": "2026-09-29T01:00:17.591Z",
+      "lastSeen": "2026-09-29T06:55:36.228Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -282,7 +282,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:54:55.687Z",
-      "lastSeen": "2026-09-29T01:00:17.591Z",
+      "lastSeen": "2026-09-29T06:55:36.228Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -298,7 +298,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:54:55.687Z",
-      "lastSeen": "2026-09-29T01:00:17.591Z",
+      "lastSeen": "2026-09-29T06:55:36.228Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -314,7 +314,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:54:55.687Z",
-      "lastSeen": "2026-09-29T01:00:17.591Z",
+      "lastSeen": "2026-09-29T06:55:36.228Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -330,7 +330,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-09-29T01:00:17.591Z",
+      "lastSeen": "2026-09-29T06:55:36.228Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -346,7 +346,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-09-29T01:00:17.591Z",
+      "lastSeen": "2026-09-29T06:55:36.228Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -362,7 +362,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-09-29T01:00:17.591Z",
+      "lastSeen": "2026-09-29T06:55:36.228Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -378,7 +378,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-09-29T01:00:17.591Z",
+      "lastSeen": "2026-09-29T06:55:36.228Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -394,7 +394,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-09-29T01:00:17.591Z",
+      "lastSeen": "2026-09-29T06:55:36.228Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -410,7 +410,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-09-29T01:00:17.591Z",
+      "lastSeen": "2026-09-29T06:55:36.228Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -426,7 +426,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-09-29T01:00:17.591Z",
+      "lastSeen": "2026-09-29T06:55:36.228Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -442,7 +442,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-09-29T01:00:17.591Z",
+      "lastSeen": "2026-09-29T06:55:36.228Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -458,7 +458,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-09-29T01:00:17.591Z",
+      "lastSeen": "2026-09-29T06:55:36.228Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -474,7 +474,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-09-29T01:00:17.591Z",
+      "lastSeen": "2026-09-29T06:55:36.228Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -490,7 +490,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-09-29T01:00:17.591Z",
+      "lastSeen": "2026-09-29T06:55:36.228Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -506,7 +506,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-09-29T01:00:17.591Z",
+      "lastSeen": "2026-09-29T06:55:36.228Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -522,7 +522,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-09-29T01:00:17.591Z",
+      "lastSeen": "2026-09-29T06:55:36.228Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -538,7 +538,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-09-29T01:00:17.591Z",
+      "lastSeen": "2026-09-29T06:55:36.228Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -554,7 +554,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-09-29T01:00:17.591Z",
+      "lastSeen": "2026-09-29T06:55:36.228Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -570,7 +570,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-09-29T01:00:17.591Z",
+      "lastSeen": "2026-09-29T06:55:36.228Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -586,7 +586,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-09-29T01:00:17.591Z",
+      "lastSeen": "2026-09-29T06:55:36.228Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -602,7 +602,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:54:55.687Z",
-      "lastSeen": "2026-09-29T01:00:17.591Z",
+      "lastSeen": "2026-09-29T06:55:36.228Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -618,7 +618,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:54:55.687Z",
-      "lastSeen": "2026-09-29T01:00:17.591Z",
+      "lastSeen": "2026-09-29T06:55:36.228Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -634,7 +634,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:54:55.687Z",
-      "lastSeen": "2026-09-29T01:00:17.591Z",
+      "lastSeen": "2026-09-29T06:55:36.228Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -650,7 +650,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-09-29T01:00:17.590Z",
+      "lastSeen": "2026-09-29T06:55:36.228Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -666,231 +666,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-09-29T01:00:17.590Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "result-ref-advt-no-04-2026-result-of-preliminary-written-examination-for-the-post-of-assistant-sub-inspector-o",
-      "title": "Result-Ref.:Advt. No.-04/2026: Result of Preliminary Written Examination for the Post of Assistant Sub-Inspector (Operation) in Bihar Police Radio (Wireless), Govt. of Bihar",
-      "organization": "BPSSC Bihar",
-      "category": "POLICE",
-      "type": "result",
-      "status": "result",
-      "notificationDate": "12/08/2026",
-      "url": "https://bpssc.bihar.gov.in/Notices/Advt_042026_PRELIMS_Result_Publish_12082026.pdf",
-      "sourceUrl": "https://bpssc.bihar.gov.in/",
-      "sourceName": "BPSSC Bihar — Police Recruitment",
-      "official": true,
-      "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-09-29T01:00:17.590Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "important-notice-ref-advt-no-07-2026-regarding-postponement-of-examination-https-bpssc-bihar-gov-in-notices-no",
-      "title": "Important Notice-Ref.:Advt. No.-07/2026: Regarding Postponement of Examination",
-      "organization": "BPSSC Bihar",
-      "category": "POLICE",
-      "type": "update",
-      "status": "update",
-      "notificationDate": "30/07/2026",
-      "url": "https://bpssc.bihar.gov.in/Notices/Notice%20for%20postponement%20of%20examination.pdf",
-      "sourceUrl": "https://bpssc.bihar.gov.in/",
-      "sourceName": "BPSSC Bihar — Police Recruitment",
-      "official": true,
-      "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-09-29T01:00:17.590Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "link-ref-advt-no-07-2026-download-e-admit-card-of-preliminary-written-examination-for-the-post-of-assistant-su",
-      "title": "Link-Ref.:Advt. No.-07/2026: Download E-Admit Card of Preliminary Written Examination for the Post of Assistant Sub-Inspector (Technical) in Bihar Police Radio (Wireless), Govt. of",
-      "organization": "BPSSC Bihar",
-      "category": "POLICE",
-      "type": "admit-card",
-      "status": "admit-card",
-      "notificationDate": "23/07/2026",
-      "url": "https://apply-bpssc.com/bpssc_7_2026_weadmitcards_v3/applicationIndex",
-      "sourceUrl": "https://bpssc.bihar.gov.in/",
-      "sourceName": "BPSSC Bihar — Police Recruitment",
-      "official": true,
-      "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-09-29T01:00:17.590Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "important-notice-ref-advt-no-07-2026-centre-list-of-candidates-according-to-roll-no-of-preliminary-written-exa",
-      "title": "Important Notice-Ref.:Advt. No.-07/2026: Centre List of Candidates according to Roll No. of Preliminary Written Examination for the Post of Assistant Sub-Inspector (Technical) in B",
-      "organization": "BPSSC Bihar",
-      "category": "POLICE",
-      "type": "update",
-      "status": "update",
-      "notificationDate": "23/07/2026",
-      "url": "https://bpssc.bihar.gov.in/Notices/Centre%20list%20According%20to%20Roll%20No%201.pdf",
-      "sourceUrl": "https://bpssc.bihar.gov.in/",
-      "sourceName": "BPSSC Bihar — Police Recruitment",
-      "official": true,
-      "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-09-29T01:00:17.590Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "important-notice-ref-advt-no-07-2026-regarding-preliminary-written-examination-and-e-admit-card-for-the-post-o",
-      "title": "Important Notice-Ref.:Advt. No.-07/2026: Regarding Preliminary Written Examination and E-Admit Card for the Post of Assistant Sub-Inspector (Technical) in Bihar Police Radio (Wirel",
-      "organization": "BPSSC Bihar",
-      "category": "POLICE",
-      "type": "admit-card",
-      "status": "admit-card",
-      "notificationDate": "14/07/2026",
-      "url": "https://bpssc.bihar.gov.in/Notices/Notice%20E-Admit%20Card%20on%20website%206.pdf",
-      "sourceUrl": "https://bpssc.bihar.gov.in/",
-      "sourceName": "BPSSC Bihar — Police Recruitment",
-      "official": true,
-      "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-09-29T01:00:17.590Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "important-notice-ref-advt-no-07-2026-list-of-invalid-applications-with-reason-of-rejection-related-to-the-post",
-      "title": "Important Notice-Ref.:Advt. No.-07/2026: List of Invalid Applications with Reason of Rejection related to the Post of Assistant Sub-Inspector (Technical) in Bihar Police Radio (Wir",
-      "organization": "BPSSC Bihar",
-      "category": "POLICE",
-      "type": "notification",
-      "status": "notification",
-      "notificationDate": "13/07/2026",
-      "url": "https://bpssc.bihar.gov.in/Notices/bpssc_07_2026_rejection_list.pdf",
-      "sourceUrl": "https://bpssc.bihar.gov.in/",
-      "sourceName": "BPSSC Bihar — Police Recruitment",
-      "official": true,
-      "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-09-29T01:00:17.590Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "ref-advt-no-09-2026-apply-online-for-the-post-of-police-sub-inspector-general-closed-cadre-in-special-branch-u",
-      "title": "Ref.:Advt. No.-09/2026: Apply Online for the Post of Police Sub-Inspector (General Closed Cadre) in Special Branch under Home (Police) Dept., Govt. of Bihar",
-      "organization": "BPSSC Bihar",
-      "category": "POLICE",
-      "type": "notification",
-      "status": "notification",
-      "notificationDate": "08/07/2026",
-      "url": "https://apply-bpssc.com/bpssc_sicadre_9_2026/applicationIndex",
-      "sourceUrl": "https://bpssc.bihar.gov.in/",
-      "sourceName": "BPSSC Bihar — Police Recruitment",
-      "official": true,
-      "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-09-29T01:00:17.590Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "link-ref-advt-no-04-2026-download-e-admit-card-of-preliminary-written-examination-for-the-post-of-assistant-su",
-      "title": "Link-Ref.:Advt. No.-04/2026: Download E-Admit Card of Preliminary Written Examination for the Post of Assistant Sub-Inspector (Operation) in Bihar Police Radio (Wireless), Govt. of",
-      "organization": "BPSSC Bihar",
-      "category": "POLICE",
-      "type": "admit-card",
-      "status": "admit-card",
-      "notificationDate": "06/07/2026",
-      "url": "https://apply-bpssc.com/bpssc_4_2026_weadmitcards_v1/applicationIndex",
-      "sourceUrl": "https://bpssc.bihar.gov.in/",
-      "sourceName": "BPSSC Bihar — Police Recruitment",
-      "official": true,
-      "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-09-29T01:00:17.590Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "important-notice-ref-advt-no-04-2026-centre-list-of-candidates-according-to-roll-no-of-preliminary-written-exa",
-      "title": "Important Notice-Ref.:Advt. No.-04/2026: Centre List of Candidates according to Roll No. of Preliminary Written Examination for the Post of Assistant Sub-Inspector (Operation) in B",
-      "organization": "BPSSC Bihar",
-      "category": "POLICE",
-      "type": "update",
-      "status": "update",
-      "notificationDate": "06/07/2026",
-      "url": "https://bpssc.bihar.gov.in/Notices/BPSSC_4_26_CENTRES_ALLOCATION_final.pdf",
-      "sourceUrl": "https://bpssc.bihar.gov.in/",
-      "sourceName": "BPSSC Bihar — Police Recruitment",
-      "official": true,
-      "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-09-29T01:00:17.590Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "advt-no-09-2026-for-selection-of-police-sub-inspector-general-closed-cadre-in-special-branch-under-home-police",
-      "title": "Advt. No.-09/2026: For Selection of Police Sub-Inspector (General Closed Cadre) in Special Branch under Home (Police) Dept., Govt. of Bihar",
-      "organization": "BPSSC Bihar",
-      "category": "POLICE",
-      "type": "update",
-      "status": "update",
-      "notificationDate": "03/07/2026",
-      "url": "https://bpssc.bihar.gov.in/Notices/Advt.%20No-09-2026%20Pdf.pdf",
-      "sourceUrl": "https://bpssc.bihar.gov.in/",
-      "sourceName": "BPSSC Bihar — Police Recruitment",
-      "official": true,
-      "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-09-29T01:00:17.590Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "important-notice-ref-advt-no-04-2026-regarding-preliminary-written-examination-and-e-admit-card-for-the-post-o",
-      "title": "Important Notice-Ref.:Advt. No.-04/2026: Regarding Preliminary Written Examination and E-Admit Card for the Post of Assistant Sub-Inspector (Operation) in Bihar Police Radio (Wirel",
-      "organization": "BPSSC Bihar",
-      "category": "POLICE",
-      "type": "admit-card",
-      "status": "admit-card",
-      "notificationDate": "25/06/2026",
-      "url": "https://bpssc.bihar.gov.in/Notices/Notice%20E-Admit%20Card%20on%20website%203.pdf",
-      "sourceUrl": "https://bpssc.bihar.gov.in/",
-      "sourceName": "BPSSC Bihar — Police Recruitment",
-      "official": true,
-      "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-09-29T01:00:17.590Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "ref-advt-no-07-2026-apply-online-for-the-post-of-assistant-sub-inspector-technical-in-bihar-police-radio-wirel",
-      "title": "Ref.:Advt. No.-07/2026: Apply Online for the Post of Assistant Sub-Inspector (Technical) in Bihar Police Radio (Wireless), Govt. of Bihar",
-      "organization": "BPSSC Bihar",
-      "category": "POLICE",
-      "type": "notification",
-      "status": "notification",
-      "notificationDate": "20/05/2026",
-      "url": "https://apply-bpssc.com/bpssc_asi_tech_7_26_v1/applicationIndex",
-      "sourceUrl": "https://bpssc.bihar.gov.in/",
-      "sourceName": "BPSSC Bihar — Police Recruitment",
-      "official": true,
-      "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-09-29T01:00:17.590Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "advt-no-07-2026-for-selection-of-assistant-sub-inspector-technical-in-bihar-police-radio-wireless-govt-of-biha",
-      "title": "Advt. No.-07/2026: For Selection of Assistant Sub-Inspector (Technical) in Bihar Police Radio (Wireless), Govt. of Bihar",
-      "organization": "BPSSC Bihar",
-      "category": "POLICE",
-      "type": "update",
-      "status": "update",
-      "notificationDate": "15/05/2026",
-      "url": "https://bpssc.bihar.gov.in/Notices/Final%20Advt.-%2007-2026.pdf",
-      "sourceUrl": "https://bpssc.bihar.gov.in/",
-      "sourceName": "BPSSC Bihar — Police Recruitment",
-      "official": true,
-      "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-09-29T01:00:17.590Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "important-notice-ref-advt-no-04-2026-list-of-invalid-applications-with-reason-of-rejection-related-to-the-post",
-      "title": "Important Notice-Ref.:Advt. No.-04/2026: List of Invalid Applications with Reason of Rejection related to the Post of Assistant Sub-Inspector (Operation) in Bihar Police Radio (Wir",
-      "organization": "BPSSC Bihar",
-      "category": "POLICE",
-      "type": "notification",
-      "status": "notification",
-      "notificationDate": "15/05/2026",
-      "url": "https://bpssc.bihar.gov.in/Notices/BPSSC_4_26_rejection%20list.pdf",
-      "sourceUrl": "https://bpssc.bihar.gov.in/",
-      "sourceName": "BPSSC Bihar — Police Recruitment",
-      "official": true,
-      "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-09-29T01:00:17.590Z",
+      "lastSeen": "2026-09-29T06:55:36.228Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -906,7 +682,231 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-09-29T01:00:17.590Z",
+      "lastSeen": "2026-09-29T06:55:36.228Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "result-ref-advt-no-04-2026-result-of-preliminary-written-examination-for-the-post-of-assistant-sub-inspector-o",
+      "title": "Result-Ref.:Advt. No.-04/2026: Result of Preliminary Written Examination for the Post of Assistant Sub-Inspector (Operation) in Bihar Police Radio (Wireless), Govt. of Bihar",
+      "organization": "BPSSC Bihar",
+      "category": "POLICE",
+      "type": "result",
+      "status": "result",
+      "notificationDate": "12/08/2026",
+      "url": "https://bpssc.bihar.gov.in/Notices/Advt_042026_PRELIMS_Result_Publish_12082026.pdf",
+      "sourceUrl": "https://bpssc.bihar.gov.in/",
+      "sourceName": "BPSSC Bihar — Police Recruitment",
+      "official": true,
+      "firstSeen": "2026-09-28T14:39:57.382Z",
+      "lastSeen": "2026-09-29T06:55:36.227Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "important-notice-ref-advt-no-07-2026-regarding-postponement-of-examination-https-bpssc-bihar-gov-in-notices-no",
+      "title": "Important Notice-Ref.:Advt. No.-07/2026: Regarding Postponement of Examination",
+      "organization": "BPSSC Bihar",
+      "category": "POLICE",
+      "type": "update",
+      "status": "update",
+      "notificationDate": "30/07/2026",
+      "url": "https://bpssc.bihar.gov.in/Notices/Notice%20for%20postponement%20of%20examination.pdf",
+      "sourceUrl": "https://bpssc.bihar.gov.in/",
+      "sourceName": "BPSSC Bihar — Police Recruitment",
+      "official": true,
+      "firstSeen": "2026-09-28T14:39:57.382Z",
+      "lastSeen": "2026-09-29T06:55:36.227Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "link-ref-advt-no-07-2026-download-e-admit-card-of-preliminary-written-examination-for-the-post-of-assistant-su",
+      "title": "Link-Ref.:Advt. No.-07/2026: Download E-Admit Card of Preliminary Written Examination for the Post of Assistant Sub-Inspector (Technical) in Bihar Police Radio (Wireless), Govt. of",
+      "organization": "BPSSC Bihar",
+      "category": "POLICE",
+      "type": "admit-card",
+      "status": "admit-card",
+      "notificationDate": "23/07/2026",
+      "url": "https://apply-bpssc.com/bpssc_7_2026_weadmitcards_v3/applicationIndex",
+      "sourceUrl": "https://bpssc.bihar.gov.in/",
+      "sourceName": "BPSSC Bihar — Police Recruitment",
+      "official": true,
+      "firstSeen": "2026-09-28T14:39:57.382Z",
+      "lastSeen": "2026-09-29T06:55:36.227Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "important-notice-ref-advt-no-07-2026-centre-list-of-candidates-according-to-roll-no-of-preliminary-written-exa",
+      "title": "Important Notice-Ref.:Advt. No.-07/2026: Centre List of Candidates according to Roll No. of Preliminary Written Examination for the Post of Assistant Sub-Inspector (Technical) in B",
+      "organization": "BPSSC Bihar",
+      "category": "POLICE",
+      "type": "update",
+      "status": "update",
+      "notificationDate": "23/07/2026",
+      "url": "https://bpssc.bihar.gov.in/Notices/Centre%20list%20According%20to%20Roll%20No%201.pdf",
+      "sourceUrl": "https://bpssc.bihar.gov.in/",
+      "sourceName": "BPSSC Bihar — Police Recruitment",
+      "official": true,
+      "firstSeen": "2026-09-28T14:39:57.382Z",
+      "lastSeen": "2026-09-29T06:55:36.227Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "important-notice-ref-advt-no-07-2026-regarding-preliminary-written-examination-and-e-admit-card-for-the-post-o",
+      "title": "Important Notice-Ref.:Advt. No.-07/2026: Regarding Preliminary Written Examination and E-Admit Card for the Post of Assistant Sub-Inspector (Technical) in Bihar Police Radio (Wirel",
+      "organization": "BPSSC Bihar",
+      "category": "POLICE",
+      "type": "admit-card",
+      "status": "admit-card",
+      "notificationDate": "14/07/2026",
+      "url": "https://bpssc.bihar.gov.in/Notices/Notice%20E-Admit%20Card%20on%20website%206.pdf",
+      "sourceUrl": "https://bpssc.bihar.gov.in/",
+      "sourceName": "BPSSC Bihar — Police Recruitment",
+      "official": true,
+      "firstSeen": "2026-09-28T14:39:57.382Z",
+      "lastSeen": "2026-09-29T06:55:36.227Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "important-notice-ref-advt-no-07-2026-list-of-invalid-applications-with-reason-of-rejection-related-to-the-post",
+      "title": "Important Notice-Ref.:Advt. No.-07/2026: List of Invalid Applications with Reason of Rejection related to the Post of Assistant Sub-Inspector (Technical) in Bihar Police Radio (Wir",
+      "organization": "BPSSC Bihar",
+      "category": "POLICE",
+      "type": "notification",
+      "status": "notification",
+      "notificationDate": "13/07/2026",
+      "url": "https://bpssc.bihar.gov.in/Notices/bpssc_07_2026_rejection_list.pdf",
+      "sourceUrl": "https://bpssc.bihar.gov.in/",
+      "sourceName": "BPSSC Bihar — Police Recruitment",
+      "official": true,
+      "firstSeen": "2026-09-28T14:39:57.382Z",
+      "lastSeen": "2026-09-29T06:55:36.227Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "ref-advt-no-09-2026-apply-online-for-the-post-of-police-sub-inspector-general-closed-cadre-in-special-branch-u",
+      "title": "Ref.:Advt. No.-09/2026: Apply Online for the Post of Police Sub-Inspector (General Closed Cadre) in Special Branch under Home (Police) Dept., Govt. of Bihar",
+      "organization": "BPSSC Bihar",
+      "category": "POLICE",
+      "type": "notification",
+      "status": "notification",
+      "notificationDate": "08/07/2026",
+      "url": "https://apply-bpssc.com/bpssc_sicadre_9_2026/applicationIndex",
+      "sourceUrl": "https://bpssc.bihar.gov.in/",
+      "sourceName": "BPSSC Bihar — Police Recruitment",
+      "official": true,
+      "firstSeen": "2026-09-28T14:39:57.382Z",
+      "lastSeen": "2026-09-29T06:55:36.227Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "link-ref-advt-no-04-2026-download-e-admit-card-of-preliminary-written-examination-for-the-post-of-assistant-su",
+      "title": "Link-Ref.:Advt. No.-04/2026: Download E-Admit Card of Preliminary Written Examination for the Post of Assistant Sub-Inspector (Operation) in Bihar Police Radio (Wireless), Govt. of",
+      "organization": "BPSSC Bihar",
+      "category": "POLICE",
+      "type": "admit-card",
+      "status": "admit-card",
+      "notificationDate": "06/07/2026",
+      "url": "https://apply-bpssc.com/bpssc_4_2026_weadmitcards_v1/applicationIndex",
+      "sourceUrl": "https://bpssc.bihar.gov.in/",
+      "sourceName": "BPSSC Bihar — Police Recruitment",
+      "official": true,
+      "firstSeen": "2026-09-28T14:39:57.382Z",
+      "lastSeen": "2026-09-29T06:55:36.227Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "important-notice-ref-advt-no-04-2026-centre-list-of-candidates-according-to-roll-no-of-preliminary-written-exa",
+      "title": "Important Notice-Ref.:Advt. No.-04/2026: Centre List of Candidates according to Roll No. of Preliminary Written Examination for the Post of Assistant Sub-Inspector (Operation) in B",
+      "organization": "BPSSC Bihar",
+      "category": "POLICE",
+      "type": "update",
+      "status": "update",
+      "notificationDate": "06/07/2026",
+      "url": "https://bpssc.bihar.gov.in/Notices/BPSSC_4_26_CENTRES_ALLOCATION_final.pdf",
+      "sourceUrl": "https://bpssc.bihar.gov.in/",
+      "sourceName": "BPSSC Bihar — Police Recruitment",
+      "official": true,
+      "firstSeen": "2026-09-28T14:39:57.382Z",
+      "lastSeen": "2026-09-29T06:55:36.227Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "advt-no-09-2026-for-selection-of-police-sub-inspector-general-closed-cadre-in-special-branch-under-home-police",
+      "title": "Advt. No.-09/2026: For Selection of Police Sub-Inspector (General Closed Cadre) in Special Branch under Home (Police) Dept., Govt. of Bihar",
+      "organization": "BPSSC Bihar",
+      "category": "POLICE",
+      "type": "update",
+      "status": "update",
+      "notificationDate": "03/07/2026",
+      "url": "https://bpssc.bihar.gov.in/Notices/Advt.%20No-09-2026%20Pdf.pdf",
+      "sourceUrl": "https://bpssc.bihar.gov.in/",
+      "sourceName": "BPSSC Bihar — Police Recruitment",
+      "official": true,
+      "firstSeen": "2026-09-28T14:39:57.382Z",
+      "lastSeen": "2026-09-29T06:55:36.227Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "important-notice-ref-advt-no-04-2026-regarding-preliminary-written-examination-and-e-admit-card-for-the-post-o",
+      "title": "Important Notice-Ref.:Advt. No.-04/2026: Regarding Preliminary Written Examination and E-Admit Card for the Post of Assistant Sub-Inspector (Operation) in Bihar Police Radio (Wirel",
+      "organization": "BPSSC Bihar",
+      "category": "POLICE",
+      "type": "admit-card",
+      "status": "admit-card",
+      "notificationDate": "25/06/2026",
+      "url": "https://bpssc.bihar.gov.in/Notices/Notice%20E-Admit%20Card%20on%20website%203.pdf",
+      "sourceUrl": "https://bpssc.bihar.gov.in/",
+      "sourceName": "BPSSC Bihar — Police Recruitment",
+      "official": true,
+      "firstSeen": "2026-09-28T14:39:57.382Z",
+      "lastSeen": "2026-09-29T06:55:36.227Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "ref-advt-no-07-2026-apply-online-for-the-post-of-assistant-sub-inspector-technical-in-bihar-police-radio-wirel",
+      "title": "Ref.:Advt. No.-07/2026: Apply Online for the Post of Assistant Sub-Inspector (Technical) in Bihar Police Radio (Wireless), Govt. of Bihar",
+      "organization": "BPSSC Bihar",
+      "category": "POLICE",
+      "type": "notification",
+      "status": "notification",
+      "notificationDate": "20/05/2026",
+      "url": "https://apply-bpssc.com/bpssc_asi_tech_7_26_v1/applicationIndex",
+      "sourceUrl": "https://bpssc.bihar.gov.in/",
+      "sourceName": "BPSSC Bihar — Police Recruitment",
+      "official": true,
+      "firstSeen": "2026-09-28T14:39:57.382Z",
+      "lastSeen": "2026-09-29T06:55:36.227Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "advt-no-07-2026-for-selection-of-assistant-sub-inspector-technical-in-bihar-police-radio-wireless-govt-of-biha",
+      "title": "Advt. No.-07/2026: For Selection of Assistant Sub-Inspector (Technical) in Bihar Police Radio (Wireless), Govt. of Bihar",
+      "organization": "BPSSC Bihar",
+      "category": "POLICE",
+      "type": "update",
+      "status": "update",
+      "notificationDate": "15/05/2026",
+      "url": "https://bpssc.bihar.gov.in/Notices/Final%20Advt.-%2007-2026.pdf",
+      "sourceUrl": "https://bpssc.bihar.gov.in/",
+      "sourceName": "BPSSC Bihar — Police Recruitment",
+      "official": true,
+      "firstSeen": "2026-09-28T14:39:57.382Z",
+      "lastSeen": "2026-09-29T06:55:36.227Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "important-notice-ref-advt-no-04-2026-list-of-invalid-applications-with-reason-of-rejection-related-to-the-post",
+      "title": "Important Notice-Ref.:Advt. No.-04/2026: List of Invalid Applications with Reason of Rejection related to the Post of Assistant Sub-Inspector (Operation) in Bihar Police Radio (Wir",
+      "organization": "BPSSC Bihar",
+      "category": "POLICE",
+      "type": "notification",
+      "status": "notification",
+      "notificationDate": "15/05/2026",
+      "url": "https://bpssc.bihar.gov.in/Notices/BPSSC_4_26_rejection%20list.pdf",
+      "sourceUrl": "https://bpssc.bihar.gov.in/",
+      "sourceName": "BPSSC Bihar — Police Recruitment",
+      "official": true,
+      "firstSeen": "2026-09-28T14:39:57.382Z",
+      "lastSeen": "2026-09-29T06:55:36.227Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -922,7 +922,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:54:55.686Z",
-      "lastSeen": "2026-09-29T01:00:17.590Z",
+      "lastSeen": "2026-09-29T06:55:36.227Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -938,7 +938,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.647Z",
-      "lastSeen": "2026-09-29T01:00:16.023Z",
+      "lastSeen": "2026-09-29T06:55:34.660Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -954,7 +954,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.647Z",
-      "lastSeen": "2026-09-29T01:00:16.023Z",
+      "lastSeen": "2026-09-29T06:55:34.660Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -970,7 +970,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.647Z",
-      "lastSeen": "2026-09-29T01:00:16.023Z",
+      "lastSeen": "2026-09-29T06:55:34.660Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -986,7 +986,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.647Z",
-      "lastSeen": "2026-09-29T01:00:16.023Z",
+      "lastSeen": "2026-09-29T06:55:34.660Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1002,7 +1002,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.647Z",
-      "lastSeen": "2026-09-29T01:00:16.023Z",
+      "lastSeen": "2026-09-29T06:55:34.660Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1018,7 +1018,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.647Z",
-      "lastSeen": "2026-09-29T01:00:16.023Z",
+      "lastSeen": "2026-09-29T06:55:34.660Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1034,7 +1034,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.647Z",
-      "lastSeen": "2026-09-29T01:00:16.023Z",
+      "lastSeen": "2026-09-29T06:55:34.660Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1050,7 +1050,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.647Z",
-      "lastSeen": "2026-09-29T01:00:16.023Z",
+      "lastSeen": "2026-09-29T06:55:34.660Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1066,7 +1066,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-09-29T01:00:16.023Z",
+      "lastSeen": "2026-09-29T06:55:34.660Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1082,7 +1082,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-09-29T01:00:16.023Z",
+      "lastSeen": "2026-09-29T06:55:34.660Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1098,7 +1098,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-09-29T01:00:16.023Z",
+      "lastSeen": "2026-09-29T06:55:34.660Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1114,7 +1114,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-09-29T01:00:16.023Z",
+      "lastSeen": "2026-09-29T06:55:34.660Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1130,7 +1130,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-09-29T01:00:16.023Z",
+      "lastSeen": "2026-09-29T06:55:34.660Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1146,7 +1146,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-09-29T01:00:16.023Z",
+      "lastSeen": "2026-09-29T06:55:34.660Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1162,39 +1162,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-09-29T01:00:16.023Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "important-notice-regarding-change-in-centre-sadanand-intermediate-college-dr-arjun-nagar-biharsharif-nalanda-a",
-      "title": "Important Notice: Regarding Change in Centre \" Sadanand Intermediate College, Dr Arjun Nagar, Biharsharif, Nalanda \" as \" Sadanand Intermediate College, Ramchandrapur, Biharsharif,",
-      "organization": "CSBC Bihar",
-      "category": "POLICE",
-      "type": "update",
-      "status": "update",
-      "notificationDate": "16-07-2025",
-      "url": "https://csbc.bihar.gov.in/Advt/Notice%20-%2016-07-2025.pdf",
-      "sourceUrl": "https://csbc.bihar.gov.in/",
-      "sourceName": "CSBC Bihar — Police Recruitment",
-      "official": true,
-      "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-09-29T01:00:16.022Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "important-notice-download-admit-card-for-pet-of-bihar-police-constable-https-apply-csbc-com-petadmv123-applica",
-      "title": "Important Notice: Download Admit Card for PET of Bihar Police Constable",
-      "organization": "CSBC Bihar",
-      "category": "POLICE",
-      "type": "admit-card",
-      "status": "admit-card",
-      "notificationDate": "21-11-2024",
-      "url": "https://apply-csbc.com/PetAdmV123/applicationIndex",
-      "sourceUrl": "https://csbc.bihar.gov.in/",
-      "sourceName": "CSBC Bihar — Police Recruitment",
-      "official": true,
-      "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-09-29T01:00:16.022Z",
+      "lastSeen": "2026-09-29T06:55:34.660Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1210,7 +1178,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-09-29T01:00:16.022Z",
+      "lastSeen": "2026-09-29T06:55:34.660Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1226,7 +1194,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-09-29T01:00:16.022Z",
+      "lastSeen": "2026-09-29T06:55:34.660Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1242,7 +1210,39 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-09-29T01:00:16.022Z",
+      "lastSeen": "2026-09-29T06:55:34.660Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "important-notice-regarding-change-in-centre-sadanand-intermediate-college-dr-arjun-nagar-biharsharif-nalanda-a",
+      "title": "Important Notice: Regarding Change in Centre \" Sadanand Intermediate College, Dr Arjun Nagar, Biharsharif, Nalanda \" as \" Sadanand Intermediate College, Ramchandrapur, Biharsharif,",
+      "organization": "CSBC Bihar",
+      "category": "POLICE",
+      "type": "update",
+      "status": "update",
+      "notificationDate": "16-07-2025",
+      "url": "https://csbc.bihar.gov.in/Advt/Notice%20-%2016-07-2025.pdf",
+      "sourceUrl": "https://csbc.bihar.gov.in/",
+      "sourceName": "CSBC Bihar — Police Recruitment",
+      "official": true,
+      "firstSeen": "2026-09-28T14:39:55.646Z",
+      "lastSeen": "2026-09-29T06:55:34.659Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "important-notice-download-admit-card-for-pet-of-bihar-police-constable-https-apply-csbc-com-petadmv123-applica",
+      "title": "Important Notice: Download Admit Card for PET of Bihar Police Constable",
+      "organization": "CSBC Bihar",
+      "category": "POLICE",
+      "type": "admit-card",
+      "status": "admit-card",
+      "notificationDate": "21-11-2024",
+      "url": "https://apply-csbc.com/PetAdmV123/applicationIndex",
+      "sourceUrl": "https://csbc.bihar.gov.in/",
+      "sourceName": "CSBC Bihar — Police Recruitment",
+      "official": true,
+      "firstSeen": "2026-09-28T14:39:55.646Z",
+      "lastSeen": "2026-09-29T06:55:34.659Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1258,7 +1258,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-09-29T01:00:16.022Z",
+      "lastSeen": "2026-09-29T06:55:34.659Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1274,7 +1274,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-09-29T01:00:16.022Z",
+      "lastSeen": "2026-09-29T06:55:34.659Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1290,7 +1290,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.645Z",
-      "lastSeen": "2026-09-29T01:00:16.022Z",
+      "lastSeen": "2026-09-29T06:55:34.659Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1306,7 +1306,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.645Z",
-      "lastSeen": "2026-09-29T01:00:16.022Z",
+      "lastSeen": "2026-09-29T06:55:34.659Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1322,7 +1322,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.645Z",
-      "lastSeen": "2026-09-29T01:00:16.022Z",
+      "lastSeen": "2026-09-29T06:55:34.659Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1338,7 +1338,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.645Z",
-      "lastSeen": "2026-09-29T01:00:16.022Z",
+      "lastSeen": "2026-09-29T06:55:34.659Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1354,7 +1354,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.645Z",
-      "lastSeen": "2026-09-29T01:00:16.022Z",
+      "lastSeen": "2026-09-29T06:55:34.659Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1370,52 +1370,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.645Z",
-      "lastSeen": "2026-09-29T01:00:16.022Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "release-of-admit-cards-for-the-candidates-of-jee-main-2026-session-2-april-2026-scheduled-to-appear-on-02-and-",
-      "title": "Release of Admit Cards for the Candidates of JEE (Main)-2026 Session-2 (April 2026) scheduled to appear on 02 and 04 April 2026- Reg.",
-      "organization": "NTA",
-      "category": "ENTRANCE",
-      "type": "admit-card",
-      "status": "admit-card",
-      "url": "https://www.nta.ac.in/Download/Notice/Notice_20260329203217.pdf",
-      "sourceUrl": "https://www.nta.ac.in/",
-      "sourceName": "NTA — Official Exam Directory",
-      "official": true,
-      "firstSeen": "2026-09-28T14:39:48.714Z",
-      "lastSeen": "2026-09-29T01:00:10.973Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "inviting-online-applications-for-graduate-aptitude-test-biotechnology-gat-b-biotechnology-eligibility-test-bet",
-      "title": "Inviting Online Applications for Graduate Aptitude Test - Biotechnology (GAT-B) / Biotechnology Eligibility Test (BET) - 2026",
-      "organization": "NTA",
-      "category": "ENTRANCE",
-      "type": "admit-card",
-      "status": "admit-card",
-      "url": "https://www.nta.ac.in/Download/Notice/Notice_20260319194521.pdf",
-      "sourceUrl": "https://www.nta.ac.in/",
-      "sourceName": "NTA — Official Exam Directory",
-      "official": true,
-      "firstSeen": "2026-09-28T14:39:48.714Z",
-      "lastSeen": "2026-09-29T01:00:10.973Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "extension-of-last-date-for-submission-of-online-application-form-of-navayug-school-sarojini-nagar-entrance-tes",
-      "title": "Extension of Last Date for Submission of Online Application Form of Navayug School Sarojini Nagar Entrance Test (NSSNET) - 2026 - reg.",
-      "organization": "NTA",
-      "category": "ENTRANCE",
-      "type": "admit-card",
-      "status": "admit-card",
-      "url": "https://www.nta.ac.in/Download/Notice/Notice_20260318155115.PDF",
-      "sourceUrl": "https://www.nta.ac.in/",
-      "sourceName": "NTA — Official Exam Directory",
-      "official": true,
-      "firstSeen": "2026-09-28T14:39:48.714Z",
-      "lastSeen": "2026-09-29T01:00:10.973Z",
+      "lastSeen": "2026-09-29T06:55:34.659Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1430,67 +1385,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:39:48.714Z",
-      "lastSeen": "2026-09-29T01:00:10.973Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "release-of-admit-card-of-cuet-pg-2026-examination-to-the-applicants-scheduled-to-appear-on-24-25-and-27-march-",
-      "title": "Release of Admit Card of CUET (PG)-2026 examination, to the Applicants scheduled to appear on 24, 25 and 27 March 2026",
-      "organization": "NTA",
-      "category": "ENTRANCE",
-      "type": "admit-card",
-      "status": "admit-card",
-      "url": "https://www.nta.ac.in/Download/Notice/Notice_20260318205101.pdf",
-      "sourceUrl": "https://www.nta.ac.in/",
-      "sourceName": "NTA — Official Exam Directory",
-      "official": true,
-      "firstSeen": "2026-09-28T14:54:45.753Z",
-      "lastSeen": "2026-09-29T01:00:10.973Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "release-of-admit-card-of-cuet-pg-2026-examination-to-the-applicants-scheduled-to-appear-on-16-17-18-and-19-mar",
-      "title": "Release of Admit Card of CUET (PG)-2026 examination, to the Applicants scheduled to appear on 16, 17, 18 and 19 March 2026",
-      "organization": "NTA",
-      "category": "ENTRANCE",
-      "type": "admit-card",
-      "status": "admit-card",
-      "url": "https://www.nta.ac.in/Download/Notice/Notice_20260312214849.pdf",
-      "sourceUrl": "https://www.nta.ac.in/",
-      "sourceName": "NTA — Official Exam Directory",
-      "official": true,
-      "firstSeen": "2026-09-28T14:54:45.753Z",
-      "lastSeen": "2026-09-29T01:00:10.973Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "correction-in-particulars-for-the-national-eligibility-cum-entrance-test-neet-ug-2026-reg-https-www-nta-ac-in-",
-      "title": "Correction in Particulars for the National Eligibility-cum-Entrance Test [(NEET (UG)] 2026 - Reg.",
-      "organization": "NTA",
-      "category": "ENTRANCE",
-      "type": "notification",
-      "status": "notification",
-      "url": "https://www.nta.ac.in/Download/Notice/Notice_20260311164514.pdf",
-      "sourceUrl": "https://www.nta.ac.in/",
-      "sourceName": "NTA — Official Exam Directory",
-      "official": true,
-      "firstSeen": "2026-09-28T14:54:45.753Z",
-      "lastSeen": "2026-09-29T01:00:10.973Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "inviting-online-application-form-for-national-teachers-eligibility-test-ntet-2026-examination-reg-https-www-nt",
-      "title": "Inviting Online Application Form for National Teachers Eligibility Test (NTET)-2026 Examination-reg.",
-      "organization": "NTA",
-      "category": "ENTRANCE",
-      "type": "notification",
-      "status": "notification",
-      "url": "https://www.nta.ac.in/Download/Notice/Notice_20260311161322.pdf",
-      "sourceUrl": "https://www.nta.ac.in/",
-      "sourceName": "NTA — Official Exam Directory",
-      "official": true,
-      "firstSeen": "2026-09-28T14:54:45.753Z",
-      "lastSeen": "2026-09-29T01:00:10.973Z",
+      "lastSeen": "2026-09-29T06:55:31.856Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1505,7 +1400,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:54:45.753Z",
-      "lastSeen": "2026-09-29T01:00:10.973Z",
+      "lastSeen": "2026-09-29T06:55:31.856Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1520,7 +1415,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:54:45.753Z",
-      "lastSeen": "2026-09-29T01:00:10.973Z",
+      "lastSeen": "2026-09-29T06:55:31.856Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1535,7 +1430,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:54:45.753Z",
-      "lastSeen": "2026-09-29T01:00:10.973Z",
+      "lastSeen": "2026-09-29T06:55:31.856Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1550,7 +1445,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:54:45.753Z",
-      "lastSeen": "2026-09-29T01:00:10.973Z",
+      "lastSeen": "2026-09-29T06:55:31.856Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1565,7 +1460,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:54:45.753Z",
-      "lastSeen": "2026-09-29T01:00:10.973Z",
+      "lastSeen": "2026-09-29T06:55:31.856Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1580,7 +1475,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:54:45.753Z",
-      "lastSeen": "2026-09-29T01:00:10.973Z",
+      "lastSeen": "2026-09-29T06:55:31.856Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1595,7 +1490,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:54:45.753Z",
-      "lastSeen": "2026-09-29T01:00:10.973Z",
+      "lastSeen": "2026-09-29T06:55:31.856Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1610,7 +1505,112 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:54:45.753Z",
-      "lastSeen": "2026-09-29T01:00:10.973Z",
+      "lastSeen": "2026-09-29T06:55:31.856Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "release-of-admit-cards-for-the-candidates-of-jee-main-2026-session-2-april-2026-scheduled-to-appear-on-02-and-",
+      "title": "Release of Admit Cards for the Candidates of JEE (Main)-2026 Session-2 (April 2026) scheduled to appear on 02 and 04 April 2026- Reg.",
+      "organization": "NTA",
+      "category": "ENTRANCE",
+      "type": "admit-card",
+      "status": "admit-card",
+      "url": "https://www.nta.ac.in/Download/Notice/Notice_20260329203217.pdf",
+      "sourceUrl": "https://www.nta.ac.in/",
+      "sourceName": "NTA — Official Exam Directory",
+      "official": true,
+      "firstSeen": "2026-09-28T14:39:48.714Z",
+      "lastSeen": "2026-09-29T06:55:31.855Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "inviting-online-applications-for-graduate-aptitude-test-biotechnology-gat-b-biotechnology-eligibility-test-bet",
+      "title": "Inviting Online Applications for Graduate Aptitude Test - Biotechnology (GAT-B) / Biotechnology Eligibility Test (BET) - 2026",
+      "organization": "NTA",
+      "category": "ENTRANCE",
+      "type": "admit-card",
+      "status": "admit-card",
+      "url": "https://www.nta.ac.in/Download/Notice/Notice_20260319194521.pdf",
+      "sourceUrl": "https://www.nta.ac.in/",
+      "sourceName": "NTA — Official Exam Directory",
+      "official": true,
+      "firstSeen": "2026-09-28T14:39:48.714Z",
+      "lastSeen": "2026-09-29T06:55:31.855Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "extension-of-last-date-for-submission-of-online-application-form-of-navayug-school-sarojini-nagar-entrance-tes",
+      "title": "Extension of Last Date for Submission of Online Application Form of Navayug School Sarojini Nagar Entrance Test (NSSNET) - 2026 - reg.",
+      "organization": "NTA",
+      "category": "ENTRANCE",
+      "type": "admit-card",
+      "status": "admit-card",
+      "url": "https://www.nta.ac.in/Download/Notice/Notice_20260318155115.PDF",
+      "sourceUrl": "https://www.nta.ac.in/",
+      "sourceName": "NTA — Official Exam Directory",
+      "official": true,
+      "firstSeen": "2026-09-28T14:39:48.714Z",
+      "lastSeen": "2026-09-29T06:55:31.855Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "release-of-admit-card-of-cuet-pg-2026-examination-to-the-applicants-scheduled-to-appear-on-24-25-and-27-march-",
+      "title": "Release of Admit Card of CUET (PG)-2026 examination, to the Applicants scheduled to appear on 24, 25 and 27 March 2026",
+      "organization": "NTA",
+      "category": "ENTRANCE",
+      "type": "admit-card",
+      "status": "admit-card",
+      "url": "https://www.nta.ac.in/Download/Notice/Notice_20260318205101.pdf",
+      "sourceUrl": "https://www.nta.ac.in/",
+      "sourceName": "NTA — Official Exam Directory",
+      "official": true,
+      "firstSeen": "2026-09-28T14:54:45.753Z",
+      "lastSeen": "2026-09-29T06:55:31.855Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "release-of-admit-card-of-cuet-pg-2026-examination-to-the-applicants-scheduled-to-appear-on-16-17-18-and-19-mar",
+      "title": "Release of Admit Card of CUET (PG)-2026 examination, to the Applicants scheduled to appear on 16, 17, 18 and 19 March 2026",
+      "organization": "NTA",
+      "category": "ENTRANCE",
+      "type": "admit-card",
+      "status": "admit-card",
+      "url": "https://www.nta.ac.in/Download/Notice/Notice_20260312214849.pdf",
+      "sourceUrl": "https://www.nta.ac.in/",
+      "sourceName": "NTA — Official Exam Directory",
+      "official": true,
+      "firstSeen": "2026-09-28T14:54:45.753Z",
+      "lastSeen": "2026-09-29T06:55:31.855Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "correction-in-particulars-for-the-national-eligibility-cum-entrance-test-neet-ug-2026-reg-https-www-nta-ac-in-",
+      "title": "Correction in Particulars for the National Eligibility-cum-Entrance Test [(NEET (UG)] 2026 - Reg.",
+      "organization": "NTA",
+      "category": "ENTRANCE",
+      "type": "notification",
+      "status": "notification",
+      "url": "https://www.nta.ac.in/Download/Notice/Notice_20260311164514.pdf",
+      "sourceUrl": "https://www.nta.ac.in/",
+      "sourceName": "NTA — Official Exam Directory",
+      "official": true,
+      "firstSeen": "2026-09-28T14:54:45.753Z",
+      "lastSeen": "2026-09-29T06:55:31.855Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "inviting-online-application-form-for-national-teachers-eligibility-test-ntet-2026-examination-reg-https-www-nt",
+      "title": "Inviting Online Application Form for National Teachers Eligibility Test (NTET)-2026 Examination-reg.",
+      "organization": "NTA",
+      "category": "ENTRANCE",
+      "type": "notification",
+      "status": "notification",
+      "url": "https://www.nta.ac.in/Download/Notice/Notice_20260311161322.pdf",
+      "sourceUrl": "https://www.nta.ac.in/",
+      "sourceName": "NTA — Official Exam Directory",
+      "official": true,
+      "firstSeen": "2026-09-28T14:54:45.753Z",
+      "lastSeen": "2026-09-29T06:55:31.855Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1625,7 +1625,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:39:48.714Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
+      "lastSeen": "2026-09-29T06:55:31.855Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1640,7 +1640,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:39:48.714Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
+      "lastSeen": "2026-09-29T06:55:31.855Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1655,7 +1655,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:39:48.714Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
+      "lastSeen": "2026-09-29T06:55:31.855Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1670,7 +1670,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:39:48.714Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
+      "lastSeen": "2026-09-29T06:55:31.855Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1685,7 +1685,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:39:48.714Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
+      "lastSeen": "2026-09-29T06:55:31.855Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1700,7 +1700,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:39:48.714Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
+      "lastSeen": "2026-09-29T06:55:31.855Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1715,7 +1715,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:39:48.714Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
+      "lastSeen": "2026-09-29T06:55:31.855Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1730,7 +1730,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:39:48.713Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
+      "lastSeen": "2026-09-29T06:55:31.855Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1745,7 +1745,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:39:48.713Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
+      "lastSeen": "2026-09-29T06:55:31.855Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1760,7 +1760,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:39:48.713Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
+      "lastSeen": "2026-09-29T06:55:31.855Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1775,7 +1775,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:54:45.753Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
+      "lastSeen": "2026-09-29T06:55:31.855Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1790,7 +1790,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:54:45.753Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
+      "lastSeen": "2026-09-29T06:55:31.855Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1805,7 +1805,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:54:45.753Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
+      "lastSeen": "2026-09-29T06:55:31.855Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1820,7 +1820,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:54:45.753Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
+      "lastSeen": "2026-09-29T06:55:31.855Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1835,7 +1835,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:54:45.753Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
+      "lastSeen": "2026-09-29T06:55:31.855Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1850,7 +1850,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:54:45.753Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
+      "lastSeen": "2026-09-29T06:55:31.855Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1865,7 +1865,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:54:45.753Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
+      "lastSeen": "2026-09-29T06:55:31.855Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1880,7 +1880,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:54:45.753Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
+      "lastSeen": "2026-09-29T06:55:31.855Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1895,7 +1895,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:54:45.753Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
+      "lastSeen": "2026-09-29T06:55:31.855Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1910,7 +1910,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:54:45.753Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
+      "lastSeen": "2026-09-29T06:55:31.855Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1925,7 +1925,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:54:45.753Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
+      "lastSeen": "2026-09-29T06:55:31.855Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1940,7 +1940,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:54:45.753Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
+      "lastSeen": "2026-09-29T06:55:31.855Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1955,83 +1955,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:54:45.753Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "release-of-admit-cards-for-the-candidates-of-national-eligibility-cum-entrance-test-neet-ug-2026-scheduled-on-",
-      "title": "Release of Admit Cards for the Candidates of National Eligibility cum Entrance Test [NEET (UG)]-2026, Scheduled on 21 June 2026- reg.",
-      "organization": "NTA",
-      "category": "ENTRANCE",
-      "type": "admit-card",
-      "status": "admit-card",
-      "url": "https://www.nta.ac.in/Download/Notice/Notice_20260614190141.pdf",
-      "sourceUrl": "https://www.nta.ac.in/",
-      "sourceName": "NTA — Official Exam Directory",
-      "official": true,
-      "firstSeen": "2026-09-28T14:39:48.713Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "opening-of-bank-account-re-confirmation-correction-window-for-refund-of-neet-ug-2026-examination-fee-examinati",
-      "title": "Opening of Bank Account Re-confirmation/Correction Window for Refund of NEET (UG) 2026 Examination Fee (Examination held on 03 May 2026) - OTP-Based Two-Factor Authentication Manda",
-      "organization": "NTA",
-      "category": "ENTRANCE",
-      "type": "admit-card",
-      "status": "admit-card",
-      "url": "https://www.nta.ac.in/Download/Notice/Notice_20260614184440.pdf",
-      "sourceUrl": "https://www.nta.ac.in/",
-      "sourceName": "NTA — Official Exam Directory",
-      "official": true,
-      "firstSeen": "2026-09-28T14:39:48.713Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "display-of-admit-cards-of-study-webs-of-active-learning-for-young-aspiring-minds-swayam-january-2026-semester-",
-      "title": "Display of Admit Cards of Study Webs of Active Learning for Young Aspiring Minds (SWAYAM) January 2026 Semester Exams-reg.",
-      "organization": "NTA",
-      "category": "ENTRANCE",
-      "type": "admit-card",
-      "status": "admit-card",
-      "url": "https://www.nta.ac.in/Download/Notice/Notice_20260612174824.pdf",
-      "sourceUrl": "https://www.nta.ac.in/",
-      "sourceName": "NTA — Official Exam Directory",
-      "official": true,
-      "firstSeen": "2026-09-28T14:39:48.713Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "conduct-and-declaration-of-results-for-the-national-institute-of-fashion-technology-entrance-examination-nifte",
-      "title": "Conduct and Declaration of Results for the National Institute of Fashion Technology Entrance Examination (NIFTEE)- 2026 for UG & PG Programmes - Reg.",
-      "organization": "NTA",
-      "category": "ENTRANCE",
-      "type": "result",
-      "status": "result",
-      "url": "https://www.nta.ac.in/Download/Notice/Notice_20260604114322.pdf",
-      "sourceUrl": "https://www.nta.ac.in/",
-      "sourceName": "NTA — Official Exam Directory",
-      "official": true,
-      "firstSeen": "2026-09-28T14:39:48.713Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "release-of-admit-cards-for-the-candidates-of-joint-integrated-programme-in-management-admission-test-jipmat-20",
-      "title": "Release of Admit Cards for the Candidates of Joint Integrated Programme in Management Admission Test (JIPMAT)-2026-reg.)",
-      "organization": "NTA",
-      "category": "ENTRANCE",
-      "type": "admit-card",
-      "status": "admit-card",
-      "notificationDate": "30.05.2026",
-      "url": "https://www.nta.ac.in/Download/Notice/Notice_20260601213514.pdf",
-      "sourceUrl": "https://www.nta.ac.in/",
-      "sourceName": "NTA — Official Exam Directory",
-      "official": true,
-      "firstSeen": "2026-09-28T14:39:48.713Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
+      "lastSeen": "2026-09-29T06:55:31.855Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2047,7 +1971,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:39:48.713Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
+      "lastSeen": "2026-09-29T06:55:31.855Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2062,7 +1986,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:39:48.713Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
+      "lastSeen": "2026-09-29T06:55:31.855Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2077,7 +2001,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:39:48.713Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
+      "lastSeen": "2026-09-29T06:55:31.855Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2092,7 +2016,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:39:48.713Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
+      "lastSeen": "2026-09-29T06:55:31.855Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2107,22 +2031,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:39:48.713Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "release-of-admit-cards-for-re-scheduled-candidates-for-cuet-ug-2026-on-06-07-june-2026-reg-https-www-nta-ac-in",
-      "title": "Release of admit cards for re-scheduled candidates for CUET (UG)- 2026 on 06-07 June 2026-reg.",
-      "organization": "NTA",
-      "category": "ENTRANCE",
-      "type": "admit-card",
-      "status": "admit-card",
-      "url": "https://www.nta.ac.in/Download/Notice/Notice_20260601213649.pdf",
-      "sourceUrl": "https://www.nta.ac.in/",
-      "sourceName": "NTA — Official Exam Directory",
-      "official": true,
-      "firstSeen": "2026-09-28T14:54:45.753Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
+      "lastSeen": "2026-09-29T06:55:31.855Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2137,7 +2046,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:54:45.753Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
+      "lastSeen": "2026-09-29T06:55:31.855Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2152,7 +2061,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:54:45.753Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
+      "lastSeen": "2026-09-29T06:55:31.855Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2167,7 +2076,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:54:45.753Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
+      "lastSeen": "2026-09-29T06:55:31.855Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2182,7 +2091,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:54:45.753Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
+      "lastSeen": "2026-09-29T06:55:31.855Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2197,7 +2106,98 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:54:45.753Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
+      "lastSeen": "2026-09-29T06:55:31.855Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "release-of-admit-cards-for-the-candidates-of-national-eligibility-cum-entrance-test-neet-ug-2026-scheduled-on-",
+      "title": "Release of Admit Cards for the Candidates of National Eligibility cum Entrance Test [NEET (UG)]-2026, Scheduled on 21 June 2026- reg.",
+      "organization": "NTA",
+      "category": "ENTRANCE",
+      "type": "admit-card",
+      "status": "admit-card",
+      "url": "https://www.nta.ac.in/Download/Notice/Notice_20260614190141.pdf",
+      "sourceUrl": "https://www.nta.ac.in/",
+      "sourceName": "NTA — Official Exam Directory",
+      "official": true,
+      "firstSeen": "2026-09-28T14:39:48.713Z",
+      "lastSeen": "2026-09-29T06:55:31.854Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "opening-of-bank-account-re-confirmation-correction-window-for-refund-of-neet-ug-2026-examination-fee-examinati",
+      "title": "Opening of Bank Account Re-confirmation/Correction Window for Refund of NEET (UG) 2026 Examination Fee (Examination held on 03 May 2026) - OTP-Based Two-Factor Authentication Manda",
+      "organization": "NTA",
+      "category": "ENTRANCE",
+      "type": "admit-card",
+      "status": "admit-card",
+      "url": "https://www.nta.ac.in/Download/Notice/Notice_20260614184440.pdf",
+      "sourceUrl": "https://www.nta.ac.in/",
+      "sourceName": "NTA — Official Exam Directory",
+      "official": true,
+      "firstSeen": "2026-09-28T14:39:48.713Z",
+      "lastSeen": "2026-09-29T06:55:31.854Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "display-of-admit-cards-of-study-webs-of-active-learning-for-young-aspiring-minds-swayam-january-2026-semester-",
+      "title": "Display of Admit Cards of Study Webs of Active Learning for Young Aspiring Minds (SWAYAM) January 2026 Semester Exams-reg.",
+      "organization": "NTA",
+      "category": "ENTRANCE",
+      "type": "admit-card",
+      "status": "admit-card",
+      "url": "https://www.nta.ac.in/Download/Notice/Notice_20260612174824.pdf",
+      "sourceUrl": "https://www.nta.ac.in/",
+      "sourceName": "NTA — Official Exam Directory",
+      "official": true,
+      "firstSeen": "2026-09-28T14:39:48.713Z",
+      "lastSeen": "2026-09-29T06:55:31.854Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "conduct-and-declaration-of-results-for-the-national-institute-of-fashion-technology-entrance-examination-nifte",
+      "title": "Conduct and Declaration of Results for the National Institute of Fashion Technology Entrance Examination (NIFTEE)- 2026 for UG & PG Programmes - Reg.",
+      "organization": "NTA",
+      "category": "ENTRANCE",
+      "type": "result",
+      "status": "result",
+      "url": "https://www.nta.ac.in/Download/Notice/Notice_20260604114322.pdf",
+      "sourceUrl": "https://www.nta.ac.in/",
+      "sourceName": "NTA — Official Exam Directory",
+      "official": true,
+      "firstSeen": "2026-09-28T14:39:48.713Z",
+      "lastSeen": "2026-09-29T06:55:31.854Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "release-of-admit-cards-for-the-candidates-of-joint-integrated-programme-in-management-admission-test-jipmat-20",
+      "title": "Release of Admit Cards for the Candidates of Joint Integrated Programme in Management Admission Test (JIPMAT)-2026-reg.)",
+      "organization": "NTA",
+      "category": "ENTRANCE",
+      "type": "admit-card",
+      "status": "admit-card",
+      "notificationDate": "30.05.2026",
+      "url": "https://www.nta.ac.in/Download/Notice/Notice_20260601213514.pdf",
+      "sourceUrl": "https://www.nta.ac.in/",
+      "sourceName": "NTA — Official Exam Directory",
+      "official": true,
+      "firstSeen": "2026-09-28T14:39:48.713Z",
+      "lastSeen": "2026-09-29T06:55:31.854Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "release-of-admit-cards-for-re-scheduled-candidates-for-cuet-ug-2026-on-06-07-june-2026-reg-https-www-nta-ac-in",
+      "title": "Release of admit cards for re-scheduled candidates for CUET (UG)- 2026 on 06-07 June 2026-reg.",
+      "organization": "NTA",
+      "category": "ENTRANCE",
+      "type": "admit-card",
+      "status": "admit-card",
+      "url": "https://www.nta.ac.in/Download/Notice/Notice_20260601213649.pdf",
+      "sourceUrl": "https://www.nta.ac.in/",
+      "sourceName": "NTA — Official Exam Directory",
+      "official": true,
+      "firstSeen": "2026-09-28T14:54:45.753Z",
+      "lastSeen": "2026-09-29T06:55:31.854Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2212,7 +2212,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:39:48.713Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
+      "lastSeen": "2026-09-29T06:55:31.854Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2227,7 +2227,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:39:48.713Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
+      "lastSeen": "2026-09-29T06:55:31.854Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2242,7 +2242,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:39:48.713Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
+      "lastSeen": "2026-09-29T06:55:31.854Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2257,7 +2257,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:39:48.713Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
+      "lastSeen": "2026-09-29T06:55:31.854Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2272,7 +2272,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:39:48.713Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
+      "lastSeen": "2026-09-29T06:55:31.854Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2287,7 +2287,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:39:48.713Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
+      "lastSeen": "2026-09-29T06:55:31.854Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying.",
       "notificationDate": "21.06.2026"
     },
@@ -2303,7 +2303,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:39:48.713Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
+      "lastSeen": "2026-09-29T06:55:31.854Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2318,7 +2318,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:39:48.713Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
+      "lastSeen": "2026-09-29T06:55:31.854Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2333,7 +2333,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:54:45.752Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
+      "lastSeen": "2026-09-29T06:55:31.854Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2348,7 +2348,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:54:45.752Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
+      "lastSeen": "2026-09-29T06:55:31.854Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2363,7 +2363,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:54:45.752Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
+      "lastSeen": "2026-09-29T06:55:31.854Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2378,7 +2378,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:54:45.752Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
+      "lastSeen": "2026-09-29T06:55:31.854Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2393,7 +2393,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:54:45.752Z",
-      "lastSeen": "2026-09-29T01:00:10.972Z",
+      "lastSeen": "2026-09-29T06:55:31.854Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2408,7 +2408,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:39:48.713Z",
-      "lastSeen": "2026-09-29T01:00:10.971Z",
+      "lastSeen": "2026-09-29T06:55:31.854Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2423,7 +2423,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:39:48.713Z",
-      "lastSeen": "2026-09-29T01:00:10.971Z",
+      "lastSeen": "2026-09-29T06:55:31.854Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2438,7 +2438,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:54:45.752Z",
-      "lastSeen": "2026-09-29T01:00:10.971Z",
+      "lastSeen": "2026-09-29T06:55:31.854Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2453,7 +2453,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:54:45.752Z",
-      "lastSeen": "2026-09-29T01:00:10.971Z",
+      "lastSeen": "2026-09-29T06:55:31.854Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2468,7 +2468,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:54:45.752Z",
-      "lastSeen": "2026-09-29T01:00:10.971Z",
+      "lastSeen": "2026-09-29T06:55:31.854Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2483,7 +2483,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:54:45.752Z",
-      "lastSeen": "2026-09-29T01:00:10.971Z",
+      "lastSeen": "2026-09-29T06:55:31.854Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2498,7 +2498,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:54:45.752Z",
-      "lastSeen": "2026-09-29T01:00:10.971Z",
+      "lastSeen": "2026-09-29T06:55:31.854Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2513,7 +2513,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:54:45.752Z",
-      "lastSeen": "2026-09-29T01:00:10.971Z",
+      "lastSeen": "2026-09-29T06:55:31.854Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2528,7 +2528,7 @@
       "sourceName": "NTA — Official Exam Directory",
       "official": true,
       "firstSeen": "2026-09-28T14:54:45.752Z",
-      "lastSeen": "2026-09-29T01:00:10.971Z",
+      "lastSeen": "2026-09-29T06:55:31.854Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
