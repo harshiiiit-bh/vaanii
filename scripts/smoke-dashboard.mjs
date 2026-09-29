@@ -202,16 +202,36 @@ try {
   assert.ok(await page.locator('#confuseTableBody .cw-card').count() > 0, 'Confused-word section is empty');
   console.log('PASS vocabulary: bank, daily sets, micro-lessons and confused-word cards');
 
-  // Browser/Android-style back must traverse VAANI SPA views instead of leaving the site.
-  await page.locator('#vaaniMainNav button[data-view="vocab"]').click();
-  await page.waitForFunction(() => document.getElementById('view-vocab')?.classList.contains('active'));
-  await page.goBack();
-  await page.waitForFunction(() => document.getElementById('view-dashboard')?.classList.contains('active'));
-  assert.equal(await page.evaluate(() => history.state?.vaaniView), 'dashboard',
-    'Browser back did not return to Dashboard from Vocabulary');
+  // Full mobile bottom-nav back journey: Home → Grammar → Vocab → PYQ → Updates
+  // and then Back must walk that exact path without closing the document.
+  const mobileNavJourney = ['grammar','vocab','pyq','notifications'];
+  for (const view of mobileNavJourney) {
+    await page.locator('#bottomNav button[data-view="' + view + '"]').click();
+    await page.waitForFunction(v => document.getElementById('view-' + v)?.classList.contains('active'), view);
+  }
+  const journeyState = await page.evaluate(() => ({
+    view: history.state?.vaaniView,
+    url: location.href,
+    length: history.length
+  }));
+  assert.equal(journeyState.view, 'notifications', 'Mobile nav did not record Updates as a history route');
+  assert.match(journeyState.url, /[?&]v=notifications(?:#|$)/, 'Mobile nav route URL is not distinct');
+  assert.ok(journeyState.length >= 5, 'Mobile navigation did not create enough history entries: ' + JSON.stringify(journeyState));
 
+  for (const expected of ['pyq','vocab','grammar','dashboard']) {
+    await page.goBack();
+    await page.waitForFunction(v => document.getElementById('view-' + v)?.classList.contains('active'), expected);
+    assert.equal(await page.evaluate(() => history.state?.vaaniView), expected,
+      'Browser back did not return to ' + expected);
+  }
+  assert.equal(await page.evaluate(() => history.state?.vaaniView), 'dashboard',
+    'Final back state is not Dashboard');
+  console.log('PASS full mobile back journey: Updates → PYQ → Vocab → Grammar → Home');
+
+  // Re-enter Vocabulary for the remaining vocabulary bridge checks.
   await page.locator('#vaaniMainNav button[data-view="vocab"]').click();
   await page.waitForFunction(() => document.getElementById('view-vocab')?.classList.contains('active'));
+
   await page.locator('#vocabGrid .word-card').first().locator('h3').click();
   await page.waitForFunction(() => document.getElementById('view-worddetail')?.classList.contains('active'));
   assert.equal(await page.evaluate(() => history.state?.vaaniView), 'worddetail',
