@@ -87,6 +87,8 @@ try {
     page.evaluate(() => logout())
   ]);
   await page.waitForSelector('#gate-stage-start', { state: 'visible', timeout: 15000 });
+  assert.equal(await page.locator('#cadetName').inputValue(), '',
+    'New-account form retained the previous account name after logout');
   const accountB = await page.evaluate(async () => {
     generateCode=()=> '654321';
     return await createNewAccount();
