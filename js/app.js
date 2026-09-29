@@ -204,9 +204,12 @@ async function initGateSession(){
     showGateStage('showcode');
     return;
   }
+  // No account or legacy profile was restored. Clear the device-wide cache from
+  // memory and never prefill a new profile with the previous user's name.
+  if(typeof resetStateForAccount==='function') resetStateForAccount();
   showGateStage('start');
   const inp = document.getElementById('cadetName');
-  if(inp && State.name && State.name!=='Cadet') inp.value = State.name; // convenience pre-fill only
+  if(inp) inp.value = '';
 }
 async function handleGateLogin(){
   const btn = document.getElementById('gate-login-btn');
