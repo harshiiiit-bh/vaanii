@@ -1060,6 +1060,36 @@ try {
     assert.equal(immediateBoard.attempts, '1', 'Completed local result disappeared when the board adapter returned an empty list');
     assert.equal(immediateBoard.rows, 1, 'Current local result was not rendered as a leaderboard row');
     assert.equal(immediateBoard.currentRank, '#1', 'Current local result did not receive its local position');
+    const championshipDesign = await page.evaluate(() => ({
+      hero: document.querySelectorAll('#view-games .vx-championship-hero').length,
+      svg: document.querySelectorAll('#view-games .vx-championship-svg').length,
+      svgHidden: document.querySelector('#view-games .vx-championship-svg')?.getAttribute('aria-hidden'),
+      podium: document.querySelectorAll('#view-games .vx-championship-podium-card').length,
+      listHeading: document.querySelector('#view-games .vx-championship-list-head')?.textContent
+    }));
+    assert.equal(championshipDesign.hero, 1, 'Arena championship hero did not render');
+    assert.equal(championshipDesign.svg, 1, 'Inline trophy artwork did not render');
+    assert.equal(championshipDesign.svgHidden, 'true', 'Decorative trophy SVG must be hidden from screen readers');
+    assert.equal(championshipDesign.podium, 1, 'Single-player championship podium card did not render');
+    assert.match(championshipDesign.listHeading || '', /RANK\s*&\s*CADET.*SCORE.*TIME/i,
+      'Leaderboard column labels did not render');
+
+    const savedViewport = page.viewportSize();
+    for (const width of [320, 360, 390, 414, 768, 1280]) {
+      await page.setViewportSize({ width, height: 900 });
+      const bounds = await page.evaluate(() => ({
+        documentWidth: document.documentElement.scrollWidth,
+        deck: document.querySelector('#view-games .vx-championship')?.getBoundingClientRect().toJSON(),
+        hero: document.querySelector('#view-games .vx-championship-hero')?.getBoundingClientRect().toJSON()
+      }));
+      assert.ok(bounds.documentWidth <= width + 2,
+        'Arena leaderboard overflowed at ' + width + 'px: ' + JSON.stringify(bounds));
+      assert.ok(bounds.deck && bounds.deck.left >= -2 && bounds.deck.right <= width + 2,
+        'Arena leaderboard deck exceeded viewport at ' + width + 'px: ' + JSON.stringify(bounds.deck));
+      assert.ok(bounds.hero && bounds.hero.width > 0,
+        'Arena championship hero failed to size at ' + width + 'px');
+    }
+    await page.setViewportSize(savedViewport);
 
     await page.locator('#view-games button').filter({ hasText: 'Back to Arena' }).last().click();
     await page.locator('#view-games .vx-recent-row').first().getByRole('button', { name: 'Open' }).click();
