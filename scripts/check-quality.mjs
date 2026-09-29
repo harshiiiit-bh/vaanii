@@ -75,6 +75,44 @@ try {
     }
   }
   console.log('Learning data: ' + grammar.length + ' grammar topics, ' + vocab.length + ' vocabulary entries validated');
+
+  const academyContext = Object.create(null);
+  for (const path of ['data/grammar.js', 'data/grammar-basics.js', 'data/grammar-academy.js']) {
+    vm.runInNewContext(readFileSync(path, 'utf8'), academyContext, { timeout: 2000 });
+  }
+  const academy = JSON.parse(vm.runInNewContext('JSON.stringify(GRAMMAR_ACADEMY)', academyContext));
+  const academyTopics = academy && academy.topics;
+  const academyCatalogIds = new Set(JSON.parse(vm.runInNewContext('JSON.stringify(GRAMMAR.map(topic => topic.id))', academyContext)));
+  if (!Array.isArray(academyTopics) || academyTopics.length < 40) throw new Error('Advanced Grammar Academy curriculum is incomplete.');
+  const academyIds = academyTopics.map(topic => topic.id);
+  if (new Set(academyIds).size !== academyIds.length) throw new Error('Duplicate Grammar Academy topic IDs.');
+  const requiredGrammar = ['sequence-of-tenses','reduced-relative-clauses','non-finite-verbs','modifier-placement','inversion','subjunctive','sentence-transformations'];
+  for (const id of requiredGrammar) if (!academyIds.includes(id)) throw new Error('Grammar Academy is missing required topic: ' + id);
+  const academyIdSet = new Set(academyIds);
+  const assessmentIds = [];
+  for (const topic of academyTopics) {
+    if (!topic.legacyId || !academyCatalogIds.has(topic.legacyId)) throw new Error('Grammar Academy legacy mapping is broken: ' + topic.id);
+    for (const prerequisite of topic.prerequisites || []) if (!academyIdSet.has(prerequisite)) throw new Error('Unknown Grammar Academy prerequisite: ' + topic.id + ' -> ' + prerequisite);
+    if ((topic.assessments || []).length < 3) throw new Error('Grammar Academy topic lacks tiered checks: ' + topic.id);
+    if (!topic.diagram || !topic.diagram.label || !topic.diagram.text || !Array.isArray(topic.diagram.steps) || topic.diagram.steps.length < 3) throw new Error('Grammar Academy diagram or text equivalent is missing: ' + topic.id);
+    if (new Set(topic.sections.map(section => section.body)).size !== topic.sections.length) throw new Error('Grammar Academy repeats a lesson section: ' + topic.id);
+    if (new Set(topic.examples.map(example => example.text)).size !== topic.examples.length) throw new Error('Grammar Academy repeats an example: ' + topic.id);
+    const prompts = topic.assessments.map(item => item.prompt);
+    if (new Set(prompts).size !== prompts.length) throw new Error('Grammar Academy repeats an assessment prompt: ' + topic.id);
+    for (const item of topic.assessments) {
+      assessmentIds.push(item.id);
+      if (!item.prompt || !Array.isArray(item.options) || item.options.length < 3 || !Number.isInteger(item.answer) || item.answer < 0 || item.answer >= item.options.length ||
+          new Set(item.options).size !== item.options.length || !Array.isArray(item.reasons) || item.reasons.length !== item.options.length || item.reasons.some(reason => String(reason).trim().length < 12) || item.provenance !== 'authored-practice') {
+        throw new Error('Invalid Grammar Academy assessment or provenance: ' + item.id);
+      }
+    }
+  }
+  if (new Set(assessmentIds).size !== assessmentIds.length) throw new Error('Duplicate Grammar Academy assessment IDs.');
+  const pageSource = readFileSync('index.html', 'utf8');
+  if (!pageSource.includes('data/grammar-academy.js') || pageSource.indexOf('data/grammar-academy.js') > pageSource.indexOf('js/app.js')) {
+    throw new Error('Grammar Academy data must load before the main app.');
+  }
+  console.log('Grammar Academy: ' + academyTopics.length + ' mapped lessons, tiered checks, prerequisites and authored provenance validated');
 } catch (error) {
   console.error('Learning data validation failed:', error.message);
   process.exitCode = 1;
@@ -218,7 +256,11 @@ try {
 try {
   const appSource = readFileSync('js/app.js', 'utf8');
   const pageSource = readFileSync('index.html', 'utf8');
-  const grammar = loadData('data/grammar.js', 'GRAMMAR');
+  const grammarContext = Object.create(null);
+  for (const path of ['data/grammar.js', 'data/grammar-basics.js', 'data/grammar-academy.js']) {
+    vm.runInNewContext(readFileSync(path, 'utf8'), grammarContext, { timeout: 2000 });
+  }
+  const grammar = JSON.parse(vm.runInNewContext('JSON.stringify(GRAMMAR)', grammarContext));
   const tierMatch = appSource.match(/const SKILL_TIERS\s*=\s*(\[[\s\S]*?\]);/);
   if (!tierMatch) throw new Error('Grammar curriculum tiers are missing.');
   const tiers = vm.runInNewContext('(' + tierMatch[1] + ')', Object.create(null), { timeout: 1000 });
@@ -234,6 +276,16 @@ try {
     if (!appSource.includes(required)) throw new Error('Grammar UI component missing: ' + required);
   }
   if (!pageSource.includes('href="vaani-grammar-ux.css"')) throw new Error('Grammar UX stylesheet is not linked.');
+  if (pageSource.indexOf('js/vaani-grammar-academy.js') > pageSource.indexOf('js/app.js')) throw new Error('Grammar Academy interactions must load before the main app.');
+  if (!pageSource.includes('data/grammar-academy.js') || pageSource.indexOf('data/grammar-academy.js') > pageSource.indexOf('js/app.js')) throw new Error('Grammar Academy curriculum must load before the main app.');
+  const academyUi = readFileSync('js/vaani-grammar-academy.js', 'utf8');
+  const academyCss = readFileSync('vaani-grammar-ux.css', 'utf8');
+  for (const required of ['Academy.analyzeSentence', 'Academy.getMixedQuestions', 'Academy.getAdaptiveItems']) {
+    if (!academyUi.includes(required)) throw new Error('Grammar Academy interaction missing: ' + required);
+  }
+  for (const required of ['.ga-catalog', '.ga-analysis-output', ':focus-visible', '@media(max-width:520px)', '@media(prefers-reduced-motion:reduce)']) {
+    if (!academyCss.includes(required)) throw new Error('Grammar Academy accessibility/responsive styling missing: ' + required);
+  }
   if (!pageSource.includes('Designed and developed by</span><strong>Harshit Chaubey</strong>')) throw new Error('Site-wide creator credit is missing.');
   console.log('Grammar UX: ' + grammarIds.length + ' topics covered by the navigation tiers; browser, journey, styles and creator credit present');
 } catch (error) {
@@ -251,6 +303,12 @@ try {
   vm.runInNewContext(readFileSync('data/comparisons-extra.js', 'utf8'), extrasContext, { timeout: 1500 });
   const extras = extrasContext.window.VAANI_COMPARISON_EXTRA;
   if (!Array.isArray(extras) || extras.length !== 72) throw new Error('Expected 72 curated additional comparison pairs.');
+  if (arenaSource.includes('A.supabaseAdapter') || arenaSource.includes('/rest/v1/arena_scores') || pageSource.includes('useSync(VX.arena.supabaseAdapter')) {
+    throw new Error('Arena direct browser score writes are still enabled.');
+  }
+  if (!arenaSource.includes('var LocalAdapter') || !arenaSource.includes('var live = false') && !arenaSource.includes('live: false')) {
+    throw new Error('Arena local-first adapter is missing.');
+  }
 
   const start = appSource.indexOf('const COMPARISONS = [');
   const end = appSource.indexOf('\n].concat(Array.isArray(window.VAANI_COMPARISON_EXTRA)', start);
@@ -357,7 +415,9 @@ try {
   const homeEnd = librarySource.indexOf('\nfunction ', homeStart + 10);
   const homeTools = homeStart >= 0 && homeEnd >= 0 ? librarySource.slice(homeStart, homeEnd) : '';
   const academyStart = librarySource.indexOf('function renderAcademy(){');
-  const academyEnd = librarySource.indexOf('\n\n/* ================= EFFICIENCY:', academyStart);
+  // Source is checked out with CRLF on Windows, so find the stable comment
+  // marker itself instead of relying on a particular newline sequence.
+  const academyEnd = librarySource.indexOf('/* ================= EFFICIENCY:', academyStart);
   const academy = academyStart >= 0 && academyEnd >= 0 ? librarySource.slice(academyStart, academyEnd) : '';
   if (bookNav.includes('data-route="levels"') || bookNav.includes('data-route="spoken"')) throw new Error('Removed Levels/Spoken English links remain in Book Reading navigation.');
   if (homeTools.includes('#/levels') || homeTools.includes('#/spoken') || homeTools.includes('English levels') || homeTools.includes('Spoken English')) throw new Error('Removed Levels/Spoken English shortcuts remain on Book Reading home.');

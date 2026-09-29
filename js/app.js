@@ -43,13 +43,15 @@ function createDefaultState(){
     completedTopics:{}, quizScores:{}, vocabLearned:{}, theme:'light', missions:{},
     dailyActivity:{}, focusSessions:{}, mysteryBoxesClaimed:0, reviewQueue:[],
     personalBests:{ bestCombo:0, longestStreak:0, highestQuizScore:0, fastestQuizSeconds:null, fastestQuizLabel:'', totalQuizzesTaken:0 },
-    pyqStats:{ attempts:{} }, topicProgress:{}, topicLastAttempt:{}, bookmarkedTopics:{}, topicNotes:{},
+    pyqStats:{ attempts:{} }, topicProgress:{}, topicLastAttempt:{}, bookmarkedTopics:{}, topicNotes:{}, pyqBookmarks:[], grammarMastery:{},
     pyqContinue:null, lastSpinDate:null, activity:[]
   };
 }
 const State = createDefaultState();
 function loadState(){
-  try{const s = JSON.parse(localStorage.getItem('vaani_state'));if(s)Object.assign(State,s);}catch(e){}
+  // Account records are the only active source of learning progress. The
+  // device-wide vaani_state key is read only by the explicit legacy migration.
+  resetStateForAccount();
   normalizeState();
 }
 /* Guards against corrupted/partial localStorage data (older versions, manual edits, etc.)
@@ -66,6 +68,17 @@ function normalizeState(){
   State.focusSessions=isRecord(State.focusSessions)?State.focusSessions:{};
   State.topicProgress=isRecord(State.topicProgress)?State.topicProgress:{};
   State.topicLastAttempt=isRecord(State.topicLastAttempt)?State.topicLastAttempt:{};
+  State.bookmarkedTopics=isRecord(State.bookmarkedTopics)?State.bookmarkedTopics:{};
+  State.topicNotes=isRecord(State.topicNotes)?State.topicNotes:{};
+  State.pyqBookmarks=Array.isArray(State.pyqBookmarks)?Array.from(new Set(State.pyqBookmarks.filter(id=>typeof id==='string'&&id))):[];
+  State.grammarMastery=isRecord(State.grammarMastery)?State.grammarMastery:{};
+  Object.keys(State.grammarMastery).forEach(id=>{
+    const entry=State.grammarMastery[id];
+    if(!isRecord(entry)){delete State.grammarMastery[id];return;}
+    const attempts=Number(entry.attempts),correct=Number(entry.correct);
+    if(!Number.isFinite(attempts)||!Number.isFinite(correct)||attempts<0||correct<0){delete State.grammarMastery[id];return;}
+    State.grammarMastery[id]={attempts:Math.floor(attempts),correct:Math.min(Math.floor(correct),Math.floor(attempts)),lastAttempt:Number.isFinite(Number(entry.lastAttempt))?Number(entry.lastAttempt):null};
+  });
   State.pyqStats=isRecord(State.pyqStats)?State.pyqStats:{attempts:{}};
   State.pyqStats.attempts=isRecord(State.pyqStats.attempts)?State.pyqStats.attempts:{};
   State.personalBests=isRecord(State.personalBests)?State.personalBests:{};
@@ -79,12 +92,20 @@ function normalizeState(){
 }
 let __vaaniStorageWarningShown=false;
 function saveState(){
-  let saved=false;
-  try{localStorage.setItem('vaani_state',JSON.stringify(State));saved=true;}
-  catch(err){console.warn('[VAANI] Browser storage could not save progress:',err);if(!__vaaniStorageWarningShown&&typeof toast==='function'){__vaaniStorageWarningShown=true;toast('Browser storage is full or unavailable. Your current session can continue, but progress may not persist.');}}
-  try{if(typeof persistCombinedAccount==='function')persistCombinedAccount();}
+  if(typeof ACTIVE_CODE==='undefined'||!ACTIVE_CODE)return false;
+  try{
+    if(typeof persistCombinedAccount==='function'){
+      const pending=persistCombinedAccount();
+      if(pending&&typeof pending.then==='function')pending.then(ok=>{
+        if(!ok&&!__vaaniStorageWarningShown&&typeof toast==='function'){
+          __vaaniStorageWarningShown=true;
+          toast('Progress could not be saved. Your current session can continue, but it may not persist.');
+        }
+      }).catch(err=>console.warn('[VAANI] Account sync could not save progress:',err));
+    }
+  }
   catch(err){console.warn('[VAANI] Account sync could not save progress:',err);}
-  return saved;
+  return true;
 }
 function resetStateForAccount(){
   Object.keys(State).forEach(key=>delete State[key]);
@@ -1197,7 +1218,13 @@ function reviewMarkRight(kind, ref){
 }
 function reviewDueItems(kindFilter){
   const now = Date.now();
-  return ensureReviewQueue().filter(x=> (!kindFilter || x.kind===kindFilter) && new Date(x.nextReview).getTime() <= now);
+  const queue=ensureReviewQueue();
+  if((!kindFilter||kindFilter==='grammar')&&window.VaaniGrammarAcademy){
+    window.VaaniGrammarAcademy.getAdaptiveItems(State).filter(entry=>entry.priority==='weak').forEach(entry=>{
+      if(!findReviewItem('grammar',entry.ref))queue.push({kind:'grammar',ref:entry.ref,box:0,wrongCount:0,rightCount:0,addedAt:new Date().toISOString(),nextReview:new Date().toISOString(),source:'weak-mastery'});
+    });
+  }
+  return queue.filter(x=> (!kindFilter || x.kind===kindFilter) && new Date(x.nextReview).getTime() <= now);
 }
 function reviewSoonestDue(){
   const q = ensureReviewQueue();
@@ -2323,10 +2350,10 @@ function topicStatus(id){
 /* ---- Skill Tree: curriculum-ordered progression map ---- */
 const SKILL_TIERS = [
   {label:'Tier I · Foundations', ids:['parts-of-speech','noun','pronoun','verb','adjective','adverb','preposition']},
-  {label:'Tier II · Verb Systems', ids:['conjunction','articles','tenses','voice','narration','sva','modals']},
-  {label:'Tier III · Sentence Architecture', ids:['conditionals','question-tags','comparison','clauses','phrases','gerunds-infinitives','participles']},
-  {label:'Tier IV · Precision & Polish', ids:['parallelism','punctuation','capitalization','word-formation','sentence-structure','determiners']},
-  {label:'Tier V · Exam Technique', ids:['spotting-errors','sentence-improvement','idioms-phrasal-verbs','one-word-substitution','jumbled-sentences','confused-words','cloze-test-strategy']}
+  {label:'Tier II · Verb Systems', ids:['conjunction','articles','tenses','sequence-of-tenses','voice','narration','sva','modals','subjunctive']},
+  {label:'Tier III · Sentence Architecture', ids:['conditionals','question-tags','comparison','clauses','reduced-relative-clauses','phrases','non-finite-verbs','gerunds-infinitives','participles']},
+  {label:'Tier IV · Precision & Polish', ids:['parallelism','punctuation','capitalization','word-formation','sentence-structure','determiners','modifier-placement']},
+  {label:'Tier V · Exam Technique', ids:['spotting-errors','sentence-improvement','idioms-phrasal-verbs','one-word-substitution','jumbled-sentences','confused-words','cloze-test-strategy','inversion','sentence-transformations']}
 ];
 function renderSkillTree(){
   const wrap = document.getElementById('skillTreeWrap'); if(!wrap) return;
@@ -2672,6 +2699,80 @@ function renderGrammarTreeInner(canvas){
   canvas.dataset.built='1';
   gtBindTopicBrowser(canvas);
   gtApplyBrowserFilters(canvas);
+  renderGrammarAcademyCatalog();
+}
+
+function recordGrammarMastery(topicId,correct){
+  if(!window.GRAMMAR_ACADEMY||!GRAMMAR_ACADEMY.topics.some(topic=>topic.id===topicId))return;
+  State.grammarMastery=State.grammarMastery||{};
+  const entry=State.grammarMastery[topicId]||{attempts:0,correct:0,lastAttempt:null};
+  entry.attempts++;if(correct)entry.correct++;entry.lastAttempt=Date.now();State.grammarMastery[topicId]=entry;
+  if(correct)reviewMarkRight('grammar',topicId);else reviewMarkWrong('grammar',topicId);
+  saveState();
+}
+
+function renderGrammarAcademyCatalog(){
+  const host=document.getElementById('grammarAcademyCatalog');
+  const curriculum=window.GRAMMAR_ACADEMY;
+  if(!host||!curriculum||!Array.isArray(curriculum.stages)||!Array.isArray(curriculum.topics))return;
+  host.replaceChildren();
+  curriculum.stages.forEach((stage,index)=>{
+    const topics=curriculum.topics.filter(topic=>topic.stage===stage.id);
+    const section=document.createElement('section');section.className='ga-stage-card';
+    const heading=document.createElement('div');heading.className='ga-stage-heading';
+    const label=document.createElement('span');label.className='ga-stage-number';label.textContent=String(index+1).padStart(2,'0');
+    const copy=document.createElement('div');const title=document.createElement('h4');title.textContent=stage.label;
+    const description=document.createElement('p');description.textContent=stage.description;copy.append(title,description);
+    const count=document.createElement('span');count.className='ga-stage-count';count.textContent=topics.length+' lessons';heading.append(label,copy,count);section.append(heading);
+    const list=document.createElement('div');list.className='ga-stage-lessons';
+    topics.forEach(topic=>{
+      const button=document.createElement('button');button.type='button';button.className='ga-lesson-link';button.textContent=topic.title;
+      button.setAttribute('aria-label','Open '+topic.title+' grammar lesson');button.addEventListener('click',()=>openTopic(topic.id));list.appendChild(button);
+    });
+    section.appendChild(list);host.appendChild(section);
+  });
+}
+
+function grammarAcademyLessonHTML(topic){
+  if(!topic)return '';
+  const esc=escapeHtmlVaani;
+  const sections=topic.sections.map(section=>'<section class="ga-lesson-section"><h4>'+esc(section.title)+'</h4><p>'+esc(section.body)+'</p></section>').join('');
+  const examples=topic.examples.map(example=>'<article class="ga-example '+(example.kind==='counterexample'?'is-counterexample':'')+'"><span>'+esc(example.kind==='counterexample'?'Counterexample':'Worked example')+'</span><p>'+esc(example.text)+'</p><small>'+esc(example.analysis)+'</small></article>').join('');
+  const mistakes=topic.misconceptions.map(item=>'<article class="ga-misconception"><b>Common trap</b><p>'+esc(item.error)+'</p><small>'+esc(item.why)+' '+esc(item.correction)+'</small></article>').join('');
+  const exercises=topic.exercises.map(item=>'<li><b>'+esc(item.type==='repair'?'Repair':'Analyze')+':</b> '+esc(item.prompt)+'<details><summary>Show a model of the reasoning</summary><p>'+esc(item.answer)+'</p></details></li>').join('');
+  const steps=topic.diagram.steps.map((step,index)=>'<li><span>'+String(index+1)+'</span><b>'+esc(step.label)+'</b><small>'+esc(step.detail)+'</small></li>').join('');
+  return '<section class="ga-lesson" aria-label="'+esc(topic.title)+' Academy lesson"><div class="ga-lesson-top"><span>'+esc(topic.stage)+' · original practice</span><p>'+esc(topic.summary)+'</p></div><div class="ga-lesson-columns">'+sections+'</div><div class="ga-examples">'+examples+'</div><div class="ga-mistakes">'+mistakes+'</div><section class="ga-diagram"><h4>'+esc(topic.diagram.label||'Reasoning path')+'</h4><p>'+esc(topic.diagram.text)+'</p><ol>'+steps+'</ol></section><section class="ga-exercises"><h4>Work the concept</h4><ol>'+exercises+'</ol></section><section class="ga-analysis"><h4>Interactive sentence analysis</h4><p>Identify likely clause boundaries and grammar markers, then verify the parser’s clues against the sentence meaning.</p><label for="gaSentenceInput">Sentence to analyze</label><textarea id="gaSentenceInput" rows="3" maxlength="3000" placeholder="For example: Although the route was difficult, the team completed it."></textarea><button class="btn ghost" type="button" id="gaAnalyzeButton">Analyze sentence</button><div id="gaAnalysisOutput" class="ga-analysis-output" role="status" aria-live="polite"></div></section><p class="ga-provenance">Assessment items are original authored practice aligned to named English skills; they are not official PYQs.</p></section>';
+}
+
+function analyzeGrammarSentence(){
+  const input=document.getElementById('gaSentenceInput'),output=document.getElementById('gaAnalysisOutput');
+  if(!input||!output||!window.VaaniGrammarAcademy)return;
+  const result=VaaniGrammarAcademy.analyzeSentence(input.value);output.replaceChildren();
+  const message=document.createElement('p');message.textContent=result.ok?result.note:result.message;output.appendChild(message);
+  if(!result.ok)return;
+  const heading=document.createElement('h5');heading.textContent='Clause identification (first-pass)';output.appendChild(heading);
+  const clauses=document.createElement('ol');result.clauses.forEach(clause=>{const li=document.createElement('li');li.textContent=clause.label+': '+clause.text;clauses.appendChild(li);});output.appendChild(clauses);
+  const tokenHeading=document.createElement('h5');tokenHeading.textContent='Grammar markers';output.appendChild(tokenHeading);
+  const tokens=document.createElement('ul');result.tokens.filter(token=>token.role!=='word').forEach(token=>{const li=document.createElement('li');li.textContent=token.text+' — '+token.role;tokens.appendChild(li);});
+  if(!tokens.childElementCount){const li=document.createElement('li');li.textContent='No likely clause markers or verb forms detected.';tokens.appendChild(li);}output.appendChild(tokens);
+}
+
+function startGrammarMixedChallenge(){
+  if(!window.VaaniGrammarAcademy)return;
+  const day=typeof dailyDateKey==='function'?dailyDateKey():new Date().toISOString().slice(0,10);
+  const selected=VaaniGrammarAcademy.getMixedQuestions(day+'|grammar-academy',12);
+  const questions=selected.map(entry=>{const item=entry.question;return {
+    q:item.prompt,opts:item.options.slice(),ans:item.answer,exp:item.explanation,reasons:item.reasons.slice(),
+    lessonId:entry.topicId,provenance:item.provenance
+  };});
+  document.getElementById('topicEyebrow').textContent='Grammar Academy · mixed practice';
+  document.getElementById('topicTitle').textContent='Mixed-concept challenge';
+  document.getElementById('topicStamp').textContent='ORIGINAL PRACTICE';
+  document.getElementById('topicMetaStrip').textContent=questions.length+' questions · '+day+' rotation · authored practice';
+  document.getElementById('flowStepper').replaceChildren();
+  document.querySelectorAll('.tab-btn').forEach(button=>button.classList.toggle('active',button.dataset.tab==='quiz'));
+  document.querySelectorAll('.tab-pane').forEach(pane=>pane.classList.toggle('active',pane.id==='pane-quiz'));
+  switchView('topic');renderQuizPane('grammar-mixed-challenge',questions);
 }
 
 function gtRipple(btn,e){
@@ -3048,6 +3149,7 @@ function toggleReveal(el){el.classList.toggle('open');}
 function openTopic(id){
   currentTopic = GRAMMAR.find(g=>g.id===id);
   if(!currentTopic) return;
+  const academyTopic=window.VaaniGrammarAcademy&&VaaniGrammarAcademy.resolve(id);
   State.topicProgress = State.topicProgress || {};
   if(!State.topicProgress[id]){ State.topicProgress[id]=true; saveState(); }
   document.getElementById('topicEyebrow').textContent='Grammar Module';
@@ -3062,7 +3164,7 @@ function openTopic(id){
     <div class="meta-pill">⏱ <b>${meta.time||'6 min'}</b> read</div>
     <div class="meta-pill">Difficulty ${diffDots(meta.difficulty||2)}</div>
     ${meta.prereq&&meta.prereq.length?`<div class="meta-pill">Prereq: <b>${meta.prereq.join(', ')}</b></div>`:''}
-    <div class="meta-pill">📝 ${currentTopic.quiz.length} quiz Qs</div>`;
+    <div class="meta-pill">📝 ${academyTopic?academyTopic.assessments.length:currentTopic.quiz.length} quiz Qs</div>`;
 
   const steps=[['concept','①','Concept'],['rule','②','Rule'],['exception','③','Exception'],['trick','④','Trick'],
     ['example','⑤','Example'],['practice','⑥','Practice'],['pyq','⑦','PYQ'],['summary','⑧','Summary']];
@@ -3075,7 +3177,9 @@ function openTopic(id){
   let learnHtml='<section class="lesson-start-card"><div class="lesson-start-top"><span class="lesson-kicker">START HERE · PLAIN ENGLISH</span><span class="lesson-time">'+escLesson(meta.time||'6 min')+'</span></div><h3>Understand the idea first</h3><p class="lesson-plain">'+escLesson(basics.plain)+'</p><div class="lesson-rule"><span class="lesson-mini-label">THE RULE</span><p>'+escLesson(basics.rule)+'</p></div>'+(basics.good?'<div class="lesson-example is-good"><span class="lesson-mini-label">EXAMPLE</span><p>'+escLesson(basics.good)+'</p></div>':'')+(basics.bad?'<div class="lesson-example is-watch"><span class="lesson-mini-label">WATCH OUT</span><p>'+escLesson(basics.bad)+'</p><small>'+escLesson(basics.why||'Check the rule before choosing.')+'</small></div>':'')+(!basics.bad&&basics.why?'<p class="lesson-why">'+escLesson(basics.why)+'</p>':'')+'<div class="lesson-start-actions"><button class="btn" type="button" id="lessonGoPractice">Try a question →</button><span>Detailed notes are available below when you need them.</span></div></section>';
   learnHtml+='<details class="lesson-reference"><summary>Open detailed reference notes (optional)</summary><div class="lesson-reference-body">'+(currentTopic.learn||'')+(currentTopic.didYouKnow?'<div class="dyk-box"><span class="dyk-icon">💡</span><div><b>DID YOU KNOW?</b>'+currentTopic.didYouKnow+'</div></div>':'')+(currentTopic.diagram?renderMindmap(currentTopic.diagram):'')+(currentTopic.exception?'<div class="exception-box"><span class="elabel">⚠ EXCEPTION TO THE RULE</span>'+currentTopic.exception+'</div>':'')+(currentTopic.levels?'<div class="panel-title" style="margin-top:24px"><span class="bar"></span>Explore by Depth</div>'+renderLevels(currentTopic.levels):'')+(currentTopic.comparison?'<div class="panel-title" style="margin-top:24px"><span class="bar"></span>Comparison Table</div>'+renderCompare(currentTopic.comparison):'')+(currentTopic.cheatSheet?'<div class="cheat-card"><h4>📋 '+escLesson(currentTopic.cheatSheet.title||'Printable Cheat Sheet')+'</h4><div class="cheat-grid">'+(currentTopic.cheatSheet.items||[]).map(it=>'<div class="cheat-cell"><b>'+escLesson(it.k)+'</b>'+escLesson(it.v)+'</div>').join('')+'</div></div>':'')+'</div></details>';
 
+  if(academyTopic) learnHtml+=grammarAcademyLessonHTML(academyTopic);
   learnHtml='<section class="grammar-coach-card"><div class="lesson-kicker">PRACTISE WRITING</div><h3>Try your own sentence</h3><p>Write one sentence using this rule. The optional checker can suggest corrections.</p><label for="grammarCoachInput">Your sentence</label><textarea id="grammarCoachInput" rows="3" maxlength="3000" placeholder="Write a sentence in your own words…"></textarea><div class="grammar-coach-actions"><button class="btn ghost" type="button" id="grammarCoachCheck" onclick="checkGrammarSentence()">Check sentence</button><span>Manual check · English (US)</span></div><div id="grammarCoachResult" class="grammar-coach-result" role="status" aria-live="polite"></div><small class="grammar-coach-privacy">Your sentence is sent to LanguageTool only when you press Check sentence. Avoid entering personal information. Automated suggestions can be imperfect.</small><small class="grammar-coach-credit">Powered by <a href="https://languagetool.org/" target="_blank" rel="noopener noreferrer">LanguageTool</a>.</small></section>'+learnHtml;
+  document.getElementById('pane-learn').innerHTML=learnHtml;
   const lessonPracticeBtn=document.getElementById('lessonGoPractice');
   if(lessonPracticeBtn)lessonPracticeBtn.addEventListener('click',()=>{const practiceStep=document.querySelector('.flow-step[data-step="practice"]');if(practiceStep)jumpFlow('practice',practiceStep);});
 
@@ -3104,7 +3208,9 @@ function openTopic(id){
     ${currentTopic.mnemonicChain?`<div class="trick-box reveal"><span class="tlabel">QUICK MNEMONIC</span>${currentTopic.mnemonicChain}</div>`:''}
     <button class="btn glow-btn" onclick="completeTopic('${currentTopic.id}')">Mark Topic Cleared +25 XP</button>`;
 
-  renderQuizPane(currentTopic.id, currentTopic.quiz);
+  const academyQuiz=academyTopic?academyTopic.assessments.map(item=>({q:item.prompt,opts:item.options.slice(),ans:item.answer,exp:item.explanation,reasons:item.reasons.slice(),lessonId:academyTopic.id,provenance:item.provenance})):currentTopic.quiz;
+  renderQuizPane(currentTopic.id, academyQuiz);
+  const analyzeButton=document.getElementById('gaAnalyzeButton');if(analyzeButton)analyzeButton.addEventListener('click',analyzeGrammarSentence);
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab==='learn'));
   document.querySelectorAll('.tab-pane').forEach(p=>p.classList.toggle('active',p.id==='pane-learn'));
   switchView('topic');
@@ -3197,8 +3303,10 @@ function renderQuizPane(id, quiz){
     pane.querySelector('#grammarQuizProgress').textContent='Question '+(idx+1)+' of '+questions.length;pane.querySelector('#grammarQuizQuestion').textContent=String(item.q||'Read the question carefully.');
     const card=pane.querySelector('.quiz-card'),wrap=pane.querySelector('#optsWrap');qTimer=startQTimer(pane.querySelector('#qTimerRing'));
     (Array.isArray(item.opts)?item.opts:[]).forEach((option,i)=>{const b=document.createElement('button');b.type='button';b.className='opt-btn quiz-option';b.setAttribute('aria-pressed','false');const letter=document.createElement('span');letter.className='quiz-option-letter';letter.textContent=String.fromCharCode(65+i);const label=document.createElement('span');label.className='quiz-option-text';label.textContent=String(option);b.append(letter,label);b.addEventListener('click',()=>{if(b.disabled)return;const elapsed=qElapsedSeconds(qTimer);if(qTimer){qTimer.stop();qTimer=null;}wrap.querySelectorAll('button').forEach(x=>{x.disabled=true;x.setAttribute('aria-pressed','false');});b.setAttribute('aria-pressed','true');const fb=pane.querySelector('#qFeedback');
-      if(i===item.ans){correctCount++;b.classList.add('correct');handleQuizCorrect(b,card);fb.className='quiz-feedback is-correct';fb.textContent='Correct. '+String(item.exp||'You selected the right answer.');if(elapsed<=5){addXP(2,'Quick answer');const speed=document.createElement('span');speed.className='speed-tag';speed.textContent='⚡ Quick answer +2 XP';fb.appendChild(speed);}}
-      else{b.classList.add('wrong');const right=wrap.querySelectorAll('button')[item.ans];if(right)right.classList.add('correct');handleQuizWrong(card);fb.className='quiz-feedback is-wrong';fb.textContent='Not quite. Correct answer: '+String((item.opts||[])[item.ans]||'the highlighted option')+'. '+String(item.exp||'Review the rule and try again.');}
+      const wasCorrect=i===item.ans;
+      if(wasCorrect){correctCount++;b.classList.add('correct');handleQuizCorrect(b,card);fb.className='quiz-feedback is-correct';fb.textContent='Correct. '+String(item.exp||'You selected the right answer.');if(item.lessonId)recordGrammarMastery(item.lessonId,true);if(elapsed<=5){addXP(2,'Quick answer');const speed=document.createElement('span');speed.className='speed-tag';speed.textContent='⚡ Quick answer +2 XP';fb.appendChild(speed);}}
+      else{b.classList.add('wrong');const right=wrap.querySelectorAll('button')[item.ans];if(right)right.classList.add('correct');handleQuizWrong(card);fb.className='quiz-feedback is-wrong';fb.textContent='Not quite. Correct answer: '+String((item.opts||[])[item.ans]||'the highlighted option')+'. '+String(item.exp||'Review the rule and try again.');if(item.lessonId)recordGrammarMastery(item.lessonId,false);}
+      if(Array.isArray(item.reasons)&&item.reasons.length){const rationale=document.createElement('ul');rationale.className='ga-choice-reasons';item.reasons.forEach((reason,index)=>{const li=document.createElement('li');li.textContent=String.fromCharCode(65+index)+'. '+String(reason);rationale.appendChild(li);});fb.appendChild(rationale);}
       const next=pane.querySelector('#nextBtn');next.disabled=false;next.focus();});wrap.appendChild(b);});
     const next=pane.querySelector('#nextBtn');next.addEventListener('click',()=>{if(!next.disabled){idx++;draw();}});
     if(!item.opts||item.opts.length<2||!Number.isInteger(item.ans)||item.ans<0||item.ans>=item.opts.length){next.disabled=true;pane.querySelector('#qFeedback').textContent='This question needs correction before it can be answered.';if(qTimer){qTimer.stop();qTimer=null;}}
@@ -3896,7 +4004,7 @@ function renderReviewWidget(){
   const due = reviewDueItems();
   card.classList.toggle('review-due-glow', due.length>0);
   if(!queue.length){
-    body.innerHTML = `<p class="review-empty">Nothing here yet — any vocab word or PYQ question you get wrong will land here for spaced review, so mistakes turn into the thing you know best.</p>`;
+    body.innerHTML = `<p class="review-empty">Nothing here yet — missed vocabulary, grammar, and PYQ items will land here for spaced review, so mistakes turn into the thing you know best.</p>`;
     return;
   }
   if(!due.length){
@@ -3906,10 +4014,11 @@ function renderReviewWidget(){
   }
   const dueVocab = due.filter(x=>x.kind==='vocab').length;
   const duePyq = due.filter(x=>x.kind==='pyq').length;
+  const dueGrammar = due.filter(x=>x.kind==='grammar').length;
   body.innerHTML = `
     <div class="review-due-row">
       <div class="review-due-count" id="reviewDueCount">0</div>
-      <div class="review-due-text">due for review right now<br><span class="review-due-breakdown">${dueVocab} vocab · ${duePyq} PYQ</span></div>
+      <div class="review-due-text">due for review right now<br><span class="review-due-breakdown">${dueVocab} vocab · ${dueGrammar} grammar · ${duePyq} PYQ</span></div>
       <button class="btn" onclick="openReviewSession()">Start Review →</button>
     </div>`;
   countUp('reviewDueCount', due.length);
@@ -3946,6 +4055,18 @@ function renderReviewCard(){
     actions.innerHTML = `
       <button class="btn ghost" onclick="reviewGradeVocab(false)">Still shaky</button>
       <button class="btn" onclick="reviewGradeVocab(true)">Got it ✓</button>`;
+  } else if(item.kind==='grammar'){
+    const adaptive=window.VaaniGrammarAcademy&&VaaniGrammarAcademy.getAdaptiveItems(State).find(entry=>entry.ref===item.ref);
+    if(!adaptive){reviewAdvance();return;}
+    const topic=adaptive.topic,q=adaptive.question;
+    front.onclick=back.onclick=null;
+    front.replaceChildren();
+    const tag=document.createElement('div');tag.className='review-kind-tag';tag.textContent='GRAMMAR · '+topic.title;
+    const prompt=document.createElement('div');prompt.className='review-q';prompt.textContent=q.prompt;
+    const options=document.createElement('div');options.className='review-opts';
+    q.options.forEach((option,index)=>{const button=document.createElement('button');button.type='button';button.className='opt-btn';button.textContent=String(option);button.addEventListener('click',()=>reviewAnswerGrammar(index));options.appendChild(button);});
+    front.append(tag,prompt,options);
+    back.replaceChildren();actions.replaceChildren();
   } else {
     const q = PYQ_BY_ID[item.ref];
     if(!q){ reviewAdvance(); return; }
@@ -3966,6 +4087,19 @@ function reviewAnswerPyq(oi){
   opts.forEach((b,i)=>{ b.disabled=true; if(i===q.ans) b.classList.add('correct'); else if(i===oi) b.classList.add('wrong'); });
   recordPyqAttempt(q._id, correct);
   setTimeout(reviewAdvance, 850);
+}
+function reviewAnswerGrammar(optionIndex){
+  const item=reviewSessionQueue[reviewSessionIdx];
+  const adaptive=window.VaaniGrammarAcademy&&VaaniGrammarAcademy.getAdaptiveItems(State).find(entry=>entry.ref===item.ref);
+  if(!adaptive)return;
+  const question=adaptive.question,correct=optionIndex===question.answer;
+  const options=document.querySelectorAll('#reviewFront .opt-btn');
+  options.forEach((button,index)=>{button.disabled=true;if(index===question.answer)button.classList.add('correct');else if(index===optionIndex)button.classList.add('wrong');});
+  const feedback=document.createElement('p');feedback.className='quiz-feedback '+(correct?'is-correct':'is-wrong');
+  feedback.textContent=(correct?'Correct. ':'Review this one. ')+(question.reasons[optionIndex]||question.explanation||'Check the lesson rule.');
+  document.getElementById('reviewFront').appendChild(feedback);
+  recordGrammarMastery(item.ref,correct);
+  setTimeout(reviewAdvance,850);
 }
 function reviewGradeVocab(gotIt){
   const item = reviewSessionQueue[reviewSessionIdx];
@@ -4329,11 +4463,22 @@ function launchConfetti(){
   draw();
 }
 
-function resetProgress(){
-  if(confirm('Reset all progress? This cannot be undone.')){
-    localStorage.removeItem('vaani_state');
-    location.reload();
+async function resetProgress(){
+  if(!confirm('Reset all progress? This cannot be undone.'))return;
+  if(typeof ACTIVE_CODE==='undefined'||!ACTIVE_CODE){toast('Sign in before resetting account progress.');return;}
+  const previous=JSON.stringify(State),name=State.name,theme=State.theme;
+  resetStateForAccount();
+  State.name=name;State.theme=theme;
+  document.body.setAttribute('data-theme',theme);
+  try{
+    if(!await persistCombinedAccount())throw new Error('Account progress save failed');
+  }catch(err){
+    resetStateForAccount();Object.assign(State,JSON.parse(previous));normalizeState();
+    document.body.setAttribute('data-theme',State.theme);
+    toast('Progress could not be reset because the account record could not be saved.');
+    return;
   }
+  location.reload();
 }
 
 /* ============================================================
@@ -5055,12 +5200,14 @@ function toggleQuickNav(){
 }
 
 /* bookmarks for questions */
-function getBookmarks(){ try{ return JSON.parse(localStorage.getItem('vaani_bookmarks')||'[]'); }catch(e){ return []; } }
+function getBookmarks(){ return Array.isArray(State.pyqBookmarks)?State.pyqBookmarks:[]; }
 function toggleBookmark(qid, starEl){
-  let bm = getBookmarks();
+  if(!ACTIVE_CODE||typeof qid!=='string'||!qid)return;
+  let bm = getBookmarks().slice();
   if(bm.includes(qid)){ bm = bm.filter(x=>x!==qid); if(starEl) starEl.classList.remove('active'); }
   else { bm.push(qid); if(starEl) starEl.classList.add('active'); }
-  localStorage.setItem('vaani_bookmarks', JSON.stringify(bm));
+  State.pyqBookmarks=bm;
+  saveState();
 }
 function isBookmarked(qid){ return getBookmarks().includes(qid); }
 

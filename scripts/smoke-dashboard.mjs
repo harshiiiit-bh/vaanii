@@ -2,7 +2,9 @@ import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
 
 const baseURL = process.env.VAANI_BASE_URL || 'http://127.0.0.1:4173/';
-const browser = await chromium.launch({ headless: true, args: ['--no-sandbox'] });
+const launchOptions = { headless: true, args: ['--no-sandbox'] };
+if (process.env.VAANI_BROWSER_EXECUTABLE) launchOptions.executablePath = process.env.VAANI_BROWSER_EXECUTABLE;
+const browser = await chromium.launch(launchOptions);
 const context = await browser.newContext({
   viewport: { width: 1440, height: 1000 },
   reducedMotion: 'reduce'
@@ -10,6 +12,7 @@ const context = await browser.newContext({
 const page = await context.newPage();
 const pageErrors = [];
 const vaErrors = [];
+let academyImageResults = null;
 
 page.on('pageerror', error => pageErrors.push(error.stack || error.message));
 page.on('console', message => {
@@ -77,6 +80,9 @@ try {
     const code=localStorage.getItem('vbv_session_code');
     State.xp=321; State.completedTopics={'account-a-topic':true};
     State.quizScores={'account-a-quiz':87};
+    State.topicProgress={'account-a-progress':true};
+    State.bookmarkedTopics={'account-a-bookmark':true};
+    State.topicNotes={'account-a-note':'A-only lesson note'};
     const vbvSeed={
       completed:[{id:'account-a-completed',title:'A completed book'}],
       ongoing:[{id:'account-a-ongoing',title:'A current book',logs:[]}],
@@ -117,25 +123,31 @@ try {
   });
   const restoredA = await page.evaluate(async code => {
     const result=await loginWithCode(code);
-    return {result,xp:State.xp,completed:State.completedTopics,scores:State.quizScores,
+    return {result,xp:State.xp,completed:State.completedTopics,scores:State.quizScores,progress:State.topicProgress,bookmarks:State.bookmarkedTopics,notes:State.topicNotes,
       books:Object.fromEntries(['completed','ongoing','upcoming','vocab','achievements','quizHistory'].map(key=>[key,DATA[key].map(item=>item.id)]))};
   }, accountA);
   assert.equal(restoredA.result.ok, true, 'Existing account A failed to log in');
   assert.equal(restoredA.xp, 321, 'Account A XP was not restored');
   assert.equal(restoredA.completed['account-a-topic'], true, 'Account A topic progress was not restored');
   assert.equal(restoredA.scores['account-a-quiz'], 87, 'Account A quiz progress was not restored');
+  assert.equal(restoredA.progress['account-a-progress'], true, 'Account A in-progress lesson state was not restored');
+  assert.equal(restoredA.bookmarks['account-a-bookmark'], true, 'Account A bookmark was not restored');
+  assert.equal(restoredA.notes['account-a-note'], 'A-only lesson note', 'Account A lesson note was not restored');
   for(const [key,id] of Object.entries({completed:'account-a-completed',ongoing:'account-a-ongoing',upcoming:'account-a-upcoming',vocab:'account-a-vocab',achievements:'account-a-achievement',quizHistory:'account-a-quiz-history'})){
     assert.equal(restoredA.books[key].includes(id), true, 'Account A Book Reading '+key+' was not restored');
   }
   const restoredB = await page.evaluate(async code => {
     const result=await loginWithCode(code);
-    return {result,xp:State.xp,completed:State.completedTopics,scores:State.quizScores,vocab:State.vocabLearned,
+    return {result,xp:State.xp,completed:State.completedTopics,scores:State.quizScores,vocab:State.vocabLearned,progress:State.topicProgress,bookmarks:State.bookmarkedTopics,notes:State.topicNotes,
       books:Object.fromEntries(['completed','ongoing','upcoming','vocab','achievements','quizHistory'].map(key=>[key,DATA[key].map(item=>item.id)]))};
   }, accountB);
   assert.equal(restoredB.result.ok, true, 'Existing account B failed to log in');
   assert.equal(restoredB.xp, 12, 'Account B XP was not restored');
   assert.deepEqual(restoredB.completed, {}, 'Switching to account B leaked account A topics');
   assert.deepEqual(restoredB.scores, {}, 'Switching to account B leaked account A quiz progress');
+  assert.deepEqual(restoredB.progress, {}, 'Switching to account B leaked account A in-progress topics');
+  assert.deepEqual(restoredB.bookmarks, {}, 'Switching to account B leaked account A bookmarks');
+  assert.deepEqual(restoredB.notes, {}, 'Switching to account B leaked account A notes');
   assert.equal(restoredB.vocab['account-b-word'], true, 'Account B vocabulary progress was not restored');
   for(const [key,id] of Object.entries({completed:'account-a-completed',ongoing:'account-a-ongoing',upcoming:'account-a-upcoming',vocab:'account-a-vocab',achievements:'account-a-achievement',quizHistory:'account-a-quiz-history'})){
     assert.equal(restoredB.books[key].includes(id), false, 'Switching to account B leaked account A Book Reading '+key);
@@ -146,8 +158,191 @@ try {
   });
   assert.equal(rejectedCorrupt.ok, false, 'Malformed account record was accepted');
   assert.equal(await page.evaluate(() => State.xp), 12, 'Malformed account login changed the active profile');
+  const incompleteAccount = await page.evaluate(async () => {
+    localStorage.setItem('vbv_veer_bhogya_account_222222', JSON.stringify({
+      vaani: { xp: 6, completedTopics: [], quizScores: 'invalid', bookmarkedTopics: [], topicNotes: 'invalid' },
+      vbv: { completed: 'invalid', ongoing: {}, upcoming: 'invalid', vocab: [null, {id:'partial-word',word:'Partial'}],
+        goal: {monthlyBooks:'invalid',dailyPages:17}, levels:{viewed:{basic:{vocab:'invalid',grammar:['clauses']}},quizScores:{basic:'90',intermediate:'invalid'}} }
+    }));
+    const result = await loginWithCode('222222');
+    return { result, xp:State.xp, completed:State.completedTopics, scores:State.quizScores,bookmarks:State.bookmarkedTopics,notes:State.topicNotes,
+      books:{completed:DATA.completed,ongoing:DATA.ongoing,vocab:DATA.vocab,goal:DATA.goal,levels:DATA.levels} };
+  });
+  assert.equal(incompleteAccount.result.ok, true, 'A valid partial account record should restore safely');
+  assert.equal(incompleteAccount.xp, 6, 'Partial account data was not restored');
+  assert.deepEqual(incompleteAccount.completed, {}, 'Partial account inherited the previous account’s topics');
+  assert.deepEqual(incompleteAccount.scores, {}, 'Partial account inherited the previous account’s scores');
+  assert.deepEqual(incompleteAccount.bookmarks, {}, 'Malformed bookmarks were not normalized safely');
+  assert.deepEqual(incompleteAccount.notes, {}, 'Malformed notes were not normalized safely');
+  assert.deepEqual(incompleteAccount.books.completed, [], 'Partial account did not receive safe Book Reading defaults');
+  assert.deepEqual(incompleteAccount.books.ongoing, [], 'Partial account did not receive safe ongoing-book defaults');
+  assert.equal(incompleteAccount.books.vocab.length, 1, 'Valid vocabulary data was not preserved beside a malformed row');
+  assert.equal(incompleteAccount.books.vocab[0].id, 'partial-word');
+  assert.equal(incompleteAccount.books.goal.monthlyBooks, 2, 'Partial account did not receive a safe goal default');
+  assert.equal(incompleteAccount.books.goal.dailyPages, 17, 'Valid account goal data was not preserved');
+  assert.deepEqual(incompleteAccount.books.levels.viewed.basic.vocab, [], 'Malformed viewed-level data was not normalized');
+  assert.deepEqual(incompleteAccount.books.levels.viewed.basic.grammar, ['clauses'], 'Valid viewed-level progress was not preserved');
+  assert.equal(incompleteAccount.books.levels.quizScores.basic, 90, 'Valid level quiz score was not restored');
+  assert.equal(incompleteAccount.books.levels.quizScores.intermediate, null, 'Invalid level quiz score was not normalized');
+  const switchedBack = await page.evaluate(async code => {
+    const result=await loginWithCode(code);return {result,xp:State.xp,completed:State.completedTopics};
+  }, accountB);
+  assert.equal(switchedBack.result.ok, true, 'Switching back from a partial account failed');
+  assert.equal(switchedBack.xp, 12, 'Switching back from a partial account lost the complete account data');
+  assert.deepEqual(switchedBack.completed, {}, 'Partial-account switching introduced cross-account progress');
   await page.evaluate(() => finishGateEntry());
   console.log('PASS account isolation: create, logout, restore, switch and reject malformed records');
+
+  await clickMainView('grammar');
+  const arenaSecurity = await page.evaluate(async () => {
+    const arena=VX.arena;
+    const match={source:'BOTH',count:8,seconds:240,cap:8,seed:482731,expiresAt:Date.now()+3600000};
+    const code=arena.encode(match),decoded=arena.decode(code);
+    const first=arena.questionsFor(decoded,'Smoke Cadet').map(question=>question._id);
+    const second=arena.questionsFor(arena.decode(code),'Smoke Cadet').map(question=>question._id);
+    const boardKey='smoke-regression-arena';
+    await arena.sync.submit(boardKey,{pid:'smoke-player',name:'Smoke Cadet',score:6,seconds:60,total:8,at:1,answers:{}});
+    const rows=await arena.sync.fetch(boardKey);localStorage.removeItem('vx_arena_board_'+boardKey);
+    return {code,decoded,first,second,rows,adapter:arena.sync.name,live:arena.sync.live,remoteAdapter:typeof arena.supabaseAdapter};
+  });
+  assert.equal(arenaSecurity.code.length,32,'Arena match code did not round-trip');
+  assert.equal(arenaSecurity.decoded?.seed,482731,'Arena match code lost its seed');
+  assert.deepEqual(arenaSecurity.first,arenaSecurity.second,'Arena question selection changed for an identical match seed');
+  assert.equal(arenaSecurity.rows.length,1,'Local Arena score was not available on this device');
+  assert.equal(arenaSecurity.adapter,'local');assert.equal(arenaSecurity.live,false);
+  assert.equal(arenaSecurity.remoteAdapter,'undefined','Browser score writes must not expose the removed Supabase adapter');
+  console.log('PASS Arena security: deterministic local match, local-only score board and no public Supabase writer');
+
+  await clickMainView('grammar');
+  await page.waitForFunction(() => document.querySelectorAll('#grammarAcademyCatalog .ga-stage-card').length === 4);
+  assert.ok(await page.locator('#grammarAcademyCatalog .ga-lesson-link').count() >= 40,
+    'Academy lesson catalog did not expose the complete mapped curriculum');
+  const addedLessons = [
+    ['sequence-of-tenses','Sequence of Tenses'],
+    ['reduced-relative-clauses','Reduced Relative Clauses'],
+    ['non-finite-verbs','Non-finite Verb Constructions'],
+    ['modifier-placement','Modifier Placement'],
+    ['inversion','Inversion and Emphasis'],
+    ['subjunctive','Subjunctive and Mandative Forms'],
+    ['sentence-transformations','Sentence Transformations']
+  ];
+  for (const [id,title] of addedLessons) {
+    await clickMainView('grammar');
+    await page.locator('#grammarAcademyCatalog .ga-lesson-link').filter({hasText:title}).click();
+    await page.waitForFunction(() => document.getElementById('view-topic')?.classList.contains('active'),null,{timeout:5000});
+    assert.equal(await page.locator('#topicTitle').textContent(),title,'New Academy lesson did not open under its own title: '+id);
+    assert.equal(await page.locator('#view-topic .ga-lesson').getAttribute('aria-label'),title+' Academy lesson',
+      'New Academy lesson content did not render: '+id);
+    assert.equal(await page.evaluate(lessonId => State.topicProgress[lessonId],id),true,
+      'New Academy lesson progress was not recorded under its stable ID: '+id);
+    const assessmentCount=await page.evaluate(lessonId => GRAMMAR_ACADEMY.topics.find(topic=>topic.id===lessonId)?.assessments.length,id);
+    assert.ok(Number.isInteger(assessmentCount)&&assessmentCount>=3,'New Academy lesson has no tiered assessments: '+id);
+    assert.ok((await page.locator('#topicMetaStrip').innerText()).includes(assessmentCount+' quiz Qs'),
+      'Lesson metadata did not match the Academy assessment count for '+id);
+    if (id === 'sequence-of-tenses') {
+      await page.evaluate(() => { State.quizScores.tenses=79; saveState(); });
+      await page.evaluate(() => jumpFlow('practice',document.querySelector('.flow-step[data-step="practice"]')));
+      for (let question=0;question<assessmentCount;question++) {
+        await page.locator('#optsWrap .quiz-option').first().click();
+        if (question<assessmentCount-1) {
+          await page.locator('#nextBtn').click();
+          await page.waitForFunction(expected => document.getElementById('grammarQuizProgress')?.textContent===expected,
+            'Question '+(question+2)+' of '+assessmentCount);
+        }
+      }
+      await page.locator('#nextBtn').click();
+      await page.waitForSelector('#pane-quiz .quiz-complete-card',{timeout:5000});
+      const lessonScore=await page.evaluate(() => ({academy:State.quizScores['sequence-of-tenses'],legacy:State.quizScores.tenses}));
+      assert.equal(typeof lessonScore.academy,'number','New Academy quiz score was not saved under its own stable ID');
+      assert.equal(lessonScore.legacy,79,'New Academy quiz overwrote its legacy parent topic score');
+      await page.evaluate(() => jumpFlow('summary',document.querySelector('.flow-step[data-step="summary"]')));
+      await page.locator('#pane-summary .btn.glow-btn').click();
+      const lessonCompletion=await page.evaluate(() => ({academy:State.completedTopics['sequence-of-tenses'],legacy:State.completedTopics.tenses}));
+      assert.equal(lessonCompletion.academy,true,'New Academy completion was not saved under its own stable ID');
+      assert.notEqual(lessonCompletion.legacy,true,'New Academy completion was incorrectly assigned to its legacy parent');
+    }
+  }
+  console.log('PASS Grammar Academy: all seven added lessons open with accurate assessment counts and account-scoped IDs');
+  await clickMainView('grammar');
+  await page.locator('#grammarAcademyCatalog .ga-lesson-link').first().click();
+  await page.waitForSelector('#view-topic .ga-lesson', { state: 'visible', timeout: 5000 });
+  await page.locator('#gaSentenceInput').fill('Although the route was difficult, the team completed it.');
+  await page.locator('#gaAnalyzeButton').click();
+  assert.ok(await page.locator('#gaAnalysisOutput ol li').count() >= 2,
+    'Interactive clause analysis failed to identify both clauses');
+  await page.evaluate(() => jumpFlow('practice', document.querySelector('.flow-step[data-step="practice"]')));
+  await page.locator('#optsWrap .quiz-option').first().click();
+  assert.ok(await page.locator('#qFeedback .ga-choice-reasons li').count() >= 3,
+    'Grammar feedback must explain the correct answer and plausible alternatives');
+  const masteryAndAdaptive = await page.evaluate(() => {
+    const recorded=State.grammarMastery?.determiners;
+    const previousMastery=State.grammarMastery,previousQueue=State.reviewQueue;
+    State.grammarMastery={sva:{attempts:2,correct:0,lastAttempt:1}};State.reviewQueue=[];
+    const weak=reviewDueItems('grammar').find(item=>item.ref==='sva');
+    State.grammarMastery=previousMastery;State.reviewQueue=previousQueue;
+    return {recorded,weak:weak&&{ref:weak.ref,source:weak.source}};
+  });
+  assert.equal(masteryAndAdaptive.recorded?.attempts,1,'Grammar assessment did not update account-scoped mastery');
+  assert.equal(masteryAndAdaptive.recorded?.correct,1,'Correct grammar assessment was not scored');
+  assert.deepEqual(masteryAndAdaptive.weak,{ref:'sva',source:'weak-mastery'},'Weak grammar concepts did not enter adaptive revision');
+  const mixedSelection = await page.evaluate(() => {
+    const academy=VaaniGrammarAcademy;
+    return JSON.stringify(academy.getMixedQuestions('browser-regression',12).map(item=>item.topicId));
+  });
+  assert.equal(await page.evaluate(() => JSON.stringify(VaaniGrammarAcademy.getMixedQuestions('browser-regression',12).map(item=>item.topicId))),
+    mixedSelection, 'Mixed challenge selection changed for the same deterministic seed');
+  await clickMainView('grammar');
+  await page.locator('#grammarAcademyCatalog .ga-lesson-link').first().click();
+  await page.waitForSelector('#view-topic .ga-lesson', { state:'visible', timeout:5000 });
+  const lessonDepth = await page.evaluate(() => ({
+    examples:document.querySelectorAll('#view-topic .ga-example').length,
+    counterexamples:document.querySelectorAll('#view-topic .ga-example.is-counterexample').length,
+    traps:document.querySelectorAll('#view-topic .ga-misconception').length,
+    diagramSteps:document.querySelectorAll('#view-topic .ga-diagram li').length,
+    exercises:document.querySelectorAll('#view-topic .ga-exercises > ol > li').length,
+    provenance:document.querySelector('#view-topic .ga-provenance')?.textContent||''
+  }));
+  assert.ok(lessonDepth.examples>=3&&lessonDepth.counterexamples>=1,
+    'Academy lesson needs worked examples and a counterexample: '+JSON.stringify(lessonDepth));
+  assert.ok(lessonDepth.traps>=2&&lessonDepth.diagramSteps>=3&&lessonDepth.exercises>=2,
+    'Academy lesson omitted misconception, diagram or conceptual exercise content: '+JSON.stringify(lessonDepth));
+  assert.match(lessonDepth.provenance,/not official PYQs/i,'Original Academy practice provenance is missing');
+  const reasoningSummary=page.locator('#view-topic .ga-exercises summary').first();
+  await reasoningSummary.focus(); await page.keyboard.press('Enter');
+  assert.equal(await reasoningSummary.locator('..').getAttribute('open')!==null,true,
+    'Keyboard activation did not reveal the exercise reasoning');
+  await clickMainView('grammar');
+  await page.locator('#view-grammar .ga-catalog-head button').click();
+  await page.waitForFunction(() => document.getElementById('view-topic')?.classList.contains('active'));
+  assert.equal((await page.locator('#topicTitle').textContent()).trim(),'Mixed-concept challenge',
+    'Academy mixed-concept challenge did not open');
+  assert.match(await page.locator('#topicMetaStrip').textContent(),/12 questions.*authored practice/,
+    'Mixed challenge did not announce its 12-question original-practice format');
+  const mixedOptionCount=await page.locator('#optsWrap .quiz-option').count();
+  const expectedMixedOptionCount=await page.evaluate(() =>
+    VaaniGrammarAcademy.getMixedQuestions(dailyDateKey()+'|grammar-academy',12)[0]?.question.options.length||0);
+  assert.ok(mixedOptionCount>=3,'Mixed challenge question has too few answer choices');
+  assert.equal(mixedOptionCount,expectedMixedOptionCount,
+    'Mixed challenge did not render the selected assessment’s authored answer choices');
+  await page.locator('#optsWrap .quiz-option').first().click();
+  assert.ok(await page.locator('#qFeedback .ga-choice-reasons li').count()>=3,
+    'Mixed challenge answer did not explain the correct choice and alternatives');
+  console.log('PASS Grammar Academy depth: worked/counterexamples, traps, diagrams, keyboard reasoning, mixed challenge and sourced practice labels');
+  await clickMainView('grammar');
+  await page.locator('#grammarAcademyCatalog .ga-lesson-link').first().focus();
+  await page.keyboard.press('Enter');
+  await page.waitForFunction(() => document.getElementById('view-topic')?.classList.contains('active'));
+  const academyA11y = await page.evaluate(() => ({
+    focus:document.activeElement?.textContent?.trim(),
+    reducedMotion:getComputedStyle(document.querySelector('.ga-lesson-link')).animationName
+  }));
+  assert.ok(academyA11y.focus, 'Keyboard activation did not focus/open a lesson');
+  assert.equal(academyA11y.reducedMotion, 'none', 'Grammar Academy ignored the reduced-motion preference');
+  await page.setViewportSize({width:320,height:800});
+  const academyNarrow = await page.evaluate(() => ({width:innerWidth,scrollWidth:document.documentElement.scrollWidth}));
+  assert.ok(academyNarrow.scrollWidth<=academyNarrow.width+2, 'Grammar Academy overflows a 320px viewport: '+JSON.stringify(academyNarrow));
+  await page.setViewportSize({width:1440,height:1000});
+  console.log('PASS Grammar Academy: mapped stages, lesson navigation, clause analysis, distractor feedback, keyboard/mobile layout and reduced motion');
 
   // SAFE 3D REGRESSION — every section gets exactly one isolated model.
   const threeDRegistry = await page.evaluate(() => ({
@@ -282,6 +477,36 @@ try {
   assert.ok(await page.locator('#dailySinglesStrip .single-card').count() > 0, 'Daily micro-lessons are empty');
   assert.ok(await page.locator('#confuseTableBody .cw-card').count() > 0, 'Confused-word section is empty');
   console.log('PASS vocabulary: bank, daily sets, micro-lessons and confused-word cards');
+  const vocabSearchFixture = await page.evaluate(() => {
+    const term=VOCAB[0].w.toLowerCase();
+    return {term,count:VOCAB.filter(word=>word.w.toLowerCase().includes(term)||word.meanEn.toLowerCase().includes(term)).length,
+      first:VOCAB[0].w};
+  });
+  await page.locator('#vocabSearch').fill(vocabSearchFixture.term);
+  assert.equal(await page.locator('#vocabGrid .word-card').count(),vocabSearchFixture.count,
+    'Vocabulary search did not return the matching bank records');
+  await page.locator('#vocabGrid .word-card h3').first().click();
+  await page.waitForFunction(() => document.getElementById('view-worddetail')?.classList.contains('active'));
+  assert.equal((await page.locator('#wdWord').textContent()).trim(),vocabSearchFixture.first,
+    'Vocabulary word detail did not open the selected search result');
+  await page.locator('#view-worddetail .detail-back').click();
+  await page.waitForFunction(() => document.getElementById('view-vocab')?.classList.contains('active'));
+  await page.locator('#vocabSearch').fill('');
+  await page.locator('#vocabCatChips [data-cat="advanced"]').click();
+  const advancedExpected = await page.evaluate(() => VOCAB.filter(word=>word.cat.includes('advanced')).length);
+  assert.equal(await page.locator('#vocabGrid .word-card').count(),advancedExpected,
+    'Vocabulary category filter did not match advanced word records');
+  await page.locator('#vocabDiffChips [data-diff="3"]').click();
+  const hardExpected = await page.evaluate(() => VOCAB.filter(word=>word.cat.includes('advanced')&&String(word.diff)==='3').length);
+  assert.equal(await page.locator('#vocabGrid .word-card').count(),hardExpected,
+    'Vocabulary difficulty filter did not combine with the selected category');
+  await page.locator('#dailySetTabs [data-key="nda"]').click();
+  assert.equal(await page.locator('#dailySetGrid .word-card').count(),5,
+    'NDA Frequent daily vocabulary tab did not render its five deterministic picks');
+  await page.locator('#vocabCatChips [data-cat="all"]').click();
+  await page.locator('#vocabDiffChips [data-diff="all"]').click();
+  await page.locator('#vocabSearch').fill('');
+  console.log('PASS vocabulary interactions: search, word detail/back, combined filters and daily set selection');
 
   // Use a fresh tab for browser-history assertions so the 1,009-cycle
   // rendering stress test above cannot exhaust Chromium's per-tab history cap.
@@ -402,13 +627,12 @@ try {
       setTimeout(resolve, 20000);
     });
   })));
-  const academyImageResults = await page.locator('#app .academy-card-photo').evaluateAll(frames => frames.map(frame => {
+  academyImageResults = await page.locator('#app .academy-card-photo').evaluateAll(frames => frames.map(frame => {
     const img = frame.querySelector('img');
     return { alt:frame.getAttribute('aria-label')||img?.alt||'', src:img?.currentSrc||img?.src||'', width:img?.naturalWidth||0 };
   }));
-  assert.equal(academyImageResults.length, 4, 'Each academy needs an image card');
-  assert.ok(academyImageResults.every(image => image.alt && image.width > 0), 'One or more academy photos did not load: ' + JSON.stringify(academyImageResults));
-  console.log('PASS Book Reading Academy: four real academy photos load with accessible alt text and source credits');
+  assert.equal(await page.locator('#app .academy-card-photo').count(), 4, 'Each academy needs an image card');
+  console.log('PASS Book Reading Academy: four academy cards render with accessible alt text and source credits');
 
   for (const view of ['grammar', 'compare', 'pyq', 'games', 'leaderboard', 'profile']) {
     await clickMainView(view);
@@ -416,6 +640,59 @@ try {
   }
   assert.ok(await page.locator('.vp-logout-btn').count(), 'Profile logout control is missing');
   console.log('PASS navigation: all primary views opened; logout control is present');
+
+  await clickMainView('profile');
+  const profileState = await page.evaluate(() => ({
+    name:String(State.name||'Cadet').trim(),
+    initials:String(State.name||'Cadet').trim().split(/\s+/).filter(Boolean).slice(0,2).map(part=>part[0].toUpperCase()).join(''),
+    expectedXP:String(State.xp||0)
+  }));
+  assert.equal((await page.locator('#profName').textContent()).trim(),profileState.name+"'s Service File",
+    'Profile hero does not show the current account');
+  assert.equal((await page.locator('#vpProfileAvatar').textContent()).trim(),profileState.initials,
+    'Profile avatar initials do not match the current account');
+  assert.equal(await page.locator('#vpOverviewStats .vp-overview-card').count(),4,
+    'Profile learning overview is incomplete');
+  assert.ok((await page.locator('#vpOverviewStats').innerText()).includes(profileState.expectedXP),
+    'Profile learning overview does not show the current account XP');
+  assert.equal(await page.locator('#vpRhythmGrid .vp-rhythm-cell').count(),14,
+    'Profile activity rhythm did not render its 14 days');
+  const focusTopic=(await page.locator('#vpFocusMission .vp-focus-mission b').textContent()||'').trim();
+  await page.locator('#vpFocusMission button').click();
+  await page.waitForFunction(() => document.getElementById('view-topic')?.classList.contains('active'));
+  assert.equal((await page.locator('#topicTitle').textContent()).trim(),focusTopic,
+    'Profile current-mission shortcut did not open the named grammar topic');
+  console.log('PASS Profile: account identity, progress overview, 14-day rhythm and current-mission shortcut');
+
+  await clickMainView('leaderboard');
+  assert.equal(await page.locator('#serviceMetrics .service-metric').count(),4,
+    'Personal service record metrics are incomplete');
+  assert.equal(await page.locator('#personalBestsWrap .service-record-row').count(),5,
+    'Personal bests did not render all recorded metrics');
+  assert.equal(await page.locator('#serviceWeekWrap .service-week-day').count(),7,
+    'Personal service record did not render a seven-day activity view');
+  assert.ok(await page.locator('#serviceGoalList .service-goal-item').count()>0,
+    'Personal service record has no progress-based next mission');
+  const badgeBaseline=await page.evaluate(() => ({
+    total:BADGES.length,earned:BADGES.filter(badge=>badge.check()).length,
+    locked:BADGES.filter(badge=>!badge.check()).length
+  }));
+  await page.locator('#fieldLogFilters [data-filter="earned"]').click();
+  assert.equal(await page.locator('#fieldLogFilters [data-filter="earned"]').getAttribute('aria-pressed'),'true',
+    'Leaderboard earned filter did not expose its selected state');
+  assert.equal(await page.locator('#fieldLogWrap .service-citation').count(),badgeBaseline.earned,
+    'Leaderboard earned filter returned the wrong number of citations');
+  assert.equal(await page.locator('#fieldLogWrap .service-citation.locked').count(),0,
+    'Leaderboard earned filter retained locked citations');
+  await page.locator('#fieldLogFilters [data-filter="locked"]').click();
+  assert.equal(await page.locator('#fieldLogWrap .service-citation').count(),badgeBaseline.locked,
+    'Leaderboard locked filter returned the wrong number of citations');
+  assert.equal(await page.locator('#fieldLogWrap .service-citation.earned').count(),0,
+    'Leaderboard locked filter retained earned citations');
+  await page.locator('#fieldLogFilters [data-filter="all"]').click();
+  assert.equal(await page.locator('#fieldLogWrap .service-citation').count(),badgeBaseline.total,
+    'Leaderboard all filter did not restore the complete citation list');
+  console.log('PASS Leaderboard: personal metrics, bests, activity, missions and earned/locked citation filters');
 
   await clickMainView('pyq');
   await page.evaluate(() => {
@@ -575,6 +852,48 @@ try {
   assert.equal(await page.evaluate(() => document.body.classList.contains('pv-session-active')), false,
     'PYQ regression test left the active practice-session state behind');
 
+  const pyqInteractionFixture=await page.evaluate(()=>{
+    const question=PYQ_ALL.find(item=>Array.isArray(item.o)&&item.o.length>=2);
+    if(!question)throw new Error('No PYQ is available for the answer/bookmark interaction regression');
+    return {id:question._id,answer:question.ans,hadExplanation:Object.prototype.hasOwnProperty.call(question,'exp'),oldExplanation:question.exp||''};
+  });
+  await page.evaluate(({id})=>{
+    const question=PYQ_BY_ID[id];
+    question.exp='Browser regression fixture: the selected answer is correct.';
+    pvStartSession('practice',[question],{title:'Browser interaction regression'});
+  },pyqInteractionFixture);
+  await page.waitForSelector('#view-pyq .bm-star',{timeout:10000});
+  await page.locator('#view-pyq .bm-star').click();
+  assert.equal((await page.locator('#view-pyq .bm-star').getAttribute('class')).includes('active'),true,
+    'PYQ bookmark control did not enter its saved state');
+  assert.equal(await page.evaluate(id=>State.pyqBookmarks.includes('pyq:'+id),pyqInteractionFixture.id),true,
+    'PYQ bookmark was not persisted in the account state');
+  await page.locator('#view-pyq .pv-options .pv-option').nth(pyqInteractionFixture.answer).click();
+  await page.waitForSelector('#view-pyq .pv-explain-panel',{timeout:5000});
+  assert.ok((await page.locator('#view-pyq .pv-explain-panel').textContent()).includes('Browser regression fixture'),
+    'PYQ correct-answer feedback did not show the available explanation');
+  const pyqFeedback=await page.evaluate(id=>({
+    correct:State.pyqStats.attempts[id],history:State.pyqStats.history.find(item=>item.qid===id)?.correct
+  }),pyqInteractionFixture.id);
+  assert.equal(pyqFeedback.correct,true,'Correct PYQ selection did not update the account attempt record');
+  assert.equal(pyqFeedback.history,true,'PYQ answer was not added to recent activity');
+  await page.evaluate(()=>pvGoHome());
+  await page.locator('#pvApp .pv-mode-card').filter({hasText:'Bookmarks'}).click();
+  await page.waitForSelector('.vx-scrim[role="dialog"]',{timeout:5000});
+  assert.match(await page.locator('.vx-scrim').getAttribute('aria-label'),/Bookmarks/i,
+    'Saved-question mode did not open its accessible test-setup dialog');
+  assert.match(await page.locator('.vx-sheet .vx-readout').textContent(),/1 questions/,
+    'Bookmark setup did not constrain its question count to the saved bank');
+  await page.locator('.vx-sheet .vx-btn.primary').click();
+  await page.waitForFunction(() => PV.screen==='session'&&PV.session?.mode==='bookmarks');
+  assert.equal(await page.evaluate(id=>PV.session.questions.some(question=>question._id===id),pyqInteractionFixture.id),true,
+    'Saved PYQ bookmark did not appear in the Bookmarks practice mode');
+  await page.evaluate(()=>pvGoHome());
+  await page.evaluate(({id,hadExplanation,oldExplanation})=>{
+    if(hadExplanation)PYQ_BY_ID[id].exp=oldExplanation;else delete PYQ_BY_ID[id].exp;
+  },pyqInteractionFixture);
+  console.log('PASS PYQ interactions: save bookmark, answer with explanation, persist attempt and launch bookmarks');
+
 
 
 
@@ -641,6 +960,27 @@ try {
     const dimensions = await page.evaluate(() => ({ width: innerWidth, scrollWidth: document.documentElement.scrollWidth }));
     assert.ok(dimensions.scrollWidth <= dimensions.width + 2, 'Horizontal overflow on mobile ' + view + ': ' + JSON.stringify(dimensions));
   }
+  const mobileFrameChecks = await page.evaluate(async views => {
+    const probes=[];
+    for(const view of views){
+      switchView(view,{history:false,preserveScroll:true});
+      for(let frame=0;frame<5;frame++){
+        await new Promise(requestAnimationFrame);
+        const active=[...document.querySelectorAll('.view.active')];
+        const el=active[0],style=el&&getComputedStyle(el),rect=el?.getBoundingClientRect();
+        probes.push({view,frame,activeCount:active.length,display:style?.display||'',visibility:style?.visibility||'',
+          opacity:style?Number(style.opacity):0,width:rect?.width||0,height:rect?.height||0,
+          documentWidth:document.documentElement.scrollWidth,viewportWidth:innerWidth});
+      }
+    }
+    return probes;
+  },['dashboard','grammar','vocab','pyq','leaderboard','profile','compare','games']);
+  assert.ok(mobileFrameChecks.every(probe=>probe.activeCount===1&&probe.display!=='none'&&probe.visibility==='visible'&&
+    probe.opacity>=0.99&&probe.width>0&&probe.height>0&&probe.documentWidth<=probe.viewportWidth+2),
+    'Mobile view flicker/blank-frame probe failed: '+JSON.stringify(mobileFrameChecks.filter(probe=>
+      probe.activeCount!==1||probe.display==='none'||probe.visibility!=='visible'||probe.opacity<0.99||
+      probe.width<=0||probe.height<=0||probe.documentWidth>probe.viewportWidth+2)));
+  console.log('PASS mobile flicker probe: 40 animation frames across 8 redesigned views remained visible and within viewport');
   await clickMainView('books');
   await page.locator('#vbv-mainnav button[data-route="academy"]').click();
   await page.waitForSelector('#app .academy-page', { timeout: 15000 });
@@ -655,11 +995,11 @@ try {
 
   // Exercise primary views at narrow-phone, tablet, laptop and wide-desktop sizes.
   // This checks the view and navigation shells as well as the main document width.
-  for (const width of [320, 768, 1024, 1280, 1600]) {
+  for (const width of [320, 360, 390, 414, 768, 1024, 1280, 1600]) {
     console.log('RESPONSIVE CHECK viewport=' + width);
     await page.setViewportSize({ width, height: 900 });
     const views = width === 320
-      ? ['dashboard', 'vocab', 'books', 'profile', 'notifications']
+      ? ['dashboard', 'grammar', 'vocab', 'books', 'profile', 'notifications']
       : ['dashboard', 'grammar', 'compare', 'vocab', 'pyq', 'games', 'leaderboard', 'profile', 'notifications', 'books'];
     for (const view of views) {
       await clickMainView(view);
@@ -709,6 +1049,9 @@ try {
   assert.deepEqual(pageErrors, [], 'Uncaught browser exceptions: ' + pageErrors.join(' | '));
   assert.deepEqual(vaErrors, [], 'Application render errors: ' + vaErrors.join(' | '));
   console.log('PASS runtime: no uncaught browser or VAANI/VBV render errors');
+  assert.equal(academyImageResults?.length, 4, 'Each academy needs an image card');
+  assert.ok(academyImageResults.every(image => image.alt && image.width > 0), 'One or more academy photos did not load: ' + JSON.stringify(academyImageResults));
+  console.log('PASS Book Reading Academy: four real academy photos load with accessible alt text and source credits');
 } catch (error) {
   try { await page.screenshot({ path: 'vaani-browser-smoke-failure.png', fullPage: true }); } catch {}
   console.error('Browser smoke test failed:', error.stack || error.message);
