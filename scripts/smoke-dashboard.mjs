@@ -283,20 +283,30 @@ try {
   assert.ok(await page.locator('#confuseTableBody .cw-card').count() > 0, 'Confused-word section is empty');
   console.log('PASS vocabulary: bank, daily sets, micro-lessons and confused-word cards');
 
-  // Start from Home so the browser-history assertions cover the exact journey
-  // below, rather than inheriting the earlier Vocabulary route from this test.
-  await clickMainView('dashboard');
-  await page.setViewportSize({ width: 390, height: 844 });
+  // Use a fresh tab for browser-history assertions so the 1,009-cycle
+  // rendering stress test above cannot exhaust Chromium's per-tab history cap.
+  // Tabs in this context share localStorage, so the same saved test account loads.
+  const navPage = await context.newPage();
+  navPage.on('pageerror', error => pageErrors.push(error.stack || error.message));
+  navPage.on('console', message => {
+    if (message.type() !== 'error') return;
+    const value = message.text();
+    if (/\[VAANI\].*(render error|uncaught error)/i.test(value) ||
+        /\[VBV\].*(error|failed)/i.test(value)) vaErrors.push(value);
+  });
+  await navPage.setViewportSize({ width: 390, height: 844 });
+  await navPage.goto(baseURL, { waitUntil: 'domcontentloaded' });
+  await navPage.waitForFunction(() => document.getElementById('gate')?.classList.contains('hide'), null, { timeout: 15000 });
+  await navPage.waitForFunction(() => document.getElementById('view-dashboard')?.classList.contains('active'));
 
   // Full mobile bottom-nav back journey: Home → Grammar → Vocab → PYQ → Updates
   // and then Back must walk that exact path without closing the document.
-  await page.waitForTimeout(200);
   const mobileNavJourney = ['grammar','vocab','pyq','notifications'];
   for (const view of mobileNavJourney) {
-    await page.locator('#bottomNav button[data-view="' + view + '"]').click();
-    await page.waitForFunction(v => document.getElementById('view-' + v)?.classList.contains('active'), view);
+    await navPage.locator('#bottomNav button[data-view="' + view + '"]').click();
+    await navPage.waitForFunction(v => document.getElementById('view-' + v)?.classList.contains('active'), view);
   }
-  const journeyState = await page.evaluate(() => ({
+  const journeyState = await navPage.evaluate(() => ({
     view: history.state?.vaaniView,
     url: location.href,
     length: history.length
@@ -306,51 +316,28 @@ try {
   assert.ok(journeyState.length >= 5, 'Mobile navigation did not create enough history entries: ' + JSON.stringify(journeyState));
 
   for (const expected of ['pyq','vocab','grammar','dashboard']) {
-    const beforeBack = await page.evaluate(() => ({
-      url: location.href,
-      view: history.state?.vaaniView,
-      active: document.querySelector('.view.active')?.id || null,
-      length: history.length
-    }));
-    await page.goBack();
-    const afterBack = await page.evaluate(() => ({
-      url: location.href,
-      view: history.state?.vaaniView,
-      active: document.querySelector('.view.active')?.id || null,
-      length: history.length
-    }));
-    console.log('MOBILE BACK TRACE', JSON.stringify({expected,beforeBack,afterBack}));
-    await page.waitForFunction(v => document.getElementById('view-' + v)?.classList.contains('active'), expected, {timeout:10000})
-      .catch(async error => {
-        const actual = await page.evaluate(() => ({
-          url: location.href,
-          view: history.state?.vaaniView,
-          active: document.querySelector('.view.active')?.id || null,
-          length: history.length
-        }));
-        throw new Error('Browser back expected ' + expected + ' but timed out; actual=' +
-          JSON.stringify(actual) + '; previous=' + JSON.stringify(afterBack) + '; cause=' + error.message);
-      });
-    assert.equal(await page.evaluate(() => history.state?.vaaniView), expected,
+    await navPage.goBack();
+    await navPage.waitForFunction(v => document.getElementById('view-' + v)?.classList.contains('active'), expected);
+    assert.equal(await navPage.evaluate(() => history.state?.vaaniView), expected,
       'Browser back did not return to ' + expected);
   }
-  assert.equal(await page.evaluate(() => history.state?.vaaniView), 'dashboard',
+  assert.equal(await navPage.evaluate(() => history.state?.vaaniView), 'dashboard',
     'Final back state is not Dashboard');
   console.log('PASS full mobile back journey: Updates → PYQ → Vocab → Grammar → Home');
 
-  // Re-enter Vocabulary for the remaining vocabulary bridge checks.
-  await page.locator('#vaaniMainNav button[data-view="vocab"]').click();
-  await page.waitForFunction(() => document.getElementById('view-vocab')?.classList.contains('active'));
-
-  await page.locator('#vocabGrid .word-card').first().locator('h3').click();
-  await page.waitForFunction(() => document.getElementById('view-worddetail')?.classList.contains('active'));
-  assert.equal(await page.evaluate(() => history.state?.vaaniView), 'worddetail',
+  // Word-detail browser Back is also exercised in the isolated tab.
+  await navPage.locator('#bottomNav button[data-view="vocab"]').click();
+  await navPage.waitForFunction(() => document.getElementById('view-vocab')?.classList.contains('active'));
+  await navPage.locator('#vocabGrid .word-card').first().locator('h3').click();
+  await navPage.waitForFunction(() => document.getElementById('view-worddetail')?.classList.contains('active'));
+  assert.equal(await navPage.evaluate(() => history.state?.vaaniView), 'worddetail',
     'Word-detail navigation did not create an in-app history state');
-  await page.goBack();
-  await page.waitForFunction(() => document.getElementById('view-vocab')?.classList.contains('active'));
-  assert.equal(await page.evaluate(() => history.state?.vaaniView), 'vocab',
+  await navPage.goBack();
+  await navPage.waitForFunction(() => document.getElementById('view-vocab')?.classList.contains('active'));
+  assert.equal(await navPage.evaluate(() => history.state?.vaaniView), 'vocab',
     'Browser back did not return to Vocabulary from Word Detail');
   console.log('PASS SPA browser back: Vocabulary → Dashboard and Word Detail → Vocabulary');
+  await navPage.close();
 
   const firstWordCard = page.locator('#vocabGrid .word-card').first();
   const capturedWord = (await firstWordCard.locator('h3').textContent() || '').trim();
