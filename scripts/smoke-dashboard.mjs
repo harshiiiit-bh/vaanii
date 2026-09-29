@@ -77,6 +77,15 @@ try {
     const code=localStorage.getItem('vbv_session_code');
     State.xp=321; State.completedTopics={'account-a-topic':true};
     State.quizScores={'account-a-quiz':87};
+    const vbvSeed={
+      completed:[{id:'account-a-completed',title:'A completed book'}],
+      ongoing:[{id:'account-a-ongoing',title:'A current book',logs:[]}],
+      upcoming:[{id:'account-a-upcoming',title:'A planned book'}],
+      vocab:[{id:'account-a-vocab',word:'A-only'}],
+      achievements:[{id:'account-a-achievement'}],
+      quizHistory:[{date:'2026-09-29',total:1,correct:1,percent:100,type:'regression',timedOut:false}]
+    };
+    Object.entries(vbvSeed).forEach(([key,rows])=>DATA[key].push(...rows));
     saveState();
     await saveData();
     return code;
@@ -94,31 +103,43 @@ try {
     return await createNewAccount();
   });
   assert.notEqual(accountB, accountA, 'Regression accounts unexpectedly share a code');
-  const cleanB = await page.evaluate(() => ({xp:State.xp,completed:State.completedTopics,scores:State.quizScores}));
+  const cleanB = await page.evaluate(() => ({xp:State.xp,completed:State.completedTopics,scores:State.quizScores,
+    books:Object.fromEntries(['completed','ongoing','upcoming','vocab','achievements','quizHistory'].map(key=>[key,DATA[key].map(item=>item.id)]))}));
   assert.equal(cleanB.xp, 0, 'New account inherited XP from the prior account');
   assert.deepEqual(cleanB.completed, {}, 'New account inherited completed topics');
   assert.deepEqual(cleanB.scores, {}, 'New account inherited quiz scores');
+  for(const key of ['completed','ongoing','upcoming','vocab','achievements','quizHistory']){
+    assert.deepEqual(cleanB.books[key], [], 'New account inherited Book Reading '+key);
+  }
   await page.evaluate(async () => {
     State.xp=12; State.vocabLearned={'account-b-word':true};
     await saveData();
   });
   const restoredA = await page.evaluate(async code => {
     const result=await loginWithCode(code);
-    return {result,xp:State.xp,completed:State.completedTopics,scores:State.quizScores};
+    return {result,xp:State.xp,completed:State.completedTopics,scores:State.quizScores,
+      books:Object.fromEntries(['completed','ongoing','upcoming','vocab','achievements','quizHistory'].map(key=>[key,DATA[key].map(item=>item.id)]))};
   }, accountA);
   assert.equal(restoredA.result.ok, true, 'Existing account A failed to log in');
   assert.equal(restoredA.xp, 321, 'Account A XP was not restored');
   assert.equal(restoredA.completed['account-a-topic'], true, 'Account A topic progress was not restored');
   assert.equal(restoredA.scores['account-a-quiz'], 87, 'Account A quiz progress was not restored');
+  for(const [key,id] of Object.entries({completed:'account-a-completed',ongoing:'account-a-ongoing',upcoming:'account-a-upcoming',vocab:'account-a-vocab',achievements:'account-a-achievement',quizHistory:'account-a-quiz-history'})){
+    assert.deepEqual(restoredA.books[key], [id], 'Account A Book Reading '+key+' was not restored');
+  }
   const restoredB = await page.evaluate(async code => {
     const result=await loginWithCode(code);
-    return {result,xp:State.xp,completed:State.completedTopics,scores:State.quizScores,vocab:State.vocabLearned};
+    return {result,xp:State.xp,completed:State.completedTopics,scores:State.quizScores,vocab:State.vocabLearned,
+      books:Object.fromEntries(['completed','ongoing','upcoming','vocab','achievements','quizHistory'].map(key=>[key,DATA[key].map(item=>item.id)]))};
   }, accountB);
   assert.equal(restoredB.result.ok, true, 'Existing account B failed to log in');
   assert.equal(restoredB.xp, 12, 'Account B XP was not restored');
   assert.deepEqual(restoredB.completed, {}, 'Switching to account B leaked account A topics');
   assert.deepEqual(restoredB.scores, {}, 'Switching to account B leaked account A quiz progress');
   assert.equal(restoredB.vocab['account-b-word'], true, 'Account B vocabulary progress was not restored');
+  for(const key of ['completed','ongoing','upcoming','vocab','achievements','quizHistory']){
+    assert.deepEqual(restoredB.books[key], [], 'Switching to account B leaked account A Book Reading '+key);
+  }
   const rejectedCorrupt = await page.evaluate(async code => {
     localStorage.setItem('vbv_veer_bhogya_account_111111','[]');
     return await loginWithCode('111111');
