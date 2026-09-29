@@ -262,3 +262,8 @@
   #view-games .vx-championship-podium-card,#view-games .vx-championship-board .vx-championship-row{transition:none!important}
   #view-games .vx-championship-podium-card:hover,#view-games .vx-championship-board .vx-championship-row:hover{transform:none}
 }
+
+
+#view-games .vx-championship-status.is-shared{color:#a8e8f1;border-color:rgba(93,207,222,.29);background:rgba(39,143,163,.12)}
+#view-games .vx-championship-status.is-error{color:#f7c18d;border-color:rgba(234,164,86,.32);background:rgba(163,98,35,.12)}
+#view-games .vx-championship-status.is-error .vx-championship-status-dot{background:#edae60}
