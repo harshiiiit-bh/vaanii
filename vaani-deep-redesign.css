@@ -109,6 +109,21 @@ button{touch-action:manipulation}
 #gate .gate-field input,#gate .gate-code-input{
   border-radius:10px;background:rgba(255,255,255,.055);font-size:16px;
 }
+/* Mobile/WebKit safety: never make the live name input transparent. The base
+   gradient text treatment can disappear when a later background declaration
+   wins the cascade, especially inside Chromium/WebView compositing. */
+#gate #cadetName{
+  background-color:rgba(255,255,255,.055);
+  background-image:none;
+  color:var(--g-gold-l);
+  -webkit-text-fill-color:var(--g-gold-l);
+  caret-color:var(--g-gold-l);
+}
+#gate #cadetName::placeholder{
+  color:rgba(232,207,143,.56);
+  -webkit-text-fill-color:rgba(232,207,143,.56);
+  opacity:1;
+}
 #gate .gate-btn{min-height:48px;border-radius:10px;letter-spacing:.11em}
 #gate .gate-credit{margin-top:16px}
 @media(max-width:480px){
