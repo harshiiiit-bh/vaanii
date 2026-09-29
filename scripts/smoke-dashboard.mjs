@@ -200,7 +200,9 @@ try {
   const threeDCycleViews = ['dashboard','grammar','compare','vocab','books','pyq','games','leaderboard','profile','notifications'];
   for (let cycle=0; cycle<1009; cycle++) {
     const view=threeDCycleViews[cycle % threeDCycleViews.length];
-    await clickMainView(view);
+    // Keep this rendering stress loop out of the browser's session history.
+    // The dedicated mobile Back journey below tests real history entries.
+    await page.evaluate(viewName => switchView(viewName, {history:false}), view);
     await page.waitForFunction(viewName => {
       const active=document.getElementById('view-'+viewName);
       return !!active?.querySelector(':scope > .vaani-3d-model');
