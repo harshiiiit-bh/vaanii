@@ -181,6 +181,20 @@ try {
 
   await clickMainView('vocab');
   assert.ok(await page.locator('#vocabGrid .word-card').count() > 0, 'Vocabulary word bank is empty');
+  const microLayout = await page.evaluate(() => {
+    const strip = document.getElementById('dailySinglesStrip');
+    const card = strip?.querySelector('.single-card');
+    const btn = card?.querySelector('.v-book-capture');
+    return {
+      columns: strip ? getComputedStyle(strip).gridTemplateColumns.split(' ').length : 0,
+      cardMinWidth: card ? Math.round(card.getBoundingClientRect().width) : 0,
+      buttonWhiteSpace: btn ? getComputedStyle(btn).whiteSpace : '',
+      buttonWidth: btn ? Math.round(btn.getBoundingClientRect().width) : 0
+    };
+  });
+  assert.ok(microLayout.columns <= 4 && microLayout.columns >= 1, 'Invalid micro-lesson grid column count: ' + JSON.stringify(microLayout));
+  assert.equal(microLayout.buttonWhiteSpace, 'nowrap', 'Book Register button is allowed to wrap character-by-character');
+  assert.ok(microLayout.buttonWidth > 0, 'Book Register button has no measurable width');
   assert.ok(await page.locator('#dailySetTabs button').count() > 0, 'Daily set tabs are empty');
   assert.ok(await page.locator('#dailySetGrid .daily-card, #dailySetGrid .word-card, #dailySetGrid .vocab-card').count() > 0,
     'Daily set cards are empty');
