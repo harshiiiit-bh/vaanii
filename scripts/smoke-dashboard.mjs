@@ -1030,6 +1030,55 @@ try {
     }
   }
   console.log('PASS responsive views: narrow phone, tablet, laptop and wide desktop layouts');
+
+  // End-to-end regression: if a local board read returns no rows after an
+  // attempt was saved, the completed local result must still appear in the
+  // standings now and when the player reopens that match.
+  await clickMainView('games');
+  await page.locator('#view-games button.vx-tile').filter({ hasText: 'Start a match' }).click();
+  await page.locator('#view-games button').filter({ hasText: 'Create match' }).click();
+  await page.locator('#view-games button').filter({ hasText: 'Take it now' }).click();
+  await page.locator('#view-games .vx-briefing-start').click();
+  await page.evaluate(() => {
+    window.__arenaSyncBeforeEmptyBoardRegression = VX.arena.sync;
+    VX.arena.useSync({
+      name: 'empty-board-regression',
+      live: false,
+      submit: () => Promise.resolve(true),
+      fetch: () => Promise.resolve([])
+    });
+  });
+  try {
+    page.once('dialog', dialog => dialog.accept());
+    await page.locator('#view-games button').filter({ hasText: /^Submit \(/ }).click();
+    await page.waitForSelector('#view-games .vx-board-summary-card', { state: 'visible', timeout: 10000 });
+    const immediateBoard = await page.evaluate(() => ({
+      attempts: document.querySelector('#view-games .vx-board-summary-card strong')?.textContent,
+      rows: document.querySelectorAll('#view-games .vx-board .vx-row-tap').length,
+      currentRank: document.querySelector('#view-games .vx-result-rank strong')?.textContent
+    }));
+    assert.equal(immediateBoard.attempts, '1', 'Completed local result disappeared when the board adapter returned an empty list');
+    assert.equal(immediateBoard.rows, 1, 'Current local result was not rendered as a leaderboard row');
+    assert.equal(immediateBoard.currentRank, '#1', 'Current local result did not receive its local position');
+
+    await page.locator('#view-games button').filter({ hasText: 'Back to Arena' }).last().click();
+    await page.locator('#view-games .vx-recent-row').first().getByRole('button', { name: 'Open' }).click();
+    await page.locator('#view-games button').filter({ hasText: 'View your result & leaderboard' }).click();
+    await page.waitForFunction(() =>
+      document.querySelector('#view-games .vx-board-summary-card strong')?.textContent === '1'
+    , { timeout: 10000 });
+    assert.equal(await page.locator('#view-games .vx-board .vx-row-tap').count(), 1,
+      'Saved local result was lost when reopening the match with an empty board adapter');
+    console.log('PASS Arena result reconciliation: current and reopened local attempt appear despite an empty board response');
+  } finally {
+    await page.evaluate(() => {
+      if (window.__arenaSyncBeforeEmptyBoardRegression) {
+        VX.arena.useSync(window.__arenaSyncBeforeEmptyBoardRegression);
+        delete window.__arenaSyncBeforeEmptyBoardRegression;
+      }
+    });
+  }
+
   await clickMainView('profile');
 
   const savedAccountKeys = await page.evaluate(() =>
