@@ -1305,15 +1305,16 @@
     var championship = el('section', 'vx-championship');
     championship.setAttribute('aria-label', 'Match leaderboard');
 
+    var sharedBoardReady = !!A.sync.live && !S._boardError;
     var championshipHero = el('div', 'vx-championship-hero');
     var heroCopy = el('div', 'vx-championship-hero-copy');
     heroCopy.innerHTML =
       '<span class="vx-championship-kicker"><i aria-hidden="true"></i> ARENA · FINAL STANDINGS</span>' +
       '<h3>Every second counts.</h3>' +
-      '<p>Prior shared attempts are shown read-only. New submissions stay on this device until secure score validation is available.</p>' +
-      '<div class="vx-championship-status ' + (A.sync.live ? 'is-live' : 'is-local') + '">' +
+      '<p>Prior shared attempts are shown as unverified history. New submissions stay on this device until secure score validation is available.</p>' +
+      '<div class="vx-championship-status ' + (sharedBoardReady ? 'is-shared' : (A.sync.live ? 'is-error' : 'is-local')) + '">' +
         '<span class="vx-championship-status-dot" aria-hidden="true"></span>' +
-        (A.sync.live ? 'SHARED READ · HISTORICAL ATTEMPTS' : 'THIS DEVICE · LOCAL BOARD') +
+        (sharedBoardReady ? 'SHARED READ · UNVERIFIED HISTORY' : (A.sync.live ? 'SHARED READ OFFLINE · LOCAL FALLBACK' : 'THIS DEVICE · LOCAL BOARD')) +
       '</div>';
     championshipHero.appendChild(heroCopy);
 
