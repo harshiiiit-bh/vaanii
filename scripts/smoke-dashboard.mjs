@@ -46,6 +46,7 @@ async function clickMainView(name) {
 try {
   await page.goto(baseURL, { waitUntil: 'domcontentloaded' });
   await page.waitForSelector('#gate-stage-start', { state: 'visible', timeout: 15000 });
+  await page.evaluate(() => { generateCode=()=> '123456'; });
   await page.locator('#cadetName').fill('VAANI Smoke Cadet');
   await page.locator('#gateBtn').click();
   await page.waitForSelector('#gate-stage-showcode', { state: 'visible', timeout: 15000 });
@@ -69,6 +70,61 @@ try {
   assert.ok(await page.locator('#dashBadgeGrid .badge').count() > 0, 'Dashboard achievements did not render');
   assert.ok(await page.locator('#focusSprintWidget .vd-focus-body').count() > 0, 'Focus Sprint did not render');
   console.log('PASS dashboard: hero, briefing, roadmap, missions, word, heatmap, badges and focus sprint');
+
+  // Account isolation regression: seed account A, logout, create account B in
+  // the same browser, then switch repeatedly and verify each saved profile.
+  const accountA = await page.evaluate(async () => {
+    const code=localStorage.getItem('vbv_session_code');
+    State.xp=321; State.completedTopics={'account-a-topic':true};
+    State.quizScores={'account-a-quiz':87};
+    saveState();
+    await saveData();
+    return code;
+  });
+  assert.match(accountA || '', /^\d{6}$/, 'Initial account code missing');
+  await Promise.all([
+    page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
+    page.evaluate(() => logout())
+  ]);
+  await page.waitForSelector('#gate-stage-start', { state: 'visible', timeout: 15000 });
+  const accountB = await page.evaluate(async () => {
+    generateCode=()=> '654321';
+    return await createNewAccount();
+  });
+  assert.notEqual(accountB, accountA, 'Regression accounts unexpectedly share a code');
+  const cleanB = await page.evaluate(() => ({xp:State.xp,completed:State.completedTopics,scores:State.quizScores}));
+  assert.equal(cleanB.xp, 0, 'New account inherited XP from the prior account');
+  assert.deepEqual(cleanB.completed, {}, 'New account inherited completed topics');
+  assert.deepEqual(cleanB.scores, {}, 'New account inherited quiz scores');
+  await page.evaluate(async () => {
+    State.xp=12; State.vocabLearned={'account-b-word':true};
+    await saveData();
+  });
+  const restoredA = await page.evaluate(async code => {
+    const result=await loginWithCode(code);
+    return {result,xp:State.xp,completed:State.completedTopics,scores:State.quizScores};
+  }, accountA);
+  assert.equal(restoredA.result.ok, true, 'Existing account A failed to log in');
+  assert.equal(restoredA.xp, 321, 'Account A XP was not restored');
+  assert.equal(restoredA.completed['account-a-topic'], true, 'Account A topic progress was not restored');
+  assert.equal(restoredA.scores['account-a-quiz'], 87, 'Account A quiz progress was not restored');
+  const restoredB = await page.evaluate(async code => {
+    const result=await loginWithCode(code);
+    return {result,xp:State.xp,completed:State.completedTopics,scores:State.quizScores,vocab:State.vocabLearned};
+  }, accountB);
+  assert.equal(restoredB.result.ok, true, 'Existing account B failed to log in');
+  assert.equal(restoredB.xp, 12, 'Account B XP was not restored');
+  assert.deepEqual(restoredB.completed, {}, 'Switching to account B leaked account A topics');
+  assert.deepEqual(restoredB.scores, {}, 'Switching to account B leaked account A quiz progress');
+  assert.equal(restoredB.vocab['account-b-word'], true, 'Account B vocabulary progress was not restored');
+  const rejectedCorrupt = await page.evaluate(async code => {
+    localStorage.setItem('vbv_veer_bhogya_account_111111','[]');
+    return await loginWithCode('111111');
+  });
+  assert.equal(rejectedCorrupt.ok, false, 'Malformed account record was accepted');
+  assert.equal(await page.evaluate(() => State.xp), 12, 'Malformed account login changed the active profile');
+  await page.evaluate(() => finishGateEntry());
+  console.log('PASS account isolation: create, logout, restore, switch and reject malformed records');
 
   // SAFE 3D REGRESSION — every section gets exactly one isolated model.
   const threeDRegistry = await page.evaluate(() => ({
