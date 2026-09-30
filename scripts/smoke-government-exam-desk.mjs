@@ -325,7 +325,7 @@ await page.goto(baseURL + '?v=notifications', { waitUntil: 'domcontentloaded' })
   await page.locator('#vx-careers > summary').click();
   assert.equal(await page.locator('#vx-careers').evaluate(element => element.open), true, 'career options should expand on activation');
   const careerGroupsVisible = await page.locator('#vxCareerGrid .vx-career-card h3').allTextContents();
-  for (const group of ['Agriculture, food & environment', 'IT, software & digital careers', 'Commerce, accounting & professional courses', 'Design, architecture & media', 'Skilled trades & apprenticeships', 'Hospitality, tourism & aviation services', 'Research, laboratories & academia', 'Social work, counselling & community careers', 'Management entrance & business school routes', 'Science & research entrance examinations', 'Design, fashion & architecture entrance tests', 'Maritime, shipping & logistics careers', 'Sports, fitness & physical education']) {
+  for (const group of ['Agriculture, food & environment', 'IT, software & digital careers', 'Commerce, accounting & professional courses', 'Design, architecture & media', 'Skilled trades & apprenticeships', 'Hospitality, tourism & aviation services', 'Research, laboratories & academia', 'Social work, counselling & community careers', 'Management entrance & business school routes', 'Science & research entrance examinations', 'Design, fashion & architecture entrance tests', 'Maritime, shipping & logistics careers', 'Sports, fitness & physical education', 'Engineering entrance tests & university admissions', 'Aviation, pilot licensing & aircraft careers', 'PSU & core-industry recruitment', 'Forest, fire, prison & field services', 'Teacher recruitment & eligibility exams', 'Postgraduate medicine & allied health exams', 'Finance, securities & professional credentials', 'Hotel management admissions & culinary careers', 'Scholarships, fellowships & student support', 'Career routes by education stage']) {
     assert.ok(careerGroupsVisible.includes(group), 'Career Map should include ' + group);
   }
   const indexMarkup = await readFile(path.join(projectRoot, 'index.html'), 'utf8');
@@ -333,20 +333,24 @@ await page.goto(baseURL + '?v=notifications', { waitUntil: 'domcontentloaded' })
   const directoryEnd = indexMarkup.indexOf('</div>\n    <div class="nc-directory-empty"', directoryStart);
   assert.ok(directoryStart >= 0 && directoryEnd > directoryStart, 'the static exam directory should remain present in index.html');
   const directoryMarkup = indexMarkup.slice(directoryStart, directoryEnd);
-  assert.equal((directoryMarkup.match(/class="nc-directory-card" data-sector=/g) || []).length, 18,
-    'the expanded exam directory should expose all 18 pathway families');
-  assert.ok(indexMarkup.includes('id="ncDirectoryCount">18 exam &amp; career pathways'), 'the directory count should match its 18 cards');
-  for (const exam of ['MBA &amp; management entrance exams', 'Law entrance &amp; qualifying exams', 'Science, research &amp; postgraduate tests', 'Apprenticeship &amp; skilled trade routes']) {
+  assert.equal((directoryMarkup.match(/class="nc-directory-card" data-sector=/g) || []).length, 30,
+    'the expanded exam directory should expose all 30 pathway families');
+  assert.ok(indexMarkup.includes('id="ncDirectoryCount">30 exam &amp; career pathways'), 'the directory count should match its 18 cards');
+  for (const exam of ['MBA &amp; management entrance exams', 'Law entrance &amp; qualifying exams', 'Science, research &amp; postgraduate tests', 'Apprenticeship &amp; skilled trade routes', 'National &amp; university engineering entrances', 'State engineering &amp; professional CETs', 'Pilot &amp; aircraft licensing exams', 'Postgraduate medical entrances', 'Nursing &amp; paramedical entrances', 'Teacher recruitment &amp; eligibility', 'Public sector &amp; core-industry hiring', 'State subordinate &amp; field recruitment', 'Finance &amp; securities credentials', 'Hotel management &amp; culinary admissions', 'Student scholarships &amp; fellowships']) {
     assert.ok(directoryMarkup.includes(exam), 'the directory should include ' + exam);
   }
   const careerText = await page.locator('#vxCareerGrid').innerText();
-  for (const option of ['Software / web developer', 'Chartered Accountant (CA)', 'Company Secretary (CS)', 'Agriculture Development Officer', 'NAPS apprenticeships', 'Hotel & hospitality management', 'CAT', 'IISER Aptitude Test (IAT)', 'NIFT Entrance Examination (NIFTEE)', 'IMU-CET', 'BSSC Inter Level / CGL', 'Actuarial Common Entrance Test (ACET)']) {
+  for (const option of ['Software / web developer', 'Chartered Accountant (CA)', 'Company Secretary (CS)', 'Agriculture Development Officer', 'NAPS apprenticeships', 'Hotel & hospitality management', 'CAT', 'IISER Aptitude Test (IAT)', 'NIFT Entrance Examination (NIFTEE)', 'IMU-CET', 'BSSC Inter Level / CGL', 'Actuarial Common Entrance Test (ACET)', 'BITSAT', 'VITEEE', 'COMEDK UGET', 'DGCA Flight Crew examinations', 'NEET-PG', 'AIIMS B.Sc. Nursing', 'BPSC TRE', 'NISM certification exams', 'NCHM JEE', 'After Class 10', 'After Graduation']) {
     assert.ok(careerText.includes(option), 'Career Map should expose ' + option);
   }
   await page.locator('#vxSearch').fill('CAT');
   const catSearchText = await page.locator('#vxCareerGrid').innerText();
   assert.ok(catSearchText.includes('CAT'), 'the Career Map search should find CAT');
   assert.ok(!catSearchText.includes('XAT'), 'the Career Map search should narrow management routes to the matching exam');
+  await page.locator('#vxSearch').fill('BITSAT');
+  assert.ok((await page.locator('#vxCareerGrid').innerText()).includes('BITSAT'), 'the Career Map search should find engineering entrances');
+  await page.locator('#vxSearch').fill('DGCA');
+  assert.ok((await page.locator('#vxCareerGrid').innerText()).includes('DGCA Flight Crew examinations'), 'the Career Map search should find aviation licensing');
   await page.locator('#vxReset').click();
 
   await page.locator('#vx-careers > summary').click();
@@ -394,7 +398,7 @@ await page.goto(baseURL + '?v=notifications', { waitUntil: 'domcontentloaded' })
   assert.equal(await page.locator('#vxUpcomingList .vx-notice-card').count(), 0, 'feed failures should show an empty state rather than stale fake opportunities');
   assert.equal(pageErrors.length, 0, 'Exam Desk should not throw during normal, malformed or unavailable feed responses: ' + pageErrors.join(' | '));
 
-  console.log('Government Exam Desk browser smoke: collapsed panels, live-feed handling, status lanes, archive, calendar, filters, force cards, XSS, errors, reduced motion, dark theme and 320–1440px layouts passed');
+  console.log('Government Exam Desk browser smoke: expanded exams and career groups, directory integrity, Career Map search, collapsed panels, live-feed handling, status lanes, archive, calendar, filters, force cards, XSS, errors, reduced motion, dark theme and 320–1440px layouts passed');
 } finally {
   const cleanup = [];
   if (browser || context) {
