@@ -33,6 +33,8 @@ jobs:
           node --check supabase/functions/_shared/arena-leaderboard.mjs
       - name: Test Arena leaderboard contract
         run: node scripts/test-arena-leaderboard.mjs
+      - name: Test Grammar Academy contract
+        run: node scripts/test-grammar-academy.mjs
       - name: Test Government Exam Desk data rules
         run: node scripts/test-government-exam-desk.mjs
       - name: Set up Deno
@@ -72,6 +74,10 @@ jobs:
         run: node scripts/smoke-dashboard.mjs
       - name: Exercise Government Exam Desk
         run: node scripts/smoke-government-exam-desk.mjs
+      - name: Exercise account isolation
+        run: node scripts/smoke-account-isolation.mjs
+      - name: Exercise legacy account migration
+        run: node scripts/smoke-account-migration.mjs
       - name: Preserve failure screenshot
         if: failure()
         uses: actions/upload-artifact@v4
