@@ -124,7 +124,7 @@ const archiveItems = [
 ];
 
 const sourceStatusFixture = {
-  version: 1, checkedAt: '2026-09-30T09:00:00Z', status: 'partial',
+  version: 1, checkedAt: '2026-09-30T12:00:00', status: 'partial',
   sourcesTotal: 3, sourcesOk: 2, sourcesFailed: 1, liveItems: 9, archiveItems: 3,
   snapshotRetained: false, concurrency: 4,
   sources: [
