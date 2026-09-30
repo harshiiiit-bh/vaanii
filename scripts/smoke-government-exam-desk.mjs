@@ -98,6 +98,11 @@ const feedItems = [
     url: 'https://upsc.gov.in/', official: true, summary: 'Dates are scheduled in an annual calendar.'
   },
   {
+    id: 'board-job-extra', title: 'Recruitment notification for a sample technical post 2026', organization: 'Sample Board', category: 'TECHNICAL',
+    type: 'Recruitment notification', status: 'notification', notificationDate: '2026-09-15',
+    url: 'https://example.gov.in/notice', official: true, summary: 'Synthetic link-board fixture; not a live vacancy.'
+  },
+  {
     id: 'sample-admit-card', title: 'SSC CHSL Admit Card 2026', organization: 'SSC', category: 'SSC',
     type: 'admit-card', status: 'admit-card', notificationDate: '2026-09-25',
     url: 'https://ssc.gov.in/', official: true, summary: 'Sample admit-card notice.'
@@ -223,8 +228,9 @@ try {
   assert.equal(await page.locator('#vxBoardAdmitList .vx-resource-row').count(), 1, 'link board should separate admit cards');
   assert.equal(await page.locator('#vxBoardKeysList .vx-resource-row').count(), 1, 'link board should separate answer keys');
   await page.locator('[data-vx-board-more="jobs"]').click();
-  assert.ok(await page.locator('#vxBoardJobsList .vx-resource-row').count() >= 5, 'View all should retain all matching job links');
+  assert.equal(await page.locator('#vxBoardJobsList .vx-resource-row').count(), 7, 'View all should expand the job list');
   await page.locator('[data-vx-board-more="jobs"]').click();
+  assert.equal(await page.locator('#vxBoardJobsList .vx-resource-row').count(), 6, 'Show fewer should collapse the job list');
 
   assert.equal(await page.locator('#vxUpcomingList .vx-notice-card').count(), 1, 'only an upcoming future start should be in Upcoming');
   assert.equal(await page.locator('#vxOngoingList .vx-notice-card').count(), 3, 'open applications outside seven days, including title date ranges, should be Ongoing');
