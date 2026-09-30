@@ -186,7 +186,7 @@ try {
   assert.equal(await page.locator('#vxNearList .vx-notice-card').count(), 4, 'today, seven-day and inferred title deadlines should be Deadline Near');
   const extensionCard = page.locator('#vxNearList .vx-notice-card').filter({ hasText: 'Online Registration Extended till 05.10.2026' });
   assert.equal(await extensionCard.count(), 1, 'an explicitly extended application should appear in Deadline Near');
-  assert.match(await extensionCard.innerText(), /Closing date[\s\S]*05 Oct 2026/, 'the extension date should be labelled as the closing date');
+  assert.match(await extensionCard.innerText(), /CLOSING DATE[\s\S]*05 Oct 2026/i, 'the extension date should be labelled as the closing date');
   assert.match(await extensionCard.innerText(), /Closes in 5 days/, 'the extension card should show the remaining closing window');
   assert.equal(await page.locator('#vxNearList .vx-notice-card').filter({ hasText: '16.09.2026 to 06.10.2026' }).count(), 1,
     'a range ending within the next seven days should appear in Deadline Near');
