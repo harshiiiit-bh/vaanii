@@ -260,10 +260,11 @@ try {
   assert.equal(await page.locator('#vxExamDatesList .vx-date-row').count(), 7, 'show later dates should expand the calendar without losing far-future records');
   assert.ok((await page.locator('#vxExamDatesList').innerText()).includes('NDA closed application cycle'),
     'expanded calendar should retain older-cycle future exam dates');
+  assert.equal(await page.locator('#vxExamDatesList').innerText().then(text => text.includes('TENTATIVE · CALENDAR')), true,
+    'tentative dates should remain visible when the user expands the calendar');
   await page.locator('#vxLaterExamDates').click();
   assert.equal(await page.locator('#vxExamDatesList .vx-date-row').count(), 4, 'calendar toggle should return to the 120-day view');
   assert.equal(await page.locator('#vxExamDatesList').innerText().then(text => text.includes('CONFIRMED · OFFICIAL NOTICE')), true);
-  assert.equal(await page.locator('#vxExamDatesList').innerText().then(text => text.includes('TENTATIVE · CALENDAR')), true);
   assert.equal(await page.locator('#vxOngoingList img').count(), 0, 'feed text must be escaped before rendering');
   assert.equal(await page.evaluate(() => window.__examDeskXss || 0), 0, 'escaped feed text must not execute');
 
