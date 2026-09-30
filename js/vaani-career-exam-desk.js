@@ -109,7 +109,10 @@
         { title: 'Engineering Services', note: 'Engineering discipline-specific recruitment.', quals: ['btech', 'diploma'], url: 'https://www.upsc.gov.in/examinations' },
         { title: 'Combined Geo-Scientist', note: 'Relevant science/engineering qualifications.', quals: ['bsc', 'btech', 'postgraduate'], url: 'https://www.upsc.gov.in/examinations' },
         { title: 'CAPF Assistant Commandant', note: 'Officer entry for Central Armed Police Forces.', quals: ['graduate'], url: 'https://www.upsc.gov.in/examinations' },
-        { title: 'Combined Medical Services', note: 'Medical qualification and registration required.', quals: ['mbbs'], url: 'https://www.upsc.gov.in/examinations' }
+        { title: 'Combined Medical Services', note: 'Medical qualification and registration required.', quals: ['mbbs'], url: 'https://www.upsc.gov.in/examinations' },
+        { title: 'Indian Economic Service', note: 'Postgraduate Economics or an accepted equivalent; read the UPSC notice.', quals: ['postgraduate'], url: 'https://upsc.gov.in/examinations' },
+        { title: 'Indian Statistical Service', note: 'Statistics / mathematical-statistics degree requirements apply.', quals: ['bsc', 'postgraduate'], url: 'https://upsc.gov.in/examinations' },
+        { title: 'EPFO Enforcement Officer / APFC', note: 'Recruitment is notice-based; degree and post-specific requirements apply.', quals: ['graduate'], url: 'https://upsc.gov.in/recruitment' }
       ]
     },
     {
@@ -121,7 +124,10 @@
         { title: 'MTS / Havaldar', note: 'Matriculation-level posts', quals: ['10th'], url: 'https://ssc.gov.in/' },
         { title: 'GD Constable', note: 'CAPF and other notified forces', quals: ['10th'], url: 'https://ssc.gov.in/' },
         { title: 'Junior Engineer', note: 'Relevant engineering diploma/degree', quals: ['diploma', 'btech'], url: 'https://ssc.gov.in/' },
-        { title: 'CPO / Stenographer', note: 'Graduate or Class 12 route, respectively', quals: ['12th', 'graduate'], url: 'https://ssc.gov.in/' }
+        { title: 'CPO / Stenographer', note: 'Graduate or Class 12 route, respectively', quals: ['12th', 'graduate'], url: 'https://ssc.gov.in/' },
+        { title: 'Junior Hindi Translator (JHT)', note: 'Language-degree and translation qualification requirements apply.', quals: ['graduate', 'postgraduate'], url: 'https://ssc.gov.in/' },
+        { title: 'Selection Posts', note: 'Vacancies span matriculation, higher-secondary and graduate levels.', quals: ['10th', '12th', 'graduate'], url: 'https://ssc.gov.in/' },
+        { title: 'Scientific Assistant (IMD)', note: 'Science / engineering subject combinations are specified in the notice.', quals: ['bsc', 'btech'], url: 'https://ssc.gov.in/' }
       ]
     },
     {
@@ -145,6 +151,11 @@
         { title: 'IBPS Specialist Officer', note: 'Role-specific qualifications', quals: ['graduate', 'btech', 'bca', 'bsc'], url: 'https://www.ibps.in/' },
         { title: 'SBI PO / Junior Associate', note: 'Probationary Officer and Clerk', quals: ['graduate'], url: 'https://sbi.co.in/web/careers' },
         { title: 'RBI Grade B / Assistant', note: 'Separate educational criteria by post', quals: ['graduate', 'postgraduate'], url: 'https://opportunities.rbi.org.in/' },
+        { title: 'NABARD Grade A / B', note: 'Rural development, agriculture and specialist streams; criteria differ by discipline.', quals: ['graduate', 'postgraduate', 'agri'], url: 'https://www.nabard.org/careers-notices1.aspx' },
+        { title: 'SEBI Grade A', note: 'General and specialist streams; the accepted degree varies by stream.', quals: ['graduate', 'postgraduate', 'btech', 'law'], url: 'https://www.sebi.gov.in/department/human-resources-department-37/opportunity.html' },
+        { title: 'IRDAI Assistant Manager', note: 'Regulatory officer recruitment; stream-wise eligibility applies.', quals: ['graduate', 'postgraduate'], url: 'https://irdai.gov.in/careers' },
+        { title: 'SIDBI Grade A / B', note: 'Development-finance roles with advertisement-specific eligibility.', quals: ['graduate', 'postgraduate', 'btech'], url: 'https://www.sidbi.in/en/careers' },
+        { title: 'EXIM Bank Management Trainee', note: 'Finance, banking and specialist disciplines as advertised.', quals: ['graduate', 'postgraduate', 'mba'], url: 'https://www.eximbankindia.in/careers' },
         { title: 'Insurance (LIC / NIACL)', note: 'Administrative and development roles', quals: ['graduate'], url: 'https://licindia.in/careers' }
       ]
     },
@@ -154,6 +165,8 @@
       routes: [
         { title: 'CTET', note: 'Teacher eligibility; teacher-training rules apply.', quals: ['12th', 'teaching'], url: 'https://ctet.nic.in/' },
         { title: 'KVS / NVS', note: 'Teaching and non-teaching posts', quals: ['graduate', 'postgraduate', 'teaching'], url: 'https://kvsangathan.nic.in/' },
+        { title: 'DSSSB', note: 'Delhi teaching, clerical and technical recruitment; post-wise criteria apply.', quals: ['12th', 'graduate', 'teaching', 'diploma'], url: 'https://dsssb.delhi.gov.in/' },
+        { title: 'Eklavya Model Residential Schools (EMRS)', note: 'Teaching and non-teaching roles; qualification and training rules vary.', quals: ['graduate', 'postgraduate', 'teaching'], url: 'https://nests.tribal.gov.in/' },
         { title: 'State TET / Teacher recruitment', note: 'State-specific eligibility and training rules', quals: ['12th', 'graduate', 'teaching'], url: 'https://ctet.nic.in/' },
         { title: 'UGC NET / JRF', note: 'Postgraduate-level academic eligibility', quals: ['postgraduate'], url: 'https://ugcnet.nta.ac.in/' }
       ]
@@ -197,6 +210,10 @@
       routes: [
         { title: 'AIIMS NORCET', note: 'Nursing officer recruitment; nursing qualification required.', quals: ['nursing'], url: 'https://www.aiimsexams.ac.in/' },
         { title: 'Medical officer roles', note: 'MBBS and registration requirements vary by notice.', quals: ['mbbs'], url: 'https://www.upsc.gov.in/recruitment' },
+        { title: 'Pharmacist', note: 'D.Pharm / B.Pharm and registration requirements vary by post.', quals: ['pharmacy', 'diploma'], url: 'https://www.aiimsexams.ac.in/' },
+        { title: 'Physiotherapist', note: 'Recognised physiotherapy qualification and registration where required.', quals: ['bsc', 'graduate', 'paramedical'], url: 'https://www.aiimsexams.ac.in/' },
+        { title: 'Optometry & vision care', note: 'Diploma/degree pathways; regulated-role requirements may apply.', quals: ['diploma', 'bsc', 'paramedical'], url: 'https://www.aiimsexams.ac.in/' },
+        { title: 'Public health & health administration', note: 'Health-science, public-health or management qualifications by role.', quals: ['graduate', 'postgraduate', 'mbbs', 'nursing'], url: 'https://www.ncs.gov.in/job-seeker/pages/default.aspx' },
         { title: 'Paramedical & lab roles', note: 'Relevant diploma or degree by post', quals: ['diploma', 'bsc', 'paramedical'], url: 'https://www.aiimsexams.ac.in/' }
       ]
     },
@@ -216,6 +233,109 @@
         { title: 'EPFO / ESIC', note: 'Administrative and specialist recruitment', quals: ['graduate', 'btech', 'bca', 'bsc'], url: 'https://www.epfindia.gov.in/' },
         { title: 'LIC / General insurance', note: 'Assistant, AAO, ADO and specialist posts', quals: ['graduate'], url: 'https://licindia.in/careers' },
         { title: 'Central department vacancies', note: 'Post-specific clerical, technical and research roles', quals: ['10th', '12th', 'iti', 'diploma', 'graduate', 'postgraduate'], url: 'https://upsc.gov.in/recruitment' }
+      ]
+    },
+    {
+      sector: 'agriculture', title: 'Agriculture, food & environment', eyebrow: 'AGRI / ENVIRONMENT',
+      description: 'Careers in agricultural science, rural development, food systems, natural resources and sustainability.',
+      routes: [
+        { title: 'Agriculture Development Officer', note: 'State agriculture recruitment; degree subject and age rules vary.', quals: ['agri', 'bsc', 'graduate'], url: 'https://icar.gov.in/index.php/en/vacancies' },
+        { title: 'ICAR scientist & technical roles', note: 'Research, laboratory, field and technical posts with institute-specific qualifications.', quals: ['agri', 'bsc', 'btech', 'postgraduate', 'diploma'], url: 'https://icar.gov.in/index.php/en/vacancies' },
+        { title: 'Rural development specialist', note: 'Agriculture, economics, finance and community-development pathways.', quals: ['agri', 'ba', 'bsc', 'bcom', 'graduate', 'postgraduate'], url: 'https://www.nabard.org/careers-notices1.aspx' },
+        { title: 'Food technology & processing', note: 'Science, engineering and processing qualifications depend on the role.', quals: ['bsc', 'btech', 'diploma', 'postgraduate'], url: 'https://www.fssai.gov.in/cms/jobs.php' },
+        { title: 'Food safety officer', note: 'Only specified science/technical degrees are accepted in each recruitment notice.', quals: ['bsc', 'btech', 'postgraduate'], url: 'https://www.fssai.gov.in/cms/jobs.php' },
+        { title: 'Fisheries & aquaculture', note: 'Fisheries and allied science degrees; field and research opportunities.', quals: ['agri', 'bsc', 'postgraduate'], url: 'https://icar.gov.in/index.php/en/vacancies' },
+        { title: 'Forestry, wildlife & conservation', note: 'Forestry, biology and environmental-science pathways; ranger rules are state-specific.', quals: ['agri', 'bsc', 'graduate', 'postgraduate'], url: 'https://upsc.gov.in/examinations' },
+        { title: 'Dairy & animal husbandry', note: 'Veterinary and dairy-science routes; regulated roles require prescribed qualifications.', quals: ['agri', 'bsc', 'btech', 'postgraduate'], url: 'https://icar.gov.in/index.php/en/vacancies' }
+      ]
+    },
+    {
+      sector: 'digital', title: 'IT, software & digital careers', eyebrow: 'DIGITAL / TECHNOLOGY',
+      description: 'Technology roles across software, data, cyber security, networks and digital product teams.',
+      routes: [
+        { title: 'Software / web developer', note: 'Build programming, databases and project skills; hiring requirements vary by employer.', quals: ['bca', 'btech', 'bsc', 'graduate'], url: 'https://www.ncs.gov.in/job-seeker/pages/default.aspx' },
+        { title: 'Data analyst / business intelligence', note: 'Statistics, spreadsheets, SQL and data-visualisation skills are useful.', quals: ['bcom', 'bba', 'bca', 'bsc', 'btech', 'graduate'], url: 'https://swayamplus.education.gov.in/' },
+        { title: 'AI / machine-learning associate', note: 'Programming, mathematics and data foundations; advanced roles may require postgraduate study.', quals: ['bca', 'bsc', 'btech', 'postgraduate'], url: 'https://swayam.gov.in/' },
+        { title: 'Cybersecurity / SOC analyst', note: 'Networking, operating systems and security labs; certifications may supplement study.', quals: ['bca', 'btech', 'bsc', 'diploma', 'graduate'], url: 'https://www.nielit.gov.in/content/courses' },
+        { title: 'Cloud & network support', note: 'Networking, Linux and cloud fundamentals; entry roles may accept a diploma or certification.', quals: ['iti', 'diploma', 'bca', 'btech', 'bsc'], url: 'https://www.nielit.gov.in/content/courses' },
+        { title: 'IT support / hardware technician', note: 'Hardware, troubleshooting and operating-system skills; practical training helps.', quals: ['12th', 'iti', 'diploma', 'bca'], url: 'https://www.skillindiadigital.gov.in/' },
+        { title: 'Quality assurance / software testing', note: 'Manual testing, test design and automation; coding depth depends on the role.', quals: ['bca', 'btech', 'bsc', 'graduate'], url: 'https://swayamplus.education.gov.in/' },
+        { title: 'NIELIT / NIC technical posts', note: 'Government IT recruitment through separate notices and discipline-specific criteria.', quals: ['bca', 'btech', 'bsc', 'diploma', 'postgraduate'], url: 'https://www.nielit.gov.in/recruitments' }
+      ]
+    },
+    {
+      sector: 'commerce', title: 'Commerce, accounting & professional courses', eyebrow: 'COMMERCE / FINANCE',
+      description: 'Professional qualifications and business careers in audit, taxation, compliance and finance.',
+      routes: [
+        { title: 'Chartered Accountant (CA)', note: 'ICAI Foundation, Intermediate and Final route; exemptions and entry rules apply.', quals: ['12th', 'bcom', 'graduate', 'ca'], url: 'https://www.icai.org/students.shtml?mod=5' },
+        { title: 'Company Secretary (CS)', note: 'ICSI CSEET / Executive / Professional stages; current entry rules apply.', quals: ['12th', 'bcom', 'graduate', 'cs'], url: 'https://www.icsi.edu/students/are-you-interested-in-cs-course' },
+        { title: 'Cost & Management Accountant (CMA)', note: 'ICMAI Foundation, Intermediate and Final; exemptions depend on prior study.', quals: ['12th', 'bcom', 'graduate', 'cma'], url: 'https://icmai.in/ClntStudents/CourseEligibility' },
+        { title: 'Accounting, audit & taxation', note: 'Accounts, tax compliance and audit-support roles; practical tools improve employability.', quals: ['bcom', 'bba', 'graduate', 'ca', 'cma'], url: 'https://www.ncs.gov.in/job-seeker/pages/default.aspx' },
+        { title: 'GST & payroll operations', note: 'Accounting software, statutory filings and payroll skills; role requirements vary.', quals: ['12th', 'bcom', 'bba', 'graduate'], url: 'https://www.skillindiadigital.gov.in/' },
+        { title: 'Investment & securities operations', note: 'Capital-market operations and research-support roles; check role-specific certification rules.', quals: ['bcom', 'bba', 'bca', 'bsc', 'graduate'], url: 'https://www.nism.ac.in/' },
+        { title: 'Business analyst / operations', note: 'Process, reporting and communication skills; backgrounds vary by industry.', quals: ['bba', 'bcom', 'bca', 'btech', 'graduate'], url: 'https://www.ncs.gov.in/job-seeker/pages/default.aspx' },
+        { title: 'MBA / PGDM management route', note: 'Postgraduate management study; entrance tests and admission rules vary by institute.', quals: ['graduate', 'mba'], url: 'https://www.nirfindia.org/' }
+      ]
+    },
+    {
+      sector: 'creative', title: 'Design, architecture & media', eyebrow: 'CREATIVE / COMMUNICATION',
+      description: 'Visual design, architecture, fashion, animation, media and communication careers.',
+      routes: [
+        { title: 'Graphic & visual designer', note: 'Build a portfolio in typography, layout and visual tools; degree rules vary by employer.', quals: ['12th', 'design', 'graduate'], url: 'https://swayam.gov.in/' },
+        { title: 'UI / UX & product design', note: 'User research, interaction design and prototyping; portfolio-led entry is common.', quals: ['12th', 'design', 'bca', 'btech', 'graduate'], url: 'https://swayamplus.education.gov.in/' },
+        { title: 'Animation, VFX & motion graphics', note: 'Portfolio and tool skills matter; formal design/media courses are optional in some roles.', quals: ['12th', 'design', 'media'], url: 'https://www.skillindiadigital.gov.in/' },
+        { title: 'Fashion & textile design', note: 'Design programmes, portfolio and institute-specific entrance routes.', quals: ['12th', 'design'], url: 'https://www.nift.ac.in/' },
+        { title: 'Industrial / product design', note: 'Design aptitude, portfolio and programme-specific admission requirements.', quals: ['12th', 'design', 'btech'], url: 'https://admissions.nid.edu/' },
+        { title: 'Architecture & planning', note: 'Recognised architecture education and applicable aptitude-test requirements.', quals: ['12th', 'architecture'], url: 'https://www.nata.in/' },
+        { title: 'Journalism & mass communication', note: 'Reporting, editing, production and communication roles; course routes vary.', quals: ['12th', 'ba', 'media', 'graduate'], url: 'https://swayam.gov.in/' },
+        { title: 'Content writing & communication', note: 'Writing, research and editing portfolio; employers set role-specific standards.', quals: ['12th', 'ba', 'media', 'graduate'], url: 'https://www.ncs.gov.in/job-seeker/pages/default.aspx' }
+      ]
+    },
+    {
+      sector: 'vocational', title: 'Skilled trades & apprenticeships', eyebrow: 'SKILL / APPRENTICESHIP',
+      description: 'Work-based routes for learners who prefer practical training and industry experience.',
+      routes: [
+        { title: 'NAPS apprenticeships', note: 'Search trade and establishment-based apprenticeship opportunities.', quals: ['10th', '12th', 'iti', 'diploma'], url: 'https://www.apprenticeshipindia.gov.in/' },
+        { title: 'NATS apprenticeships', note: 'Graduate, diploma and vocational apprenticeship opportunities; scheme eligibility varies.', quals: ['diploma', 'btech', 'bsc', 'bcom', 'bca', 'graduate'], url: 'https://nats.education.gov.in/' },
+        { title: 'Electrician / fitter / welder', note: 'ITI and trade-certification routes with employer-specific practical tests.', quals: ['10th', 'iti'], url: 'https://www.skillindiadigital.gov.in/' },
+        { title: 'CNC, machining & manufacturing', note: 'Trade, diploma and hands-on production skills; standards vary by industry.', quals: ['10th', 'iti', 'diploma'], url: 'https://www.skillindiadigital.gov.in/' },
+        { title: 'Electronics & embedded technician', note: 'Electronics, maintenance and testing pathways through ITI/diploma and skills training.', quals: ['iti', 'diploma', 'btech'], url: 'https://www.nielit.gov.in/content/courses' },
+        { title: 'EV service & automotive technician', note: 'Vehicle diagnostics, electrical safety and service training.', quals: ['10th', 'iti', 'diploma'], url: 'https://www.skillindiadigital.gov.in/' },
+        { title: 'Solar / renewable-energy technician', note: 'Electrical and renewable-energy installation/maintenance training.', quals: ['10th', 'iti', 'diploma'], url: 'https://www.skillindiadigital.gov.in/' },
+        { title: 'Logistics & supply-chain operations', note: 'Warehouse, inventory, dispatch and operations roles; certifications may help.', quals: ['12th', 'diploma', 'graduate'], url: 'https://www.ncs.gov.in/job-seeker/pages/default.aspx' }
+      ]
+    },
+    {
+      sector: 'hospitality', title: 'Hospitality, tourism & aviation services', eyebrow: 'SERVICE / TOURISM',
+      description: 'Guest services, culinary work, travel operations and airport-facing careers.',
+      routes: [
+        { title: 'Hotel & hospitality management', note: 'Diploma and degree routes; admission criteria differ by institute.', quals: ['12th', 'hospitality', 'graduate'], url: 'https://exams.nta.ac.in/NCHM/' },
+        { title: 'Chef & food production', note: 'Culinary training, food safety and practical experience are central.', quals: ['10th', '12th', 'hospitality'], url: 'https://www.skillindiadigital.gov.in/' },
+        { title: 'Travel & tourism operations', note: 'Travel desk, tour operations and destination services; language skills help.', quals: ['12th', 'hospitality', 'graduate'], url: 'https://tourism.gov.in/' },
+        { title: 'Airport ground operations', note: 'Customer service, ramp and operations roles; employer training and conditions vary.', quals: ['12th', 'diploma', 'aviation'], url: 'https://www.ncs.gov.in/job-seeker/pages/default.aspx' },
+        { title: 'Event & conference management', note: 'Planning, budgeting, vendors and communication; practical experience is valuable.', quals: ['12th', 'bba', 'graduate', 'hospitality'], url: 'https://swayamplus.education.gov.in/' }
+      ]
+    },
+    {
+      sector: 'research', title: 'Research, laboratories & academia', eyebrow: 'RESEARCH / HIGHER STUDY',
+      description: 'Scientific research, academic study and project-based roles across institutions.',
+      routes: [
+        { title: 'CSIR-UGC NET / JRF', note: 'Research fellowship and eligibility routes; subject and degree rules apply.', quals: ['bsc', 'btech', 'postgraduate'], url: 'https://csirnet.nta.ac.in/' },
+        { title: 'ICMR research & project roles', note: 'Project assistant, technical and research vacancies are institute-specific.', quals: ['bsc', 'btech', 'mbbs', 'nursing', 'paramedical', 'postgraduate'], url: 'https://www.icmr.gov.in/' },
+        { title: 'Research assistant / project staff', note: 'Universities and funded projects set their own qualifications and selection process.', quals: ['ba', 'bsc', 'btech', 'graduate', 'postgraduate'], url: 'https://icar.gov.in/index.php/en/vacancies' },
+        { title: 'PhD / doctoral study', note: 'Entrance, fellowship and admission rules vary by university and subject.', quals: ['postgraduate', 'btech', 'bsc', 'graduate'], url: 'https://swayam.gov.in/' },
+        { title: 'Laboratory & scientific support', note: 'Lab, instrumentation and data roles; trade, diploma or degree criteria vary.', quals: ['12th', 'iti', 'diploma', 'bsc', 'btech'], url: 'https://www.nielit.gov.in/recruitments' }
+      ]
+    },
+    {
+      sector: 'social', title: 'Social work, counselling & community careers', eyebrow: 'PUBLIC / SOCIAL IMPACT',
+      description: 'People-focused careers in counselling, development, community programmes and public services.',
+      routes: [
+        { title: 'Social work (BSW / MSW)', note: 'Community, healthcare, school and development-sector roles.', quals: ['ba', 'graduate', 'postgraduate', 'socialwork'], url: 'https://www.ncs.gov.in/job-seeker/pages/default.aspx' },
+        { title: 'Psychology & counselling', note: 'Training and supervised practice requirements depend on the role and setting.', quals: ['ba', 'bsc', 'postgraduate', 'psychology'], url: 'https://swayam.gov.in/' },
+        { title: 'NGO & development programmes', note: 'Programme, field and community-coordination roles; experience and local-language skills can help.', quals: ['12th', 'ba', 'bsc', 'graduate', 'socialwork'], url: 'https://www.ncs.gov.in/job-seeker/pages/default.aspx' },
+        { title: 'Public policy & programme research', note: 'Research, economics and public-administration backgrounds; role requirements vary.', quals: ['ba', 'bsc', 'bcom', 'graduate', 'postgraduate'], url: 'https://swayamplus.education.gov.in/' },
+        { title: 'CSR & community engagement', note: 'Corporate social responsibility, reporting and field coordination roles.', quals: ['ba', 'bba', 'bcom', 'graduate', 'socialwork'], url: 'https://www.ncs.gov.in/job-seeker/pages/default.aspx' }
       ]
     }
   ];

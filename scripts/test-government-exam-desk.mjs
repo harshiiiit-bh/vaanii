@@ -81,8 +81,8 @@ assert.equal(desk.isExamDateWithinHorizon({ examDate: '2027-04-11' }, today, 120
 assert.equal(desk.isExamDateWithinHorizon({ examDate: '2026-09-29' }, today, 120), false,
   'past exam dates must not appear even in the near-term calendar');
 
-const graduateTags = desk.normalizeQualifications('BA, B.Sc., B.Com., BCA, BBA and B.Tech / B.E.');
-for (const qualification of ['ba', 'bsc', 'bcom', 'bca', 'bba', 'btech']) {
+const graduateTags = desk.normalizeQualifications('BA, B.Sc., B.Com., BCA, BBA, B.Tech / B.E., B.Pharm, B.Arch, B.Des, MBA, agriculture, Chartered Accountant, Company Secretary and CMA');
+for (const qualification of ['ba', 'bsc', 'bcom', 'bca', 'bba', 'btech', 'agri', 'pharmacy', 'architecture', 'design', 'ca', 'cs', 'cma', 'mba', 'hospitality', 'psychology', 'socialwork', 'media']) {
   assert.ok(graduateTags.includes(qualification), 'qualification parser must recognize ' + qualification);
   assert.ok(desk.QUALIFICATIONS.some(option => option.id === qualification), 'filter must offer ' + qualification);
 }
@@ -94,6 +94,10 @@ assert.equal(desk.qualificationMatches(['postgraduate'], 'ba'), false,
   'postgraduate requirements must not be mistaken for bachelor-level eligibility');
 assert.equal(desk.sectorFor({ category: 'unclassified' }), 'other',
   'unknown sectors must not be mislabeled as insurance');
+assert.equal(desk.sectorFor({ category: 'digital technology', title: 'software developer' }), 'digital');
+assert.equal(desk.sectorFor({ category: 'agriculture', title: 'agricultural officer' }), 'agriculture');
+assert.equal(desk.sectorFor({ category: 'design', title: 'graphic designer' }), 'creative');
+assert.equal(desk.sectorFor({ category: 'vocational', title: 'electrician apprenticeship' }), 'vocational');
 
 assert.equal(desk.examDateConfidence({ type: 'Annual Calendar' }), 'tentative');
 assert.equal(desk.examDateConfidence({ examDateConfirmed: true }), 'confirmed');

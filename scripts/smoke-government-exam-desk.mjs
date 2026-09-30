@@ -291,6 +291,15 @@ try {
   assert.equal(await page.locator('#vxSector').inputValue(), 'all');
   assert.equal(await page.locator('#vxOngoingList .vx-notice-card').count(), 3, 'Reset Filters should restore all inferred and explicit open applications');
 
+  const careerGroupsVisible = await page.locator('#vxCareerGrid .vx-career-card h3').allTextContents();
+  for (const group of ['Agriculture, food & environment', 'IT, software & digital careers', 'Commerce, accounting & professional courses', 'Design, architecture & media', 'Skilled trades & apprenticeships', 'Hospitality, tourism & aviation services', 'Research, laboratories & academia', 'Social work, counselling & community careers']) {
+    assert.ok(careerGroupsVisible.includes(group), 'Career Map should include ' + group);
+  }
+  const careerText = await page.locator('#vxCareerGrid').innerText();
+  for (const option of ['Software / web developer', 'Chartered Accountant (CA)', 'Company Secretary (CS)', 'Agriculture Development Officer', 'NAPS apprenticeships', 'Hotel & hospitality management']) {
+    assert.ok(careerText.includes(option), 'Career Map should expose ' + option);
+  }
+
   const armedForces = await page.locator('#vxForcesGrid .vx-force-card h3').allTextContents();
   for (const force of ['Indian Army', 'Indian Navy', 'Indian Air Force', 'Indian Coast Guard']) {
     assert.ok(armedForces.includes(force), force + ' should have a distinct force card');

@@ -18,7 +18,19 @@
     { id: 'law', label: 'Law degree' },
     { id: 'mbbs', label: 'MBBS / Medical' },
     { id: 'nursing', label: 'Nursing' },
-    { id: 'paramedical', label: 'Paramedical' }
+    { id: 'paramedical', label: 'Paramedical' },
+    { id: 'agri', label: 'Agriculture & allied degree' },
+    { id: 'pharmacy', label: 'Pharmacy' },
+    { id: 'architecture', label: 'Architecture / planning' },
+    { id: 'design', label: 'Design / fine arts' },
+    { id: 'ca', label: 'Chartered Accountancy' },
+    { id: 'cs', label: 'Company Secretary' },
+    { id: 'cma', label: 'Cost & Management Accountancy' },
+    { id: 'mba', label: 'MBA / PGDM' },
+    { id: 'hospitality', label: 'Hospitality / hotel management' },
+    { id: 'psychology', label: 'Psychology / counselling' },
+    { id: 'socialwork', label: 'Social work' },
+    { id: 'media', label: 'Media / journalism' }
   ].map(Object.freeze));
 
   const SECTORS = Object.freeze([
@@ -34,11 +46,20 @@
     { id: 'health', label: 'Healthcare' },
     { id: 'law', label: 'Law & judiciary' },
     { id: 'insurance', label: 'Insurance & other central roles' },
+    { id: 'agriculture', label: 'Agriculture & environment' },
+    { id: 'digital', label: 'IT & digital' },
+    { id: 'commerce', label: 'Commerce & professional' },
+    { id: 'creative', label: 'Design & media' },
+    { id: 'vocational', label: 'Vocational & skilled trades' },
+    { id: 'hospitality', label: 'Hospitality & tourism' },
+    { id: 'research', label: 'Research & academia' },
+    { id: 'social', label: 'Social impact & public service' },
     { id: 'other', label: 'Other / unclassified' }
   ].map(Object.freeze));
 
   const DEGREE_QUALIFICATIONS = Object.freeze([
-    'ba', 'bsc', 'bcom', 'bca', 'bba', 'btech', 'postgraduate', 'law', 'mbbs'
+    'ba', 'bsc', 'bcom', 'bca', 'bba', 'btech', 'postgraduate', 'law', 'mbbs',
+    'agri', 'pharmacy', 'architecture', 'design', 'mba', 'psychology', 'socialwork', 'media'
   ]);
   const DATE_FIELDS = Object.freeze({
     start: ['applicationStartDate', 'startDate', 'openDate'],
@@ -207,6 +228,19 @@
     if (/nursing|\bgnm\b/.test(text)) add('nursing');
     if (/paramedical|radiographer|lab technician/.test(text)) add('paramedical');
 
+    if (/\b(?:agriculture|agronomy|horticulture|agricultural|fisheries|dairy science|forestry|veterinary)\b/.test(text)) add('agri');
+    if (/\b(?:b\.?pharm|d\.?pharm|pharmacy|pharmacist)\b/.test(text)) add('pharmacy');
+    if (/\b(?:b\.?arch|b\.?plan|architecture|architectural planning)\b/.test(text)) add('architecture');
+    if (/\b(?:b\.?des|design degree|fine arts|fashion design|visual communication)\b/.test(text)) add('design');
+    if (/\b(?:chartered accountant|chartered accountancy|ca foundation|ca intermediate|ca final)\b/.test(text)) add('ca');
+    if (/\b(?:company secretary|cseet|cs executive)\b/.test(text)) add('cs');
+    if (/\b(?:cost and management accountant|cost accountant|cma course|cma foundation|cma intermediate|cma final)\b/.test(text)) add('cma');
+    if (/\b(?:mba|pgdm|master of business administration)\b/.test(text)) add('mba');
+    if (/\b(?:hotel management|hospitality management|hotel administration)\b/.test(text)) add('hospitality');
+    if (/\b(?:psychology|counselling|counseling)\b/.test(text)) add('psychology');
+    if (/\b(?:social work|social worker)\b/.test(text)) add('socialwork');
+    if (/\b(?:journalism|mass communication|media studies)\b/.test(text)) add('media');
+
     const withoutPostgraduate = text.replace(/\bpost[\s-]?graduate\b/g, '');
     if (/\bgraduate\b|\bgraduation\b|bachelor'?s degree|degree in any discipline/.test(withoutPostgraduate)) add('graduate');
     return tags;
@@ -233,6 +267,15 @@
     if (!isRecord(item)) return 'other';
     const text = [item.category, item.organization, item.title].filter(Boolean).join(' ').toLowerCase();
     if (/nda|cds|agniveer|army|navy|air force|afcat|coast guard|bsf|crpf|itbp|cisf|capf|assam rifles|rpf|paramilitary|police/.test(text)) return 'defence';
+    if (/agricultur|horticulture|fisheries|dairy|forestry|wildlife|soil science|agribusiness|nabard/.test(text)) return 'agriculture';
+    if (/software|cyber ?security|data analyst|data science|artificial intelligence|\bai\b|cloud computing|web developer|information technology|\bit\b|nielit|nic scientist/.test(text)) return 'digital';
+    if (/chartered account|\bca foundation\b|company secretary|\bcseet\b|\bcma\b|accounting|taxation|gst practitioner|financial analyst|nism|business analyst|entrepreneur/.test(text)) return 'commerce';
+    if (/design|fashion|animation|graphic|ux|ui|journalism|media|content writer|architecture|interior/.test(text)) return 'creative';
+    if (/apprentice|apprenticeship|iti trade|electrician|fitter|welder|cnc|solar technician|ev service|industrial skill/.test(text)) return 'vocational';
+    if (/hospitality|hotel management|culinary|chef|tourism|travel operator|event management|aviation ground/.test(text)) return 'hospitality';
+    if (/research fellow|research assistant|phd|research scientist|csir net|academic research|icar/.test(text)) return 'research';
+    if (/social work|community development|counsell?or|ngo|public policy|csr/.test(text)) return 'social';
+
     if (/ssc|staff selection|cgl|chsl|mts|stenographer/.test(text)) return 'ssc';
     if (/railway|rrb|ntpc|loco pilot/.test(text)) return 'railways';
     if (/bank|ibps|sbi|rbi|lic|insurance/.test(text)) return 'banking';
