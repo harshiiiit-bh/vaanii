@@ -167,6 +167,10 @@ await page.route('**/*', async route => {
     await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(sourceStatusFixture) });
     return;
   }
+  if (!isApi && url.pathname.endsWith('/data/defence-notifications.json')) {
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ version: 1, generatedAt: '2026-09-30T09:00:00Z', items: feedItems }) });
+    return;
+  }
   if (isApi && url.pathname.endsWith('/api/notifications/archive')) {
     await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ version: 1, generatedAt: '2026-09-30T09:00:00Z', items: archiveItems }) });
     return;
