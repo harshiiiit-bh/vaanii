@@ -577,6 +577,7 @@
   }
   function renderAll() {
     const filters = controls();
+    renderSourceManagement();
     const upcoming = renderLane('upcoming', filters);
     const ongoing = renderLane('ongoing', filters);
     const near = renderLane('near', filters);
