@@ -385,9 +385,20 @@ try {
     'Mixed challenge answer did not explain the correct choice and alternatives');
   console.log('PASS Grammar Academy depth: worked/counterexamples, traps, diagrams, keyboard reasoning, mixed challenge and sourced practice labels');
   await clickMainView('grammar');
-  await page.locator('#grammarAcademyCatalog .ga-lesson-link').first().focus();
-  await page.keyboard.press('Enter');
-  await page.waitForFunction(() => document.getElementById('view-topic')?.classList.contains('active'));
+  await page.waitForFunction(() =>
+    document.getElementById('view-grammar')?.classList.contains('active') &&
+    !!document.querySelector('#grammarAcademyCatalog .ga-lesson-link')
+  , null, { timeout: 5000 });
+  // Grammar navigation rebuilds the catalog on the next frame. Let the
+  // rebuilt button settle before sending keyboard input, avoiding a detached
+  // focused node while still exercising the native Enter-to-click behavior.
+  await page.evaluate(() => new Promise(resolve =>
+    requestAnimationFrame(() => requestAnimationFrame(resolve))
+  ));
+  const keyboardLessonLink = page.locator('#grammarAcademyCatalog .ga-lesson-link').first();
+  await keyboardLessonLink.waitFor({ state: 'visible', timeout: 5000 });
+  await keyboardLessonLink.press('Enter');
+  await page.waitForFunction(() => document.getElementById('view-topic')?.classList.contains('active'), null, { timeout: 5000 });
   const academyA11y = await page.evaluate(() => ({
     focus:document.activeElement?.textContent?.trim(),
     reducedMotion:getComputedStyle(document.querySelector('.ga-lesson-link')).animationName
