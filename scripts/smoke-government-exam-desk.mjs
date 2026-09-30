@@ -32,13 +32,16 @@ const server = createServer(async (request, response) => {
   }
 });
 
-await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+let browser = null;
+let context = null;
+try {
+  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
 const address = server.address();
 const baseURL = 'http://127.0.0.1:' + address.port + '/';
 const launchOptions = { headless: true, args: ['--no-sandbox'] };
 if (process.env.VAANI_BROWSER_EXECUTABLE) launchOptions.executablePath = process.env.VAANI_BROWSER_EXECUTABLE;
-const browser = await chromium.launch(launchOptions);
-const context = await browser.newContext({ viewport: { width: 1440, height: 1000 }, reducedMotion: 'reduce' });
+browser = await chromium.launch(launchOptions);
+context = await browser.newContext({ viewport: { width: 1440, height: 1000 }, reducedMotion: 'reduce' });
 const page = await context.newPage();
 const fixedToday = '2026-09-30';
 let failFeeds = false;
@@ -198,8 +201,7 @@ await page.route('**/*', async route => {
 const pageErrors = [];
 page.on('pageerror', error => pageErrors.push(error.message));
 
-try {
-  await page.goto(baseURL + '?v=notifications', { waitUntil: 'domcontentloaded' });
+await page.goto(baseURL + '?v=notifications', { waitUntil: 'domcontentloaded' });
   // Exercise the same entry gate as a real visitor before clicking page controls.
   await page.waitForSelector('#gate-stage-start', { state: 'visible', timeout: 15000 });
   await page.evaluate(() => { generateCode = () => '654321'; });
@@ -375,6 +377,21 @@ try {
 
   console.log('Government Exam Desk browser smoke: collapsed panels, live-feed handling, status lanes, archive, calendar, filters, force cards, XSS, errors, reduced motion, dark theme and 320–1440px layouts passed');
 } finally {
-  await browser.close();
-  await new Promise(resolve => server.close(resolve));
+  const cleanup = [];
+  if (browser || context) {
+    cleanup.push((async () => {
+      try {
+        if (context) await context.close();
+      } finally {
+        if (browser) await browser.close();
+      }
+    })());
+  }
+  if (server.listening) {
+    server.closeAllConnections?.();
+    cleanup.push(new Promise(resolve => server.close(resolve)));
+  }
+  const outcomes = await Promise.allSettled(cleanup);
+  const failedCleanup = outcomes.find(outcome => outcome.status === 'rejected');
+  if (failedCleanup) throw failedCleanup.reason;
 }
