@@ -252,7 +252,6 @@
       routes: [
         { title: 'Agriculture Development Officer', note: 'State agriculture recruitment; degree subject and age rules vary.', quals: ['agri', 'bsc', 'graduate'], url: 'https://icar.gov.in/index.php/en/vacancies' },
         { title: 'ICAR scientist & technical roles', note: 'Research, laboratory, field and technical posts with institute-specific qualifications.', quals: ['agri', 'bsc', 'btech', 'postgraduate', 'diploma'], url: 'https://icar.gov.in/index.php/en/vacancies' },
-        { title: 'Actuarial Common Entrance Test (ACET)', note: 'Entry examination for the actuarial profession; check current education and registration rules.', quals: ['12th', 'graduate'], url: 'https://www.actuariesindia.org/' },
         { title: 'Rural development specialist', note: 'Agriculture, economics, finance and community-development pathways.', quals: ['agri', 'ba', 'bsc', 'bcom', 'graduate', 'postgraduate'], url: 'https://www.nabard.org/careers-notices1.aspx' },
         { title: 'Food technology & processing', note: 'Science, engineering and processing qualifications depend on the role.', quals: ['bsc', 'btech', 'diploma', 'postgraduate'], url: 'https://www.fssai.gov.in/cms/jobs.php' },
         { title: 'Food safety officer', note: 'Only specified science/technical degrees are accepted in each recruitment notice.', quals: ['bsc', 'btech', 'postgraduate'], url: 'https://www.fssai.gov.in/cms/jobs.php' },
@@ -281,6 +280,7 @@
       routes: [
         { title: 'Chartered Accountant (CA)', note: 'ICAI Foundation, Intermediate and Final route; exemptions and entry rules apply.', quals: ['12th', 'bcom', 'graduate', 'ca'], url: 'https://www.icai.org/students.shtml?mod=5' },
         { title: 'Company Secretary (CS)', note: 'ICSI CSEET / Executive / Professional stages; current entry rules apply.', quals: ['12th', 'bcom', 'graduate', 'cs'], url: 'https://www.icsi.edu/students/are-you-interested-in-cs-course' },
+        { title: 'Actuarial Common Entrance Test (ACET)', note: 'Entry examination for the actuarial profession; check current education and registration rules.', quals: ['12th', 'graduate'], url: 'https://www.actuariesindia.org/' },
         { title: 'Cost & Management Accountant (CMA)', note: 'ICMAI Foundation, Intermediate and Final; exemptions depend on prior study.', quals: ['12th', 'bcom', 'graduate', 'cma'], url: 'https://icmai.in/ClntStudents/CourseEligibility' },
         { title: 'Accounting, audit & taxation', note: 'Accounts, tax compliance and audit-support roles; practical tools improve employability.', quals: ['bcom', 'bba', 'graduate', 'ca', 'cma'], url: 'https://www.ncs.gov.in/job-seeker/pages/default.aspx' },
         { title: 'GST & payroll operations', note: 'Accounting software, statutory filings and payroll skills; role requirements vary.', quals: ['12th', 'bcom', 'bba', 'graduate'], url: 'https://www.skillindiadigital.gov.in/' },
@@ -408,6 +408,138 @@
         { title: 'Sports coaching', note: 'Coaching roles through recognised training, sport-specific credentials and advertised vacancies.', quals: ['12th', 'graduate'], url: 'https://sportsauthorityofindia.nic.in/' },
         { title: 'Sports Authority of India recruitment', note: 'Coach, assistant, technical and other posts when advertised.', quals: ['graduate', 'bsc', 'postgraduate'], url: 'https://sportsauthorityofindia.nic.in/' },
         { title: 'Fitness & strength training', note: 'Practical certification, safe programming and experience support entry; employer rules vary.', quals: ['12th', 'graduate'], url: 'https://www.skillindiadigital.gov.in/' }
+      ]
+    }
+    ,
+    {
+      sector: 'entrance', title: 'Engineering entrance tests & university admissions', eyebrow: 'ENGINEERING / UNDERGRADUATE',
+      description: 'National, university and state-level routes into engineering and technology degrees.',
+      routes: [
+        { title: 'BITSAT', note: 'Birla Institute of Technology and Science undergraduate admissions.', quals: ['12th'], url: 'https://www.bitsadmission.com/' },
+        { title: 'VITEEE', note: 'VIT engineering entrance route; check programme and campus criteria.', quals: ['12th'], url: 'https://viteee.vit.ac.in/' },
+        { title: 'SRMJEEE', note: 'SRM undergraduate engineering admission test.', quals: ['12th'], url: 'https://www.srmist.edu.in/' },
+        { title: 'MET', note: 'Manipal Entrance Test for listed engineering and other programmes.', quals: ['12th', 'graduate'], url: 'https://www.manipal.edu/entrancetest.html' },
+        { title: 'COMEDK UGET', note: 'Engineering admissions at participating Karnataka colleges.', quals: ['12th'], url: 'https://www.comedk.org/' },
+        { title: 'KIITEE', note: 'KIIT admissions for listed undergraduate programmes.', quals: ['12th'], url: 'https://kiitee.kiit.ac.in/' },
+        { title: 'AEEE', note: 'Amrita engineering entrance pathway.', quals: ['12th'], url: 'https://www.amrita.edu/admissions/' },
+        { title: 'WBJEE', note: 'West Bengal state joint entrance examination.', quals: ['12th'], url: 'https://wbjeeb.nic.in/' },
+        { title: 'MHT-CET', note: 'Maharashtra professional-course entrance tests; consult the current course brochure.', quals: ['12th'], url: 'https://cetcell.mahacet.org/' },
+        { title: 'KCET', note: 'Karnataka Common Entrance Test; course-specific admissions apply.', quals: ['12th'], url: 'https://cetonline.karnataka.gov.in/kea/' },
+        { title: 'AP EAPCET', note: 'Andhra Pradesh engineering, agriculture and pharmacy entrance test.', quals: ['12th'], url: 'https://cets.apsche.ap.gov.in/EAPCET/Eapcet/EAPCET_HomePage' },
+        { title: 'OJEE', note: 'Odisha entrance and counselling for participating professional courses.', quals: ['12th', 'graduate'], url: 'https://ojee.nic.in/' },
+        { title: 'GUJCET', note: 'Gujarat common entrance test; check current state admission rules.', quals: ['12th'], url: 'https://gujcet.gseb.org/' },
+        { title: 'IIITH UGEE', note: 'Undergraduate entrance and interview route for selected IIIT Hyderabad programmes.', quals: ['12th'], url: 'https://ugadmissions.iiit.ac.in/' }
+      ]
+    },
+    {
+      sector: 'technical', title: 'Aviation, pilot licensing & aircraft careers', eyebrow: 'AVIATION / AEROSPACE',
+      description: 'Pilot training, flight-crew licensing, aircraft maintenance and airport technology careers.',
+      routes: [
+        { title: 'DGCA Flight Crew examinations', note: 'Licence examinations for flight crew; prerequisites depend on licence and rating.', quals: ['12th', 'graduate'], url: 'https://pariksha.dgca.gov.in/home' },
+        { title: 'Aircraft Maintenance Engineer (AME)', note: 'DGCA licence examination and approved training routes; category rules apply.', quals: ['12th', 'diploma', 'btech'], url: 'https://pariksha.dgca.gov.in/home' },
+        { title: 'Commercial Pilot Licence (CPL)', note: 'Pilot-training and flight-crew licensing pathway; medical, flying-hour and examination requirements apply.', quals: ['12th'], url: 'https://www.dgca.gov.in/' },
+        { title: 'Air Traffic Control (AAI JE ATC)', note: 'Airport Authority recruitment for eligible science/engineering graduates.', quals: ['bsc', 'btech', 'graduate'], url: 'https://www.aai.aero/en/careers/recruitment' },
+        { title: 'Aviation operations & ground services', note: 'Airline, airport and ground-handling roles with employer-specific training.', quals: ['12th', 'diploma', 'graduate'], url: 'https://www.ncs.gov.in/job-seeker/pages/default.aspx' },
+        { title: 'Cabin crew & passenger services', note: 'Airline recruitment with employer-set age, education, communication and medical standards.', quals: ['12th', 'graduate'], url: 'https://www.ncs.gov.in/job-seeker/pages/default.aspx' }
+      ]
+    },
+    {
+      sector: 'technical', title: 'PSU & core-industry recruitment', eyebrow: 'PUBLIC SECTOR / INDUSTRY',
+      description: 'Engineering, operations, finance and trainee openings at public-sector enterprises.',
+      routes: [
+        { title: 'GATE-based PSU recruitment', note: 'Only PSUs and disciplines named in the applicable recruitment notice.', quals: ['btech', 'graduate'], url: 'https://gate2026.iitg.ac.in/' },
+        { title: 'HAL careers', note: 'Aerospace engineering, technician, management and apprentice vacancies.', quals: ['btech', 'diploma', 'iti', 'graduate'], url: 'https://hal-india.co.in/' },
+        { title: 'BEL recruitment', note: 'Electronics, engineering, officer, trainee and apprentice posts.', quals: ['btech', 'diploma', 'iti', 'graduate'], url: 'https://bel-india.in/' },
+        { title: 'BHEL recruitment', note: 'Engineering, trade apprentice and other notified recruitment.', quals: ['btech', 'diploma', 'iti', 'graduate'], url: 'https://careers.bhel.in/' },
+        { title: 'ONGC careers', note: 'Energy-sector graduate trainee, engineering and apprentice opportunities.', quals: ['btech', 'graduate', 'diploma', 'iti'], url: 'https://ongcindia.com/' },
+        { title: 'IOCL recruitment', note: 'Technical, apprentice and officer recruitment; current notices define disciplines.', quals: ['btech', 'diploma', 'iti', 'graduate'], url: 'https://iocl.com/' },
+        { title: 'NTPC careers', note: 'Power-sector engineering, executive and apprentice vacancies.', quals: ['btech', 'diploma', 'iti', 'graduate'], url: 'https://careers.ntpc.co.in/' },
+        { title: 'Power Grid recruitment', note: 'Electrical, civil, finance, HR and other notified roles.', quals: ['btech', 'diploma', 'graduate'], url: 'https://www.powergrid.in/' },
+        { title: 'GAIL recruitment', note: 'Engineering, executive, technical and trainee posts.', quals: ['btech', 'diploma', 'graduate'], url: 'https://gailonline.com/' },
+        { title: 'SAIL / Coal India', note: 'Management trainee, technician, mining and apprentice roles as advertised.', quals: ['btech', 'diploma', 'iti', 'graduate'], url: 'https://sail.co.in/' }
+      ]
+    },
+    {
+      sector: 'state', title: 'Forest, fire, prison & field services', eyebrow: 'STATE / FIELD RECRUITMENT',
+      description: 'State-level public safety and field-service careers beyond the main police constable and SI routes.',
+      routes: [
+        { title: 'Forest Guard / Forester', note: 'Physical, education and regional requirements vary by state.', quals: ['10th', '12th', 'bsc'], url: 'https://bpsc.bihar.gov.in/' },
+        { title: 'State Forest Range Officer', note: 'Degree subjects and physical standards are state-specific.', quals: ['bsc', 'graduate', 'agri'], url: 'https://www.upsc.gov.in/examinations' },
+        { title: 'Fire & Emergency Services', note: 'Fireman, driver, station and technical posts when advertised.', quals: ['10th', '12th', 'iti', 'diploma'], url: 'https://police.gov.in/' },
+        { title: 'Jail Warder / Prison Department', note: 'State prison recruitment with post-specific physical and education standards.', quals: ['10th', '12th', 'graduate'], url: 'https://police.gov.in/' },
+        { title: 'Excise Constable / Inspector', note: 'State excise recruitment; education and physical criteria vary.', quals: ['12th', 'graduate'], url: 'https://bpssc.bihar.gov.in/' },
+        { title: 'Disaster management roles', note: 'Field response, planning and technical work across state and public agencies.', quals: ['12th', 'graduate', 'postgraduate'], url: 'https://ndma.gov.in/' },
+        { title: 'Revenue / land-record roles', note: 'Amin, patwari, lekhpal and related posts under state-specific systems.', quals: ['12th', 'graduate', 'diploma'], url: 'https://bpsc.bihar.gov.in/' }
+      ]
+    },
+    {
+      sector: 'teaching', title: 'Teacher recruitment & eligibility exams', eyebrow: 'TEACHING / ACADEMIC',
+      description: 'Teacher eligibility tests, school recruitment and academic selection processes.',
+      routes: [
+        { title: 'BPSC TRE', note: 'Bihar school recruitment; the current notice sets class, subject and training rules.', quals: ['graduate', 'postgraduate', 'teaching'], url: 'https://bpsc.bihar.gov.in/' },
+        { title: 'AWES OST', note: 'Army Public School recruitment screening test for eligible teaching applicants.', quals: ['graduate', 'postgraduate', 'teaching'], url: 'https://www.awesindia.com/' },
+        { title: 'KVS PRT / TGT / PGT', note: 'Central school recruitment; subject, degree and teacher-training rules vary by post.', quals: ['graduate', 'postgraduate', 'teaching'], url: 'https://kvsangathan.nic.in/' },
+        { title: 'NVS teaching recruitment', note: 'Navodaya school posts and qualification rules as notified.', quals: ['graduate', 'postgraduate', 'teaching'], url: 'https://navodaya.gov.in/' },
+        { title: 'DSSSB teacher posts', note: 'Delhi PRT, TGT, PGT and other school-related recruitment.', quals: ['graduate', 'postgraduate', 'teaching'], url: 'https://dsssb.delhi.gov.in/' },
+        { title: 'State TET / STET', note: 'Teacher eligibility tests run by states; eligibility and validity differ.', quals: ['graduate', 'postgraduate', 'teaching'], url: 'https://ctet.nic.in/' },
+        { title: 'B.Ed / integrated teacher education admissions', note: 'Entrance and counselling routes vary by university and state.', quals: ['12th', 'graduate', 'teaching'], url: 'https://cuet.nta.nic.in/' }
+      ]
+    },
+    {
+      sector: 'health', title: 'Postgraduate medicine & allied health exams', eyebrow: 'MEDICAL / NURSING',
+      description: 'Postgraduate medical admissions and nursing or allied-health entry and recruitment.',
+      routes: [
+        { title: 'NEET-PG', note: 'Postgraduate medical admission examination; recognised MBBS and internship conditions apply.', quals: ['mbbs', 'graduate'], url: 'https://natboard.edu.in/' },
+        { title: 'INI-CET', note: 'Postgraduate medical admission test for participating Institutes of National Importance.', quals: ['mbbs', 'graduate'], url: 'https://www.aiimsexams.ac.in/' },
+        { title: 'NEET-SS', note: 'Super-specialty medical admission route for eligible doctors.', quals: ['mbbs', 'postgraduate'], url: 'https://natboard.edu.in/' },
+        { title: 'AIIMS B.Sc. Nursing', note: 'Nursing admission route; subject and medical requirements apply.', quals: ['12th', 'nursing'], url: 'https://www.aiimsexams.ac.in/' },
+        { title: 'AIIMS Paramedical entrance', note: 'Allied-health programme admissions; course-wise subjects and eligibility apply.', quals: ['12th', 'paramedical'], url: 'https://www.aiimsexams.ac.in/' },
+        { title: 'AIIMS NORCET', note: 'Nursing Officer recruitment for candidates with prescribed nursing qualifications.', quals: ['nursing', 'graduate'], url: 'https://www.aiimsexams.ac.in/' },
+        { title: 'DNB-PDCET / FNB', note: 'Post-diploma and fellowship entrance routes; specialty-specific eligibility applies.', quals: ['mbbs', 'postgraduate'], url: 'https://natboard.edu.in/' }
+      ]
+    },
+    {
+      sector: 'commerce', title: 'Finance, securities & professional credentials', eyebrow: 'FINANCE / CREDENTIALS',
+      description: 'Credentials for accounting, securities markets, investment analysis and risk careers.',
+      routes: [
+        { title: 'NISM certification exams', note: 'Market credentials; some are required for particular regulated functions.', quals: ['12th', 'graduate', 'postgraduate'], url: 'https://www.nism.ac.in/certifications/' },
+        { title: 'CFA Program', note: 'Investment-analysis credential with eligibility and exam-level rules set by CFA Institute.', quals: ['graduate', 'postgraduate'], url: 'https://www.cfainstitute.org/' },
+        { title: 'FRM', note: 'Financial risk-management credential; experience requirements apply for certification.', quals: ['graduate', 'postgraduate'], url: 'https://www.garp.org/frm' },
+        { title: 'Certified Financial Planner (CFP)', note: 'Financial-planning credential; education and experience requirements apply.', quals: ['graduate', 'postgraduate'], url: 'https://www.fpsbindia.org/' },
+        { title: 'Actuarial science (ACET)', note: 'Entry route into actuarial studies; qualification and membership rules apply.', quals: ['12th', 'graduate'], url: 'https://www.actuariesindia.org/' },
+        { title: 'CFA / FRM-aligned analyst careers', note: 'Research, risk and investment roles; employers set their own qualification requirements.', quals: ['graduate', 'postgraduate', 'mba'], url: 'https://www.ncs.gov.in/job-seeker/pages/default.aspx' }
+      ]
+    },
+    {
+      sector: 'hospitality', title: 'Hotel management admissions & culinary careers', eyebrow: 'HOSPITALITY / CULINARY',
+      description: 'Formal hospitality admissions, culinary training and guest-service pathways.',
+      routes: [
+        { title: 'NCHM JEE', note: 'National hotel-management entrance examination for participating institutes.', quals: ['12th', 'hospitality'], url: 'https://exams.nta.nic.in/nchm-jee/' },
+        { title: 'BHM / hospitality degree admissions', note: 'University entrance or merit routes vary by institute.', quals: ['12th', 'hospitality'], url: 'https://nchm.gov.in/' },
+        { title: 'Culinary arts & food production', note: 'Diploma, degree and apprenticeship routes; practical requirements vary.', quals: ['10th', '12th', 'hospitality'], url: 'https://www.skillindiadigital.gov.in/' },
+        { title: 'Hotel operations & guest services', note: 'Front office, food and beverage, housekeeping and event roles.', quals: ['12th', 'hospitality', 'graduate'], url: 'https://www.ncs.gov.in/job-seeker/pages/default.aspx' }
+      ]
+    },
+    {
+      sector: 'entrance', title: 'Scholarships, fellowships & student support', eyebrow: 'SCHOLARSHIPS / FELLOWSHIPS',
+      description: 'Funding and fellowship routes alongside admission and recruitment examinations.',
+      routes: [
+        { title: 'National Scholarship Portal (NSP)', note: 'Central and state scholarship schemes; eligibility and deadlines are scheme-specific.', quals: ['10th', '12th', 'graduate', 'postgraduate'], url: 'https://scholarships.gov.in/' },
+        { title: 'INSPIRE-SHE', note: 'Science scholarship scheme; selection is based on scheme rules, not a standalone competitive exam.', quals: ['12th', 'bsc'], url: 'https://online-inspire.gov.in/' },
+        { title: 'PM-USP Central Sector Scholarship', note: 'Merit-based scholarship route through NSP, subject to current scheme criteria.', quals: ['12th', 'graduate'], url: 'https://scholarships.gov.in/' },
+        { title: 'AICTE scholarships', note: 'Technical education scholarship schemes; available categories and conditions can change.', quals: ['diploma', 'btech', 'graduate'], url: 'https://www.aicte-india.org/' },
+        { title: 'State scholarship portals', note: 'State-specific merit, post-matric and welfare schemes.', quals: ['10th', '12th', 'graduate', 'postgraduate'], url: 'https://scholarships.gov.in/' }
+      ]
+    },
+    {
+      sector: 'other', title: 'Career routes by education stage', eyebrow: 'CHOOSE YOUR ENTRY POINT',
+      description: 'A quick map of where to explore based on your current qualification.',
+      routes: [
+        { title: 'After Class 10', note: 'Explore ITI, polytechnic, apprenticeships, SSC MTS, and notified Agniveer or police posts.', quals: ['10th'], url: 'https://www.skillindiadigital.gov.in/' },
+        { title: 'After Class 12', note: 'Explore NDA, JEE, NEET, CUET, design, hotel management and university entrances.', quals: ['12th'], url: 'https://www.nta.ac.in/' },
+        { title: 'After ITI / Diploma', note: 'Explore technical recruitment, apprenticeships, railway and state JE routes.', quals: ['iti', 'diploma'], url: 'https://www.apprenticeshipindia.gov.in/' },
+        { title: 'After Graduation', note: 'Explore CDS, AFCAT, UPSC, SSC CGL, banking, MBA and specialist recruitment.', quals: ['graduate'], url: 'https://www.ncs.gov.in/job-seeker/pages/default.aspx' },
+        { title: 'After Postgraduation', note: 'Explore UGC NET, CSIR NET, research, regulatory and specialist roles.', quals: ['postgraduate'], url: 'https://ugcnet.nta.nic.in/' }
       ]
     }
   ];
