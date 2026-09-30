@@ -544,6 +544,27 @@
     }
   ];
 
+  // Expose the complete career/entry catalogue to the compact directory and dedicated detail pages.
+  // These are the same route definitions used by the Government Exam Desk, so the two views stay in sync.
+  const VAANI_CAREER_OPTIONS = forceGroups.concat(
+    uniformedGroups.map(function (group) {
+      return Object.assign({}, group, { sector: 'defence' });
+    }),
+    careerGroups
+  ).reduce(function (all, group) {
+    return all.concat(group.routes.map(function (route) {
+      return Object.assign({}, route, {
+        groupTitle: group.title,
+        groupEyebrow: group.eyebrow,
+        groupDescription: group.description,
+        sector: group.sector || 'defence'
+      });
+    }));
+  }, []);
+  window.VAANI_CAREER_OPTIONS = Object.freeze(VAANI_CAREER_OPTIONS.map(function (route) {
+    return Object.freeze(route);
+  }));
+
   const state = { items: [], archived: [], generatedAt: null, loading: true, refreshing: false, feedAvailable: false, archiveAvailable: false, feedSource: '', feedError: '', feedRefreshFailed: false, sourceStatus: null, showAllArchive: false, showLaterExamDates: false, showAllLanes: { upcoming: false, ongoing: false, near: false }, linkBoardExpanded: { jobs: false, results: false, admit: false, keys: false } };
 
   function esc(value) {
