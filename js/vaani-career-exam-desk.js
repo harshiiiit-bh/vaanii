@@ -23,6 +23,11 @@
         { title: 'NDA & NA', note: 'Officer entry after Class 12; stream rules vary by wing.', quals: ['12th'], url: 'https://www.upsc.gov.in/examinations' },
         { title: 'CDS', note: 'Officer entry after graduation; academy rules differ.', quals: ['graduate'], url: 'https://www.upsc.gov.in/examinations' },
         { title: 'Agniveer', note: 'GD, Technical, Office Assistant and Tradesmen routes; criteria vary by trade.', quals: ['10th', '12th', 'iti', 'diploma'], url: 'https://joinindianarmy.nic.in/' },
+        { title: '10+2 Technical Entry Scheme (TES)', note: 'Technical officer route after Class 12 PCM; shortlisting and medical rules are notice-specific.', quals: ['12th'], url: 'https://joinindianarmy.nic.in/' },
+        { title: 'Technical Graduate Course (TGC)', note: 'Engineering-graduate officer entry; eligible disciplines and age limits are notice-specific.', quals: ['btech'], url: 'https://joinindianarmy.nic.in/' },
+        { title: 'SSC Technical', note: 'Short Service Commission technical entry for eligible engineering graduates.', quals: ['btech'], url: 'https://joinindianarmy.nic.in/' },
+        { title: 'NCC Special Entry', note: 'Officer entry for candidates meeting the prescribed NCC and degree criteria.', quals: ['graduate'], url: 'https://joinindianarmy.nic.in/' },
+        { title: 'JAG Entry', note: 'Judge Advocate General officer route for eligible law graduates.', quals: ['law'], url: 'https://joinindianarmy.nic.in/' },
         { title: 'Technical & other advertised entries', note: 'Technical, specialist and direct entries appear in separate notices.', quals: ['12th', 'diploma', 'btech', 'graduate'], url: 'https://joinindianarmy.nic.in/' }
       ]
     },
@@ -34,6 +39,7 @@
         { title: 'NDA & NA', note: 'Naval Academy officer route through UPSC; PCM rules apply.', quals: ['12th'], url: 'https://www.upsc.gov.in/examinations' },
         { title: '10+2 B.Tech Cadet Entry', note: 'Class 12 science route; subject, rank and course rules come from the notice.', quals: ['12th'], url: 'https://www.joinindiannavy.gov.in/' },
         { title: 'Agniveer SSR / MR', note: 'Sailor entries with different educational criteria.', quals: ['10th', '12th'], url: 'https://www.joinindiannavy.gov.in/' },
+        { title: 'SSC Officer entries', note: 'Executive, technical, logistics, education and other branches as advertised.', quals: ['graduate', 'btech', 'postgraduate'], url: 'https://www.joinindiannavy.gov.in/' },
         { title: 'Other notified entries', note: 'Officer, technical and specialist entries are announced separately.', quals: ['12th', 'diploma', 'btech', 'graduate'], url: 'https://www.joinindiannavy.gov.in/' }
       ]
     },
@@ -45,6 +51,7 @@
         { title: 'NDA', note: 'Officer entry after Class 12; subject rules vary by branch.', quals: ['12th'], url: 'https://www.upsc.gov.in/examinations' },
         { title: 'AFCAT', note: 'Graduate entry for eligible branches; branch-specific criteria apply.', quals: ['graduate'], url: 'https://afcat.cdac.in/' },
         { title: 'Agniveervayu', note: 'Class 12, vocational and other routes as listed in each notice.', quals: ['12th', 'diploma'], url: 'https://agnipathvayu.cdac.in/AV/' },
+        { title: 'NCC Special Entry (Flying)', note: 'Flying-branch route for eligible NCC Air Wing Senior Division candidates with the prescribed certificate.', quals: ['graduate'], url: 'https://careerairforce.gov.in/' },
         { title: 'Other advertised entries', note: 'Officer and specialist branches have separate subject, degree and medical criteria.', quals: ['graduate', 'btech'], url: 'https://careerairforce.gov.in/' }
       ]
     },
@@ -56,6 +63,7 @@
         { title: 'Navik (GD)', note: 'Class 12 route; subject requirements apply.', quals: ['12th'], url: 'https://www.indiancoastguard.gov.in/' },
         { title: 'Navik (DB)', note: 'Class 10 route; check the current recruitment notice.', quals: ['10th'], url: 'https://www.indiancoastguard.gov.in/' },
         { title: 'Yantrik', note: 'Diploma-based technical route; branch rules vary.', quals: ['diploma'], url: 'https://joinindiancoastguard.cdac.in/' },
+        { title: 'Assistant Commandant (GD / Technical)', note: 'Officer recruitment for eligible graduates and engineers; branch rules differ.', quals: ['graduate', 'btech'], url: 'https://joinindiancoastguard.cdac.in/' },
         { title: 'Officer entries', note: 'Officer opportunities and requirements are published by entry and branch.', quals: ['graduate', 'btech'], url: 'https://joinindiancoastguard.cdac.in/' }
       ]
     }
@@ -178,6 +186,8 @@
         { title: 'BPSC / UPPSC / State PSCs', note: 'State civil and allied services', quals: ['graduate'], url: 'https://bpsc.bihar.gov.in/' },
         { title: 'Bihar Police (CSBC)', note: 'Constable and advertised posts', quals: ['10th', '12th'], url: 'https://csbc.bihar.gov.in/' },
         { title: 'Bihar Police (BPSSC)', note: 'Sub-Inspector and other notified posts', quals: ['graduate'], url: 'https://bpssc.bihar.gov.in/' },
+        { title: 'BSSC Inter Level / CGL', note: 'Bihar subordinate-service recruitment; qualification depends on the post and notice.', quals: ['12th', 'graduate'], url: 'https://bssc.bihar.gov.in/' },
+        { title: 'UPSSSC PET & main examinations', note: 'Preliminary eligibility and post-specific main exams for notified Uttar Pradesh vacancies.', quals: ['10th', '12th', 'graduate'], url: 'https://upsssc.gov.in/' },
         { title: 'State departmental posts', note: 'Clerical, technical and specialist openings', quals: ['10th', '12th', 'diploma', 'graduate'], url: 'https://bpsc.bihar.gov.in/' }
       ]
     },
@@ -200,7 +210,8 @@
         { title: 'NEET UG', note: 'Medical and allied admission; subject rules apply.', quals: ['12th'], url: 'https://neet.nta.nic.in/' },
         { title: 'CUET UG', note: 'University admission across participating institutions.', quals: ['12th'], url: 'https://cuet.nta.nic.in/' },
         { title: 'CLAT UG / PG', note: 'Law admission; UG and PG routes differ.', quals: ['12th', 'law', 'graduate'], url: 'https://consortiumofnlus.ac.in/' },
-        { title: 'NIFT / NATA', note: 'Design and architecture admission routes', quals: ['12th'], url: 'https://exams.nta.ac.in/' },
+        { title: 'AILET', note: 'National Law University Delhi admission test; UG and PG eligibility differ.', quals: ['12th', 'law', 'graduate'], url: 'https://nationallawuniversitydelhi.in/' },
+        { title: 'NIFT / NID / UCEED / NATA', note: 'Fashion, design and architecture admissions; course-wise eligibility differs.', quals: ['12th', 'design', 'architecture', 'graduate'], url: 'https://exams.nta.ac.in/NIFTEE/' },
         { title: 'GATE', note: 'Postgraduate study and selected recruitment pathways', quals: ['btech', 'bsc', 'graduate'], url: 'https://gate2026.iitg.ac.in/' }
       ]
     },
@@ -241,6 +252,7 @@
       routes: [
         { title: 'Agriculture Development Officer', note: 'State agriculture recruitment; degree subject and age rules vary.', quals: ['agri', 'bsc', 'graduate'], url: 'https://icar.gov.in/index.php/en/vacancies' },
         { title: 'ICAR scientist & technical roles', note: 'Research, laboratory, field and technical posts with institute-specific qualifications.', quals: ['agri', 'bsc', 'btech', 'postgraduate', 'diploma'], url: 'https://icar.gov.in/index.php/en/vacancies' },
+        { title: 'Actuarial Common Entrance Test (ACET)', note: 'Entry examination for the actuarial profession; check current education and registration rules.', quals: ['12th', 'graduate'], url: 'https://www.actuariesindia.org/' },
         { title: 'Rural development specialist', note: 'Agriculture, economics, finance and community-development pathways.', quals: ['agri', 'ba', 'bsc', 'bcom', 'graduate', 'postgraduate'], url: 'https://www.nabard.org/careers-notices1.aspx' },
         { title: 'Food technology & processing', note: 'Science, engineering and processing qualifications depend on the role.', quals: ['bsc', 'btech', 'diploma', 'postgraduate'], url: 'https://www.fssai.gov.in/cms/jobs.php' },
         { title: 'Food safety officer', note: 'Only specified science/technical degrees are accepted in each recruitment notice.', quals: ['bsc', 'btech', 'postgraduate'], url: 'https://www.fssai.gov.in/cms/jobs.php' },
@@ -336,6 +348,66 @@
         { title: 'NGO & development programmes', note: 'Programme, field and community-coordination roles; experience and local-language skills can help.', quals: ['12th', 'ba', 'bsc', 'graduate', 'socialwork'], url: 'https://www.ncs.gov.in/job-seeker/pages/default.aspx' },
         { title: 'Public policy & programme research', note: 'Research, economics and public-administration backgrounds; role requirements vary.', quals: ['ba', 'bsc', 'bcom', 'graduate', 'postgraduate'], url: 'https://swayamplus.education.gov.in/' },
         { title: 'CSR & community engagement', note: 'Corporate social responsibility, reporting and field coordination roles.', quals: ['ba', 'bba', 'bcom', 'graduate', 'socialwork'], url: 'https://www.ncs.gov.in/job-seeker/pages/default.aspx' }
+      ]
+    }
+    ,
+    {
+      sector: 'entrance', title: 'Management entrance & business school routes', eyebrow: 'MBA / BUSINESS',
+      description: 'Graduate-level management admission tests and business-school pathways.',
+      routes: [
+        { title: 'CAT', note: 'Common Admission Test for participating IIMs and other institutions.', quals: ['graduate'], url: 'https://iimcat.ac.in/' },
+        { title: 'XAT', note: 'Xavier Aptitude Test; participating institutes set their own admission criteria.', quals: ['graduate'], url: 'https://xatonline.in/' },
+        { title: 'CMAT', note: 'NTA management entrance examination accepted by participating institutions.', quals: ['graduate'], url: 'https://cmat.nta.nic.in/' },
+        { title: 'MAT', note: 'AIMA management aptitude test; institute acceptance varies.', quals: ['graduate'], url: 'https://mat.aima.in/' },
+        { title: 'SNAP', note: 'Symbiosis National Aptitude Test for participating programmes.', quals: ['graduate'], url: 'https://www.snaptest.org/' },
+        { title: 'NMAT', note: 'NMAT by GMAC; participating schools determine accepted scores and rules.', quals: ['graduate'], url: 'https://www.mba.com/exams/nmat' },
+        { title: 'ATMA', note: 'AIMS Test for Management Admissions; check participating institutions.', quals: ['graduate'], url: 'https://atmaaims.com/' },
+        { title: 'State MBA CETs', note: 'State-level management entrance tests; dates and participating institutes vary.', quals: ['graduate'], url: 'https://cetcell.mahacet.org/' }
+      ]
+    },
+    {
+      sector: 'research', title: 'Science & research entrance examinations', eyebrow: 'SCIENCE / RESEARCH',
+      description: 'Admissions and qualifying tests for science degrees, postgraduate study and research.',
+      routes: [
+        { title: 'IISER Aptitude Test (IAT)', note: 'Admission route for participating IISER programmes; current eligibility is course-specific.', quals: ['12th'], url: 'https://iiseradmission.in/' },
+        { title: 'NEST', note: 'National Entrance Screening Test for NISER and UM-DAE CEBS programmes.', quals: ['12th'], url: 'https://www.nestexam.in/' },
+        { title: 'IIT JAM', note: 'Admission test for participating postgraduate science programmes.', quals: ['bsc', 'btech', 'graduate'], url: 'https://jam2027.iitb.ac.in/' },
+        { title: 'JEST', note: 'Screening test used by participating science research institutions; each programme sets eligibility.', quals: ['bsc', 'graduate', 'postgraduate'], url: 'https://www.jest.org.in/' },
+        { title: 'TIFR Graduate Studies (GS)', note: 'Subject-specific entrance route for participating graduate research programmes.', quals: ['bsc', 'btech', 'graduate', 'postgraduate'], url: 'https://www.tifr.res.in/academics/gs.php' },
+        { title: 'CSIR-UGC NET', note: 'National eligibility test for research fellowship and lectureship in notified subjects.', quals: ['postgraduate'], url: 'https://csirnet.nta.ac.in/' }
+      ]
+    },
+    {
+      sector: 'creative', title: 'Design, fashion & architecture entrance tests', eyebrow: 'DESIGN / BUILT ENVIRONMENT',
+      description: 'Portfolio and aptitude-based admissions for design, fashion and architecture programmes.',
+      routes: [
+        { title: 'NIFT Entrance Examination (NIFTEE)', note: 'Fashion and design admissions; programme-wise eligibility applies.', quals: ['12th', 'graduate', 'design'], url: 'https://exams.nta.ac.in/NIFTEE/' },
+        { title: 'NID Design Aptitude Test (DAT)', note: 'Undergraduate and postgraduate design admission routes.', quals: ['12th', 'graduate', 'design'], url: 'https://admissions.nid.edu/' },
+        { title: 'UCEED', note: 'Undergraduate design admission test at participating institutes.', quals: ['12th', 'design'], url: 'https://www.uceed.iitb.ac.in/' },
+        { title: 'CEED', note: 'Postgraduate design admission test; participating institutes set additional rules.', quals: ['graduate', 'btech', 'design'], url: 'https://www.ceed.iitb.ac.in/' },
+        { title: 'NATA', note: 'Aptitude test used for B.Arch admissions; verify current Council of Architecture rules.', quals: ['12th', 'architecture'], url: 'https://www.nata.in/' },
+        { title: 'JEE Main Paper 2 (B.Arch / B.Planning)', note: 'Architecture and planning entrance papers; subject combinations and admission rules differ.', quals: ['12th', 'architecture'], url: 'https://jeemain.nta.nic.in/' }
+      ]
+    },
+    {
+      sector: 'technical', title: 'Maritime, shipping & logistics careers', eyebrow: 'MARITIME / LOGISTICS',
+      description: 'Sea-going, marine engineering, port operations and logistics pathways.',
+      routes: [
+        { title: 'IMU-CET', note: 'Indian Maritime University admission test for notified UG and PG programmes.', quals: ['12th', 'graduate', 'btech'], url: 'https://www.imu.edu.in/imunew/admissions-2026-27' },
+        { title: 'Nautical Science / Deck Officer pathway', note: 'Diploma or degree routes such as DNS and B.Sc. Nautical Science; medical and sponsorship rules matter.', quals: ['12th', 'graduate'], url: 'https://www.imu.edu.in/imunew/admissions-2026-27' },
+        { title: 'Marine Engineering', note: 'Marine engineering degree and lateral-entry routes; institute and medical criteria apply.', quals: ['12th', 'diploma', 'btech'], url: 'https://www.imu.edu.in/imunew/admissions-2026-27' },
+        { title: 'Naval Architecture & Ocean Engineering', note: 'Engineering study and specialist design or research roles.', quals: ['12th', 'btech', 'graduate'], url: 'https://www.imu.edu.in/imunew/admissions-2026-27' },
+        { title: 'Port, shipping & logistics operations', note: 'Operations, cargo, planning and supply-chain roles; qualifications vary by employer.', quals: ['12th', 'diploma', 'graduate', 'bba', 'bcom'], url: 'https://www.ncs.gov.in/job-seeker/pages/default.aspx' }
+      ]
+    },
+    {
+      sector: 'teaching', title: 'Sports, fitness & physical education', eyebrow: 'SPORTS / WELLNESS',
+      description: 'Coaching, physical education, fitness and sports-support careers.',
+      routes: [
+        { title: 'B.P.Ed / M.P.Ed admissions', note: 'Physical-education degree routes; entrance, practical and fitness tests vary by university.', quals: ['graduate', 'postgraduate'], url: 'https://www.ncs.gov.in/job-seeker/pages/default.aspx' },
+        { title: 'Sports coaching', note: 'Coaching roles through recognised training, sport-specific credentials and advertised vacancies.', quals: ['12th', 'graduate'], url: 'https://sportsauthorityofindia.nic.in/' },
+        { title: 'Sports Authority of India recruitment', note: 'Coach, assistant, technical and other posts when advertised.', quals: ['graduate', 'bsc', 'postgraduate'], url: 'https://sportsauthorityofindia.nic.in/' },
+        { title: 'Fitness & strength training', note: 'Practical certification, safe programming and experience support entry; employer rules vary.', quals: ['12th', 'graduate'], url: 'https://www.skillindiadigital.gov.in/' }
       ]
     }
   ];
