@@ -1,39 +1,135 @@
 (function () {
   'use strict';
-  function ready() {
-    var grid = document.getElementById('ncDirectoryGrid');
-    if (!grid) return;
-    grid.querySelectorAll('.nc-directory-card').forEach(function (card) {
-      if (card.dataset.detailBound === '1') return;
-      card.dataset.detailBound = '1';
-      card.setAttribute('role', 'link');
-      card.setAttribute('tabindex', '0');
-      var titleEl = card.querySelector('h3');
-      var typeEl = card.querySelector('.nc-dir-type');
-      var descEl = card.querySelector(':scope > p');
-      var tags = Array.from(card.querySelectorAll('.nc-tags span')).map(function (x) { return x.textContent.trim(); });
-      var primary = card.querySelector('.nc-dir-actions .nc-btn.primary') || card.querySelector('.nc-dir-actions a');
-      var params = new URLSearchParams();
-      params.set('title', titleEl ? titleEl.textContent.trim() : 'Exam / Career pathway');
-      params.set('sector', card.dataset.sector || '');
-      params.set('type', typeEl ? typeEl.textContent.trim() : '');
-      params.set('description', descEl ? descEl.textContent.trim() : '');
-      params.set('tags', tags.join('|'));
-      if (primary && primary.href) params.set('portal', primary.href);
-      var href = 'exam.html?' + params.toString();
-      card.querySelectorAll('a').forEach(function (a) {
-        a.addEventListener('click', function (event) { event.stopPropagation(); });
-      });
-      function open() {
-        card.classList.add('nc-directory-opened');
-        window.setTimeout(function () { window.location.href = href; }, 80);
-      }
-      card.addEventListener('click', open);
-      card.addEventListener('keydown', function (event) {
-        if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); open(); }
-      });
+
+  var sectorLabels = {
+    defence: 'Defence',
+    upsc: 'UPSC',
+    ssc: 'SSC',
+    railways: 'Railways',
+    banking: 'Banking',
+    teaching: 'Teaching',
+    state: 'State services',
+    technical: 'Technical',
+    entrance: 'Entrance',
+    health: 'Healthcare',
+    law: 'Law',
+    insurance: 'Insurance',
+    agriculture: 'Agriculture',
+    digital: 'IT & digital',
+    commerce: 'Commerce',
+    creative: 'Design & media',
+    vocational: 'Vocational',
+    hospitality: 'Hospitality',
+    research: 'Research',
+    social: 'Social service',
+    other: 'Other'
+  };
+
+  var root, grid, countEl, emptyEl, searchEl, activeSector = 'all', cards = [];
+
+  function esc(value) {
+    return String(value == null ? '' : value).replace(/[&<>"']/g, function (ch) {
+      return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[ch];
     });
   }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ready, { once: true });
-  else ready();
+
+  function routeUrl(route) {
+    var params = new URLSearchParams();
+    params.set('title', route.title || 'Career / exam pathway');
+    params.set('sector', route.sector || 'other');
+    params.set('group', route.groupTitle || '');
+    params.set('eyebrow', route.groupEyebrow || '');
+    params.set('description', route.note || '');
+    params.set('groupDescription', route.groupDescription || '');
+    params.set('quals', (route.quals || []).join('|'));
+    if (route.url) params.set('portal', route.url);
+    return 'exam.html?' + params.toString();
+  }
+
+  function normalizeCatalog() {
+    var source = Array.isArray(window.VAANI_CAREER_OPTIONS) ? window.VAANI_CAREER_OPTIONS : [];
+    var seen = new Set();
+    return source.filter(function (route) {
+      if (!route || !route.title) return false;
+      var key = [route.sector, route.groupTitle, route.title, route.url].join('|').toLowerCase();
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }
+
+  function cardMarkup(route, index) {
+    var sector = route.sector || 'other';
+    var label = sectorLabels[sector] || sector;
+    var quals = Array.isArray(route.quals) ? route.quals : [];
+    return '<a class="nc-directory-card" href="' + esc(routeUrl(route)) + '"' +
+      ' data-sector="' + esc(sector) + '" data-search="' +
+      esc([route.title, route.note, route.groupTitle, route.groupEyebrow, label, quals.join(' ')].join(' ').toLowerCase()) + '">' +
+      '<div class="nc-dir-top"><span class="nc-dir-number">' + String(index + 1).padStart(3, '0') + '</span>' +
+      '<span class="nc-dir-type">' + esc(route.groupEyebrow || route.groupTitle || label) + '</span></div>' +
+      '<h3>' + esc(route.title) + '</h3>' +
+      '<p>' + esc(route.note || route.groupDescription || 'Open the dedicated route page for eligibility, dates and the official portal.') + '</p>' +
+      '<span class="nc-dir-sector">' + esc(label) + '</span>' +
+      (quals.length ? '<div class="nc-tags">' + quals.slice(0, 3).map(function (q) { return '<span>' + esc(q) + '</span>'; }).join('') + '</div>' : '') +
+      '</a>';
+  }
+
+  function applyFilter() {
+    var query = String(searchEl && searchEl.value || '').trim().toLowerCase();
+    var visible = 0;
+    cards.forEach(function (card) {
+      var sectorOk = activeSector === 'all' || card.dataset.sector === activeSector;
+      var text = card.dataset.search || '';
+      var queryOk = !query || text.indexOf(query) >= 0;
+      var show = sectorOk && queryOk;
+      card.hidden = !show;
+      if (show) visible += 1;
+    });
+    if (countEl) countEl.textContent = visible + ' career pathways';
+    if (emptyEl) emptyEl.hidden = visible !== 0;
+  }
+
+  function bindFilters() {
+    root.querySelectorAll('[data-nc-filter]').forEach(function (button) {
+      button.addEventListener('click', function () {
+        activeSector = button.dataset.ncFilter || 'all';
+        root.querySelectorAll('[data-nc-filter]').forEach(function (item) {
+          var active = item === button;
+          item.classList.toggle('active', active);
+          item.setAttribute('aria-pressed', String(active));
+        });
+        applyFilter();
+      });
+    });
+    if (searchEl) searchEl.addEventListener('input', applyFilter);
+  }
+
+  function render() {
+    root = document.getElementById('view-notifications');
+    grid = document.getElementById('ncDirectoryGrid');
+    countEl = document.getElementById('ncDirectoryCount');
+    emptyEl = document.getElementById('ncDirectoryEmpty');
+    searchEl = document.getElementById('ncSearch');
+    if (!root || !grid) return;
+
+    var catalog = normalizeCatalog();
+    grid.innerHTML = catalog.map(cardMarkup).join('');
+    cards = Array.prototype.slice.call(grid.querySelectorAll('.nc-directory-card'));
+    bindFilters();
+    applyFilter();
+  }
+
+  function boot() {
+    if (!Array.isArray(window.VAANI_CAREER_OPTIONS)) {
+      window.setTimeout(boot, 60);
+      return;
+    }
+    render();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot, { once: true });
+  } else {
+    boot();
+  }
 })();
