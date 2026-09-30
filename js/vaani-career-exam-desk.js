@@ -220,7 +220,7 @@
     }
   ];
 
-  const state = { items: [], archived: [], generatedAt: null, loading: true, refreshing: false, feedAvailable: false, archiveAvailable: false, feedSource: '', feedError: '', feedRefreshFailed: false, sourceStatus: null, showAllArchive: false, showLaterExamDates: false };
+  const state = { items: [], archived: [], generatedAt: null, loading: true, refreshing: false, feedAvailable: false, archiveAvailable: false, feedSource: '', feedError: '', feedRefreshFailed: false, sourceStatus: null, showAllArchive: false, showLaterExamDates: false, linkBoardExpanded: { jobs: false, results: false, admit: false, keys: false } };
 
   function esc(value) {
     return String(value == null ? '' : value).replace(/[&<>"']/g, function (ch) {
@@ -547,6 +547,107 @@
     }
   }
 
+  function boardKind(item) {
+    const text = [item.title, item.type, item.status].filter(Boolean).join(' ').toLowerCase();
+    if (/\b(result|results|merit list|selection list|score card|cut.?off|marksheet)\b/.test(text)) return 'results';
+    if (/\b(answer.?key|response sheet|objection tracker)\b/.test(text)) return 'keys';
+    if (/\b(admit cards?|e-?admit|hall tickets?|call letters?|admission certificate)\b/.test(text)) return 'admit';
+    if (/\b(apply online|online application|application form|registration|recruitment|vacanc(?:y|ies)|advertisement|apprentice|employment notice)\b/.test(text) &&
+        !/\b(calendar|answer key|admit card|result|merit list)\b/.test(text)) return 'jobs';
+    return '';
+  }
+
+  function boardDate(item) {
+    const app = DATA.applicationDates(item);
+    return parseDate(item.notificationDate || item.publishedAt || item.date || app.start || item.archivedAt || item.firstSeen);
+  }
+
+  function isBoardRecent(item, days) {
+    const date = boardDate(item);
+    return Boolean(date && dayDiff(today(), date) >= 0 && dayDiff(today(), date) <= days);
+  }
+
+  function uniqueBoardItems(items, kind) {
+    const seen = new Set();
+    return items.filter(function (item) {
+      const url = safeUrl(kind === 'jobs' ? (item.applicationUrl || item.applyUrl || item.url || item.sourceUrl) :
+        (item.url || item.sourceUrl || item.applicationUrl));
+      if (!url) return false;
+      const title = String(item.title || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+      const key = url.toLowerCase() + '|' + title;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }
+
+  function boardItems(kind, filters) {
+    const records = kind === 'jobs' ? state.items : state.items.concat(state.archived);
+    const items = uniqueBoardItems(uniqueItems(records).filter(function (item) {
+      if (boardKind(item) !== kind || !matches(item, filters)) return false;
+      if (kind === 'jobs') {
+        const status = classify(item);
+        if (status === 'archive') return false;
+        return ['near', 'ongoing', 'upcoming'].includes(status) || isBoardRecent(item, 120);
+      }
+      return state.linkBoardExpanded[kind] || isBoardRecent(item, 180);
+    }), kind);
+    items.sort(function (a, b) {
+      if (kind === 'jobs') {
+        const rank = { near: 0, ongoing: 1, upcoming: 2, ignore: 3, archive: 4 };
+        const difference = (rank[classify(a)] ?? 3) - (rank[classify(b)] ?? 3);
+        if (difference) return difference;
+        const ae = DATA.applicationDates(a).end;
+        const be = DATA.applicationDates(b).end;
+        if (ae && be && ae.getTime() !== be.getTime()) return ae.getTime() - be.getTime();
+      }
+      const da = boardDate(a), db = boardDate(b);
+      return (db ? db.getTime() : 0) - (da ? da.getTime() : 0);
+    });
+    return items;
+  }
+
+  function renderLinkBoard(filters) {
+    const groups = [
+      { key: 'jobs', empty: 'No current or recent job notices match.' },
+      { key: 'results', empty: 'No recent results match.' },
+      { key: 'admit', empty: 'No recent admit-card links match.' },
+      { key: 'keys', empty: 'No recent answer-key links match.' }
+    ];
+    groups.forEach(function (group) {
+      const suffix = group.key.charAt(0).toUpperCase() + group.key.slice(1);
+      const list = root.querySelector('#vxBoard' + suffix + 'List');
+      const count = root.querySelector('#vxBoard' + suffix + 'Count');
+      const more = root.querySelector('[data-vx-board-more="' + group.key + '"]');
+      if (!list) return;
+      const items = boardItems(group.key, filters);
+      if (count) count.textContent = String(items.length).padStart(2, '0');
+      const limit = state.linkBoardExpanded[group.key] ? items.length : 6;
+      list.innerHTML = items.length ? items.slice(0, limit).map(function (item) {
+        const application = safeUrl(item.applicationUrl || item.applyUrl);
+        const notice = safeUrl(item.notificationUrl || item.advertisementUrl || item.sourceUrl || item.url);
+        const primary = application || safeUrl(item.url || item.sourceUrl);
+        const date = group.key === 'jobs' ? DATA.applicationDates(item) : null;
+        const meta = group.key === 'jobs'
+          ? date.end && date.end >= today() ? 'Closes ' + fmtDate(date.end)
+            : date.start && date.start > today() ? 'Opens ' + fmtDate(date.start)
+              : boardDate(item) ? 'Notice ' + fmtDate(boardDate(item)) : 'Official notice'
+          : boardDate(item) ? fmtDate(boardDate(item)) : 'Date not listed';
+        const detailLink = notice && primary && notice !== primary
+          ? '<a class="vx-resource-secondary" href="' + esc(notice) + '" target="_blank" rel="noopener noreferrer">Notice ↗</a>' : '';
+        const actionLabel = group.key === 'jobs' ? (application || /\/apply(?:\?|$)/i.test(primary || '') ? 'Apply ↗' : 'Open ↗') : 'Open ↗';
+        return '<li class="vx-resource-row"><div class="vx-resource-copy"><a class="vx-resource-title" href="' + esc(notice || primary) + '" target="_blank" rel="noopener noreferrer">' + esc(item.title || 'Official update') + '</a>' +
+          '<small>' + esc(item.organization || item.sourceName || 'Official source') + ' · ' + esc(meta) + '</small></div><div class="vx-resource-actions">' +
+          (primary ? '<a class="vx-resource-action" href="' + esc(primary) + '" target="_blank" rel="noopener noreferrer">' + actionLabel + '</a>' : '') + detailLink + '</div></li>';
+      }).join('') : '<li class="vx-resource-empty">' + (state.loading ? 'Loading official links…' : esc(group.empty)) + '</li>';
+      if (more) {
+        more.hidden = items.length <= 6;
+        more.textContent = state.linkBoardExpanded[group.key] ? 'Show fewer' : 'View all ' + items.length;
+        more.setAttribute('aria-expanded', String(state.linkBoardExpanded[group.key]));
+      }
+    });
+  }
+
   function renderSourceManagement() {
     const report = state.sourceStatus;
     const health = root.querySelector('#vxFeedHealth');
@@ -613,6 +714,7 @@
   function renderAll() {
     const filters = controls();
     renderSourceManagement();
+    renderLinkBoard(filters);
     const upcoming = renderLane('upcoming', filters);
     const ongoing = renderLane('ongoing', filters);
     const near = renderLane('near', filters);
@@ -633,8 +735,9 @@
     '<div class="vx-hero-visual" aria-hidden="true"><div class="vx-orbit vx-orbit-a"></div><div class="vx-orbit vx-orbit-b"></div>',
     '<div class="vx-hero-emblem"><svg viewBox="0 0 100 100" role="presentation"><path d="M50 7 82 19v24c0 22-13 39-32 50C31 82 18 65 18 43V19z" fill="none" stroke="currentColor" stroke-width="3"/><path d="M34 51 45 62 68 36" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="vx-hero-visual-label">FIND · VERIFY · APPLY</div></div>',
     '<div class="vx-hero-foot"><span><b id="vxTotalCount">00</b><small>actionable notices</small></span><span><b id="vxActiveCount">00</b><small>current / scheduled</small></span><span class="vx-sync" id="vxSyncStamp">Syncing official feeds…</span></div></header>',
+    '<section class="vx-link-board" id="vx-link-board" aria-labelledby="vxLinkBoardTitle"><div class="vx-section-heading"><div><span class="vx-section-index">DIRECTORY / QUICK ACCESS</span><h2 id="vxLinkBoardTitle">Latest links</h2><p>Jump straight to applications, results, admit cards and answer keys. Open the official notice before relying on any date.</p></div><span class="vx-board-stamp">OFFICIAL LINKS</span></div><div class="vx-link-grid"><article class="vx-link-column vx-link-column-jobs" id="vx-board-jobs" aria-labelledby="vxBoardJobsTitle"><div class="vx-link-column-head"><div><span>01 / APPLICATIONS</span><h3 id="vxBoardJobsTitle">Latest Jobs</h3></div><b id="vxBoardJobsCount">00</b></div><ul class="vx-resource-list" id="vxBoardJobsList" aria-live="polite"></ul><button type="button" class="vx-resource-more" data-vx-board-more="jobs" hidden>View all</button></article><article class="vx-link-column vx-link-column-results" id="vx-board-results" aria-labelledby="vxBoardResultsTitle"><div class="vx-link-column-head"><div><span>02 / OUTCOMES</span><h3 id="vxBoardResultsTitle">Results</h3></div><b id="vxBoardResultsCount">00</b></div><ul class="vx-resource-list" id="vxBoardResultsList" aria-live="polite"></ul><button type="button" class="vx-resource-more" data-vx-board-more="results" hidden>View all</button></article><article class="vx-link-column vx-link-column-admit" id="vx-board-admit" aria-labelledby="vxBoardAdmitTitle"><div class="vx-link-column-head"><div><span>03 / EXAM ACCESS</span><h3 id="vxBoardAdmitTitle">Admit Cards</h3></div><b id="vxBoardAdmitCount">00</b></div><ul class="vx-resource-list" id="vxBoardAdmitList" aria-live="polite"></ul><button type="button" class="vx-resource-more" data-vx-board-more="admit" hidden>View all</button></article><article class="vx-link-column vx-link-column-keys" id="vx-board-keys" aria-labelledby="vxBoardKeysTitle"><div class="vx-link-column-head"><div><span>04 / ANSWER REVIEW</span><h3 id="vxBoardKeysTitle">Answer Keys</h3></div><b id="vxBoardKeysCount">00</b></div><ul class="vx-resource-list" id="vxBoardKeysList" aria-live="polite"></ul><button type="button" class="vx-resource-more" data-vx-board-more="keys" hidden>View all</button></article></div></section>',
     '<section class="vx-ops-strip" aria-label="Notification feed management"><div class="vx-ops-summary"><span class="vx-ops-dot" id="vxOpsDot" aria-hidden="true"></span><div class="vx-ops-copy"><span class="vx-ops-kicker">FEED MANAGEMENT</span><strong id="vxFeedHealth" aria-live="polite">Checking source health…</strong><small id="vxFeedSummary">Checking the Worker feed and the latest snapshot.</small></div></div><div class="vx-ops-actions"><button type="button" class="vx-refresh" id="vxRefreshFeed">↻ Refresh feed</button><details class="vx-source-report" id="vxSourceReport"><summary id="vxSourceSummary">Source report</summary><div class="vx-source-list" id="vxSourceList"><p>Loading source report…</p></div></details></div></section>',
-    '<nav class="vx-jump" aria-label="Exam desk sections"><button type="button" data-vx-jump="vx-upcoming">Upcoming</button><button type="button" data-vx-jump="vx-ongoing">Ongoing</button><button type="button" data-vx-jump="vx-near">Deadline near</button><button type="button" data-vx-jump="vx-exam-dates">Exam dates</button><button type="button" data-vx-jump="vx-defence">Defence corner</button><button type="button" data-vx-jump="vx-careers">Career map</button><button type="button" data-vx-jump="vx-archive">Archive</button></nav>',
+    '<nav class="vx-jump" aria-label="Exam desk sections"><button type="button" data-vx-jump="vx-link-board">Latest links</button><button type="button" data-vx-jump="vx-board-jobs">Jobs</button><button type="button" data-vx-jump="vx-board-results">Results</button><button type="button" data-vx-jump="vx-board-admit">Admit cards</button><button type="button" data-vx-jump="vx-board-keys">Answer keys</button><button type="button" data-vx-jump="vx-upcoming">Upcoming</button><button type="button" data-vx-jump="vx-ongoing">Ongoing</button><button type="button" data-vx-jump="vx-near">Deadline near</button><button type="button" data-vx-jump="vx-exam-dates">Exam dates</button><button type="button" data-vx-jump="vx-defence">Defence corner</button><button type="button" data-vx-jump="vx-careers">Career map</button><button type="button" data-vx-jump="vx-archive">Archive</button></nav>',
     '<section class="vx-filter-panel" id="vxFilterPanel" aria-label="Search and filter exams"><div class="vx-filter-heading"><div><span class="vx-eyebrow">SMART DIRECTORY</span><h2>Find your next route</h2><p>Search exams or narrow notices and career paths by qualification and sector.</p></div><button type="button" class="vx-reset" id="vxReset">Reset filters</button></div>',
     '<div class="vx-controls"><label class="vx-search-wrap"><span>SEARCH EXAMS &amp; CAREERS</span><input id="vxSearch" type="search" placeholder="Try NDA, BCA, NTPC, technician…" autocomplete="off"></label>',
     '<label><span>YOUR QUALIFICATION</span><select id="vxQualification"><option value="all">All qualifications</option>' + DATA.QUALIFICATIONS.map(function (option) { return '<option value="' + esc(option.id) + '">' + esc(option.label) + '</option>'; }).join('') + '</select></label>',
@@ -703,7 +806,9 @@
       const statusResult = results[2] || {};
       if (feedResult.source) {
         state.feedRefreshFailed = false;
-        state.items = DATA.normalizeItems(feedResult.data);
+        const snapshotResult = await loadJson(['data/defence-notifications.json'], isFeedPayload);
+        const curatedSnapshot = snapshotResult.source ? DATA.normalizeItems(snapshotResult.data).filter(function (item) { return Boolean(item.verifiedAt); }) : [];
+        state.items = uniqueItems(DATA.normalizeItems(feedResult.data).concat(curatedSnapshot));
         state.feedAvailable = true;
         state.feedSource = feedResult.fallback || !API || !feedResult.source.startsWith(API) ? 'snapshot' : 'worker';
         state.feedError = feedResult.error || '';
@@ -772,6 +877,15 @@
     root.querySelector('#vxLaterExamDates')?.addEventListener('click', function () {
       state.showLaterExamDates = !state.showLaterExamDates;
       renderAll();
+    });
+    root.querySelectorAll('[data-vx-board-more]').forEach(function (button) {
+      button.addEventListener('click', function () {
+        const key = button.dataset.vxBoardMore;
+        if (Object.prototype.hasOwnProperty.call(state.linkBoardExpanded, key)) {
+          state.linkBoardExpanded[key] = !state.linkBoardExpanded[key];
+          renderAll();
+        }
+      });
     });
     root.querySelector('#vxRefreshFeed')?.addEventListener('click', refreshData);
     renderAll();

@@ -98,8 +98,13 @@ const feedItems = [
     url: 'https://upsc.gov.in/', official: true, summary: 'Dates are scheduled in an annual calendar.'
   },
   {
+    id: 'sample-admit-card', title: 'SSC CHSL Admit Card 2026', organization: 'SSC', category: 'SSC',
+    type: 'admit-card', status: 'admit-card', notificationDate: '2026-09-25',
+    url: 'https://ssc.gov.in/', official: true, summary: 'Sample admit-card notice.'
+  },
+  {
     id: 'future-result', title: 'NDA answer key update', organization: 'UPSC', category: 'NDA',
-    type: 'Answer key', status: 'released', examDate: '2027-02-14', eligibility: 'Class 12',
+    type: 'Answer key', status: 'released', notificationDate: '2026-09-24', examDate: '2027-02-14', eligibility: 'Class 12',
     url: 'https://upsc.gov.in/', official: true, summary: 'Post-exam answer key.'
   },
   {
@@ -208,6 +213,14 @@ try {
   await page.waitForFunction(() => !document.querySelector('#vxRefreshFeed')?.disabled);
   assert.equal(apiRequests.length, initialRefreshRequests + 2, 'Refresh feed should recheck both live API endpoints');
   assert.equal(await page.locator('#vxNearList .vx-notice-card').count(), 4, 'refresh should preserve the classified deadline cards');
+  assert.ok(await page.locator('#vxBoardJobsList .vx-resource-row').count() >= 5, 'link board should show multiple open or scheduled application links');
+  assert.ok((await page.locator('#vxBoardJobsList').innerText()).includes('SSC recruitment closing today'), 'job links should be shown as direct titles');
+  assert.equal(await page.locator('#vxBoardResultsList .vx-resource-row').count(), 1, 'link board should separate recent results');
+  assert.equal(await page.locator('#vxBoardAdmitList .vx-resource-row').count(), 1, 'link board should separate admit cards');
+  assert.equal(await page.locator('#vxBoardKeysList .vx-resource-row').count(), 1, 'link board should separate answer keys');
+  await page.locator('[data-vx-board-more="jobs"]').click();
+  assert.ok(await page.locator('#vxBoardJobsList .vx-resource-row').count() >= 5, 'View all should retain all matching job links');
+  await page.locator('[data-vx-board-more="jobs"]').click();
 
   assert.equal(await page.locator('#vxUpcomingList .vx-notice-card').count(), 1, 'only an upcoming future start should be in Upcoming');
   assert.equal(await page.locator('#vxOngoingList .vx-notice-card').count(), 3, 'open applications outside seven days, including title date ranges, should be Ongoing');
@@ -223,14 +236,16 @@ try {
   assert.equal(await page.locator('#vxUpcomingList').innerText().then(text => text.includes('NDA Officer Entry Calendar 2027')), true);
   assert.equal(await page.locator('#vxUpcomingList').innerText().then(text => text.includes('answer key')), false,
     'a post-exam notice must not become an active opportunity');
-  assert.equal(await page.locator('#vxArchiveGrid .vx-archive-card').count(), 3, 'expired application and both result records should stay archived');
+  assert.equal(await page.locator('#vxArchiveGrid .vx-archive-card').count(), 4, 'expired application, result, answer-key and admit-card records should stay archived');
   assert.equal(await page.locator('#vxExamDatesList .vx-date-row').count(), 4, 'default calendar should show only future exam dates within 120 days');
   assert.equal(await page.locator('#vxExamDatesList .vx-date-month').count(), 2, 'near-term exam dates should be grouped by month and year');
   const calendarTitles = await page.locator('#vxExamDatesList .vx-date-row h4').allTextContents();
   assert.equal(calendarTitles[0], 'SSC recruitment closing today',
     'the exam calendar should sort by the actual exam date in chronological order');
-  assert.ok(!calendarTitles.includes('NDA closed application cycle'),
-    'distant exam dates should stay hidden in the default calendar view');
+  assert.ok(calendarTitles.includes('NDA closed application cycle'),
+    'near-term future exam should remain visible even if its application is closed');
+  assert.ok(!calendarTitles.includes('NDA Officer Entry Calendar 2027'),
+    'distant NDA exam dates should stay hidden in the default calendar view');
   await page.locator('#vxLaterExamDates').click();
   assert.equal(await page.locator('#vxExamDatesList .vx-date-row').count(), 7, 'show later dates should expand the calendar without losing far-future records');
   assert.ok((await page.locator('#vxExamDatesList').innerText()).includes('NDA closed application cycle'),
