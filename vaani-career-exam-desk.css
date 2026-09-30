@@ -130,6 +130,33 @@
   font:600 10px/1.5 Inter,system-ui,sans-serif;
   text-align:right;
 }
+/* Compact feed management and diagnostic panel */
+#view-notifications .vx-ops-strip{display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0;padding:10px 14px;border:1px solid var(--line,rgba(22,33,46,.1));border-radius:15px;background:var(--panel,#fff);box-shadow:0 5px 16px rgba(18,34,49,.035)}
+#view-notifications .vx-ops-summary{display:flex;align-items:center;gap:10px;min-width:0}
+#view-notifications .vx-ops-dot{flex:0 0 9px;width:9px;height:9px;border-radius:50%;background:#8b95a1;box-shadow:0 0 0 4px rgba(139,149,161,.12)}
+#view-notifications .vx-ops-strip.is-healthy .vx-ops-dot{background:#33976c;box-shadow:0 0 0 4px rgba(51,151,108,.12)}
+#view-notifications .vx-ops-strip.is-partial .vx-ops-dot{background:#c18a2d;box-shadow:0 0 0 4px rgba(193,138,45,.14)}
+#view-notifications .vx-ops-strip.is-stale .vx-ops-dot{background:#c18a2d;box-shadow:0 0 0 4px rgba(193,138,45,.14)}
+#view-notifications .vx-ops-copy{display:grid;gap:2px;min-width:0}
+#view-notifications .vx-ops-kicker{color:var(--gold-d,#8a5f17);font:800 8px/1.2 Inter,system-ui,sans-serif;letter-spacing:.14em}
+#view-notifications .vx-ops-copy>strong{color:var(--text,#172235);font:800 11px/1.3 Inter,system-ui,sans-serif}
+#view-notifications .vx-ops-copy>small{color:var(--muted,#5b6774);font:500 10px/1.4 Inter,system-ui,sans-serif;overflow-wrap:anywhere}
+#view-notifications .vx-ops-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex:0 0 auto}
+#view-notifications .vx-refresh{min-height:32px;padding:7px 10px;border:1px solid rgba(33,89,122,.22);border-radius:9px;color:#fff;background:#173d5b;cursor:pointer;font:800 9px/1.2 Inter,system-ui,sans-serif}
+#view-notifications .vx-refresh:hover:not(:disabled){background:#235779}
+#view-notifications .vx-refresh:disabled{opacity:.58;cursor:wait}
+#view-notifications .vx-source-report{position:relative;color:var(--text,#172235);font:700 9px/1.3 Inter,system-ui,sans-serif}
+#view-notifications .vx-source-report>summary{padding:8px 9px;border:1px solid var(--line,rgba(22,33,46,.13));border-radius:9px;cursor:pointer;list-style:none;background:var(--panel2,#fbf7ed);white-space:nowrap}
+#view-notifications .vx-source-report>summary::-webkit-details-marker{display:none}
+#view-notifications .vx-source-report[open]>summary{border-color:rgba(173,122,36,.42)}
+#view-notifications .vx-source-list{width:min(520px,calc(100vw - 38px));max-height:250px;overflow:auto;margin-top:7px;padding:9px;border:1px solid var(--line,rgba(22,33,46,.13));border-radius:11px;background:var(--panel,#fff);box-shadow:0 12px 28px rgba(16,33,48,.12)}
+#view-notifications .vx-source-list ul{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:4px 12px;margin:0;padding:0;list-style:none}
+#view-notifications .vx-source-entry{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 8px;padding:7px 4px;border-bottom:1px solid var(--line,rgba(22,33,46,.07))}
+#view-notifications .vx-source-name{min-width:0;color:var(--text,#172235);font-weight:700;overflow-wrap:anywhere}
+#view-notifications .vx-source-result{color:var(--muted,#5b6774);text-align:right;font-weight:600}
+#view-notifications .vx-source-entry.is-failed .vx-source-result{color:#a65a3c}
+#view-notifications .vx-source-entry small{grid-column:1/-1;color:var(--muted2,#8996a3);font:500 9px/1.35 Inter,system-ui,sans-serif}
+#view-notifications .vx-source-list>p{margin:0;color:var(--muted,#5b6774);font:500 10px/1.5 Inter,system-ui,sans-serif}
 #view-notifications .vx-jump{
   display:flex;
   gap:8px;
@@ -229,6 +256,13 @@
 }
 #view-notifications .vx-filter-note span{color:var(--gold,#ad7a24);font-size:13px;line-height:1}
 #view-notifications .vx-lane{scroll-margin-top:20px}
+#view-notifications .vx-lane-is-empty{padding-bottom:clamp(10px,1.4vw,14px)}
+#view-notifications .vx-lane-is-empty .vx-section-heading{margin-bottom:6px}
+#view-notifications .vx-lane-is-empty .vx-empty{display:grid;grid-template-columns:auto minmax(0,1fr) minmax(0,1.3fr);align-items:center;justify-content:stretch;gap:0 8px;min-height:0;padding:3px 8px;border:0;border-radius:0;background:transparent;text-align:left}
+#view-notifications .vx-lane-is-empty .vx-empty-mark{margin:0;font-size:14px}
+#view-notifications .vx-lane-is-empty .vx-empty strong{font-size:10px}
+#view-notifications .vx-lane-is-empty .vx-empty span{margin:0;font-size:10px;text-align:right}
+
 #view-notifications .vx-lane-upcoming{border-top:3px solid #548ab6}
 #view-notifications .vx-lane-ongoing{border-top:3px solid #33976c}
 #view-notifications .vx-lane-near{border-top:3px solid #c18a2d}
@@ -532,6 +566,8 @@
   outline:3px solid rgba(183,140,62,.65);
   outline-offset:3px;
 }
+[data-theme="dark"] #view-notifications .vx-ops-strip,
+[data-theme="dark"] #view-notifications .vx-source-list,
 [data-theme="dark"] #view-notifications .vx-filter-panel,
 [data-theme="dark"] #view-notifications .vx-lane,
 [data-theme="dark"] #view-notifications .vx-date-section,
@@ -546,6 +582,10 @@
 [data-theme="dark"] #view-notifications .vx-controls select{background:var(--panel2,#161e2a);color:var(--text,#e9edf2)}
 [data-theme="dark"] #view-notifications .vx-link-btn{background:#245779;color:#fff}
 @media(max-width:760px){
+  #view-notifications .vx-ops-strip{align-items:flex-start;flex-direction:column}
+  #view-notifications .vx-ops-actions{width:100%;justify-content:flex-start}
+  #view-notifications .vx-source-list{width:min(520px,calc(100vw - 42px))}
+
   #view-notifications{padding:12px!important}
   #view-notifications .vx-shell{gap:15px}
   #view-notifications .vx-hero{grid-template-columns:minmax(0,1fr) 112px;gap:14px;padding:21px;border-radius:20px}
@@ -574,6 +614,8 @@
   #view-notifications .vx-date-section,
   #view-notifications .vx-career-section{padding:15px}
   #view-notifications .vx-notice-grid{grid-template-columns:1fr}
+  #view-notifications .vx-lane-is-empty .vx-empty{grid-template-columns:auto minmax(0,1fr);gap:2px 7px}
+  #view-notifications .vx-lane-is-empty .vx-empty span{grid-column:2;text-align:left}
   #view-notifications .vx-card-top{align-items:flex-start;flex-direction:column;gap:6px}
   #view-notifications .vx-org{text-align:left;white-space:normal}
   #view-notifications .vx-card-bottom{align-items:flex-start;flex-direction:column}

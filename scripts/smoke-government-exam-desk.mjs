@@ -123,6 +123,17 @@ const archiveItems = [
   {}
 ];
 
+const sourceStatusFixture = {
+  version: 1, checkedAt: '2026-09-30T09:00:00Z', status: 'partial',
+  sourcesTotal: 3, sourcesOk: 2, sourcesFailed: 1, liveItems: 9, archiveItems: 3,
+  snapshotRetained: false, concurrency: 4,
+  sources: [
+    { source: 'SSC', ok: true, found: 0, durationMs: 125 },
+    { source: 'SBI', ok: true, found: 8, durationMs: 240 },
+    { source: 'UPSC', ok: false, found: 0, durationMs: 310, error: '403 Forbidden' }
+  ]
+};
+
 await context.addInitScript(({ fixed }) => {
   const NativeDate = Date;
   const fixedEpoch = new NativeDate(fixed + 'T12:00:00').valueOf();
@@ -142,8 +153,13 @@ await page.route('**/*', async route => {
   const isApi = url.hostname === 'vaani-notifications-api.harshitchaubey127.workers.dev';
   if (isApi) apiRequests.push(url.pathname);
   const isLocalFeed = url.pathname.endsWith('/data/defence-notifications.json') || url.pathname.endsWith('/data/defence-notifications-archive.json');
-  if (failFeeds && (isApi || isLocalFeed)) {
+  const isLocalStatus = url.pathname.endsWith('/data/defence-notifications-status.json');
+  if (failFeeds && (isApi || isLocalFeed || isLocalStatus)) {
     await route.fulfill({ status: 503, contentType: 'application/json', body: JSON.stringify({ error: 'fixture unavailable' }) });
+    return;
+  }
+  if (isLocalStatus) {
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(sourceStatusFixture) });
     return;
   }
   if (isApi && url.pathname.endsWith('/api/notifications/archive')) {
@@ -180,6 +196,17 @@ try {
   });
   assert.deepEqual(apiRequests.slice().sort(), ['/api/notifications', '/api/notifications/archive'],
     'the Exam Desk should read the existing live feed and archive once each');
+  assert.match(await page.locator('#vxFeedHealth').innerText(), /Partial source coverage/, 'feed health should disclose incomplete source coverage');
+  assert.match(await page.locator('#vxFeedSummary').innerText(), /2\/3 sources reachable/, 'feed health should show the source coverage count');
+  await page.locator('#vxSourceReport summary').click();
+  assert.equal(await page.locator('#vxSourceList li').count(), 3, 'source details should list each configured source');
+  assert.match(await page.locator('#vxSourceList').innerText(), /UPSC[\s\S]*403 Forbidden/, 'failed source diagnostics should be visible');
+  await page.locator('#vxSourceReport summary').click();
+  const initialRefreshRequests = apiRequests.length;
+  await page.locator('#vxRefreshFeed').click();
+  await page.waitForFunction(() => !document.querySelector('#vxRefreshFeed')?.disabled);
+  assert.equal(apiRequests.length, initialRefreshRequests + 2, 'Refresh feed should recheck both live API endpoints');
+  assert.equal(await page.locator('#vxNearList .vx-notice-card').count(), 4, 'refresh should preserve the classified deadline cards');
 
   assert.equal(await page.locator('#vxUpcomingList .vx-notice-card').count(), 1, 'only an upcoming future start should be in Upcoming');
   assert.equal(await page.locator('#vxOngoingList .vx-notice-card').count(), 3, 'open applications outside seven days, including title date ranges, should be Ongoing');
@@ -220,6 +247,11 @@ try {
   assert.equal(await page.locator('#vxForcesGrid .vx-force-card').count() > 0, true, 'combined filters should retain matching force pathways');
   assert.equal(await page.locator('#vxArchiveGrid .vx-archive-card').count() > 0, true, 'combined filters should also search the archive');
 
+  await page.locator('#vxSearch').fill('no-matching-exam-record');
+  assert.equal(await page.locator('#vx-ongoing').evaluate(element => element.classList.contains('vx-lane-is-empty')), true,
+    'empty lanes should be marked for compact presentation');
+  assert.equal(await page.locator('#vxOngoingList .vx-empty').evaluate(element => getComputedStyle(element).minHeight), '0px',
+    'empty lanes should not reserve a tall blank card');
   await page.locator('#vxReset').click();
   assert.equal(await page.locator('#vxSearch').inputValue(), '');
   assert.equal(await page.locator('#vxQualification').inputValue(), 'all');

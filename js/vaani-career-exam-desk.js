@@ -10,6 +10,7 @@
   const API = String(window.VAANI_NOTIFICATIONS_API || '').replace(/\/$/, '');
   const feedUrls = [API ? API + '/api/notifications' : '', 'data/defence-notifications.json'].filter(Boolean);
   const archiveUrls = [API ? API + '/api/notifications/archive' : '', 'data/defence-notifications-archive.json'].filter(Boolean);
+  const statusUrls = ['data/defence-notifications-status.json'];
 
   const QUAL_LABELS = Object.fromEntries(DATA.QUALIFICATIONS.map(function (option) { return [option.id, option.label]; }));
 
@@ -219,7 +220,7 @@
     }
   ];
 
-  const state = { items: [], archived: [], generatedAt: null, loading: true, feedAvailable: false, archiveAvailable: false, showAllArchive: false };
+  const state = { items: [], archived: [], generatedAt: null, loading: true, refreshing: false, feedAvailable: false, archiveAvailable: false, feedSource: '', feedError: '', sourceStatus: null, showAllArchive: false };
 
   function esc(value) {
     return String(value == null ? '' : value).replace(/[&<>"']/g, function (ch) {
@@ -372,6 +373,8 @@
     const count = root.querySelector('#vx' + suffix + 'Count');
     if (!list) return 0;
     const items = state.items.filter(function (item) { return classify(item) === lane && matches(item, filters); });
+    const section = list.closest('.vx-lane');
+    if (section) section.classList.toggle('vx-lane-is-empty', items.length === 0);
     items.sort(function (a, b) {
       if (lane === 'near') {
         const da = DATA.applicationDates(a).end;
@@ -515,6 +518,63 @@
     }
   }
 
+  function renderSourceManagement() {
+    const report = state.sourceStatus;
+    const health = root.querySelector('#vxFeedHealth');
+    const detail = root.querySelector('#vxFeedSummary');
+    const refresh = root.querySelector('#vxRefreshFeed');
+    const summary = root.querySelector('#vxSourceSummary');
+    const list = root.querySelector('#vxSourceList');
+    const panel = root.querySelector('.vx-ops-strip');
+    if (!panel) return;
+
+    const total = report && Number.isInteger(report.sourcesTotal) ? report.sourcesTotal : 0;
+    const ok = report && Number.isInteger(report.sourcesOk) ? report.sourcesOk : 0;
+    const checked = report && report.checkedAt ? new Date(report.checkedAt) : null;
+    const checkedValid = checked && !Number.isNaN(checked.valueOf());
+    const stale = Boolean(report) && (!checkedValid || Date.now() - checked.valueOf() > 90 * 60 * 1000);
+    let tone = 'unknown';
+    let title = 'Source report unavailable';
+    if (state.refreshing) {
+      title = 'Refreshing the latest feed…';
+    } else if (report && total > 0 && ok === total && !stale) {
+      tone = 'healthy';
+      title = 'All configured sources responded';
+    } else if (report && ok > 0 && !stale) {
+      tone = 'partial';
+      title = 'Partial source coverage';
+    } else if (report && stale) {
+      tone = 'stale';
+      title = 'Source report is stale';
+    } else if (report && total > 0 && ok === 0) {
+      title = 'No source responded on the last check';
+    }
+    panel.classList.toggle('is-healthy', tone === 'healthy');
+    panel.classList.toggle('is-partial', tone === 'partial');
+    panel.classList.toggle('is-stale', tone === 'stale');
+    panel.classList.toggle('is-unknown', tone === 'unknown');
+    if (health) health.textContent = title;
+    const origin = state.feedSource === 'worker' ? 'Cloudflare Worker feed' :
+      state.feedSource === 'snapshot' ? 'bundled fallback snapshot' : 'feed not loaded';
+    const stamp = checkedValid ? checked.toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'check time unavailable';
+    const coverage = total ? ok + '/' + total + ' sources reachable' : 'Source availability is not reported';
+    const fallbackNote = state.feedSource === 'snapshot' && state.feedError ? ' · live service unavailable; using snapshot' : '';
+    if (detail) detail.textContent = [coverage, origin + fallbackNote, checkedValid ? 'last checked ' + stamp + (stale ? ' · stale' : '') : ''].filter(Boolean).join(' · ');
+    if (refresh) {
+      refresh.disabled = state.refreshing;
+      refresh.setAttribute('aria-busy', String(state.refreshing));
+      refresh.textContent = state.refreshing ? 'Checking…' : '↻ Refresh feed';
+    }
+    if (summary) summary.textContent = total ? 'Source report (' + ok + '/' + total + ')' : 'Source report';
+    if (list) {
+      const sources = report && Array.isArray(report.sources) ? report.sources : [];
+      list.innerHTML = sources.length ? '<ul>' + sources.map(function (source) {
+        return '<li class="vx-source-entry ' + (source.ok ? 'is-ok' : 'is-failed') + '"><span class="vx-source-name">' + esc(source.source || 'Official source') + '</span>' +
+          '<span class="vx-source-result">' + (source.ok ? 'Reachable · ' + Number(source.found || 0) + ' matches' : 'Failed · ' + esc(source.error || 'Request failed')) + '</span>' +
+          '<small>' + (Number(source.durationMs) > 0 ? Math.round(Number(source.durationMs)) + ' ms' : 'Duration unavailable') + '</small></li>';
+      }).join('') + '</ul>' : '<p>Source-level diagnostics are unavailable. Use the official portals to verify current notices.</p>';
+    }
+  }
   function renderAll() {
     const filters = controls();
     const upcoming = renderLane('upcoming', filters);
@@ -537,6 +597,7 @@
     '<div class="vx-hero-visual" aria-hidden="true"><div class="vx-orbit vx-orbit-a"></div><div class="vx-orbit vx-orbit-b"></div>',
     '<div class="vx-hero-emblem"><svg viewBox="0 0 100 100" role="presentation"><path d="M50 7 82 19v24c0 22-13 39-32 50C31 82 18 65 18 43V19z" fill="none" stroke="currentColor" stroke-width="3"/><path d="M34 51 45 62 68 36" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="vx-hero-visual-label">FIND · VERIFY · APPLY</div></div>',
     '<div class="vx-hero-foot"><span><b id="vxTotalCount">00</b><small>actionable notices</small></span><span><b id="vxActiveCount">00</b><small>current / scheduled</small></span><span class="vx-sync" id="vxSyncStamp">Syncing official feeds…</span></div></header>',
+    '<section class="vx-ops-strip" aria-label="Notification feed management"><div class="vx-ops-summary"><span class="vx-ops-dot" id="vxOpsDot" aria-hidden="true"></span><div class="vx-ops-copy"><span class="vx-ops-kicker">FEED MANAGEMENT</span><strong id="vxFeedHealth" aria-live="polite">Checking source health…</strong><small id="vxFeedSummary">Checking the Worker feed and the latest snapshot.</small></div></div><div class="vx-ops-actions"><button type="button" class="vx-refresh" id="vxRefreshFeed">↻ Refresh feed</button><details class="vx-source-report" id="vxSourceReport"><summary id="vxSourceSummary">Source report</summary><div class="vx-source-list" id="vxSourceList"><p>Loading source report…</p></div></details></div></section>',
     '<nav class="vx-jump" aria-label="Exam desk sections"><button type="button" data-vx-jump="vx-upcoming">Upcoming</button><button type="button" data-vx-jump="vx-ongoing">Ongoing</button><button type="button" data-vx-jump="vx-near">Deadline near</button><button type="button" data-vx-jump="vx-exam-dates">Exam dates</button><button type="button" data-vx-jump="vx-defence">Defence corner</button><button type="button" data-vx-jump="vx-careers">Career map</button><button type="button" data-vx-jump="vx-archive">Archive</button></nav>',
     '<section class="vx-filter-panel" id="vxFilterPanel" aria-label="Search and filter exams"><div class="vx-filter-heading"><div><span class="vx-eyebrow">SMART DIRECTORY</span><h2>Find your next route</h2><p>Search exams or narrow notices and career paths by qualification and sector.</p></div><button type="button" class="vx-reset" id="vxReset">Reset filters</button></div>',
     '<div class="vx-controls"><label class="vx-search-wrap"><span>SEARCH EXAMS &amp; CAREERS</span><input id="vxSearch" type="search" placeholder="Try NDA, BCA, NTPC, technician…" autocomplete="off"></label>',
@@ -557,22 +618,92 @@
     '</div>'
   ].join('');
 
-  async function loadJson(urls) {
-    let error = '';
-    for (const url of urls) {
+  function isFeedPayload(value) {
+    return Boolean(value && typeof value === 'object' && Array.isArray(value.items));
+  }
+
+  function isSourceStatus(value) {
+    return Boolean(value && typeof value === 'object' && Number.isInteger(value.sourcesTotal) &&
+      Number.isInteger(value.sourcesOk) && Array.isArray(value.sources));
+  }
+
+  async function loadJson(urls, validate) {
+    const failures = [];
+    for (let index = 0; index < urls.length; index++) {
+      const url = urls[index];
       try {
-        const response = await fetch(url, { cache: 'no-store' });
+        const requestUrl = url + (url.includes('?') ? '&' : '?') + '_=' + Date.now();
+        const response = await fetch(requestUrl, { cache: 'no-store', signal: AbortSignal.timeout(9000) });
         if (!response.ok) {
-          error = 'HTTP ' + response.status;
+          failures.push('HTTP ' + response.status);
           continue;
         }
-        return { data: await response.json(), source: url, error: '' };
+        const data = await response.json();
+        if (typeof validate === 'function' && !validate(data)) {
+          failures.push('Invalid response structure');
+          continue;
+        }
+        return { data, source: url, error: failures.join('; '), fallback: index > 0 };
       } catch (caught) {
-        // Continue to the local snapshot if the live service is unreachable.
-        error = String(caught && caught.message || caught || 'Request failed');
+        failures.push(String(caught && caught.message || caught || 'Request failed'));
       }
     }
-    return { data: { items: [] }, source: '', error: error || 'No source available' };
+    return { data: { items: [] }, source: '', error: failures.join('; ') || 'No source available', fallback: false };
+  }
+
+  async function refreshData() {
+    if (state.refreshing) return;
+    state.refreshing = true;
+    if (!state.items.length && !state.archived.length) state.loading = true;
+    renderSourceManagement();
+    try {
+      const results = await Promise.all([
+        loadJson(feedUrls, isFeedPayload),
+        loadJson(archiveUrls, isFeedPayload),
+        loadJson(statusUrls, isSourceStatus)
+      ]);
+      const feedResult = results[0] || {};
+      const archiveResult = results[1] || {};
+      const statusResult = results[2] || {};
+      if (feedResult.source) {
+        state.items = DATA.normalizeItems(feedResult.data);
+        state.feedAvailable = true;
+        state.feedSource = feedResult.fallback || !API || !feedResult.source.startsWith(API) ? 'snapshot' : 'worker';
+        state.feedError = feedResult.error || '';
+        state.generatedAt = state.feedSource === 'snapshot' && feedResult.data ? feedResult.data.generatedAt || null : null;
+      } else {
+        state.feedError = feedResult.error || 'Feed unavailable';
+        if (!state.feedAvailable) state.items = [];
+      }
+      if (archiveResult.source) {
+        state.archived = DATA.normalizeItems(archiveResult.data).filter(function (item) {
+          return ['id', 'title', 'organization', 'sourceName', 'category', 'summary', 'url', 'sourceUrl',
+            'archivedAt', 'lastDate', 'examDate', 'notificationDate'].some(function (key) {
+            return item[key] != null && String(item[key]).trim() !== '';
+          });
+        });
+        state.archiveAvailable = true;
+      } else if (!state.archiveAvailable) {
+        state.archived = [];
+      }
+      if (statusResult.source) state.sourceStatus = statusResult.data;
+      if (state.sourceStatus && state.sourceStatus.checkedAt) state.generatedAt = state.sourceStatus.checkedAt;
+    } catch (error) {
+      state.feedError = String(error && error.message || error || 'Refresh failed');
+    } finally {
+      state.loading = false;
+      state.refreshing = false;
+      const stamp = root.querySelector('#vxSyncStamp');
+      if (stamp) {
+        const date = state.generatedAt ? new Date(state.generatedAt) : null;
+        const formatted = date && !Number.isNaN(date.valueOf())
+          ? date.toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })
+          : '';
+        stamp.textContent = !state.feedAvailable ? 'Feed unavailable · check official portals' :
+          formatted ? 'Last source check ' + formatted : state.feedSource === 'worker' ? 'Live feed connected' : 'Snapshot loaded';
+      }
+      renderAll();
+    }
   }
 
   function install() {
@@ -599,40 +730,9 @@
       state.showAllArchive = !state.showAllArchive;
       renderAll();
     });
+    root.querySelector('#vxRefreshFeed')?.addEventListener('click', refreshData);
     renderAll();
-    Promise.all([loadJson(feedUrls), loadJson(archiveUrls)]).then(function (results) {
-      const feedResult = results[0] || {};
-      const archiveResult = results[1] || {};
-      const feed = feedResult.data;
-      const archive = archiveResult.data;
-      state.items = DATA.normalizeItems(feed);
-      state.archived = DATA.normalizeItems(archive).filter(function (item) {
-        // Do not render empty or malformed feed objects as fictional archive cards.
-        return ['id', 'title', 'organization', 'sourceName', 'category', 'summary', 'url', 'sourceUrl',
-          'archivedAt', 'lastDate', 'examDate', 'notificationDate'].some(function (key) {
-          return item[key] != null && String(item[key]).trim() !== '';
-        });
-      });
-      state.feedAvailable = Boolean(feedResult.source);
-      state.archiveAvailable = Boolean(archiveResult.source);
-      state.generatedAt = feed && typeof feed === 'object' ? feed.generatedAt || null : null;
-      state.loading = false;
-      const stamp = root.querySelector('#vxSyncStamp');
-      if (stamp) {
-        const date = state.generatedAt ? new Date(state.generatedAt) : null;
-        stamp.textContent = !state.feedAvailable
-          ? 'Feed unavailable · check official portals'
-          : date && !Number.isNaN(date.valueOf())
-          ? 'Feed checked ' + date.toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })
-          : 'Official feed loaded';
-      }
-      renderAll();
-    }).catch(function () {
-      state.loading = false;
-      const stamp = root.querySelector('#vxSyncStamp');
-      if (stamp) stamp.textContent = 'Feed unavailable · check official portals';
-      renderAll();
-    });
+    refreshData();
   }
 
   if (document.readyState === 'loading') {
