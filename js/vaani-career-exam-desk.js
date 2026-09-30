@@ -598,7 +598,13 @@
       const feed = feedResult.data;
       const archive = archiveResult.data;
       state.items = DATA.normalizeItems(feed);
-      state.archived = DATA.normalizeItems(archive);
+      state.archived = DATA.normalizeItems(archive).filter(function (item) {
+        // Do not render empty or malformed feed objects as fictional archive cards.
+        return ['id', 'title', 'organization', 'sourceName', 'category', 'summary', 'url', 'sourceUrl',
+          'archivedAt', 'lastDate', 'examDate', 'notificationDate'].some(function (key) {
+          return item[key] != null && String(item[key]).trim() !== '';
+        });
+      });
       state.feedAvailable = Boolean(feedResult.source);
       state.archiveAvailable = Boolean(archiveResult.source);
       state.generatedAt = feed && typeof feed === 'object' ? feed.generatedAt || null : null;
