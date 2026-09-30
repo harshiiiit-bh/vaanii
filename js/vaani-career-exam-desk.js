@@ -296,7 +296,7 @@
   }
 
   function reasonForArchive(item) {
-    const end = parseDate(item.lastDate || item.applicationEndDate || item.closingDate);
+    const end = DATA.applicationDates(item).end;
     const exam = parseDate(item.examDate || item.examinationDate);
     const now = today();
     if (item.archiveReason) return String(item.archiveReason).replace(/[-_]+/g, ' ');
@@ -334,8 +334,9 @@
     const category = String(item.category || 'Government').replace(/[_-]+/g, ' ');
     const organization = item.organization || item.sourceName || 'Official source';
     const url = safeUrl(item.url || item.sourceUrl);
-    const start = item.applicationStartDate || item.startDate || item.openDate;
-    const end = item.lastDate || item.applicationEndDate || item.closingDate;
+    const applicationWindow = DATA.applicationDates(item);
+    const start = applicationWindow.start;
+    const end = applicationWindow.end;
     const exam = item.examDate || item.examinationDate;
     const notice = item.notificationDate || item.publishedAt || item.date;
     const now = today();
@@ -373,8 +374,8 @@
     const items = state.items.filter(function (item) { return classify(item) === lane && matches(item, filters); });
     items.sort(function (a, b) {
       if (lane === 'near') {
-        const da = parseDate(a.lastDate || a.applicationEndDate || a.closingDate);
-        const db = parseDate(b.lastDate || b.applicationEndDate || b.closingDate);
+        const da = DATA.applicationDates(a).end;
+        const db = DATA.applicationDates(b).end;
         return (da ? da.getTime() : Infinity) - (db ? db.getTime() : Infinity);
       }
       const da = parseDate(a.examDate || a.examinationDate || a.applicationStartDate || a.notificationDate || a.lastDate);
@@ -384,10 +385,17 @@
       if (!db) return -1;
       return da.getTime() - db.getTime();
     });
-    if (count) count.textContent = String(items.length).padStart(2, '0');
+    if (count) count.textContent = String(items.length);
+    const hasFilters = Boolean(filters.query || filters.qualification !== 'all' || filters.sector !== 'all');
+    const emptyTitle = state.loading ? 'Syncing official notices…' : hasFilters ? 'No matching notices' :
+      lane === 'near' ? 'No deadlines within 7 days' :
+      lane === 'ongoing' ? 'No applications open beyond the 7-day window' : 'No upcoming exam notices';
+    const emptyHint = state.loading ? 'Loading the latest feed.' : hasFilters ? 'Clear or adjust your filters to see more notices.' :
+      lane === 'ongoing' ? 'Closing-soon applications are listed separately in Deadline near.' :
+      'Check the official recruitment portals for the latest updates.';
     list.innerHTML = items.length
       ? items.map(function (item) { return noticeCard(item, lane); }).join('')
-      : '<div class="vx-empty"><span class="vx-empty-mark">—</span><strong>' + (state.loading ? 'Syncing official notices…' : 'Nothing to show here right now') + '</strong><span>' + (state.loading ? 'Loading the latest feed.' : 'Try clearing a filter or check the official portals again later.') + '</span></div>';
+      : '<div class="vx-empty"><span class="vx-empty-mark">—</span><strong>' + emptyTitle + '</strong><span>' + emptyHint + '</span></div>';
     return items.length;
   }
 
@@ -496,7 +504,7 @@
     const limit = state.showAllArchive ? items.length : 12;
     mount.innerHTML = items.length ? items.slice(0, limit).map(function (item) {
       const url = safeUrl(item.url || item.sourceUrl);
-      const detail = fmtDate(item.lastDate || item.examDate || item.notificationDate);
+      const detail = fmtDate(DATA.applicationDates(item).end) || fmtDate(item.examDate || item.notificationDate);
       return '<article class="vx-archive-card"><div class="vx-archive-top"><span>ARCHIVED</span><small>' + esc(detail || fmtDate(item.archivedAt) || 'Historical') + '</small></div>' +
         '<h3>' + esc(item.title || 'Historical recruitment notice') + '</h3><p>' + esc(item.organization || item.sourceName || 'Official source') + ' · ' + esc(reasonForArchive(item)) + '</p>' +
         (url ? '<a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">Open source ↗</a>' : '') + '</article>';
@@ -517,8 +525,8 @@
     renderArchive(filters);
     const total = root.querySelector('#vxTotalCount');
     const active = root.querySelector('#vxActiveCount');
-    if (total) total.textContent = String(upcoming + ongoing + near).padStart(2, '0');
-    if (active) active.textContent = String(state.items.filter(function (item) { return ['upcoming', 'ongoing', 'near'].includes(classify(item)); }).length).padStart(2, '0');
+    if (total) total.textContent = String(upcoming + ongoing + near);
+    if (active) active.textContent = String(state.items.filter(function (item) { return ['upcoming', 'ongoing', 'near'].includes(classify(item)); }).length);
   }
 
   const markup = [

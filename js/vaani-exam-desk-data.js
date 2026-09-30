@@ -97,6 +97,32 @@
     const items = Array.isArray(payload) ? payload : isRecord(payload) && Array.isArray(payload.items) ? payload.items : [];
     return items.filter(isRecord);
   }
+  function applicationDates(item) {
+    if (!isRecord(item)) return { start: null, end: null };
+
+    let start = parseDate(firstValue(item, DATE_FIELDS.start));
+    let end = parseDate(firstValue(item, DATE_FIELDS.end));
+    const title = String(item.title || '');
+    const applicationTitle = /\b(?:apply\s+online|online\s+application|applications?|registration)\b/i.test(title);
+    if (!applicationTitle) return { start, end };
+
+    const dateToken = '(?:\\b(?:0?[1-9]|[12]\\d|3[01])[./-](?:0?[1-9]|1[0-2])[./-]20\\d{2}\\b|\\b20\\d{2}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\\d|3[01])\\b)';
+    const range = new RegExp('(' + dateToken + ')\\s*(?:to|through|–|—)\\s*(' + dateToken + ')', 'i').exec(title);
+    if (range) {
+      const rangeStart = parseDate(range[1]);
+      const rangeEnd = parseDate(range[2]);
+      if (rangeStart && rangeEnd && rangeEnd >= rangeStart) {
+        if (!start) start = rangeStart;
+        if (!end) end = rangeEnd;
+      }
+    } else if (!end && /\b(?:last date|closing date|deadline|extended|extension)\b/i.test(title)) {
+      const titleDates = [...title.matchAll(new RegExp(dateToken, 'g'))];
+      if (titleDates.length) end = parseDate(titleDates[titleDates.length - 1][0]);
+    }
+
+    return { start, end };
+  }
+
 
   function classify(item, todayValue) {
     if (!isRecord(item)) return 'ignore';
@@ -104,8 +130,9 @@
     const status = [item.status, item.type].filter(Boolean).join(' ').toLowerCase().replace(/[_-]+/g, ' ');
     const postExam = [item.title, item.summary, item.status, item.type]
       .filter(Boolean).join(' ').toLowerCase();
-    const end = parseDate(firstValue(item, DATE_FIELDS.end));
-    const start = parseDate(firstValue(item, DATE_FIELDS.start));
+    const applicationWindow = applicationDates(item);
+    const end = applicationWindow.end;
+    const start = applicationWindow.start;
     const exam = parseDate(firstValue(item, DATE_FIELDS.exam));
     const notice = parseDate(firstValue(item, DATE_FIELDS.notice));
 
@@ -117,7 +144,11 @@
 
     const explicitlyOpen = /\b(open|ongoing|active|accepting|live|registration open|application open)\b/.test(status);
     const dateRangeIsOpen = Boolean(start && start <= today && (!end || end >= today));
-    if ((explicitlyOpen || dateRangeIsOpen) && (!start || start <= today) && (!end || end >= today)) {
+    const title = String(item.title || '');
+    const extensionWindowIsOpen = /\b(?:apply\s+online|online\s+application|applications?|registration)\b/i.test(title) &&
+      /\b(?:last date|closing date|deadline|extended|extension)\b/i.test(title) &&
+      !start && Boolean(end && end >= today);
+    if ((explicitlyOpen || dateRangeIsOpen || extensionWindowIsOpen) && (!start || start <= today) && (!end || end >= today)) {
       return end && daysBetween(end, today) <= 7 ? 'near' : 'ongoing';
     }
 
@@ -219,6 +250,7 @@
     SECTORS,
     parseDate,
     normalizeItems,
+    applicationDates,
     classify,
     isFutureExamDate,
     examDateConfidence,

@@ -66,6 +66,24 @@ const feedItems = [
     summary: 'Tentative date listed in an annual calendar.'
   },
   {
+    id: 'sbi-extension-title', title: 'APPLY ONLINE (Online Registration Extended till 05.10.2026)',
+    organization: 'SBI', category: 'BANKING', type: 'notification', status: 'notification',
+    notificationDate: '05.10.2026', url: 'https://sbi.bank.in/', official: true,
+    summary: 'Application registration has been extended.'
+  },
+  {
+    id: 'sbi-range-near', title: 'APPLY ONLINE (16.09.2026 to 06.10.2026)',
+    organization: 'SBI', category: 'BANKING', type: 'notification', status: 'notification',
+    notificationDate: '16.09.2026', url: 'https://sbi.bank.in/', official: true,
+    summary: 'Application window shown in the official listing.'
+  },
+  {
+    id: 'sbi-range-open', title: 'APPLY ONLINE (30.09.2026 to 21.10.2026)',
+    organization: 'SBI', category: 'BANKING', type: 'notification', status: 'notification',
+    notificationDate: '30.09.2026', url: 'https://sbi.bank.in/', official: true,
+    summary: 'Application window shown in the official listing.'
+  },
+  {
     id: 'expired-application', title: 'NDA closed application cycle', organization: 'UPSC', category: 'NDA',
     type: 'Recruitment notification', status: 'notification', notificationDate: '2026-08-01',
     applicationStartDate: '2026-08-01', lastDate: '2026-09-29', examDate: '2027-01-03',
@@ -164,8 +182,16 @@ try {
     'the Exam Desk should read the existing live feed and archive once each');
 
   assert.equal(await page.locator('#vxUpcomingList .vx-notice-card').count(), 1, 'only an upcoming future start should be in Upcoming');
-  assert.equal(await page.locator('#vxOngoingList .vx-notice-card').count(), 2, 'open applications outside seven days should be Ongoing');
-  assert.equal(await page.locator('#vxNearList .vx-notice-card').count(), 2, 'today and seven-day deadlines should be Deadline Near');
+  assert.equal(await page.locator('#vxOngoingList .vx-notice-card').count(), 3, 'open applications outside seven days, including title date ranges, should be Ongoing');
+  assert.equal(await page.locator('#vxNearList .vx-notice-card').count(), 4, 'today, seven-day and inferred title deadlines should be Deadline Near');
+  const extensionCard = page.locator('#vxNearList .vx-notice-card').filter({ hasText: 'Online Registration Extended till 05.10.2026' });
+  assert.equal(await extensionCard.count(), 1, 'an explicitly extended application should appear in Deadline Near');
+  assert.match(await extensionCard.innerText(), /Closing date[\s\S]*05 Oct 2026/, 'the extension date should be labelled as the closing date');
+  assert.match(await extensionCard.innerText(), /Closes in 5 days/, 'the extension card should show the remaining closing window');
+  assert.equal(await page.locator('#vxNearList .vx-notice-card').filter({ hasText: '16.09.2026 to 06.10.2026' }).count(), 1,
+    'a range ending within the next seven days should appear in Deadline Near');
+  assert.equal(await page.locator('#vxOngoingList .vx-notice-card').filter({ hasText: '30.09.2026 to 21.10.2026' }).count(), 1,
+    'a date range that is open today and closes beyond seven days should appear in Ongoing');
   assert.equal(await page.locator('#vxUpcomingList').innerText().then(text => text.includes('NDA Officer Entry Calendar 2027')), true);
   assert.equal(await page.locator('#vxUpcomingList').innerText().then(text => text.includes('answer key')), false,
     'a post-exam notice must not become an active opportunity');
@@ -198,7 +224,7 @@ try {
   assert.equal(await page.locator('#vxSearch').inputValue(), '');
   assert.equal(await page.locator('#vxQualification').inputValue(), 'all');
   assert.equal(await page.locator('#vxSector').inputValue(), 'all');
-  assert.equal(await page.locator('#vxOngoingList .vx-notice-card').count(), 2, 'Reset Filters should restore the unfiltered list');
+  assert.equal(await page.locator('#vxOngoingList .vx-notice-card').count(), 3, 'Reset Filters should restore all inferred and explicit open applications');
 
   const armedForces = await page.locator('#vxForcesGrid .vx-force-card h3').allTextContents();
   for (const force of ['Indian Army', 'Indian Navy', 'Indian Air Force', 'Indian Coast Guard']) {

@@ -373,8 +373,8 @@
   align-items:center;
   justify-content:center;
   grid-column:1/-1;
-  min-height:120px;
-  padding:20px;
+  min-height:76px;
+  padding:14px 16px;
   border:1px dashed rgba(107,125,142,.27);
   border-radius:14px;
   color:var(--muted,#5b6774);

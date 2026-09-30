@@ -16,6 +16,22 @@ const cases = [
   ['deadline seven days away is near', { status: 'open', lastDate: '2026-10-07' }, 'near'],
   ['deadline eight days away is ongoing', { status: 'open', lastDate: '2026-10-08' }, 'ongoing'],
   ['explicitly open application without dates stays available', { status: 'application open' }, 'ongoing'],
+  ['application extension in title closes within 7 days', {
+    title: 'APPLY ONLINE (Online Registration Extended till 05.10.2026)',
+    status: 'notification', type: 'notification', notificationDate: '05.10.2026'
+  }, 'near'],
+  ['application range ending within 7 days is near', {
+    title: 'APPLY ONLINE (16.09.2026 to 06.10.2026)',
+    status: 'notification', type: 'notification', notificationDate: '16.09.2026'
+  }, 'near'],
+  ['application range open beyond 7 days is ongoing', {
+    title: 'APPLY ONLINE (30.09.2026 to 21.10.2026)',
+    status: 'notification', type: 'notification', notificationDate: '30.09.2026'
+  }, 'ongoing'],
+  ['expired application date range is archived', {
+    title: 'APPLY ONLINE (07.08.2026 to 27.08.2026)',
+    status: 'notification', type: 'notification', notificationDate: '07.08.2026'
+  }, 'archive'],
   ['future application start is upcoming', { status: 'notification', applicationStartDate: '2026-10-01' }, 'upcoming'],
   ['future announced exam date is upcoming', { type: 'Recruitment notification', examDate: '2027-02-15' }, 'upcoming'],
   ['past application deadline is archived even with a future exam', { status: 'notification', lastDate: '2026-09-29', examDate: '2027-02-15' }, 'archive'],
@@ -32,6 +48,25 @@ for (const [name, item, expected] of cases) {
 }
 
 assert.equal(desk.parseDate('2026-02-31'), null, 'impossible ISO dates must not roll into March');
+const stamp = date => date ? [date.getFullYear(), String(date.getMonth() + 1).padStart(2, '0'), String(date.getDate()).padStart(2, '0')].join('-') : null;
+assert.deepEqual(
+  Object.fromEntries(Object.entries(desk.applicationDates({
+    title: 'APPLY ONLINE (Online Registration Extended till 05.10.2026)',
+    notificationDate: '05.10.2026'
+  })).map(([key, value]) => [key, stamp(value)])),
+  { start: null, end: '2026-10-05' },
+  'an explicit extension date in the application title must be used as the closing date, not the notice date'
+);
+assert.deepEqual(
+  Object.fromEntries(Object.entries(desk.applicationDates({
+    title: 'APPLY ONLINE (16.09.2026 to 06.10.2026)',
+    notificationDate: '16.09.2026'
+  })).map(([key, value]) => [key, stamp(value)])),
+  { start: '2026-09-16', end: '2026-10-06' },
+  'application date ranges in official notice titles must preserve both dates'
+);
+assert.equal(desk.applicationDates({ title: 'Exam calendar dated 05.10.2026' }).end, null,
+  'a date in a non-application title must not be misread as an application deadline');
 assert.equal(desk.classify(null, today), 'ignore', 'null feed entries must be safe');
 assert.equal(desk.normalizeItems({ items: [null, 'bad row', [], {}, { title: 'Valid row' }] }).length, 2,
   'feed parsing must discard non-record entries but tolerate incomplete records');
