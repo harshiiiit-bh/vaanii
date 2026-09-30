@@ -28,8 +28,8 @@ jobs:
           node --check scripts/smoke-dashboard.mjs
           node --check scripts/update-defence-notifications.mjs
           node --check scripts/test-arena-leaderboard.mjs
-      node --check scripts/test-government-exam-desk.mjs
-      node --check scripts/smoke-government-exam-desk.mjs
+          node --check scripts/test-government-exam-desk.mjs
+          node --check scripts/smoke-government-exam-desk.mjs
           node --check supabase/functions/_shared/arena-leaderboard.mjs
       - name: Test Arena leaderboard contract
         run: node scripts/test-arena-leaderboard.mjs
