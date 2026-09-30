@@ -220,7 +220,7 @@
     }
   ];
 
-  const state = { items: [], archived: [], generatedAt: null, loading: true, refreshing: false, feedAvailable: false, archiveAvailable: false, feedSource: '', feedError: '', sourceStatus: null, showAllArchive: false };
+  const state = { items: [], archived: [], generatedAt: null, loading: true, refreshing: false, feedAvailable: false, archiveAvailable: false, feedSource: '', feedError: '', feedRefreshFailed: false, sourceStatus: null, showAllArchive: false };
 
   function esc(value) {
     return String(value == null ? '' : value).replace(/[&<>"']/g, function (ch) {
@@ -537,6 +537,11 @@
     let title = 'Source report unavailable';
     if (state.refreshing) {
       title = 'Refreshing the latest feed…';
+    } else if (state.feedRefreshFailed && state.feedAvailable) {
+      tone = 'stale';
+      title = 'Refresh failed · showing last loaded data';
+    } else if (state.feedRefreshFailed) {
+      title = 'Feed unavailable · check official portals';
     } else if (report && total > 0 && ok === total && !stale) {
       tone = 'healthy';
       title = 'All configured sources responded';
@@ -559,7 +564,8 @@
     const stamp = checkedValid ? checked.toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'check time unavailable';
     const coverage = total ? ok + '/' + total + ' sources reachable' : 'Source availability is not reported';
     const fallbackNote = state.feedSource === 'snapshot' && state.feedError ? ' · live service unavailable; using snapshot' : '';
-    if (detail) detail.textContent = [coverage, origin + fallbackNote, checkedValid ? 'last checked ' + stamp + (stale ? ' · stale' : '') : ''].filter(Boolean).join(' · ');
+    const retainedNote = state.feedRefreshFailed && state.feedAvailable ? ' · last loaded data retained' : '';
+    if (detail) detail.textContent = [coverage, origin + fallbackNote + retainedNote, checkedValid ? 'last checked ' + stamp + (stale ? ' · stale' : '') : ''].filter(Boolean).join(' · ');
     if (refresh) {
       refresh.disabled = state.refreshing;
       refresh.setAttribute('aria-busy', String(state.refreshing));
@@ -667,12 +673,14 @@
       const archiveResult = results[1] || {};
       const statusResult = results[2] || {};
       if (feedResult.source) {
+        state.feedRefreshFailed = false;
         state.items = DATA.normalizeItems(feedResult.data);
         state.feedAvailable = true;
         state.feedSource = feedResult.fallback || !API || !feedResult.source.startsWith(API) ? 'snapshot' : 'worker';
         state.feedError = feedResult.error || '';
         state.generatedAt = state.feedSource === 'snapshot' && feedResult.data ? feedResult.data.generatedAt || null : null;
       } else {
+        state.feedRefreshFailed = true;
         state.feedError = feedResult.error || 'Feed unavailable';
         if (!state.feedAvailable) state.items = [];
       }

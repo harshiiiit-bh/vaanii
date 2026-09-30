@@ -284,6 +284,11 @@ try {
   assert.ok(!mobile.columns.includes(' '), 'mobile notice cards should use a single column');
 
   failFeeds = true;
+  await page.locator('#vxRefreshFeed').click();
+  await page.waitForFunction(() => document.querySelector('#vxRefreshFeed') && !document.querySelector('#vxRefreshFeed').disabled, null, { timeout: 10000 });
+  assert.equal(await page.locator('#vxNearList .vx-notice-card').count(), 4, 'a failed manual refresh should retain the last loaded notice cards');
+  assert.match(await page.locator('#vxFeedHealth').innerText(), /Refresh failed · showing last loaded data/, 'a failed manual refresh should be visible without clearing the current list');
+  assert.match(await page.locator('#vxFeedSummary').innerText(), /last loaded data retained/, 'the management panel should disclose retained data after a failed refresh');
   await page.reload({ waitUntil: 'domcontentloaded' });
   await page.locator('#vxSyncStamp').waitFor();
   await page.waitForFunction(() => document.querySelector('#vxSyncStamp')?.textContent.includes('Feed unavailable'));
