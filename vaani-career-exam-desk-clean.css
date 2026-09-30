@@ -220,3 +220,12 @@
   #view-notifications .vx-fold-mark,
   #view-notifications .vx-notice-card{transition:none}
 }
+/* Keep folded panels flush with their own summaries. */
+#view-notifications .vx-secondary,
+#view-notifications .vx-archive,
+#view-notifications .vx-date-section,
+#view-notifications .vx-defence-section,
+#view-notifications .vx-career-section{padding:0!important}
+#view-notifications .vx-secondary:not([open])>summary:hover,
+#view-notifications .vx-archive:not([open])>summary:hover{background:var(--panel2,#fbf7ed)}
+#view-notifications .vx-fold-body{min-width:0}
