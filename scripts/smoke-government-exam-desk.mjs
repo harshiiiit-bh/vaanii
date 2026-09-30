@@ -102,6 +102,14 @@ const feedItems = [
     type: 'Recruitment notification', status: 'notification', notificationDate: '2026-09-15',
     url: 'https://example.gov.in/notice', official: true, summary: 'Synthetic link-board fixture; not a live vacancy.'
   },
+  ...['A', 'B', 'C', 'D'].map((suffix, index) => ({
+    id: 'upcoming-schedule-' + suffix,
+    title: 'Synthetic upcoming schedule ' + suffix,
+    organization: 'UPSC', category: 'UPSC', type: 'Annual Calendar', status: 'scheduled',
+    applicationStartDate: '2026-10-' + String(10 + index).padStart(2, '0'),
+    url: 'https://upsc.gov.in/', official: true,
+    summary: 'Synthetic schedule fixture for the notice preview control.'
+  })),
   {
     id: 'sample-admit-card', title: 'SSC CHSL Admit Card 2026', organization: 'SSC', category: 'SSC',
     type: 'admit-card', status: 'admit-card', notificationDate: '2026-09-25',
@@ -241,7 +249,13 @@ try {
   await page.locator('#vx-links > summary').click();
   assert.equal(await page.locator('#vx-links').evaluate(element => element.open), false, 'the official links panel should collapse on second activation');
 
-  assert.equal(await page.locator('#vxUpcomingList .vx-notice-card').count(), 1, 'only an upcoming future start should be in Upcoming');
+  assert.equal(await page.locator('#vxUpcomingList .vx-notice-card').count(), 4, 'upcoming lane should initially show only four preview cards');
+  assert.equal(await page.locator('#vxUpcomingMore').isVisible(), true, 'large lanes should expose a View all control');
+  assert.match(await page.locator('#vxUpcomingMore').innerText(), /View all 5/, 'preview control should disclose the complete result count');
+  await page.locator('#vxUpcomingMore').click();
+  assert.equal(await page.locator('#vxUpcomingList .vx-notice-card').count(), 5, 'View all should reveal every matching upcoming notice');
+  await page.locator('#vxUpcomingMore').click();
+  assert.equal(await page.locator('#vxUpcomingList .vx-notice-card').count(), 4, 'Show fewer should restore the compact upcoming preview');
   assert.equal(await page.locator('#vxOngoingList .vx-notice-card').count(), 3, 'open applications outside seven days, including title date ranges, should be Ongoing');
   assert.equal(await page.locator('#vxNearList .vx-notice-card').count(), 4, 'today, seven-day and inferred title deadlines should be Deadline Near');
   const extensionCard = page.locator('#vxNearList .vx-notice-card').filter({ hasText: 'Online Registration Extended till 05.10.2026' });
