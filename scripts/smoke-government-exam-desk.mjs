@@ -210,6 +210,11 @@ try {
   });
   assert.deepEqual(apiRequests.slice().sort(), ['/api/notifications', '/api/notifications/archive'],
     'the Exam Desk should read the existing live feed and archive once each');
+  for (const id of ['vx-links', 'vx-exam-dates', 'vx-defence', 'vx-careers', 'vx-archive']) {
+    const panel = page.locator('#' + id);
+    assert.equal(await panel.evaluate(element => element instanceof HTMLDetailsElement), true, id + ' should be an accessible expandable panel');
+    assert.equal(await panel.evaluate(element => element.open), false, id + ' should be collapsed on initial load to reduce clutter');
+  }
   await page.waitForFunction(() => document.querySelector('#vxRefreshFeed') && !document.querySelector('#vxRefreshFeed').disabled, null, { timeout: 10000 });
   assert.match(await page.locator('#vxFeedHealth').innerText(), /Partial source coverage/, 'feed health should disclose incomplete source coverage');
   assert.match(await page.locator('#vxFeedSummary').innerText(), /2\/3 sources reachable/, 'feed health should show the source coverage count');
@@ -222,6 +227,8 @@ try {
   await page.waitForFunction(() => !document.querySelector('#vxRefreshFeed')?.disabled);
   assert.equal(apiRequests.length, initialRefreshRequests + 2, 'Refresh feed should recheck both live API endpoints');
   assert.equal(await page.locator('#vxNearList .vx-notice-card').count(), 4, 'refresh should preserve the classified deadline cards');
+  await page.locator('#vx-links > summary').click();
+  assert.equal(await page.locator('#vx-links').evaluate(element => element.open), true, 'the official links panel should expand on activation');
   assert.ok(await page.locator('#vxBoardJobsList .vx-resource-row').count() >= 5, 'link board should show multiple open or scheduled application links');
   assert.ok((await page.locator('#vxBoardJobsList').innerText()).includes('SSC recruitment closing today'), 'job links should be shown as direct titles');
   assert.equal(await page.locator('#vxBoardResultsList .vx-resource-row').count(), 1, 'link board should separate recent results');
@@ -231,6 +238,8 @@ try {
   assert.equal(await page.locator('#vxBoardJobsList .vx-resource-row').count(), 7, 'View all should expand the job list');
   await page.locator('[data-vx-board-more="jobs"]').click();
   assert.equal(await page.locator('#vxBoardJobsList .vx-resource-row').count(), 6, 'Show fewer should collapse the job list');
+  await page.locator('#vx-links > summary').click();
+  assert.equal(await page.locator('#vx-links').evaluate(element => element.open), false, 'the official links panel should collapse on second activation');
 
   assert.equal(await page.locator('#vxUpcomingList .vx-notice-card').count(), 1, 'only an upcoming future start should be in Upcoming');
   assert.equal(await page.locator('#vxOngoingList .vx-notice-card').count(), 3, 'open applications outside seven days, including title date ranges, should be Ongoing');
@@ -246,7 +255,11 @@ try {
   assert.equal(await page.locator('#vxUpcomingList').innerText().then(text => text.includes('NDA Officer Entry Calendar 2027')), true);
   assert.equal(await page.locator('#vxUpcomingList').innerText().then(text => text.includes('answer key')), false,
     'a post-exam notice must not become an active opportunity');
+  await page.locator('#vx-archive > summary').click();
+  assert.equal(await page.locator('#vx-archive').evaluate(element => element.open), true, 'the archive should expand on activation');
   assert.equal(await page.locator('#vxArchiveGrid .vx-archive-card').count(), 4, 'expired application, result, answer-key and admit-card records should stay archived');
+  await page.locator('#vx-exam-dates > summary').click();
+  assert.equal(await page.locator('#vx-exam-dates').evaluate(element => element.open), true, 'the calendar should expand on activation');
   assert.equal(await page.locator('#vxExamDatesList .vx-date-row').count(), 4, 'default calendar should show only future exam dates within 120 days');
   assert.equal(await page.locator('#vxExamDatesList .vx-date-month').count(), 2, 'near-term exam dates should be grouped by month and year');
   const calendarTitles = await page.locator('#vxExamDatesList .vx-date-row h4').allTextContents();
@@ -265,6 +278,8 @@ try {
   await page.locator('#vxLaterExamDates').click();
   assert.equal(await page.locator('#vxExamDatesList .vx-date-row').count(), 4, 'calendar toggle should return to the 120-day view');
   assert.equal(await page.locator('#vxExamDatesList').innerText().then(text => text.includes('CONFIRMED · OFFICIAL NOTICE')), true);
+  await page.locator('#vx-exam-dates > summary').click();
+  await page.locator('#vx-archive > summary').click();
   assert.equal(await page.locator('#vxOngoingList img').count(), 0, 'feed text must be escaped before rendering');
   assert.equal(await page.evaluate(() => window.__examDeskXss || 0), 0, 'escaped feed text must not execute');
 
@@ -291,6 +306,8 @@ try {
   assert.equal(await page.locator('#vxSector').inputValue(), 'all');
   assert.equal(await page.locator('#vxOngoingList .vx-notice-card').count(), 3, 'Reset Filters should restore all inferred and explicit open applications');
 
+  await page.locator('#vx-careers > summary').click();
+  assert.equal(await page.locator('#vx-careers').evaluate(element => element.open), true, 'career options should expand on activation');
   const careerGroupsVisible = await page.locator('#vxCareerGrid .vx-career-card h3').allTextContents();
   for (const group of ['Agriculture, food & environment', 'IT, software & digital careers', 'Commerce, accounting & professional courses', 'Design, architecture & media', 'Skilled trades & apprenticeships', 'Hospitality, tourism & aviation services', 'Research, laboratories & academia', 'Social work, counselling & community careers']) {
     assert.ok(careerGroupsVisible.includes(group), 'Career Map should include ' + group);
@@ -300,6 +317,9 @@ try {
     assert.ok(careerText.includes(option), 'Career Map should expose ' + option);
   }
 
+  await page.locator('#vx-careers > summary').click();
+  await page.locator('#vx-defence > summary').click();
+  assert.equal(await page.locator('#vx-defence').evaluate(element => element.open), true, 'defence pathways should expand on activation');
   const armedForces = await page.locator('#vxForcesGrid .vx-force-card h3').allTextContents();
   for (const force of ['Indian Army', 'Indian Navy', 'Indian Air Force', 'Indian Coast Guard']) {
     assert.ok(armedForces.includes(force), force + ' should have a distinct force card');
@@ -309,20 +329,23 @@ try {
     assert.ok(uniformedForces.includes(force), force + ' should have a distinct uniformed-service card');
   }
 
+  await page.locator('#vx-defence > summary').click();
   await page.locator('body').evaluate(element => element.setAttribute('data-theme', 'dark'));
   const darkBackground = await page.locator('.vx-filter-panel').evaluate(element => getComputedStyle(element).backgroundColor);
   assert.notEqual(darkBackground, 'rgba(0, 0, 0, 0)', 'the dark theme should style the filter panel');
-  await page.locator('[data-vx-jump="vx-careers"]').click();
-  assert.equal(await page.evaluate(() => window.__examDeskScrollBehavior), 'auto', 'section navigation should respect reduced motion');
+  const cardMotion = await page.locator('#vxNearList .vx-notice-card').first().evaluate(element => getComputedStyle(element).transitionDuration);
+  assert.equal(cardMotion, '0s', 'reduced-motion preference should disable notice-card transitions');
 
-  await page.setViewportSize({ width: 390, height: 844 });
-  const mobile = await page.locator('#view-notifications .vx-shell').evaluate(element => ({
-    width: element.clientWidth,
-    scrollWidth: element.scrollWidth,
-    columns: getComputedStyle(element.querySelector('.vx-notice-grid')).gridTemplateColumns
-  }));
-  assert.ok(mobile.scrollWidth <= mobile.width + 1, 'mobile Exam Desk should not require horizontal scrolling: ' + JSON.stringify(mobile));
-  assert.ok(!mobile.columns.includes(' '), 'mobile notice cards should use a single column');
+  for (const viewport of [{ width: 320, height: 740 }, { width: 390, height: 844 }, { width: 768, height: 900 }, { width: 1024, height: 900 }, { width: 1440, height: 1000 }]) {
+    await page.setViewportSize(viewport);
+    const layout = await page.locator('#view-notifications .vx-shell').evaluate(element => ({
+      width: element.clientWidth,
+      scrollWidth: element.scrollWidth,
+      columns: getComputedStyle(element.querySelector('.vx-notice-grid')).gridTemplateColumns
+    }));
+    assert.ok(layout.scrollWidth <= layout.width + 1, 'Exam Desk should not require horizontal scrolling at ' + viewport.width + 'px: ' + JSON.stringify(layout));
+    if (viewport.width <= 560) assert.ok(!layout.columns.includes(' '), 'notice cards should use a single column at ' + viewport.width + 'px');
+  }
 
   failFeeds = true;
   await page.locator('#vxRefreshFeed').click();
@@ -336,7 +359,7 @@ try {
   assert.equal(await page.locator('#vxUpcomingList .vx-notice-card').count(), 0, 'feed failures should show an empty state rather than stale fake opportunities');
   assert.equal(pageErrors.length, 0, 'Exam Desk should not throw during normal, malformed or unavailable feed responses: ' + pageErrors.join(' | '));
 
-  console.log('Government Exam Desk browser smoke: status lanes, archive, calendar, filters, force cards, XSS, errors, reduced motion, dark theme and mobile layout passed');
+  console.log('Government Exam Desk browser smoke: collapsed panels, live-feed handling, status lanes, archive, calendar, filters, force cards, XSS, errors, reduced motion, dark theme and 320–1440px layouts passed');
 } finally {
   await browser.close();
   await new Promise(resolve => server.close(resolve));
