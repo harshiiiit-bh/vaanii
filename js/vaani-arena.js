@@ -285,7 +285,8 @@
   var SHARED_BOARD_API_KEY = 'sb_publishable_VfRmr2xFvu4Iv8sfSJReQQ_qzr5z_MI';
   var SharedReadAdapter = {
     name: 'shared-read',
-    live: true,
+    live: false,
+    shared: true,
     submit: function (code, entry) {
       return LocalAdapter.submit(code, entry);
     },
@@ -528,8 +529,8 @@
     w.appendChild(ol);
     var note = el('p', 'vx-sub');
     note.style.marginTop = '18px';
-    note.innerHTML = A.sync.live
-      ? 'Leaderboards are shared live across every player.'
+    note.innerHTML = A.sync.shared
+      ? 'Historical standings are shared across players as unverified records. New score submissions stay on this device.'
       : 'This board contains attempts saved on this device. Shared scores are disabled until a signed-in server verifies each attempt.';
     w.appendChild(note);
   }
@@ -1316,10 +1317,10 @@
     championshipStatus.appendChild(championshipStatusDot);
     championshipStatus.appendChild(championshipStatusText);
     function updateChampionshipStatus() {
-      if (A.sync.live && !S._boardError) {
+      if (A.sync.shared && !S._boardError) {
         championshipStatus.className = 'vx-championship-status is-shared';
         championshipStatusText.textContent = 'SHARED READ · UNVERIFIED HISTORY';
-      } else if (A.sync.live) {
+      } else if (A.sync.shared) {
         championshipStatus.className = 'vx-championship-status is-error';
         championshipStatusText.textContent = 'SHARED READ OFFLINE · LOCAL FALLBACK';
       } else {
