@@ -488,14 +488,14 @@ try {
   await page.waitForTimeout(250);
   const notificationText = await page.locator('#view-notifications').innerText();
   assert.ok(!notificationText.includes('\\n'), 'A literal escaped newline leaked into the visible page');
-  const notificationHero = await page.locator('#view-notifications .nc-hero').evaluate(el => ({
+  const notificationHero = await page.locator('#view-notifications .vx-hero').evaluate(el => ({
     before: getComputedStyle(el, '::before').content,
     background: getComputedStyle(el).backgroundImage,
     titleColor: getComputedStyle(el.querySelector('h1')).color
   }));
-  assert.equal(notificationHero.before, 'none', 'Global header glass overlay is covering the notifications hero');
-  assert.match(notificationHero.background, /linear-gradient/, 'Notifications hero lost its dark gradient');
-  assert.equal(notificationHero.titleColor, 'rgb(255, 255, 255)', 'Notifications hero heading is not white');
+  assert.equal(notificationHero.before, 'none', 'Global header glass overlay is covering the redesigned notifications hero');
+  assert.match(notificationHero.background, /linear-gradient/, 'Redesigned notifications hero lost its dark gradient');
+  assert.equal(notificationHero.titleColor, 'rgb(251, 252, 255)', 'Redesigned notifications hero heading lost its light foreground');
   console.log('PASS notifications: no escaped newline; hero gradient and heading remain visible');
   await clickMainView('dashboard');
 
