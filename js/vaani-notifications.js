@@ -60,7 +60,7 @@
       card.hidden = !(sectorMatch && queryMatch);
       if (!card.hidden) visible++;
     });
-    if (count) count.textContent = visible + (visible === 1 ? ' exam family' : ' exam families');
+    if (count) count.textContent = visible + (visible === 1 ? ' pathway' : ' pathways');
     if (empty) empty.hidden = visible !== 0;
     renderLive(liveItems);
   }

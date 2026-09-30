@@ -333,9 +333,9 @@ await page.goto(baseURL + '?v=notifications', { waitUntil: 'domcontentloaded' })
   const directoryEnd = indexMarkup.indexOf('</div>\n    <div class="nc-directory-empty"', directoryStart);
   assert.ok(directoryStart >= 0 && directoryEnd > directoryStart, 'the static exam directory should remain present in index.html');
   const directoryMarkup = indexMarkup.slice(directoryStart, directoryEnd);
-  assert.equal((directoryMarkup.match(/class="nc-directory-card" data-sector=/g) || []).length, 30,
-    'the expanded exam directory should expose all 30 pathway families');
-  assert.ok(indexMarkup.includes('id="ncDirectoryCount">30 exam &amp; career pathways'), 'the directory count should match its 18 cards');
+  assert.equal((directoryMarkup.match(/class="nc-directory-card" data-sector=/g) || []).length, 55,
+    'the expanded exam directory should expose all 55 exam and career entries');
+  assert.ok(indexMarkup.includes('id="ncDirectoryCount">55 exam &amp; career pathways'), 'the directory count should match its 18 cards');
   for (const exam of ['MBA &amp; management entrance exams', 'Law entrance &amp; qualifying exams', 'Science, research &amp; postgraduate tests', 'Apprenticeship &amp; skilled trade routes', 'National &amp; university engineering entrances', 'State engineering &amp; professional CETs', 'Pilot &amp; aircraft licensing exams', 'Postgraduate medical entrances', 'Nursing &amp; paramedical entrances', 'Teacher recruitment &amp; eligibility', 'Public sector &amp; core-industry hiring', 'State subordinate &amp; field recruitment', 'Finance &amp; securities credentials', 'Hotel management &amp; culinary admissions', 'Student scholarships &amp; fellowships']) {
     assert.ok(directoryMarkup.includes(exam), 'the directory should include ' + exam);
   }
