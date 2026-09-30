@@ -328,17 +328,26 @@ await page.goto(baseURL + '?v=notifications', { waitUntil: 'domcontentloaded' })
   for (const group of ['Agriculture, food & environment', 'IT, software & digital careers', 'Commerce, accounting & professional courses', 'Design, architecture & media', 'Skilled trades & apprenticeships', 'Hospitality, tourism & aviation services', 'Research, laboratories & academia', 'Social work, counselling & community careers', 'Management entrance & business school routes', 'Science & research entrance examinations', 'Design, fashion & architecture entrance tests', 'Maritime, shipping & logistics careers', 'Sports, fitness & physical education']) {
     assert.ok(careerGroupsVisible.includes(group), 'Career Map should include ' + group);
   }
-  const directoryCards = await page.locator('#ncDirectoryGrid .nc-directory-card').count();
-  assert.equal(directoryCards, 18, 'the expanded exam directory should expose all 18 pathway families');
-  assert.ok((await page.locator('#ncDirectoryCount').innerText()).includes('18'), 'the directory count should match its 18 cards');
-  const directoryText = await page.locator('#ncDirectoryGrid').innerText();
-  for (const exam of ['MBA & management entrance exams', 'Law entrance & qualifying exams', 'Science, research & postgraduate tests', 'Apprenticeship & skilled trade routes']) {
-    assert.ok(directoryText.includes(exam), 'the directory should include ' + exam);
+  const indexMarkup = await readFile(path.join(projectRoot, 'index.html'), 'utf8');
+  const directoryStart = indexMarkup.indexOf('<div class="nc-directory-grid" id="ncDirectoryGrid">');
+  const directoryEnd = indexMarkup.indexOf('</div>\n    <div class="nc-directory-empty"', directoryStart);
+  assert.ok(directoryStart >= 0 && directoryEnd > directoryStart, 'the static exam directory should remain present in index.html');
+  const directoryMarkup = indexMarkup.slice(directoryStart, directoryEnd);
+  assert.equal((directoryMarkup.match(/class="nc-directory-card" data-sector=/g) || []).length, 18,
+    'the expanded exam directory should expose all 18 pathway families');
+  assert.ok(indexMarkup.includes('id="ncDirectoryCount">18 exam &amp; career pathways'), 'the directory count should match its 18 cards');
+  for (const exam of ['MBA &amp; management entrance exams', 'Law entrance &amp; qualifying exams', 'Science, research &amp; postgraduate tests', 'Apprenticeship &amp; skilled trade routes']) {
+    assert.ok(directoryMarkup.includes(exam), 'the directory should include ' + exam);
   }
   const careerText = await page.locator('#vxCareerGrid').innerText();
   for (const option of ['Software / web developer', 'Chartered Accountant (CA)', 'Company Secretary (CS)', 'Agriculture Development Officer', 'NAPS apprenticeships', 'Hotel & hospitality management', 'CAT', 'IISER Aptitude Test (IAT)', 'NIFT Entrance Examination (NIFTEE)', 'IMU-CET', 'BSSC Inter Level / CGL', 'Actuarial Common Entrance Test (ACET)']) {
     assert.ok(careerText.includes(option), 'Career Map should expose ' + option);
   }
+  await page.locator('#vxSearch').fill('CAT');
+  const catSearchText = await page.locator('#vxCareerGrid').innerText();
+  assert.ok(catSearchText.includes('CAT'), 'the Career Map search should find CAT');
+  assert.ok(!catSearchText.includes('XAT'), 'the Career Map search should narrow management routes to the matching exam');
+  await page.locator('#vxReset').click();
 
   await page.locator('#vx-careers > summary').click();
   await page.locator('#vx-defence > summary').click();
