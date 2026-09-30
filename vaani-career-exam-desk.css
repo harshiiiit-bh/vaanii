@@ -588,5 +588,77 @@
   #view-notifications .vx-notice-card{transition:none}
 }
 
-/* Keep the global glass-header pseudo layer from tinting the redesigned hero. */
+/* Exam Desk interaction and legibility refinements */
+#view-notifications .vx-jump{flex-wrap:wrap;overflow:visible;scrollbar-width:auto}
+#view-notifications .vx-jump button{flex:0 1 auto;white-space:normal}
+#view-notifications .vx-uniformed-heading{margin-top:4px;border-top:1px solid var(--line,rgba(22,33,46,.1))}
+#view-notifications .vx-date-month+.vx-date-month{margin-top:22px;padding-top:15px;border-top:1px solid var(--line,rgba(22,33,46,.1))}
+#view-notifications .vx-date-month-title{margin:0 0 8px;color:var(--gold-d,#8a5f17);font:700 17px/1.25 Oswald,Impact,sans-serif}
+#view-notifications .vx-date-month-items{display:grid;gap:0}
+#view-notifications .vx-date-info h4{margin:3px 0;color:var(--text,#172235);font:700 15px/1.4 Inter,system-ui,sans-serif;overflow-wrap:anywhere}
+#view-notifications .vx-date-confirmed{color:#23754f;background:rgba(45,151,103,.12)}
+#view-notifications .vx-date-tentative{color:#8a5c12;background:rgba(193,138,45,.15)}
+#view-notifications .vx-date-unverified{color:var(--muted,#5b6774);background:rgba(125,133,145,.12)}
+#view-notifications .vx-eyebrow,
+#view-notifications .vx-section-index,
+#view-notifications .vx-map-label,
+#view-notifications .vx-lane-count,
+#view-notifications .vx-section-heading p,
+#view-notifications .vx-filter-heading p,
+#view-notifications .vx-filter-note,
+#view-notifications .vx-sync,
+#view-notifications .vx-hero-foot small,
+#view-notifications .vx-jump button,
+#view-notifications .vx-controls label>span,
+#view-notifications .vx-status,
+#view-notifications .vx-org,
+#view-notifications .vx-card-dates small,
+#view-notifications .vx-card-dates strong,
+#view-notifications .vx-tag,
+#view-notifications .vx-card-hint,
+#view-notifications .vx-link-btn,
+#view-notifications .vx-date-block span,
+#view-notifications .vx-date-block small,
+#view-notifications .vx-date-tag,
+#view-notifications .vx-date-info p,
+#view-notifications .vx-subheading p,
+#view-notifications .vx-subheading>span,
+#view-notifications .vx-force-desc,
+#view-notifications .vx-route-main>strong,
+#view-notifications .vx-route-main>span,
+#view-notifications .vx-force-portal,
+#view-notifications .vx-career-card>p,
+#view-notifications .vx-archive>summary small,
+#view-notifications .vx-archive-count,
+#view-notifications .vx-archive-top span,
+#view-notifications .vx-archive-top small,
+#view-notifications .vx-archive-card p,
+#view-notifications .vx-archive-card a,
+#view-notifications .vx-archive-more,
+#view-notifications .vx-disclaimer{font-size:11px}
+#view-notifications .vx-date-tag{letter-spacing:.04em}
+#view-notifications .vx-date-info p,
+#view-notifications .vx-section-heading p,
+#view-notifications .vx-filter-heading p,
+#view-notifications .vx-filter-note,
+#view-notifications .vx-force-desc,
+#view-notifications .vx-route-main>span,
+#view-notifications .vx-career-card>p,
+#view-notifications .vx-archive-card p,
+#view-notifications .vx-disclaimer{font-size:12px}
+#view-notifications .vx-card-dates small,
+#view-notifications .vx-date-block small,
+#view-notifications .vx-date-tag,
+#view-notifications .vx-archive-top span,
+#view-notifications .vx-archive-top small{font-size:10px}
+#view-notifications .vx-archive-card h3{font-size:13px}
+#view-notifications .vx-career-card .vx-route .vx-tag{font-size:10px}
+[data-theme="dark"] #view-notifications .vx-force-portal,
+[data-theme="dark"] #view-notifications .vx-archive-card a{color:#aad3ef}
+[data-theme="dark"] #view-notifications .vx-archive-top span{color:#e5c982}
+[data-theme="dark"] #view-notifications .vx-date-confirmed{color:#76dba4;background:rgba(45,151,103,.2)}
+[data-theme="dark"] #view-notifications .vx-date-tentative{color:#f0d08a;background:rgba(193,138,45,.2)}
+[data-theme="dark"] #view-notifications .vx-date-unverified{color:#c2cbd5;background:rgba(125,133,145,.2)}
+
+/* Preserve the global glass-header pseudo layer from tinting the Exam Desk hero. */
 #view-notifications .vx-hero::before{content:none!important}

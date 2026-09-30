@@ -28,9 +28,13 @@ jobs:
           node --check scripts/smoke-dashboard.mjs
           node --check scripts/update-defence-notifications.mjs
           node --check scripts/test-arena-leaderboard.mjs
+      node --check scripts/test-government-exam-desk.mjs
+      node --check scripts/smoke-government-exam-desk.mjs
           node --check supabase/functions/_shared/arena-leaderboard.mjs
       - name: Test Arena leaderboard contract
         run: node scripts/test-arena-leaderboard.mjs
+      - name: Test Government Exam Desk data rules
+        run: node scripts/test-government-exam-desk.mjs
       - name: Set up Deno
         uses: denoland/setup-deno@v2
         with:
@@ -66,6 +70,8 @@ jobs:
           exit 1
       - name: Exercise dashboard and learning flows
         run: node scripts/smoke-dashboard.mjs
+      - name: Exercise Government Exam Desk
+        run: node scripts/smoke-government-exam-desk.mjs
       - name: Preserve failure screenshot
         if: failure()
         uses: actions/upload-artifact@v4

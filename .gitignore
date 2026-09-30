@@ -1,0 +1,3 @@
+# Installed dependencies and local tooling
+node_modules/
+**/node_modules/
