@@ -587,3 +587,6 @@
   #view-notifications .vx-jump button,
   #view-notifications .vx-notice-card{transition:none}
 }
+
+/* Keep the global glass-header pseudo layer from tinting the redesigned hero. */
+#view-notifications .vx-hero::before{content:none!important}
