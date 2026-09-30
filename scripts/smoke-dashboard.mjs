@@ -263,9 +263,9 @@ try {
   assert.equal(arenaSecurity.live,false,'Shared read must not enable browser score writes');
   assert.equal(arenaSecurity.shared,true,'Arena must identify its shared read-only board');
   assert.equal(arenaSecurity.request.method,'POST','Shared Arena endpoint must use POST');
-  assert.match(arenaSecurity.request.url,/\\/functions\\/v1\\/arena-leaderboard/,'Shared Arena read did not use the Edge Function');
+  assert.ok(arenaSecurity.request.url.includes('/functions/v1/arena-leaderboard'),'Shared Arena read did not use the Edge Function');
   assert.equal(JSON.parse(arenaSecurity.request.body).code,'smoke-regression-arena','Shared Arena read sent the wrong match code');
-  assert.match(arenaSecurity.request.contentType,/application\\/json/i,'Shared Arena read must send JSON');
+  assert.ok(arenaSecurity.request.contentType.toLowerCase().includes('application/json'),'Shared Arena read must send JSON');
   assert.equal(arenaSecurity.remoteAdapter,'undefined','Browser score writes must not expose the removed Supabase adapter');
   console.log('PASS Arena security: deterministic match, device-local submission, Edge Function historical read and no public writer');
 
