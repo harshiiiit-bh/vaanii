@@ -144,6 +144,14 @@ page.on('pageerror', error => pageErrors.push(error.message));
 
 try {
   await page.goto(baseURL + '?v=notifications', { waitUntil: 'domcontentloaded' });
+  // Exercise the same entry gate as a real visitor before clicking page controls.
+  await page.waitForSelector('#gate-stage-start', { state: 'visible', timeout: 15000 });
+  await page.evaluate(() => { generateCode = () => '654321'; });
+  await page.locator('#cadetName').fill('Exam Desk Smoke Cadet');
+  await page.locator('#gateBtn').click();
+  await page.waitForSelector('#gate-stage-showcode', { state: 'visible', timeout: 15000 });
+  await page.locator('#gate-stage-showcode .gate-btn').click();
+  await page.waitForFunction(() => document.getElementById('gate')?.classList.contains('hide'), null, { timeout: 15000 });
   await page.locator('#vxSyncStamp').waitFor();
   await page.waitForFunction(() => {
     const text = document.querySelector('#vxSyncStamp')?.textContent || '';
