@@ -1,0 +1,139 @@
+/* ==========================================================
+   VAANI · final interface polish
+   Safe presentation-only layer. Existing routes, IDs, data
+   bindings, navigation handlers and grid definitions remain
+   untouched. Loaded last to avoid fighting earlier layers.
+   ========================================================== */
+
+:root {
+  --ui-card-radius: 16px;
+  --ui-control-radius: 10px;
+  --ui-focus: var(--gold-l, #d9a94f);
+}
+
+/* Keyboard focus should remain easy to see without changing layout. */
+:where(button, a, input, select, textarea, [role="button"], [tabindex]):focus-visible {
+  outline: 3px solid var(--ui-focus);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 2px var(--bg);
+}
+:where(button, a, [role="button"]) { touch-action: manipulation; }
+
+/* Keep the shared shell predictable at dense desktop and tablet widths. */
+header { border-bottom-color: var(--line); }
+.topbar { min-width: 0; }
+nav.mainnav { min-width: 0; overscroll-behavior-inline: contain; }
+nav.mainnav button { line-height: 1.25; }
+nav.mainnav button:focus-visible,
+.bottomnav button:focus-visible { position: relative; z-index: 3; }
+
+/* A consistent surface language across existing modules. */
+.view :is(.card, .panel, .gt-card, .service-card, .vp-card) {
+  border-color: var(--line);
+  box-shadow: var(--shadow-sm);
+  background-color: var(--panel);
+}
+.view :is(.card, .panel, .gt-card, .service-card, .vp-card) > * {
+  min-width: 0;
+}
+.view :is(input:not([type="checkbox"]):not([type="radio"]), select, textarea) {
+  max-width: 100%;
+  min-width: 0;
+  color: var(--text);
+}
+.view :is(input:not([type="checkbox"]):not([type="radio"]), select, textarea)::placeholder {
+  color: var(--muted);
+  opacity: .82;
+}
+
+/* Dashboard: preserve the grid, but improve its hierarchy and legibility. */
+#view-dashboard { min-width: 0; }
+#view-dashboard .vd-hero {
+  min-height: clamp(360px, 32vw, 460px);
+  border-radius: 22px;
+  margin-bottom: 22px;
+}
+#view-dashboard .vd-hero-inner { max-width: min(100%, 760px); }
+#view-dashboard .vd-hero-title {
+  max-width: 17ch;
+  text-wrap: balance;
+  line-height: 1.04;
+}
+#view-dashboard .vd-stat { min-width: 82px; }
+#view-dashboard .vd-stat-num { font-variant-numeric: tabular-nums; }
+#view-dashboard .vd-stat-lbl {
+  color: rgba(243, 245, 243, .82);
+  line-height: 1.45;
+}
+#view-dashboard .vd-qa-btn {
+  min-width: 0;
+  border-color: var(--line);
+  box-shadow: var(--shadow-sm);
+  transition: border-color .18s ease, box-shadow .18s ease, background-color .18s ease;
+}
+#view-dashboard .vd-qa-btn:focus-visible { outline-offset: 2px; }
+#view-dashboard .vd-qa-btn span:last-child {
+  line-height: 1.35;
+  text-wrap: balance;
+}
+#view-dashboard .vd-briefing,
+#view-dashboard .vd-card {
+  border-color: var(--line);
+}
+#view-dashboard .vd-brief-col { min-width: 0; }
+#view-dashboard .vd-brief-col :is(h3, p) { overflow-wrap: anywhere; }
+#view-dashboard .vd-card .panel-title {
+  line-height: 1.3;
+  text-wrap: balance;
+}
+#view-dashboard .vd-roadmap {
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scrollbar-width: thin;
+}
+#view-dashboard .mastery-row,
+#view-dashboard .mastery-row > * { min-width: 0; }
+#view-dashboard .activity-feed,
+#view-dashboard #missionList,
+#view-dashboard #reviewWidgetBody { overflow-wrap: anywhere; }
+
+/* Hover feedback only on devices that actually support hover. */
+@media (hover: hover) and (pointer: fine) {
+  #view-dashboard .vd-qa-btn:hover {
+    border-color: var(--gold);
+    box-shadow: var(--shadow-md);
+  }
+  .view :is(.card, .panel, .gt-card, .service-card, .vp-card):hover {
+    border-color: color-mix(in srgb, var(--gold) 32%, var(--line));
+  }
+}
+
+/* Tablet and phone: do not alter the established grid breakpoints. */
+@media (max-width: 900px) {
+  #view-dashboard .vd-hero { min-height: 360px; }
+}
+@media (max-width: 600px) {
+  #view-dashboard .vd-hero { min-height: 0; }
+  #view-dashboard .vd-hero-inner { min-width: 0; }
+  #view-dashboard .vd-hero-title { max-width: 14ch; }
+  #view-dashboard .vd-brief-col { min-width: 0; }
+  .view :is(.card, .panel, .gt-card, .service-card, .vp-card) {
+    max-width: 100%;
+  }
+}
+@media (max-width: 360px) {
+  #view-dashboard .vd-stat { min-width: 72px; }
+}
+
+/* Respect the system preference even if a module adds its own motion. */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
