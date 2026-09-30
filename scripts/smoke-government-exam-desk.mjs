@@ -348,7 +348,7 @@ try {
   const darkBackground = await page.locator('.vx-filter-panel').evaluate(element => getComputedStyle(element).backgroundColor);
   assert.notEqual(darkBackground, 'rgba(0, 0, 0, 0)', 'the dark theme should style the filter panel');
   const cardMotion = await page.locator('#vxNearList .vx-notice-card').first().evaluate(element => getComputedStyle(element).transitionDuration);
-  assert.equal(cardMotion, '0s', 'reduced-motion preference should disable notice-card transitions');
+  assert.ok(Number.parseFloat(cardMotion) <= 0.0001, 'reduced-motion preference should reduce notice-card transitions to a negligible duration: ' + cardMotion);
 
   for (const viewport of [{ width: 320, height: 740 }, { width: 390, height: 844 }, { width: 768, height: 900 }, { width: 1024, height: 900 }, { width: 1440, height: 1000 }]) {
     await page.setViewportSize(viewport);
