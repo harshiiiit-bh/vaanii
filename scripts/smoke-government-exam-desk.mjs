@@ -196,6 +196,7 @@ try {
   });
   assert.deepEqual(apiRequests.slice().sort(), ['/api/notifications', '/api/notifications/archive'],
     'the Exam Desk should read the existing live feed and archive once each');
+  await page.waitForFunction(() => document.querySelector('#vxRefreshFeed') && !document.querySelector('#vxRefreshFeed').disabled, null, { timeout: 10000 });
   assert.match(await page.locator('#vxFeedHealth').innerText(), /Partial source coverage/, 'feed health should disclose incomplete source coverage');
   assert.match(await page.locator('#vxFeedSummary').innerText(), /2\/3 sources reachable/, 'feed health should show the source coverage count');
   await page.locator('#vxSourceReport summary').click();
