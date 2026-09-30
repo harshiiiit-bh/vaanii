@@ -340,7 +340,7 @@
     }
   ];
 
-  const state = { items: [], archived: [], generatedAt: null, loading: true, refreshing: false, feedAvailable: false, archiveAvailable: false, feedSource: '', feedError: '', feedRefreshFailed: false, sourceStatus: null, showAllArchive: false, showLaterExamDates: false, linkBoardExpanded: { jobs: false, results: false, admit: false, keys: false } };
+  const state = { items: [], archived: [], generatedAt: null, loading: true, refreshing: false, feedAvailable: false, archiveAvailable: false, feedSource: '', feedError: '', feedRefreshFailed: false, sourceStatus: null, showAllArchive: false, showLaterExamDates: false, showAllLanes: { upcoming: false, ongoing: false, near: false }, linkBoardExpanded: { jobs: false, results: false, admit: false, keys: false } };
 
   function esc(value) {
     return String(value == null ? '' : value).replace(/[&<>"']/g, function (ch) {
@@ -527,9 +527,17 @@
     const emptyHint = state.loading ? 'Loading the latest feed.' : hasFilters ? 'Clear or adjust your filters to see more notices.' :
       lane === 'ongoing' ? 'Closing-soon applications are listed separately in Deadline near.' :
       'Check the official recruitment portals for the latest updates.';
-    list.innerHTML = items.length
-      ? items.map(function (item) { return noticeCard(item, lane); }).join('')
+    const laneLimit = 4;
+    const visibleItems = state.showAllLanes[lane] ? items : items.slice(0, laneLimit);
+    list.innerHTML = visibleItems.length
+      ? visibleItems.map(function (item) { return noticeCard(item, lane); }).join('')
       : '<div class="vx-empty"><span class="vx-empty-mark">—</span><strong>' + emptyTitle + '</strong><span>' + emptyHint + '</span></div>';
+    const more = root.querySelector('#vx' + suffix + 'More');
+    if (more) {
+      more.hidden = items.length <= laneLimit;
+      more.textContent = state.showAllLanes[lane] ? 'Show fewer' : 'View all ' + items.length;
+      more.setAttribute('aria-expanded', String(state.showAllLanes[lane]));
+    }
     return items.length;
   }
 
@@ -857,9 +865,9 @@
     '<label><span>SECTOR</span><select id="vxSector"><option value="all">All sectors</option>' + DATA.SECTORS.map(function (sector) { return '<option value="' + esc(sector.id) + '">' + esc(sector.label) + '</option>'; }).join('') + '</select></label></div>',
     '<p class="vx-filter-note"><span aria-hidden="true">ⓘ</span> Results depend on source data. Always confirm eligibility and dates in the official notification.</p></section>',
     '<section class="vx-ops-strip vx-ops-clean" aria-label="Notification feed status"><div class="vx-ops-summary"><span class="vx-ops-dot" id="vxOpsDot" aria-hidden="true"></span><div class="vx-ops-copy"><strong id="vxFeedHealth" aria-live="polite">Checking source health…</strong><small id="vxFeedSummary">Checking the latest notification feed.</small></div></div><div class="vx-ops-actions"><button type="button" class="vx-refresh" id="vxRefreshFeed">↻ Refresh</button><details class="vx-source-report" id="vxSourceReport"><summary id="vxSourceSummary">Sources</summary><div class="vx-source-list" id="vxSourceList"><p>Loading source report…</p></div></details></div></section>',
-    '<section class="vx-lane vx-lane-near vx-primary-lane" id="vx-near" aria-labelledby="vxNearTitle"><div class="vx-section-heading"><div><span class="vx-section-index">ACT FIRST</span><h2 id="vxNearTitle">Closing soon</h2><p>Applications closing today or within 7 days.</p></div><span class="vx-lane-count" id="vxNearCount">00</span></div><div class="vx-notice-grid" id="vxNearList" aria-live="polite"></div></section>',
-    '<section class="vx-lane vx-lane-ongoing vx-primary-lane" id="vx-ongoing" aria-labelledby="vxOngoingTitle"><div class="vx-section-heading"><div><span class="vx-section-index">APPLY NOW</span><h2 id="vxOngoingTitle">Open applications</h2><p>Forms currently open beyond the 7-day closing window.</p></div><span class="vx-lane-count" id="vxOngoingCount">00</span></div><div class="vx-notice-grid" id="vxOngoingList" aria-live="polite"></div></section>',
-    '<section class="vx-lane vx-lane-upcoming vx-primary-lane" id="vx-upcoming" aria-labelledby="vxUpcomingTitle"><div class="vx-section-heading"><div><span class="vx-section-index">PLAN AHEAD</span><h2 id="vxUpcomingTitle">Upcoming examinations</h2><p>Announced or scheduled dates. Calendar dates may be tentative.</p></div><span class="vx-lane-count" id="vxUpcomingCount">00</span></div><div class="vx-notice-grid" id="vxUpcomingList" aria-live="polite"></div></section>',
+    '<section class="vx-lane vx-lane-near vx-primary-lane" id="vx-near" aria-labelledby="vxNearTitle"><div class="vx-section-heading"><div><span class="vx-section-index">ACT FIRST</span><h2 id="vxNearTitle">Closing soon</h2><p>Applications closing today or within 7 days.</p></div><span class="vx-lane-count" id="vxNearCount">00</span></div><div class="vx-notice-grid" id="vxNearList" aria-live="polite"></div><button type="button" class="vx-resource-more vx-lane-more" id="vxNearMore" data-vx-lane-more="near" aria-controls="vxNearList" hidden>View all</button></section>',
+    '<section class="vx-lane vx-lane-ongoing vx-primary-lane" id="vx-ongoing" aria-labelledby="vxOngoingTitle"><div class="vx-section-heading"><div><span class="vx-section-index">APPLY NOW</span><h2 id="vxOngoingTitle">Open applications</h2><p>Forms currently open beyond the 7-day closing window.</p></div><span class="vx-lane-count" id="vxOngoingCount">00</span></div><div class="vx-notice-grid" id="vxOngoingList" aria-live="polite"></div><button type="button" class="vx-resource-more vx-lane-more" id="vxOngoingMore" data-vx-lane-more="ongoing" aria-controls="vxOngoingList" hidden>View all</button></section>',
+    '<section class="vx-lane vx-lane-upcoming vx-primary-lane" id="vx-upcoming" aria-labelledby="vxUpcomingTitle"><div class="vx-section-heading"><div><span class="vx-section-index">PLAN AHEAD</span><h2 id="vxUpcomingTitle">Upcoming examinations</h2><p>Announced or scheduled dates. Calendar dates may be tentative.</p></div><span class="vx-lane-count" id="vxUpcomingCount">00</span></div><div class="vx-notice-grid" id="vxUpcomingList" aria-live="polite"></div><button type="button" class="vx-resource-more vx-lane-more" id="vxUpcomingMore" data-vx-lane-more="upcoming" aria-controls="vxUpcomingList" hidden>View all</button></section>',
     '<details class="vx-secondary vx-links-fold" id="vx-links"><summary class="vx-secondary-summary"><span><strong>Latest official links</strong><small>Jobs, results, admit cards and answer keys</small></span><span class="vx-fold-mark" aria-hidden="true">+</span></summary><div class="vx-fold-body"><section class="vx-link-board" id="vx-link-board" aria-labelledby="vxLinkBoardTitle"><div class="vx-section-heading"><div><h2 id="vxLinkBoardTitle">Official update directory</h2><p>Open the relevant official notice before relying on dates.</p></div><span class="vx-board-stamp">OFFICIAL LINKS</span></div><div class="vx-link-grid"><article class="vx-link-column vx-link-column-jobs" id="vx-board-jobs" aria-labelledby="vxBoardJobsTitle"><div class="vx-link-column-head"><div><span>APPLICATIONS</span><h3 id="vxBoardJobsTitle">Latest jobs</h3></div><b id="vxBoardJobsCount">00</b></div><ul class="vx-resource-list" id="vxBoardJobsList" aria-live="polite"></ul><button type="button" class="vx-resource-more" data-vx-board-more="jobs" hidden>View all</button></article><article class="vx-link-column vx-link-column-results" id="vx-board-results" aria-labelledby="vxBoardResultsTitle"><div class="vx-link-column-head"><div><span>OUTCOMES</span><h3 id="vxBoardResultsTitle">Results</h3></div><b id="vxBoardResultsCount">00</b></div><ul class="vx-resource-list" id="vxBoardResultsList" aria-live="polite"></ul><button type="button" class="vx-resource-more" data-vx-board-more="results" hidden>View all</button></article><article class="vx-link-column vx-link-column-admit" id="vx-board-admit" aria-labelledby="vxBoardAdmitTitle"><div class="vx-link-column-head"><div><span>EXAM ACCESS</span><h3 id="vxBoardAdmitTitle">Admit cards</h3></div><b id="vxBoardAdmitCount">00</b></div><ul class="vx-resource-list" id="vxBoardAdmitList" aria-live="polite"></ul><button type="button" class="vx-resource-more" data-vx-board-more="admit" hidden>View all</button></article><article class="vx-link-column vx-link-column-keys" id="vx-board-keys" aria-labelledby="vxBoardKeysTitle"><div class="vx-link-column-head"><div><span>ANSWER REVIEW</span><h3 id="vxBoardKeysTitle">Answer keys</h3></div><b id="vxBoardKeysCount">00</b></div><ul class="vx-resource-list" id="vxBoardKeysList" aria-live="polite"></ul><button type="button" class="vx-resource-more" data-vx-board-more="keys" hidden>View all</button></article></div></section></div></details>',
     '<details class="vx-secondary vx-date-section" id="vx-exam-dates" aria-labelledby="vxExamDatesTitle"><summary class="vx-secondary-summary"><span><strong id="vxExamDatesTitle">Exam date calendar</strong><small>Confirmed and tentative dates from the feed</small></span><span class="vx-lane-count" id="vxExamDatesCount">00</span><span class="vx-fold-mark" aria-hidden="true">+</span></summary><div class="vx-fold-body"><div class="vx-date-toolbar"><span id="vxExamHorizonNote">Showing exam dates in the next 120 days.</span><button type="button" class="vx-date-toggle" id="vxLaterExamDates" hidden>Show later dates</button></div><div class="vx-date-list" id="vxExamDatesList" aria-live="polite"></div></div></details>',
     '<details class="vx-secondary vx-defence-section" id="vx-defence" aria-labelledby="vxDefenceTitle"><summary class="vx-secondary-summary"><span><strong id="vxDefenceTitle">Defence &amp; uniformed careers</strong><small>Armed Forces, Coast Guard, CAPF and other services</small></span><span class="vx-fold-mark" aria-hidden="true">+</span></summary><div class="vx-fold-body"><div class="vx-defence-banner"><div><span class="vx-eyebrow">SERVICE PATHWAYS</span><h2>Explore by force</h2><p>Compare entry routes and open the official recruitment portals.</p></div><span class="vx-defence-seal" aria-hidden="true">★</span></div><div class="vx-subheading"><div><h3>Armed Forces &amp; Coast Guard</h3><p>Army, Navy, Air Force and Coast Guard routes.</p></div><span>01 — 04</span></div><div class="vx-force-grid" id="vxForcesGrid"></div><div class="vx-subheading vx-uniformed-heading"><div><h3>CAPF &amp; other uniformed services</h3><p>Each force and recruitment route is listed separately.</p></div><span>05 — 13</span></div><div class="vx-force-grid vx-uniformed-grid" id="vxUniformedGrid"></div></div></details>',
@@ -980,7 +988,17 @@
       root.querySelector('#vxSector').value = 'all';
       state.showAllArchive = false;
       state.showLaterExamDates = false;
+      Object.keys(state.showAllLanes).forEach(function (key) { state.showAllLanes[key] = false; });
       renderAll();
+    });
+    root.querySelectorAll('[data-vx-lane-more]').forEach(function (button) {
+      button.addEventListener('click', function () {
+        const lane = button.dataset.vxLaneMore;
+        if (Object.prototype.hasOwnProperty.call(state.showAllLanes, lane)) {
+          state.showAllLanes[lane] = !state.showAllLanes[lane];
+          renderAll();
+        }
+      });
     });
     root.querySelector('#vxArchiveMore')?.addEventListener('click', function () {
       state.showAllArchive = !state.showAllArchive;
