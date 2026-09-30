@@ -10,6 +10,36 @@ const context = await browser.newContext({
   reducedMotion: 'reduce'
 });
 const page = await context.newPage();
+const sharedArenaFixture = Array.from({ length: 12 }, (_, i) => ({
+  code: '',
+  pid: 'legacy-cadet-' + String(i + 1).padStart(2, '0'),
+  name: 'Legacy Cadet ' + String(i + 1).padStart(2, '0'),
+  score: 15 - (i % 6),
+  seconds: 48 + i * 7,
+  total: 15,
+  at: 1790500000000 + i
+}));
+await page.route('https://pccavdwwhykwyeitxixc.supabase.co/functions/v1/arena-leaderboard', async route => {
+  const request = route.request();
+  const cors = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'apikey, content-type, x-client-info',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS'
+  };
+  if (request.method() === 'OPTIONS') {
+    await route.fulfill({ status: 200, headers: cors, body: 'ok' });
+    return;
+  }
+  let requestedCode = '';
+  try { requestedCode = request.postDataJSON()?.code || ''; } catch {}
+  const rows = sharedArenaFixture.map(row => ({ ...row, code: requestedCode }));
+  await route.fulfill({
+    status: 200,
+    headers: cors,
+    contentType: 'application/json',
+    body: JSON.stringify({ rows, verified: false, source: 'historical' })
+  });
+});
 const pageErrors = [];
 const vaErrors = [];
 let academyImageResults = null;
@@ -204,15 +234,14 @@ try {
     const testEntry={pid:'smoke-player',name:'Smoke Cadet',score:6,seconds:60,total:8,at:1,answers:{}};
     await arena.sync.submit(boardKey,testEntry);
     const localRows=JSON.parse(localStorage.getItem('vx_arena_board_'+boardKey)||'[]');
-
-    // Shared adapter must read remote standings without sending score writes.
     const originalFetch=window.fetch;
     let request=null;
     window.fetch=(url,options={})=>{
-      request={url:String(url),method:String(options.method||'GET'),body:options.body||null};
-      return Promise.resolve({ok:true,json:()=>Promise.resolve([
-        {code:boardKey,pid:'remote-player',name:'Remote Cadet',score:7,seconds:45,total:8,at:2,expires_at:null}
-      ])});
+      request={url:String(url),method:String(options.method||'GET'),body:options.body||null,
+        contentType:options.headers?.['Content-Type']||options.headers?.['content-type']||''};
+      return Promise.resolve({ok:true,json:()=>Promise.resolve({rows:[
+        {code:boardKey,pid:'remote-player',name:'Remote Cadet',score:7,seconds:45,total:8,at:2}
+      ],verified:false,source:'historical'})});
     };
     let sharedRows=[];
     try { sharedRows=await arena.sync.fetch(boardKey); }
@@ -228,17 +257,17 @@ try {
   assert.equal(arenaSecurity.decoded?.seed,482731,'Arena match code lost its seed');
   assert.deepEqual(arenaSecurity.first,arenaSecurity.second,'Arena question selection changed for an identical match seed');
   assert.equal(arenaSecurity.localRows.length,1,'Arena score was not saved locally on this device');
-  assert.equal(arenaSecurity.localRows[0].pid,'smoke-player','Local Arena submission changed the player identity');
-  assert.equal(arenaSecurity.sharedRows.length,1,'Shared Arena leaderboard read did not return the server standings');
+  assert.equal(arenaSecurity.sharedRows.length,1,'Shared Arena read did not return a historical row');
   assert.equal(arenaSecurity.sharedRows[0].pid,'remote-player','Shared Arena read returned the wrong row');
   assert.equal(arenaSecurity.adapter,'shared-read','Shared read adapter was not configured');
   assert.equal(arenaSecurity.live,false,'Shared read must not enable browser score writes');
   assert.equal(arenaSecurity.shared,true,'Arena must identify its shared read-only board');
-  assert.equal(arenaSecurity.request.method,'GET','Shared Arena leaderboard must use read-only GET');
-  assert.match(arenaSecurity.request.url,/\/rest\/v1\/arena_scores\?code=eq\./,'Shared Arena leaderboard did not query the existing score table');
-  assert.equal(arenaSecurity.request.body,null,'Shared Arena leaderboard read unexpectedly sent a request body');
+  assert.equal(arenaSecurity.request.method,'POST','Shared Arena endpoint must use POST');
+  assert.match(arenaSecurity.request.url,/\\/functions\\/v1\\/arena-leaderboard/,'Shared Arena read did not use the Edge Function');
+  assert.equal(JSON.parse(arenaSecurity.request.body).code,'smoke-regression-arena','Shared Arena read sent the wrong match code');
+  assert.match(arenaSecurity.request.contentType,/application\\/json/i,'Shared Arena read must send JSON');
   assert.equal(arenaSecurity.remoteAdapter,'undefined','Browser score writes must not expose the removed Supabase adapter');
-  console.log('PASS Arena security: shared read-only standings, local-only submission, deterministic match and no public Supabase writer');
+  console.log('PASS Arena security: deterministic match, device-local submission, Edge Function historical read and no public writer');
 
   await clickMainView('grammar');
   await page.waitForFunction(() => document.querySelectorAll('#grammarAcademyCatalog .ga-stage-card').length === 4);
@@ -1135,6 +1164,21 @@ try {
       }
     });
   }
+
+  await page.locator('#view-games .vx-championship-refresh').click();
+  await page.waitForFunction(() =>
+    document.querySelectorAll('#view-games .vx-championship-row').length >= 12
+  , { timeout: 10000 });
+  const sharedBoard = await page.evaluate(() => ({
+    attempts: document.querySelector('#view-games .vx-championship-metric strong')?.textContent,
+    rows: document.querySelectorAll('#view-games .vx-championship-row').length,
+    state: document.querySelector('#view-games .vx-championship-status')?.textContent
+  }));
+  assert.ok(Number(sharedBoard.attempts) >= 12, 'Historical shared attempts did not appear in the board summary');
+  assert.ok(sharedBoard.rows >= 12, 'Historical shared players did not appear in the leaderboard');
+  assert.match(sharedBoard.state || '', /SHARED READ.*UNVERIFIED HISTORY/i,
+    'Shared historical results are not clearly marked as unverified');
+  console.log('PASS Arena shared-read standings: 12 historical players render alongside local result');
 
   await clickMainView('profile');
 

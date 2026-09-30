@@ -1,0 +1,4 @@
+project_id = "pccavdwwhykwyeitxixc"
+
+[functions.arena-leaderboard]
+verify_jwt = false
