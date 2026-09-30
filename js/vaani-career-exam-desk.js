@@ -220,7 +220,7 @@
     }
   ];
 
-  const state = { items: [], archived: [], generatedAt: null, loading: true, refreshing: false, feedAvailable: false, archiveAvailable: false, feedSource: '', feedError: '', feedRefreshFailed: false, sourceStatus: null, showAllArchive: false };
+  const state = { items: [], archived: [], generatedAt: null, loading: true, refreshing: false, feedAvailable: false, archiveAvailable: false, feedSource: '', feedError: '', feedRefreshFailed: false, sourceStatus: null, showAllArchive: false, showLaterExamDates: false };
 
   function esc(value) {
     return String(value == null ? '' : value).replace(/[&<>"']/g, function (ch) {
@@ -257,7 +257,8 @@
 
   function itemText(item) {
     return [item.title, item.organization, item.category, item.type, item.status, item.summary, item.sourceName,
-      item.eligibility, item.qualification, item.qualifications, item.education].map(function (value) {
+      item.eligibility, item.qualification, item.qualifications, item.education, item.advertisementNo, item.vacancies,
+      item.feeDetails, item.selectionProcess].map(function (value) {
       return Array.isArray(value) ? value.join(' ') : String(value || '');
     }).join(' ').toLowerCase();
   }
@@ -334,7 +335,9 @@
     const title = item.title || 'Official examination update';
     const category = String(item.category || 'Government').replace(/[_-]+/g, ' ');
     const organization = item.organization || item.sourceName || 'Official source';
-    const url = safeUrl(item.url || item.sourceUrl);
+    const applicationUrl = safeUrl(item.applicationUrl || item.applyUrl);
+    const url = safeUrl(applicationUrl || item.url || item.sourceUrl);
+    const officialUrl = safeUrl(item.advertisementUrl || item.notificationUrl || item.sourceUrl);
     const applicationWindow = DATA.applicationDates(item);
     const start = applicationWindow.start;
     const end = applicationWindow.end;
@@ -350,21 +353,29 @@
     const details = [];
     if (start && fmtDate(start)) details.push(['Opening date', fmtDate(start)]);
     if (end && fmtDate(end)) details.push(['Closing date', fmtDate(end)]);
+    if (item.feePaymentLastDate && fmtDate(item.feePaymentLastDate)) details.push(['Fee payment', fmtDate(item.feePaymentLastDate)]);
     if (exam && fmtDate(exam)) details.push(['Exam date', fmtDate(exam)]);
     if (!start && !end && !exam && notice && fmtDate(notice)) details.push(['Notice date', fmtDate(notice)]);
+    if (item.advertisementNo) details.push(['Advertisement', item.advertisementNo]);
+    if (item.vacancies) details.push(['Vacancies', item.vacancies]);
+    if (item.feeDetails) details.push(['Fee', item.feeDetails]);
     const detailsMarkup = details.length
       ? '<div class="vx-card-dates">' + details.map(function (pair) {
         return '<div><small>' + esc(pair[0]) + '</small><strong>' + esc(pair[1]) + '</strong></div>';
       }).join('') + '</div>'
       : '';
     const summary = item.summary || 'Open the official source and check the full notice before applying.';
+    const actions = [];
+    if (url) actions.push('<a class="vx-link-btn" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' +
+      (applicationUrl ? 'Apply online' : 'Official notice') + ' <span aria-hidden="true">↗</span></a>');
+    if (officialUrl && officialUrl !== url) actions.push('<a class="vx-link-btn vx-link-secondary" href="' + esc(officialUrl) +
+      '" target="_blank" rel="noopener noreferrer">Official details <span aria-hidden="true">↗</span></a>');
     return '<article class="vx-notice-card vx-' + lane + '">' +
       '<div class="vx-card-top"><span class="vx-status">' + statusLabel + '</span><span class="vx-org">' + esc(organization) + ' · ' + esc(category) + '</span></div>' +
       '<h3>' + esc(title) + '</h3><p>' + esc(summary) + '</p>' +
       detailsMarkup + qualificationsMarkup(qualificationsFor(item)) +
       '<div class="vx-card-bottom"><span class="vx-card-hint">' + esc(lane === 'near' ? (days === 0 ? 'Closes today' : 'Closes in ' + days + ' days') : lane === 'ongoing' ? 'Applications open' : 'Date announced') + '</span>' +
-      (url ? '<a class="vx-link-btn" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">Official notice <span aria-hidden="true">↗</span></a>' : '') +
-      '</div></article>';
+      '<div class="vx-card-actions">' + actions.join('') + '</div></div></article>';
   }
 
   function renderLane(lane, filters) {
@@ -372,7 +383,7 @@
     const list = root.querySelector('#vx' + suffix + 'List');
     const count = root.querySelector('#vx' + suffix + 'Count');
     if (!list) return 0;
-    const items = state.items.filter(function (item) { return classify(item) === lane && matches(item, filters); });
+    const items = uniqueItems(state.items.filter(function (item) { return classify(item) === lane && matches(item, filters); }));
     const section = list.closest('.vx-lane');
     if (section) section.classList.toggle('vx-lane-is-empty', items.length === 0);
     items.sort(function (a, b) {
@@ -452,12 +463,30 @@
     const mount = root.querySelector('#vxExamDatesList');
     const count = root.querySelector('#vxExamDatesCount');
     if (!mount) return;
-    const items = uniqueItems(state.items.concat(state.archived)).filter(function (item) {
+    const allItems = uniqueItems(state.items.concat(state.archived)).filter(function (item) {
       return DATA.isFutureExamDate(item, today()) && matches(item, filters);
     }).sort(dateSort);
+    const laterItems = allItems.filter(function (item) { return !DATA.isExamDateWithinHorizon(item, today(), 120); });
+    const items = state.showLaterExamDates ? allItems : allItems.filter(function (item) {
+      return DATA.isExamDateWithinHorizon(item, today(), 120);
+    });
+    const toggle = root.querySelector('#vxLaterExamDates');
+    const horizonNote = root.querySelector('#vxExamHorizonNote');
+    if (toggle) {
+      toggle.hidden = laterItems.length === 0;
+      toggle.textContent = state.showLaterExamDates ? 'Show next 120 days' : 'Show later dates (' + laterItems.length + ')';
+      toggle.setAttribute('aria-expanded', String(state.showLaterExamDates));
+    }
+    if (horizonNote) horizonNote.textContent = state.showLaterExamDates
+      ? 'Showing all future exam dates in the feed.'
+      : 'Showing exam dates in the next 120 days.';
     if (count) count.textContent = String(items.length).padStart(2, '0');
     if (!items.length) {
-      mount.innerHTML = '<div class="vx-empty"><span class="vx-empty-mark">▦</span><strong>No future exam dates match</strong><span>Only dates present in the notice feed are shown. Check the relevant official calendar for further dates.</span></div>';
+      const emptyTitle = !state.showLaterExamDates && laterItems.length ? 'No exam dates in the next 120 days' : 'No future exam dates match';
+      const emptyHint = !state.showLaterExamDates && laterItems.length
+        ? 'Later dates are available above; expand the calendar to see them.'
+        : 'Only dates present in the notice feed are shown. Check the relevant official calendar for further dates.';
+      mount.innerHTML = '<div class="vx-empty"><span class="vx-empty-mark">▦</span><strong>' + emptyTitle + '</strong><span>' + emptyHint + '</span></div>';
       return;
     }
 
@@ -593,7 +622,7 @@
     const total = root.querySelector('#vxTotalCount');
     const active = root.querySelector('#vxActiveCount');
     if (total) total.textContent = String(upcoming + ongoing + near);
-    if (active) active.textContent = String(state.items.filter(function (item) { return ['upcoming', 'ongoing', 'near'].includes(classify(item)); }).length);
+    if (active) active.textContent = String(uniqueItems(state.items).filter(function (item) { return ['upcoming', 'ongoing', 'near'].includes(classify(item)); }).length);
   }
 
   const markup = [
@@ -614,7 +643,7 @@
     '<section class="vx-lane vx-lane-upcoming" id="vx-upcoming" aria-labelledby="vxUpcomingTitle"><div class="vx-section-heading"><div><span class="vx-section-index">01 / PLANNED</span><h2 id="vxUpcomingTitle">Upcoming examinations</h2><p>Dates announced or scheduled; annual-calendar dates remain tentative until the exam notice.</p></div><span class="vx-lane-count" id="vxUpcomingCount">00</span></div><div class="vx-notice-grid" id="vxUpcomingList" aria-live="polite"></div></section>',
     '<section class="vx-lane vx-lane-ongoing" id="vx-ongoing" aria-labelledby="vxOngoingTitle"><div class="vx-section-heading"><div><span class="vx-section-index">02 / OPEN</span><h2 id="vxOngoingTitle">Ongoing applications</h2><p>Application windows that are currently open and are not within the 7-day closing window.</p></div><span class="vx-lane-count" id="vxOngoingCount">00</span></div><div class="vx-notice-grid" id="vxOngoingList" aria-live="polite"></div></section>',
     '<section class="vx-lane vx-lane-near" id="vx-near" aria-labelledby="vxNearTitle"><div class="vx-section-heading"><div><span class="vx-section-index">03 / PRIORITY</span><h2 id="vxNearTitle">Deadline near</h2><p>Application forms closing today or within 7 days. Check the closing date and official instructions.</p></div><span class="vx-lane-count" id="vxNearCount">00</span></div><div class="vx-notice-grid" id="vxNearList" aria-live="polite"></div></section>',
-    '<section class="vx-date-section" id="vx-exam-dates" aria-labelledby="vxExamDatesTitle"><div class="vx-section-heading"><div><span class="vx-section-index">DATEBOARD / SEPARATE VIEW</span><h2 id="vxExamDatesTitle">Exam date calendar</h2><p>Upcoming examination dates in one chronological list, separate from application status.</p></div><span class="vx-lane-count" id="vxExamDatesCount">00</span></div><div class="vx-date-list" id="vxExamDatesList" aria-live="polite"></div></section>',
+    '<section class="vx-date-section" id="vx-exam-dates" aria-labelledby="vxExamDatesTitle"><div class="vx-section-heading"><div><span class="vx-section-index">DATEBOARD / SEPARATE VIEW</span><h2 id="vxExamDatesTitle">Exam date calendar</h2><p>Near-term exam dates first; distant dates stay tucked away until requested.</p></div><span class="vx-lane-count" id="vxExamDatesCount">00</span></div><div class="vx-date-toolbar"><span id="vxExamHorizonNote">Showing exam dates in the next 120 days.</span><button type="button" class="vx-date-toggle" id="vxLaterExamDates" hidden>Show later dates</button></div><div class="vx-date-list" id="vxExamDatesList" aria-live="polite"></div></section>',
     '<section class="vx-defence-section" id="vx-defence" aria-labelledby="vxDefenceTitle"><div class="vx-defence-banner"><div><span class="vx-eyebrow">SPECIAL CORNER · UNIFORMED CAREERS</span><h2 id="vxDefenceTitle">Defence &amp; national security</h2><p>Explore military, Coast Guard, CAPF and other uniformed-service pathways in distinct service cards.</p></div><span class="vx-defence-seal" aria-hidden="true">★</span></div>',
     '<div class="vx-subheading"><div><h3>Armed Forces &amp; Coast Guard</h3><p>Army, Navy, Air Force and Coast Guard routes.</p></div><span>01 — 04</span></div><div class="vx-force-grid" id="vxForcesGrid"></div>',
     '<div class="vx-subheading vx-uniformed-heading"><div><h3>CAPF &amp; other uniformed services</h3><p>Each force and recruitment route is listed separately.</p></div><span>05 — 13</span></div><div class="vx-force-grid vx-uniformed-grid" id="vxUniformedGrid"></div></section>',
@@ -733,10 +762,15 @@
       root.querySelector('#vxQualification').value = 'all';
       root.querySelector('#vxSector').value = 'all';
       state.showAllArchive = false;
+      state.showLaterExamDates = false;
       renderAll();
     });
     root.querySelector('#vxArchiveMore')?.addEventListener('click', function () {
       state.showAllArchive = !state.showAllArchive;
+      renderAll();
+    });
+    root.querySelector('#vxLaterExamDates')?.addEventListener('click', function () {
+      state.showLaterExamDates = !state.showLaterExamDates;
       renderAll();
     });
     root.querySelector('#vxRefreshFeed')?.addEventListener('click', refreshData);

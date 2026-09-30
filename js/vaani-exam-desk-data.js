@@ -163,6 +163,14 @@
     return Boolean(date && date >= today);
   }
 
+  function isExamDateWithinHorizon(item, todayValue, horizonDays) {
+    if (!isFutureExamDate(item, todayValue)) return false;
+    const date = parseDate(firstValue(item, DATE_FIELDS.exam));
+    const today = referenceDate(todayValue);
+    const limit = Number.isFinite(Number(horizonDays)) ? Math.max(0, Math.floor(Number(horizonDays))) : 120;
+    return Boolean(date && daysBetween(date, today) <= limit);
+  }
+
   function examDateConfidence(item) {
     if (!isRecord(item)) return 'unverified';
     if (item.examDateConfirmed === true || item.isExamDateConfirmed === true) return 'confirmed';
@@ -253,6 +261,7 @@
     applicationDates,
     classify,
     isFutureExamDate,
+    isExamDateWithinHorizon,
     examDateConfidence,
     normalizeQualifications,
     qualificationsFor,

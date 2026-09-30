@@ -74,6 +74,12 @@ assert.equal(desk.isFutureExamDate({ lastDate: '2026-09-29', examDate: '2027-02-
   'a closed cycle may stay visible in the separate future exam calendar');
 assert.equal(desk.isFutureExamDate({ examDate: 'not a date' }, today), false,
   'invalid exam dates must not enter the calendar');
+assert.equal(desk.isExamDateWithinHorizon({ examDate: '2027-01-15' }, today, 120), true,
+  'near-term future exam dates should appear in the default calendar');
+assert.equal(desk.isExamDateWithinHorizon({ examDate: '2027-04-11' }, today, 120), false,
+  'distant NDA/CDS calendar dates should remain outside the default horizon');
+assert.equal(desk.isExamDateWithinHorizon({ examDate: '2026-09-29' }, today, 120), false,
+  'past exam dates must not appear even in the near-term calendar');
 
 const graduateTags = desk.normalizeQualifications('BA, B.Sc., B.Com., BCA, BBA and B.Tech / B.E.');
 for (const qualification of ['ba', 'bsc', 'bcom', 'bca', 'bba', 'btech']) {

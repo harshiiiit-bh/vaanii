@@ -224,13 +224,19 @@ try {
   assert.equal(await page.locator('#vxUpcomingList').innerText().then(text => text.includes('answer key')), false,
     'a post-exam notice must not become an active opportunity');
   assert.equal(await page.locator('#vxArchiveGrid .vx-archive-card').count(), 3, 'expired application and both result records should stay archived');
-  assert.equal(await page.locator('#vxExamDatesList .vx-date-row').count(), 7, 'future exam dates remain visible independently of application status');
-  assert.equal(await page.locator('#vxExamDatesList .vx-date-month').count(), 5, 'future exam dates should be grouped by month and year');
+  assert.equal(await page.locator('#vxExamDatesList .vx-date-row').count(), 4, 'default calendar should show only future exam dates within 120 days');
+  assert.equal(await page.locator('#vxExamDatesList .vx-date-month').count(), 2, 'near-term exam dates should be grouped by month and year');
   const calendarTitles = await page.locator('#vxExamDatesList .vx-date-row h4').allTextContents();
   assert.equal(calendarTitles[0], 'SSC recruitment closing today',
     'the exam calendar should sort by the actual exam date in chronological order');
-  assert.ok(calendarTitles.includes('NDA closed application cycle'),
-    'a future exam date should remain on the calendar even when its application is archived');
+  assert.ok(!calendarTitles.includes('NDA closed application cycle'),
+    'distant exam dates should stay hidden in the default calendar view');
+  await page.locator('#vxLaterExamDates').click();
+  assert.equal(await page.locator('#vxExamDatesList .vx-date-row').count(), 7, 'show later dates should expand the calendar without losing far-future records');
+  assert.ok((await page.locator('#vxExamDatesList').innerText()).includes('NDA closed application cycle'),
+    'expanded calendar should retain older-cycle future exam dates');
+  await page.locator('#vxLaterExamDates').click();
+  assert.equal(await page.locator('#vxExamDatesList .vx-date-row').count(), 4, 'calendar toggle should return to the 120-day view');
   assert.equal(await page.locator('#vxExamDatesList').innerText().then(text => text.includes('CONFIRMED · OFFICIAL NOTICE')), true);
   assert.equal(await page.locator('#vxExamDatesList').innerText().then(text => text.includes('TENTATIVE · CALENDAR')), true);
   assert.equal(await page.locator('#vxOngoingList img').count(), 0, 'feed text must be escaped before rendering');
