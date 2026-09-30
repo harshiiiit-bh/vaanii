@@ -106,7 +106,7 @@ const feedItems = [
     id: 'upcoming-schedule-' + suffix,
     title: 'Synthetic upcoming schedule ' + suffix,
     organization: 'UPSC', category: 'UPSC', type: 'Annual Calendar', status: 'scheduled',
-    applicationStartDate: '2026-10-' + String(10 + index).padStart(2, '0'),
+    applicationStartDate: '2026-10-' + String(20 + index).padStart(2, '0'),
     url: 'https://upsc.gov.in/', official: true,
     summary: 'Synthetic schedule fixture for the notice preview control.'
   })),
