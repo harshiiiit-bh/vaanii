@@ -435,7 +435,7 @@
       sector: 'technical', title: 'Aviation, pilot licensing & aircraft careers', eyebrow: 'AVIATION / AEROSPACE',
       description: 'Pilot training, flight-crew licensing, aircraft maintenance and airport technology careers.',
       routes: [
-        { title: 'DGCA Flight Crew examinations', note: 'Licence examinations for flight crew; prerequisites depend on licence and rating.', quals: ['12th', 'graduate'], url: 'https://pariksha.dgca.gov.in/home' },
+        { title: 'DGCA Flight Crew examinations', note: 'Licence examinations for flight crew; prerequisites depend on licence and rating.', quals: ['12th', 'graduate', 'aviation'], url: 'https://pariksha.dgca.gov.in/home' },
         { title: 'Aircraft Maintenance Engineer (AME)', note: 'DGCA licence examination and approved training routes; category rules apply.', quals: ['12th', 'diploma', 'btech'], url: 'https://pariksha.dgca.gov.in/home' },
         { title: 'Commercial Pilot Licence (CPL)', note: 'Pilot-training and flight-crew licensing pathway; medical, flying-hour and examination requirements apply.', quals: ['12th'], url: 'https://www.dgca.gov.in/' },
         { title: 'Air Traffic Control (AAI JE ATC)', note: 'Airport Authority recruitment for eligible science/engineering graduates.', quals: ['bsc', 'btech', 'graduate'], url: 'https://www.aai.aero/en/careers/recruitment' },

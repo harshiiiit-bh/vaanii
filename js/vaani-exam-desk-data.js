@@ -30,7 +30,8 @@
     { id: 'hospitality', label: 'Hospitality / hotel management' },
     { id: 'psychology', label: 'Psychology / counselling' },
     { id: 'socialwork', label: 'Social work' },
-    { id: 'media', label: 'Media / journalism' }
+    { id: 'media', label: 'Media / journalism' },
+    { id: 'aviation', label: 'Aviation / flight crew' }
   ].map(Object.freeze));
 
   const SECTORS = Object.freeze([

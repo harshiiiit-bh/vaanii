@@ -300,7 +300,7 @@ await page.goto(baseURL + '?v=notifications', { waitUntil: 'domcontentloaded' })
   assert.equal(await page.evaluate(() => window.__examDeskXss || 0), 0, 'escaped feed text must not execute');
 
   const qualificationOptions = await page.locator('#vxQualification option').evaluateAll(options => options.map(option => option.value));
-  for (const qualification of ['10th', '12th', 'iti', 'diploma', 'ba', 'bsc', 'bcom', 'bca', 'bba', 'btech', 'graduate', 'postgraduate', 'teaching', 'law', 'mbbs', 'nursing', 'paramedical']) {
+  for (const qualification of ['10th', '12th', 'iti', 'diploma', 'ba', 'bsc', 'bcom', 'bca', 'bba', 'btech', 'graduate', 'postgraduate', 'teaching', 'law', 'mbbs', 'nursing', 'paramedical', 'aviation']) {
     assert.ok(qualificationOptions.includes(qualification), 'qualification filter should include ' + qualification);
   }
 
@@ -351,6 +351,8 @@ await page.goto(baseURL + '?v=notifications', { waitUntil: 'domcontentloaded' })
   assert.ok((await page.locator('#vxCareerGrid').innerText()).includes('BITSAT'), 'the Career Map search should find engineering entrances');
   await page.locator('#vxSearch').fill('DGCA');
   assert.ok((await page.locator('#vxCareerGrid').innerText()).includes('DGCA Flight Crew examinations'), 'the Career Map search should find aviation licensing');
+  await page.locator('#vxQualification').selectOption('aviation');
+  assert.ok((await page.locator('#vxCareerGrid').innerText()).includes('DGCA Flight Crew examinations'), 'the aviation qualification filter should retain its matching flight-crew route');
   await page.locator('#vxReset').click();
 
   await page.locator('#vx-careers > summary').click();
