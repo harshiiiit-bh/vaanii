@@ -458,7 +458,7 @@
   function routeMatches(route, filters, groupText, sector) {
     const qualOk = qualMatches(route.quals, filters.qualification);
     const sectorOk = filters.sector === 'all' || filters.sector === sector;
-    const routeText = [route.title, route.note].join(' ').toLowerCase();
+    const routeText = [route.title, route.note, route.quals.map(function (tag) { return QUAL_LABELS[tag] || tag; }).join(' ')].join(' ').toLowerCase();
     const queryOk = !filters.query || groupText.includes(filters.query) || routeText.includes(filters.query);
     return qualOk && sectorOk && queryOk;
   }
