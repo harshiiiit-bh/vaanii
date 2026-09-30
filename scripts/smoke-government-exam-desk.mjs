@@ -164,8 +164,11 @@ try {
   assert.equal(await page.locator('#vxArchiveGrid .vx-archive-card').count(), 3, 'expired application and both result records should stay archived');
   assert.equal(await page.locator('#vxExamDatesList .vx-date-row').count(), 7, 'future exam dates remain visible independently of application status');
   assert.equal(await page.locator('#vxExamDatesList .vx-date-month').count(), 5, 'future exam dates should be grouped by month and year');
-  assert.equal(await page.locator('#vxExamDatesList .vx-date-row').first().locator('h4').textContent(), 'NDA closed application cycle',
-    'the exam calendar should sort future dates even when the application is archived');
+  const calendarTitles = await page.locator('#vxExamDatesList .vx-date-row h4').allTextContents();
+  assert.equal(calendarTitles[0], 'SSC recruitment closing today',
+    'the exam calendar should sort by the actual exam date in chronological order');
+  assert.ok(calendarTitles.includes('NDA closed application cycle'),
+    'a future exam date should remain on the calendar even when its application is archived');
   assert.equal(await page.locator('#vxExamDatesList').innerText().then(text => text.includes('CONFIRMED · OFFICIAL NOTICE')), true);
   assert.equal(await page.locator('#vxExamDatesList').innerText().then(text => text.includes('TENTATIVE · CALENDAR')), true);
   assert.equal(await page.locator('#vxOngoingList img').count(), 0, 'feed text must be escaped before rendering');
