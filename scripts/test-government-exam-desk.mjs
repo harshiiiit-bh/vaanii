@@ -81,7 +81,7 @@ assert.equal(desk.isExamDateWithinHorizon({ examDate: '2027-04-11' }, today, 120
 assert.equal(desk.isExamDateWithinHorizon({ examDate: '2026-09-29' }, today, 120), false,
   'past exam dates must not appear even in the near-term calendar');
 
-const graduateTags = desk.normalizeQualifications('BA, B.Sc., B.Com., BCA, BBA, B.Tech / B.E., B.Pharm, B.Arch, B.Des, MBA, agriculture, Chartered Accountant, Company Secretary and CMA');
+const graduateTags = desk.normalizeQualifications('BA, B.Sc., B.Com., BCA, BBA, B.Tech / B.E., B.Pharm, B.Arch, B.Des, MBA, agriculture, Chartered Accountant, Company Secretary, CMA, hospitality management, psychology, social work and journalism');
 for (const qualification of ['ba', 'bsc', 'bcom', 'bca', 'bba', 'btech', 'agri', 'pharmacy', 'architecture', 'design', 'ca', 'cs', 'cma', 'mba', 'hospitality', 'psychology', 'socialwork', 'media']) {
   assert.ok(graduateTags.includes(qualification), 'qualification parser must recognize ' + qualification);
   assert.ok(desk.QUALIFICATIONS.some(option => option.id === qualification), 'filter must offer ' + qualification);

@@ -234,7 +234,7 @@
     if (/\b(?:b\.?des|design degree|fine arts|fashion design|visual communication)\b/.test(text)) add('design');
     if (/\b(?:chartered accountant|chartered accountancy|ca foundation|ca intermediate|ca final)\b/.test(text)) add('ca');
     if (/\b(?:company secretary|cseet|cs executive)\b/.test(text)) add('cs');
-    if (/\b(?:cost and management accountant|cost accountant|cma course|cma foundation|cma intermediate|cma final)\b/.test(text)) add('cma');
+    if (/\b(?:cost and management accountant|cost accountant|cma|cma course|cma foundation|cma intermediate|cma final)\b/.test(text)) add('cma');
     if (/\b(?:mba|pgdm|master of business administration)\b/.test(text)) add('mba');
     if (/\b(?:hotel management|hospitality management|hotel administration)\b/.test(text)) add('hospitality');
     if (/\b(?:psychology|counselling|counseling)\b/.test(text)) add('psychology');
