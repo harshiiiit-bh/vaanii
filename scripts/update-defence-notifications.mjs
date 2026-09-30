@@ -1,7 +1,10 @@
 import fs from 'node:fs/promises';
+import { createSourceStatus, fetchWithRetry, mapConcurrent } from './notification-sync-utils.mjs';
 
 const DATA_FILE = 'data/defence-notifications.json';
 const ARCHIVE_FILE = 'data/defence-notifications-archive.json';
+const STATUS_FILE = 'data/defence-notifications-status.json';
+const SOURCE_CONCURRENCY = 4;
 const USER_AGENT = 'VAANI-Defence-Notification-Bot/1.0 (+https://harshiiiit-bh.github.io/vaanii/)';
 const MAX_PER_SOURCE = 80;
 
@@ -156,10 +159,9 @@ function isNoticeRecord(item) {
 }
 
 async function fetchSource(source){
-  const res = await fetch(source.url, {
+  const res = await fetchWithRetry(source.url, {
     headers: { 'user-agent': USER_AGENT, accept: 'text/html,application/xhtml+xml' },
-    redirect: 'follow',
-    signal: AbortSignal.timeout(20000)
+    redirect: 'follow', timeoutMs: 20000, attempts: 3, baseDelayMs: 300, maxDelayMs: 1800
   });
   if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
   const html = await res.text();
@@ -209,42 +211,61 @@ async function main(){
   const rejectedIds=(existing.items||[]).filter(x=>!isNoticeRecord(x)).map(x=>String(x.id)).filter(Boolean);
   const pruneIds=[...new Set([...(Array.isArray(existing.pruneIds)?existing.pruneIds:[]),...rejectedIds])];
   const byKey=new Map((existing.items||[]).filter(isNoticeRecord).map(x=>[x.id,x]));
-  const runLog=[];
+  const sourceResults = await mapConcurrent(sources, SOURCE_CONCURRENCY, async source => {
+    const started = Date.now();
+    try {
+      const result = await fetchSource(source);
+      return { source, ok: true, found: result.out.length, durationMs: Date.now() - started, hits: result.out };
+    } catch (error) {
+      return { source, ok: false, found: 0, durationMs: Date.now() - started, error: String(error?.message || error), hits: [] };
+    }
+  });
+  const runLog = sourceResults.map(result => ({
+    source: result.source.name, ok: result.ok, found: result.found, durationMs: result.durationMs,
+    ...(result.error ? { error: result.error } : {})
+  }));
+  const now = new Date();
+  const sourceStatus = createSourceStatus({
+    checkedAt: now.toISOString(), sources: runLog,
+    liveItems: (existing.items || []).length, archiveItems: (archive.items || []).length,
+    snapshotRetained: true, concurrency: SOURCE_CONCURRENCY
+  });
+  if (sourceStatus.sourcesOk === 0) {
+    await fs.writeFile(STATUS_FILE, JSON.stringify(sourceStatus, null, 2) + String.fromCharCode(10));
+    console.warn('All official sources failed; preserving the last known-good live and archive snapshots.');
+    console.log(JSON.stringify(sourceStatus, null, 2));
+    return;
+  }
 
-  for(const source of sources){
-    try{
-      const result=await fetchSource(source);
-      runLog.push({source:source.name,ok:true,found:result.out.length});
-      for(const hit of result.out){
-        const combined=hit.label+' '+hit.url+' '+hit.context;
-        const category=categoryFor(combined,source.categories);
-        const id=makeId(hit.label,hit.url);
-        const dates=inferDates(hit.context);
-        const prev=byKey.get(id);
-        byKey.set(id,{
-          ...(prev||{}),
-          id,
-          title:hit.label,
-          organization:source.name.split(' — ')[0],
-          category,
-          type:statusFor(combined),
-          status:statusFor(combined),
-          ...(dates[0]&&!prev?.notificationDate?{notificationDate:dates[0]}:{}),
-          url:hit.url,
-          sourceUrl:source.url,
-          sourceName:source.name,
-          official:true,
-          firstSeen:prev?.firstSeen||new Date().toISOString(),
-          lastSeen:new Date().toISOString(),
-          summary:prev?.summary||"Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-        });
-      }
-    }catch(error){
-      runLog.push({source:source.name,ok:false,error:String(error.message||error)});
+  for (const result of sourceResults) {
+    if (!result.ok) continue;
+    const source = result.source;
+    for (const hit of result.hits) {
+      const combined = hit.label + ' ' + hit.url + ' ' + hit.context;
+      const category = categoryFor(combined, source.categories);
+      const id = makeId(hit.label, hit.url);
+      const dates = inferDates(hit.context);
+      const prev = byKey.get(id);
+      byKey.set(id, {
+        ...(prev || {}),
+        id,
+        title: hit.label,
+        organization: source.name.split(' — ')[0],
+        category,
+        type: statusFor(combined),
+        status: statusFor(combined),
+        ...(dates[0] && !prev?.notificationDate ? { notificationDate: dates[0] } : {}),
+        url: hit.url,
+        sourceUrl: source.url,
+        sourceName: source.name,
+        official: true,
+        firstSeen: prev?.firstSeen || now.toISOString(),
+        lastSeen: now.toISOString(),
+        summary: prev?.summary || "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+      });
     }
   }
 
-  const now=new Date();
   const archiveMap=new Map((archive.items||[]).map(x=>[x.id,x]));
   const live=[];
   for (const item of byKey.values()) {
@@ -266,13 +287,18 @@ async function main(){
   }
   const items=live.filter(x=>x.title&&x.url).sort((a,b)=>String(b.lastSeen||b.firstSeen).localeCompare(String(a.lastSeen||a.firstSeen)));
   const archived=[...archiveMap.values()].sort((a,b)=>String(b.archivedAt||'').localeCompare(String(a.archivedAt||'')));
-  const output={version:1,generatedAt:now.toISOString(),source:'VAANI Government & Defence Notification Engine',checkedSources:runLog,pruneIds,items};
-  const archiveOutput={version:1,generatedAt:now.toISOString(),source:'VAANI Defence Notification Archive',items:archived};
-  await fs.writeFile(DATA_FILE,JSON.stringify(output,null,2)+'\n');
-  await fs.writeFile(ARCHIVE_FILE,JSON.stringify(archiveOutput,null,2)+'\n');
-  console.log(JSON.stringify({generatedAt:output.generatedAt,items:items.length,runLog},null,2));
-
-  if(runLog.every(x=>!x.ok)) throw new Error('All notification sources failed; refusing to publish a blank refresh.');
+  const output = { version: 1, generatedAt: now.toISOString(), source: 'VAANI Government & Defence Notification Engine', checkedSources: runLog, pruneIds, items };
+  const archiveOutput = { version: 1, generatedAt: now.toISOString(), source: 'VAANI Defence Notification Archive', items: archived };
+  const statusOutput = createSourceStatus({
+    checkedAt: now.toISOString(), sources: runLog, liveItems: items.length, archiveItems: archived.length,
+    snapshotRetained: false, concurrency: SOURCE_CONCURRENCY
+  });
+  await Promise.all([
+    fs.writeFile(DATA_FILE, JSON.stringify(output, null, 2) + String.fromCharCode(10)),
+    fs.writeFile(ARCHIVE_FILE, JSON.stringify(archiveOutput, null, 2) + String.fromCharCode(10)),
+    fs.writeFile(STATUS_FILE, JSON.stringify(statusOutput, null, 2) + String.fromCharCode(10))
+  ]);
+  console.log(JSON.stringify({ generatedAt: output.generatedAt, items: items.length, archiveItems: archived.length, ...statusOutput }, null, 2));
 }
 
 main().catch(error=>{console.error(error);process.exit(1);});

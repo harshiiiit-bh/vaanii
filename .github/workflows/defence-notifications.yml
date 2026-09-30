@@ -10,7 +10,7 @@ permissions:
 
 concurrency:
   group: defence-notification-sync
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   sync:
@@ -25,12 +25,61 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
 
       - name: Refresh defence notifications
         run: node scripts/update-defence-notifications.mjs
+      - name: Summarize source health
+        id: source-health
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const report = JSON.parse(fs.readFileSync('data/defence-notifications-status.json', 'utf8'));
+          if (!Array.isArray(report.sources) || !Number.isInteger(report.sourcesOk) || !Number.isInteger(report.sourcesTotal)) {
+            throw new Error('Notification source-health report is invalid.');
+          }
+          const safe = value => String(value ?? '').replace(/[|\r\n]/g, ' ');
+          const summary = [
+            '### Notification source health',
+            '',
+            `- Checked: ${safe(report.checkedAt)}`,
+            `- Reachable: **${report.sourcesOk}/${report.sourcesTotal}**`,
+            `- Retained live/archive records: **${report.liveItems}/${report.archiveItems}**`,
+            `- Previous snapshot retained: **${report.snapshotRetained ? 'yes' : 'no'}**`,
+            '',
+            '| Official source | Result | Matches | Duration | Detail |',
+            '|---|---:|---:|---:|---|'
+          ];
+          for (const source of report.sources) {
+            summary.push(`| ${safe(source.source)} | ${source.ok ? 'Reachable' : 'Failed'} | ${Number(source.found || 0)} | ${Number(source.durationMs || 0)} ms | ${safe(source.error || '')} |`);
+          }
+          fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, summary.join('\n') + '\n');
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `sources_ok=${report.sourcesOk}\nsources_total=${report.sourcesTotal}\n`);
+          if (report.sourcesOk < report.sourcesTotal) console.warn(`Partial notification source coverage: ${report.sourcesOk}/${report.sourcesTotal}.`);
+          NODE
+
+      - name: Check Cloudflare notification API health
+        if: steps.source-health.outputs.sources_ok != '0'
+        env:
+          VAANI_NOTIFICATIONS_API: ${{ secrets.VAANI_NOTIFICATIONS_API }}
+        run: |
+          if [ -z "$VAANI_NOTIFICATIONS_API" ]; then
+            echo "::error::Missing VAANI_NOTIFICATIONS_API repository secret."
+            exit 1
+          fi
+          node --input-type=module <<'NODE'
+          import { fetchWithRetry } from './scripts/notification-sync-utils.mjs';
+          const base = process.env.VAANI_NOTIFICATIONS_API.replace(/\/$/, '');
+          const response = await fetchWithRetry(base + '/health', {
+            headers: { accept: 'application/json' }, attempts: 3, timeoutMs: 10000, baseDelayMs: 300
+          });
+          const health = await response.json();
+          if (health?.ok !== true) throw new Error('Cloudflare health endpoint returned an invalid status.');
+          console.log('Cloudflare notification API health check passed.');
+          NODE
 
       - name: Sync live feed to Cloudflare D1
+        if: steps.source-health.outputs.sources_ok != '0'
         env:
           VAANI_NOTIFICATIONS_API: ${{ secrets.VAANI_NOTIFICATIONS_API }}
           VAANI_NOTIFICATIONS_SYNC_SECRET: ${{ secrets.VAANI_NOTIFICATIONS_SYNC_SECRET }}
@@ -39,8 +88,9 @@ jobs:
             echo "::error::Missing VAANI_NOTIFICATIONS_API or VAANI_NOTIFICATIONS_SYNC_SECRET repository secret."
             exit 1
           fi
-          node <<'NODE'
-          const fs = require('node:fs');
+          node --input-type=module <<'NODE'
+          import * as fs from 'node:fs';
+          import { fetchWithRetry } from './scripts/notification-sync-utils.mjs';
           const feed = JSON.parse(fs.readFileSync('data/defence-notifications.json','utf8'));
           const archive = JSON.parse(fs.readFileSync('data/defence-notifications-archive.json','utf8'));
           const archiveIds = new Set((archive.items || []).map(x => x.id));
@@ -59,17 +109,13 @@ jobs:
           };
 
           async function request(body, label) {
-            const response = await fetch(endpoint, {
-              method: 'POST',
-              headers,
-              body: JSON.stringify(body),
-              signal: AbortSignal.timeout(60000)
+            const response = await fetchWithRetry(endpoint, {
+              method: 'POST', headers, body: JSON.stringify(body),
+              attempts: 3, timeoutMs: 60000, baseDelayMs: 350, maxDelayMs: 3000
             });
-            const responseText = await response.text();
-            if (!response.ok) {
-              throw new Error('Cloudflare sync failed for ' + label + ': ' + response.status + ' ' + responseText.slice(0, 500));
-            }
-            return JSON.parse(responseText);
+            const payload = await response.json();
+            if (!payload || payload.ok !== true) throw new Error('Cloudflare sync returned an invalid response for ' + label);
+            return payload;
           }
 
           (async () => {
@@ -99,7 +145,7 @@ jobs:
         run: |
           git config user.name "vaani-notification-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/defence-notifications.json data/defence-notifications-archive.json
+          git add data/defence-notifications.json data/defence-notifications-archive.json data/defence-notifications-status.json
           if git diff --cached --quiet; then
             echo "No notification snapshot changes detected."
             exit 0

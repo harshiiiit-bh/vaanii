@@ -5,6 +5,8 @@ on:
   push:
     branches:
       - main
+      - improve/**
+      - codex/**
   workflow_dispatch:
 
 permissions:
@@ -20,7 +22,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
       - name: Check JavaScript syntax
         shell: bash
         run: |
@@ -29,6 +31,8 @@ jobs:
           node --check scripts/update-defence-notifications.mjs
           node --check scripts/test-arena-leaderboard.mjs
           node --check scripts/test-government-exam-desk.mjs
+          node --check scripts/notification-sync-utils.mjs
+          node --check scripts/test-notification-sync-utils.mjs
           node --check scripts/smoke-government-exam-desk.mjs
           node --check supabase/functions/_shared/arena-leaderboard.mjs
       - name: Test Arena leaderboard contract
@@ -37,6 +41,8 @@ jobs:
         run: node scripts/test-grammar-academy.mjs
       - name: Test Government Exam Desk data rules
         run: node scripts/test-government-exam-desk.mjs
+      - name: Test notification sync utilities
+        run: node scripts/test-notification-sync-utils.mjs
       - name: Set up Deno
         uses: denoland/setup-deno@v2
         with:
@@ -55,7 +61,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
       - name: Install Playwright
         run: npm install --no-save --no-package-lock playwright
       - name: Install Chromium
