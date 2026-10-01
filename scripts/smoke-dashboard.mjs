@@ -208,29 +208,29 @@ try {
   assert.ok(await page.locator('#serviceRankList .vp-service-rank-insignia img').count() >= 9,
     'Army ladder is missing insignia images');
   assert.deepEqual(await page.locator('#serviceRankList .vp-service-rank-threshold').allTextContents(),
-    ['100 total XP · +100 for this step','350 total XP · +250 for this step','800 total XP · +450 for this step','1,500 total XP · +700 for this step','2,600 total XP · +1,100 for this step','4,200 total XP · +1,600 for this step','6,500 total XP · +2,300 for this step','9,500 total XP · +3,000 for this step','13,500 total XP · +4,000 for this step','18,000 total XP · +4,500 for this step'],
+    ['100 total XP · +100 for this step','400 total XP · +300 for this step','900 total XP · +500 for this step','1,700 total XP · +800 for this step','3,000 total XP · +1,300 for this step','4,800 total XP · +1,800 for this step','7,200 total XP · +2,400 for this step','10,500 total XP · +3,300 for this step','14,500 total XP · +4,000 for this step','19,000 total XP · +4,500 for this step'],
     'Army milestones should show increasing cumulative thresholds and step costs');
   await page.evaluate(() => { State.xp=500; refreshDashboard(); });
   assert.equal(await page.locator('#rankTitle').textContent(), 'Captain',
     'Army 350-XP threshold should unlock Captain, not several ranks at once');
-  assert.match(await page.locator('#rankXPText').textContent(), /Major.*800 total XP/,
+  assert.match(await page.locator('#rankXPText').textContent(), /Major.*900 total XP/,
     'Army rank progress should name Major and show its cumulative threshold');
   const rankBoundary=await page.evaluate(()=>({
-    before:getServiceRankProgress(349,'army').current.name,
-    at:getServiceRankProgress(350,'army').current.name,
-    after:getServiceRankProgress(18000,'army').current.name,
-    next:getServiceRankProgress(18000,'army').next
+    before:getServiceRankProgress(399,'army').current.name,
+    at:getServiceRankProgress(400,'army').current.name,
+    after:getServiceRankProgress(19000,'army').current.name,
+    next:getServiceRankProgress(19000,'army').next
   }));
   assert.deepEqual(rankBoundary,{before:'Lieutenant',at:'Captain',after:'Field Marshal',next:null},
     'Rank transitions should occur only at their threshold and continue to Field Marshal');
   const paceMath=await page.evaluate(()=>({
     first:getMinimumXPDays(100,0,80),
-    next:getMinimumXPDays(250,0,80),
+    next:getMinimumXPDays(500,0,80),
     partiallyAvailable:getMinimumXPDays(50,30,80),
     canFinishToday:getMinimumXPDays(50,80,80),
     afterTop:getMinimumXPDays(0,80,80)
   }));
-  assert.deepEqual(paceMath,{first:2,next:4,partiallyAvailable:2,canFinishToday:0,afterTop:0},
+  assert.deepEqual(paceMath,{first:2,next:7,partiallyAvailable:1,canFinishToday:0,afterTop:0},
     'Milestone pace should respect today’s remaining cap and never estimate beyond the top rank');
   assert.equal(await page.locator('#rankDailyXPTrack').getAttribute('role'),'progressbar',
     'Daily XP allowance should expose an accessible progress meter');
