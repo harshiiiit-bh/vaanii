@@ -6,15 +6,16 @@
       in the normal synchronous way every other script on the page
       loads, so there is nothing that can silently fail to appear.
 
-   NDA vs CDS: a paper file's content decides which exam it belongs to,
+   NDA vs CDS vs AFCAT: a paper file's content decides which exam it belongs to,
    not its filename or its position in this array — index.html tells
    them apart by the variable name declared inside the file:
-     - `var PYQ_<year>_<session> = [...]`      -> NDA (default)
-     - `var PYQ_CDS_<year>_<session> = [...]`  -> CDS
-   For human clarity, name CDS files `cds-<year>-<session>.js` (e.g.
-   "cds-2024-I"), but still just list the filename below like every
-   other entry — everything else (archive, counts, era grouping) picks
-   it up automatically from the variable name. */
+     - `var PYQ_<year>_<session> = [...]`       -> NDA (default)
+     - `var PYQ_CDS_<year>_<session> = [...]`   -> CDS
+     - `var PYQ_AFCAT_<year>_<session> = [...]` -> AFCAT
+   For human clarity, name CDS files `cds-<year>-<session>.js` and
+   AFCAT files `afcat-<year>-<session>.js`, but still just list the
+   filename below like every other entry — everything else (archive,
+   counts, era grouping) picks it up automatically from the variable name. */
 var PYQ_PAPER_FILES = [
   "2009-I","2009-II",
   "2010-I","2010-II",
@@ -34,11 +35,12 @@ var PYQ_PAPER_FILES = [
   "2024-I","2024-II",
   "2025-I","2025-II",
 
-  // Only CDS papers whose source files are present in this repository.
+  // Only CDS/AFCAT papers whose source files are present in this repository.
   "cds-2013-I","cds-2013-II",
   "cds-2014-I","cds-2014-II","cds-2015-I",
   "cds-2021-I","cds-2021-II",
   "cds-2022-I","cds-2022-II",
   "cds-2023-I","cds-2023-II",
   "cds-2024-I","cds-2024-II","cds-2025-I","cds-2015-II",
+  "afcat-2022-II",
 ];
