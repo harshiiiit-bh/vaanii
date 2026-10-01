@@ -117,6 +117,14 @@ jobs:
             res.raise_for_status()
             root=BeautifulSoup(res.text,"html.parser").select_one(".entry-content")
             if not root:raise RuntimeError(f"Missing article root for {session}")
+            if session=="II":
+              q47=next((x for x in root.find_all("ol") if x.get("start")=="47"),None)
+              print("Q47_OL",str(q47)[:8000] if q47 else "NONE")
+              if q47:
+                for k,sib in enumerate(q47.next_siblings):
+                  if k>18:break
+                  if getattr(sib,"name",None):
+                    print("Q47_SIB",k,sib.name,repr(norm(sib.get_text(" ",strip=True))[:1000]),str(sib)[:2200])
             lists=outer_lists(root)
             records=[]
             next_n=1
