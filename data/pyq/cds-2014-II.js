@@ -30,7 +30,7 @@ var PYQ_CDS_2014_II = (function () {
     ['Spotting Errors','Churchill was | one of the greatest | war leaders.',['Churchill was','one of the greatest','war leaders.','No error']],
     ['Spotting Errors','We should keep | such people | at an arm’s length.',['We should keep','such people','at an arm’s length.','No error']],
     ['Spotting Errors','He did not know | as much as | he claimed he knew.',['He did not know','as much as','he claimed he knew.','No error']],
-    ['Spotting Errors','That was very dangerous: | you might | have been killed.',['That was very dangerous:','you might have been killed.','','No error']],
+    ['Spotting Errors','That was very dangerous: | you might | have been killed.',['That was very dangerous:','you might','have been killed.','No error']],
     ['Spotting Errors','My friend | is going | to a movie every week.',['My friend','is going','to a movie every week.','No error']],
     ['Spotting Errors','They sit | at the window | and watch the traffic.',['They sit','at the window','and watch the traffic.','No error']],
     ['Spotting Errors','I started early | for the station lest | I should not miss the train.',['I started early','for the station lest','I should not miss the train.','No error']],
