@@ -156,6 +156,7 @@ try {
   await page.waitForSelector('#gate-stage-showcode', { state: 'visible', timeout: 15000 });
   const codeText = await textOf('#gate-code-display');
   assert.match(codeText.replace(/\s/g, ''), /^\d{6}$/, 'New account code should contain six digits');
+  await page.evaluate(() => { State.serviceForce = null; });
   await page.locator('#gate-stage-showcode .gate-btn').click();
   await page.waitForSelector('#serviceForcePicker[data-mode="onboarding"]', { state: 'visible', timeout: 15000 });
   assert.equal(await page.locator('#serviceForcePicker .service-force-option').count(), 3,
