@@ -1752,15 +1752,24 @@ function pvHomeHTML(){
   }).join('');
   const topicsHTML = topicGroups.map(group=>`
     <section class="pv-topic-group" data-topic-group="${group.id}">
-      <div class="pv-topic-group-head">
-        <div class="pv-topic-group-copy">
-          <span class="pv-topic-group-kicker">SECTION</span>
+      <button type="button" class="pv-topic-group-head" onclick="pvToggleTopicGroup('${group.id}')" aria-expanded="false" aria-controls="pv-topic-group-${group.id}">
+        <span class="pv-topic-group-copy">
+          <span class="pv-topic-group-kicker">GROUP</span>
           <strong>${escapeHtmlVaani(group.title)}</strong>
           <small>${escapeHtmlVaani(group.desc)}</small>
+        </span>
+        <span class="pv-topic-group-head-side">
+          <span class="pv-topic-group-count">${group.items.length} skill${group.items.length!==1?'s':''}</span>
+          <span class="pv-topic-group-chevron" aria-hidden="true">⌄</span>
+        </span>
+      </button>
+      <div class="pv-topic-group-body" id="pv-topic-group-${group.id}" hidden>
+        <div class="pv-topic-group-actions">
+          <span>Practice all ${group.items.reduce((sum,item)=>sum+PYQ_ALL.filter(q=>q.sec===item.topic).length,0)} questions from this group.</span>
+          <button type="button" class="pv-topic-group-practice" onclick="pvLaunchTopicGroup('${group.id}')">Practice all →</button>
         </div>
-        <span class="pv-topic-group-count">${group.items.length} skill${group.items.length!==1?'s':''}</span>
+        <div class="pv-topic-grid pv-topic-subgrid">${topicCardsHTML(group.items)}</div>
       </div>
-      <div class="pv-topic-grid pv-topic-subgrid">${topicCardsHTML(group.items)}</div>
     </section>`).join('');
 
   const recent = st.history.slice(0,5);
@@ -1770,7 +1779,7 @@ function pvHomeHTML(){
       <div class="pv-recent-dot ${h.correct?'ok':'no'}">${h.correct?'✓':'✕'}</div>
       <div class="pv-recent-body">
         <div class="pv-recent-q">${pyqPromptHTML(q)}</div>
-        <div class="pv-recent-meta">${(PYQ_EXAM_INFO[q._exam]&&PYQ_EXAM_INFO[q._exam].short)||'NDA'} ${q.s} ${q.y} · ${q.sec}</div>
+        <div class="pv-recent-meta">${(PYQ_EXAM_INFO[q._exam]&&PYQ_EXAM_INFO[q._exam].short)||'NDA'} ${q.s} ${q.y} · ${pvOriginalTopicTag(q)}</div>
       </div>
     </div>`;
   }).join('') : `<div class="pv-empty-note">Solve a few questions and your recent activity will show up here.</div>`;
@@ -1817,6 +1826,31 @@ function pvHomeHTML(){
     <div class="pv-topic-grid" id="pvTopicGrid">${topicsHTML}</div>
     <div class="pv-empty-note pv-topic-empty" id="pvTopicEmpty" hidden>No matching topic. Try another search.</div>
   </div>`;
+}
+
+function pvToggleTopicGroup(groupId){
+  const group=document.querySelector(`.pv-topic-group[data-topic-group="${CSS.escape(groupId)}"]`);
+  if(!group)return;
+  const body=group.querySelector('.pv-topic-group-body');
+  const head=group.querySelector('.pv-topic-group-head');
+  if(!body||!head)return;
+  const open=!body.hidden;
+  body.hidden=open;
+  head.setAttribute('aria-expanded',String(!open));
+  group.classList.toggle('is-open',!open);
+}
+function pvLaunchTopicGroup(groupId){
+  const group=pvTopicGroups(pvTopics()).find(item=>item.id===groupId);
+  if(!group){ toast('This group is not available yet.'); return; }
+  const topics=new Set(group.items.map(item=>item.topic));
+  const list=PYQ_ALL.filter(q=>topics.has(q.sec));
+  if(!list.length){ toast('No questions are available in this group yet.'); return; }
+  pvStartSession('section',list,{title:group.title});
+}
+
+function pvOriginalTopicTag(q){
+  if(!q)return '';
+  return String(q._sourceSec||q.sec||'').trim() || 'PYQ';
 }
 
 function pvFilterTopicCards(value){
@@ -2186,7 +2220,7 @@ function pvSessionHTML(){
     <div class="pv-qcard reveal">
       <div class="pv-qmeta-row">
         <span class="pyq-chip yr">${(PYQ_EXAM_INFO[q._exam]&&PYQ_EXAM_INFO[q._exam].short)||'NDA'} ${q.s} ${q.y}</span>
-        <span class="pyq-chip tp">${q.sec}</span>
+        <span class="pyq-chip tp">${escapeHtmlVaani(pvOriginalTopicTag(q))}</span>
         ${q.diff?`<span class="pyq-chip diff-${q.diff}">${q.diff}</span>`:''}
         <button class="bm-star ${bookmarked?'active':''}" onclick="toggleBookmark('${bmId}', this)" title="Bookmark" style="margin-left:auto">★</button>
       </div>
