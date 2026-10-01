@@ -1506,6 +1506,7 @@ var PYQ_CDS_2018_I = [
     "n": 70,
     "sec": "Reading Comprehension",
     "q": "“It has largely diluted the fruits of the remarkable economic progress”. Find antonym of the underlined word",
+    "keyword": "diluted",
     "o": [
       "coalesced",
       "compounded",
