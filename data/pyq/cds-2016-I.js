@@ -2007,6 +2007,7 @@ var PYQ_CDS_2016_I = [
     "s": "I",
     "n": 95,
     "sec": "Synonyms",
+    "keyword": "kindle",
     "q": "Her words always make me hesitate and kindle with suspicion.",
     "o": [
       "Make fun of",
@@ -2027,6 +2028,7 @@ var PYQ_CDS_2016_I = [
     "s": "I",
     "n": 96,
     "sec": "Synonyms",
+    "keyword": "palatial",
     "q": "Grand Oberoi is one of the most palatial and luxurious hotels in India.",
     "o": [
       "Very clean",
@@ -2067,6 +2069,7 @@ var PYQ_CDS_2016_I = [
     "s": "I",
     "n": 98,
     "sec": "Synonyms",
+    "keyword": "voracious",
     "q": "These African species of the monkeys are quite dangerous and voracious.",
     "o": [
       "Very bad",
@@ -2087,6 +2090,7 @@ var PYQ_CDS_2016_I = [
     "s": "I",
     "n": 99,
     "sec": "Synonyms",
+    "keyword": "strictures",
     "q": "The strictures of the United Nations have failed to have any effect on the warring factions.",
     "o": [
       "Strictness",
