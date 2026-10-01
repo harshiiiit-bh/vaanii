@@ -1864,6 +1864,15 @@ function pvFilterTopicCards(value){
   grid.querySelectorAll('.pv-topic-group').forEach(group=>{
     const groupVisible=group.querySelectorAll('.pv-topic-card:not([hidden])').length;
     group.hidden=groupVisible===0;
+    if(term && groupVisible>0){
+      const body=group.querySelector('.pv-topic-group-body');
+      const head=group.querySelector('.pv-topic-group-head');
+      if(body && head){
+        body.hidden=false;
+        head.setAttribute('aria-expanded','true');
+        group.classList.add('is-open');
+      }
+    }
   });
   const results=document.getElementById('pvTopicResults');
   if(results)results.textContent=term?(visible+' of '+cards.length+' topics'):(cards.length+' topics');
