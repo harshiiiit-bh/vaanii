@@ -183,6 +183,18 @@ try {
 
   await clickMainView('profile');
   await assertVisibleText('#vpProfileRank', 'Service-aware Profile rank');
+  assert.match(await page.locator('#rankDailyXPHint').textContent(), /0 \/ 80/,
+    'Profile should display the 80-XP daily earning cap');
+  assert.equal(await page.locator('#serviceRankBadgeSource').count(), 0,
+    'Rank card should not expose insignia source links');
+  assert.equal(await page.locator('#serviceRankList .vp-service-rank-insignia a').count(), 0,
+    'Insignia images should not be clickable source links');
+  await page.locator('.vp-xp-rules summary').click();
+  assert.match(await page.locator('.vp-xp-rules').innerText(), /below 50% accuracy deducts 10 XP/,
+    'Profile should disclose low-accuracy XP deduction');
+  assert.match(await page.locator('.vp-xp-rules').innerText(), /missed login day resets the streak/,
+    'Profile should disclose missed-login penalty');
+  await page.locator('.vp-xp-rules summary').click();
   await page.locator('#serviceRankLadder summary').click();
   const armyLadder = await page.locator('#serviceRankList .vp-service-rank-row').allInnerTexts();
   const armyRankNames = await page.locator('#serviceRankList .vp-service-rank-name').allTextContents();
@@ -300,7 +312,7 @@ try {
   await page.locator('#serviceForcePicker .service-force-option[data-force="army"]').click();
   await page.waitForFunction(() => !document.getElementById('serviceForcePicker'));
   await clickMainView('dashboard');
-  console.log('PASS service ranks: distinct Army/Navy/Air Force ladders, insignia sources, milestone mapping, reset persistence and force changes');
+  console.log('PASS service ranks: distinct Army/Navy/Air Force ladders, insignia display, XP milestones, daily cap, strict penalties and force changes');
 
   // Account isolation regression: seed account A, logout, create account B in
   // the same browser, then switch repeatedly and verify each saved profile.
