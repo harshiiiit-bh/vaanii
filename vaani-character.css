@@ -1,0 +1,119 @@
+/* ============================================================
+   VAANI CHARACTER MENTOR
+============================================================ */
+:root{
+  --vc-gold:#c9a24b;
+  --vc-navy:#172732;
+  --vc-panel:rgba(255,255,255,.97);
+  --vc-line:rgba(23,39,50,.13);
+}
+.vaani-mentor{
+  position:fixed;
+  right:18px;
+  bottom:92px;
+  z-index:9100;
+  display:flex;
+  align-items:flex-end;
+  gap:8px;
+  pointer-events:none;
+}
+.vaani-mentor.is-hidden{display:none}
+.vc-bubble{
+  width:min(300px,calc(100vw - 170px));
+  padding:13px 15px;
+  border:1px solid rgba(201,162,75,.35);
+  border-radius:17px 17px 4px 17px;
+  background:var(--vc-panel);
+  color:var(--vc-navy);
+  box-shadow:0 18px 44px rgba(13,26,35,.20);
+  transform:translateY(10px) scale(.96);
+  opacity:0;
+  transition:opacity .24s ease,transform .24s ease;
+  pointer-events:auto;
+}
+.vaani-mentor.speaking .vc-bubble{opacity:1;transform:translateY(0) scale(1)}
+.vc-kicker{
+  font:700 .58rem var(--mono,monospace);
+  letter-spacing:.14em;
+  color:#8d6a29;
+  text-transform:uppercase;
+}
+.vc-text{margin-top:5px;font-size:.78rem;line-height:1.5;color:#4e5e68}
+.vc-quote{margin-top:7px;font-family:var(--serif,Georgia);font-size:.82rem;font-style:italic;color:#253640}
+.vc-actions{display:flex;gap:7px;margin-top:9px}
+.vc-actions button{
+  min-height:30px;padding:6px 10px;border-radius:999px;border:1px solid var(--vc-line);
+  background:#f8f7f3;color:#47565f;font:700 .62rem var(--mono,monospace);cursor:pointer;
+}
+.vc-actions button.primary{background:var(--vc-navy);border-color:var(--vc-navy);color:#fff}
+.vc-character{
+  width:120px;height:108px;flex:0 0 120px;
+  background-image:url("assets/vaani-officer-pack.webp");
+  background-size:400% 300%;
+  background-position:0 0;
+  background-repeat:no-repeat;
+  filter:drop-shadow(0 14px 12px rgba(8,18,24,.22));
+  transform:translateY(12px);
+  opacity:.98;
+  transition:transform .3s ease,filter .3s ease;
+  pointer-events:auto;
+  cursor:pointer;
+}
+.vaani-mentor.speaking .vc-character{transform:translateY(0) scale(1.02);filter:drop-shadow(0 18px 16px rgba(8,18,24,.27))}
+.vc-p0{background-position:0 0}.vc-p1{background-position:33.333% 0}.vc-p2{background-position:66.667% 0}.vc-p3{background-position:100% 0}
+.vc-p4{background-position:0 50%}.vc-p5{background-position:33.333% 50%}.vc-p6{background-position:66.667% 50%}.vc-p7{background-position:100% 50%}
+.vc-p8{background-position:0 100%}.vc-p9{background-position:33.333% 100%}.vc-p10{background-position:66.667% 100%}.vc-p11{background-position:100% 100%}
+.vaani-mentor.bad-result{
+  inset:0;
+  right:auto;bottom:auto;
+  width:100%;height:100%;
+  padding:18px;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background:rgba(8,14,18,.72);
+  backdrop-filter:blur(5px);
+  pointer-events:auto;
+}
+.vaani-mentor.bad-result.show{display:flex}
+.vc-recovery-card{
+  width:min(620px,100%);
+  padding:22px;
+  border:1px solid rgba(201,162,75,.45);
+  border-radius:24px;
+  background:linear-gradient(145deg,#fff,#f8f8f4);
+  box-shadow:0 30px 90px rgba(0,0,0,.30);
+  display:grid;
+  grid-template-columns:150px 1fr;
+  gap:14px;
+  align-items:center;
+}
+.vc-recovery-art{
+  width:150px;height:140px;
+  background-image:url("assets/vaani-officer-pack.webp");
+  background-size:400% 300%;
+  background-position:0 50%;
+  background-repeat:no-repeat;
+}
+.vc-recovery-copy .vc-kicker{font-size:.62rem}.vc-recovery-copy h3{margin:5px 0 7px;font:700 1.35rem var(--serif,Georgia);color:var(--vc-navy)}
+.vc-recovery-copy p{margin:0;color:#5e6a73;font-size:.84rem;line-height:1.58}
+.vc-recovery-copy blockquote{margin:10px 0 0;padding-left:12px;border-left:3px solid var(--vc-gold);font:600 .88rem/1.45 var(--serif,Georgia);color:#334650}
+.vc-recovery-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.vc-recovery-actions button{min-height:38px}
+.vc-close{
+  position:absolute;right:18px;top:16px;width:34px;height:34px;border-radius:50%;
+  border:1px solid rgba(23,39,50,.12);background:#fff;color:#53616a;cursor:pointer;
+}
+@media(max-width:700px){
+  .vaani-mentor{right:8px;bottom:calc(var(--bottomnav-h,64px) + 74px);gap:3px}
+  .vc-bubble{width:min(250px,calc(100vw - 108px));padding:10px 11px}.vc-text{font-size:.73rem}.vc-quote{font-size:.76rem}
+  .vc-character{width:96px;height:90px;flex-basis:96px}
+  .vc-actions button{min-height:28px;font-size:.58rem}
+  .vc-recovery-card{grid-template-columns:100px 1fr;padding:16px;border-radius:20px}
+  .vc-recovery-art{width:100px;height:100px}
+  .vc-recovery-copy h3{font-size:1.08rem}.vc-recovery-copy p{font-size:.76rem}.vc-recovery-copy blockquote{font-size:.78rem}
+}
+@media(max-width:430px){
+  .vaani-mentor{bottom:calc(var(--bottomnav-h,64px) + 72px)}
+  .vc-character{width:82px;height:78px;flex-basis:82px}.vc-bubble{width:calc(100vw - 108px)}
+}
