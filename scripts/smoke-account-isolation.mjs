@@ -16,6 +16,8 @@ try{
   await page.waitForSelector('#gate-stage-showcode',{state:'visible',timeout:15000});
   const firstCode=await page.locator('#gate-code-display').innerText();
   await page.locator('#gate-stage-showcode .gate-btn').click();
+  await page.waitForSelector('#serviceForcePicker[data-mode="onboarding"]',{state:'visible',timeout:15000});
+  await page.locator('#serviceForcePicker .service-force-option[data-force="army"]').click();
   await page.waitForFunction(()=>document.getElementById('gate')?.classList.contains('hide'));
   const accountA=await page.evaluate(async()=>{
     const code=getSessionCode();
@@ -50,6 +52,7 @@ try{
   await page.evaluate(async()=>{State.xp=12;State.vocabLearned={'b-word':true};toggleBookmark('b-pyq',null);await saveData();});
   const restoredA=await page.evaluate(async code=>{const result=await loginWithCode(code);return {result,state:State,books:DATA,pyqBookmarks:getBookmarks()};},accountA);
   assert.equal(restoredA.result.ok,true);assert.equal(restoredA.state.xp,321);
+  assert.equal(restoredA.state.serviceForce,'army','Account A service preference was not restored');
   assert.equal(restoredA.state.completedTopics.noun,true);assert.equal(restoredA.state.quizScores.sva,87);
   assert.equal(restoredA.state.topicProgress.tenses,true);assert.equal(restoredA.state.bookmarkedTopics.clauses,true);
   assert.deepEqual(restoredA.state.grammarMastery.sva,{attempts:4,correct:3,lastAttempt:123});
