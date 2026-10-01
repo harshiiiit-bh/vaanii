@@ -2146,6 +2146,22 @@ function pvReportError(qid){
   toast('Reported — thanks, Cadet. We\'ll review this question.');
 }
 
+function pvPaperIdentity(q){
+  const exam=String(q&&q._exam||'NDA').trim().toUpperCase();
+  const info=PYQ_EXAM_INFO[exam];
+  const code=info?info.short:exam;
+  const year=Number(q&&q.y);
+  const session=String(q&&q.s||'').trim().toUpperCase();
+  const validYear=Number.isFinite(year)&&year>=1900&&year<=2100;
+  const validSession=/^[IVXLC]+$/.test(session);
+  return {code:code,year:validYear?String(year):'',session:validSession?session:'',label:[code,validSession?session:'',validYear?String(year):''].filter(Boolean).join(' ')};
+}
+
+function pvPaperChipHTML(q){
+  const p=pvPaperIdentity(q);
+  return '<span class="pyq-chip yr" title="Source paper">'+escapeHtmlVaani(p.label||'PYQ')+'</span>';
+}
+
 function pvSessionHTML(){
   const s = PV.session; if(!s) return '';
   const q = s.questions[s.index];
@@ -2228,8 +2244,8 @@ function pvSessionHTML(){
 
     <div class="pv-qcard reveal">
       <div class="pv-qmeta-row">
-        <span class="pyq-chip yr">${(PYQ_EXAM_INFO[q._exam]&&PYQ_EXAM_INFO[q._exam].short)||'NDA'} ${q.s} ${q.y}</span>
-        <span class="pyq-chip tp">${escapeHtmlVaani(pvOriginalTopicTag(q))}</span>
+${pvPaperChipHTML(q)}
+        <span class="pyq-chip tp">${escapeHtmlVaani(q.sec||pvOriginalTopicTag(q)||'PYQ')}</span>
         ${q.diff?`<span class="pyq-chip diff-${q.diff}">${q.diff}</span>`:''}
         <button class="bm-star ${bookmarked?'active':''}" onclick="toggleBookmark('${bmId}', this)" title="Bookmark" style="margin-left:auto">★</button>
       </div>
