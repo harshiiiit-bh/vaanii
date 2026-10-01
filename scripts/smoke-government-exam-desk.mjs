@@ -41,7 +41,7 @@ const baseURL = 'http://127.0.0.1:' + address.port + '/';
 const launchOptions = { headless: true, args: ['--no-sandbox'] };
 if (process.env.VAANI_BROWSER_EXECUTABLE) launchOptions.executablePath = process.env.VAANI_BROWSER_EXECUTABLE;
 browser = await chromium.launch(launchOptions);
-context = await browser.newContext({ viewport: { width: 1440, height: 1000 }, reducedMotion: 'reduce' });
+context = await browser.newContext({ viewport: { width: 1440, height: 1000 }, reducedMotion: 'reduce', serviceWorkers: 'block' });
 const page = await context.newPage();
 const fixedToday = '2026-09-30';
 let failFeeds = false;
@@ -487,8 +487,14 @@ await page.goto(baseURL + '?v=notifications', { waitUntil: 'domcontentloaded' })
   }
 
   failFeeds = true;
+  const refreshFailureResponse = page.waitForResponse(response => response.status() === 503, { timeout: 10000 });
   await page.locator('#vxRefreshFeed').click();
-  await page.waitForFunction(() => document.querySelector('#vxRefreshFeed') && !document.querySelector('#vxRefreshFeed').disabled, null, { timeout: 10000 });
+  await refreshFailureResponse;
+  await page.waitForFunction(() => {
+    const button = document.querySelector('#vxRefreshFeed');
+    const health = document.querySelector('#vxFeedHealth')?.textContent || '';
+    return Boolean(button && !button.disabled && health.includes('Refresh failed · showing last loaded data'));
+  }, null, { timeout: 10000 });
   assert.equal(await page.locator('#vxNearList .vx-notice-card').count(), nearVisible, 'a failed manual refresh should retain the last loaded notice cards');
   assert.match(await page.locator('#vxFeedHealth').innerText(), /Refresh failed · showing last loaded data/, 'a failed manual refresh should be visible without clearing the current list');
   assert.match(await page.locator('#vxFeedSummary').innerText(), /last loaded data retained/, 'the management panel should disclose retained data after a failed refresh');
