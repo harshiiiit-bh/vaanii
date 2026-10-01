@@ -310,9 +310,29 @@ await page.goto(baseURL + '?v=notifications', { waitUntil: 'domcontentloaded' })
   assert.equal(await page.locator('#vxArchiveGrid .vx-archive-card').count(), 4, 'expired application, result, answer-key and admit-card records should stay archived');
   await page.locator('#vx-exam-dates > summary').click();
   assert.equal(await page.locator('#vx-exam-dates').evaluate(element => element.open), true, 'the calendar should expand on activation');
-  assert.equal(await page.locator('#vxExamDatesList .vx-date-row').count(), 4, 'default calendar should show only future exam dates within 120 days');
-  assert.equal(await page.locator('#vxExamDatesList .vx-date-month').count(), 2, 'near-term exam dates should be grouped by month and year');
-  const calendarTitles = await page.locator('#vxExamDatesList .vx-date-row h4').allTextContents();
+  const defaultCalendarRows = await page.locator('#vxExamDatesList .vx-date-row').evaluateAll(rows => {
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    return rows.map(row => {
+      const block = row.querySelector('.vx-date-block');
+      const day = Number(block?.querySelector('strong')?.textContent || 0);
+      const monthLabel = String(block?.querySelector('span')?.textContent || '').trim().slice(0, 3);
+      const month = monthNames.indexOf(monthLabel);
+      const year = Number(block?.querySelector('small')?.textContent || 0);
+      const date = month >= 0 && year ? new Date(year, month, day) : new Date(NaN);
+      return {
+        title: row.querySelector('h4')?.textContent?.trim() || '',
+        days: Number.isNaN(date.valueOf()) ? NaN : Math.round((date.valueOf() - today.valueOf()) / 86400000)
+      };
+    });
+  });
+  const defaultCalendarCount = defaultCalendarRows.length;
+  const calendarTitles = defaultCalendarRows.map(row => row.title);
+  assert.ok(defaultCalendarCount >= 4, 'the default calendar should show the fixture’s near-term exam dates');
+  assert.ok(defaultCalendarRows.every(row => Number.isFinite(row.days) && row.days >= 0 && row.days <= 120),
+    'the default calendar must keep every row inside its 120-day window: ' + JSON.stringify(defaultCalendarRows));
+  assert.ok(await page.locator('#vxExamDatesList .vx-date-month').count() >= 2, 'near-term exam dates should be grouped by month and year');
   assert.equal(calendarTitles[0], 'SSC recruitment closing today',
     'the exam calendar should sort by the actual exam date in chronological order');
   assert.ok(calendarTitles.includes('NDA closed application cycle'),
@@ -320,14 +340,20 @@ await page.goto(baseURL + '?v=notifications', { waitUntil: 'domcontentloaded' })
   assert.ok(!calendarTitles.includes('NDA Officer Entry Calendar 2027'),
     'distant NDA exam dates should stay hidden in the default calendar view');
   await page.locator('#vxLaterExamDates').click();
-  assert.equal(await page.locator('#vxExamDatesList .vx-date-row').count(), 7, 'show later dates should expand the calendar without losing far-future records');
-  assert.ok((await page.locator('#vxExamDatesList').innerText()).includes('NDA closed application cycle'),
+  const expandedCalendarTitles = await page.locator('#vxExamDatesList .vx-date-row h4').allTextContents();
+  const expandedCalendarCount = await page.locator('#vxExamDatesList .vx-date-row').count();
+  assert.ok(expandedCalendarCount > defaultCalendarCount, 'show later dates should expand the calendar');
+  assert.ok(expandedCalendarTitles.includes('NDA Officer Entry Calendar 2027'),
+    'expanded calendar should expose far-future exam dates');
+  assert.ok(expandedCalendarTitles.includes('NDA closed application cycle'),
     'expanded calendar should retain older-cycle future exam dates');
   assert.equal(await page.locator('#vxExamDatesList').innerText().then(text => text.includes('TENTATIVE · CALENDAR')), true,
     'tentative dates should remain visible when the user expands the calendar');
   await page.locator('#vxLaterExamDates').click();
-  assert.equal(await page.locator('#vxExamDatesList .vx-date-row').count(), 4, 'calendar toggle should return to the 120-day view');
-  assert.equal(await page.locator('#vxExamDatesList').innerText().then(text => text.includes('CONFIRMED · OFFICIAL NOTICE')), true);
+  assert.equal(await page.locator('#vxExamDatesList .vx-date-row').count(), defaultCalendarCount,
+    'calendar toggle should return to the exact 120-day view');
+  assert.deepEqual(await page.locator('#vxExamDatesList .vx-date-row h4').allTextContents(), calendarTitles,
+    'collapsing the calendar should restore the same near-term date set');
   await page.locator('#vx-exam-dates > summary').click();
   await page.locator('#vx-archive > summary').click();
   assert.equal(await page.locator('#vxOngoingList img').count(), 0, 'feed text must be escaped before rendering');
@@ -434,7 +460,45 @@ await page.goto(baseURL + '?v=notifications', { waitUntil: 'domcontentloaded' })
   assert.equal(await page.locator('#vxUpcomingList .vx-notice-card').count(), 0, 'feed failures should show an empty state rather than stale fake opportunities');
   assert.equal(pageErrors.length, 0, 'Exam Desk should not throw during normal, malformed or unavailable feed responses: ' + pageErrors.join(' | '));
 
-  console.log('Government Exam Desk browser smoke: expanded exams and career groups, directory integrity, Career Map search, collapsed panels, live-feed handling, status lanes, archive, calendar, filters, force cards, XSS, errors, reduced motion, dark theme and 320–1440px layouts passed');
+  // Browser-level PYQ layout regression: group panels must span the topic
+  // browser, while preserving a no-horizontal-scroll layout on mobile.
+  failFeeds = false;
+  await page.evaluate(() => switchView('pyq'));
+  await page.waitForSelector('#pvTopicGrid .pv-topic-group', { state: 'attached', timeout: 20000 });
+  await page.waitForFunction(() => {
+    const group = document.querySelector('#pvTopicGrid .pv-topic-group');
+    return Boolean(group && group.getBoundingClientRect().width > 0);
+  }, null, { timeout: 15000 });
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  const pyqDesktopLayout = await page.locator('#pvTopicGrid').evaluate(element => {
+    const group = element.querySelector('.pv-topic-group');
+    const title = group?.querySelector('.pv-topic-group-copy strong');
+    return {
+      containerWidth: element.getBoundingClientRect().width,
+      groupWidth: group?.getBoundingClientRect().width || 0,
+      titleWidth: title?.getBoundingClientRect().width || 0,
+      columns: getComputedStyle(element).gridTemplateColumns.split(/\\s+/).filter(Boolean).length
+    };
+  });
+  assert.equal(pyqDesktopLayout.columns, 1, 'PYQ groups should use a single outer column on desktop: ' + JSON.stringify(pyqDesktopLayout));
+  assert.ok(pyqDesktopLayout.groupWidth >= pyqDesktopLayout.containerWidth * 0.85,
+    'PYQ group panels should fill the available desktop width: ' + JSON.stringify(pyqDesktopLayout));
+  assert.ok(pyqDesktopLayout.titleWidth >= 240,
+    'PYQ group headings must not collapse to one-character wrapping: ' + JSON.stringify(pyqDesktopLayout));
+  await page.setViewportSize({ width: 390, height: 844 });
+  const pyqMobileLayout = await page.locator('#pvTopicGrid').evaluate(element => ({
+    containerWidth: element.getBoundingClientRect().width,
+    groupWidth: element.querySelector('.pv-topic-group')?.getBoundingClientRect().width || 0,
+    documentWidth: document.documentElement.clientWidth,
+    documentScrollWidth: document.documentElement.scrollWidth
+  }));
+  assert.ok(pyqMobileLayout.groupWidth >= pyqMobileLayout.containerWidth * 0.85,
+    'PYQ group panels should remain full-width on mobile: ' + JSON.stringify(pyqMobileLayout));
+  assert.ok(pyqMobileLayout.documentScrollWidth <= pyqMobileLayout.documentWidth + 1,
+    'PYQ should not introduce horizontal page scrolling on mobile: ' + JSON.stringify(pyqMobileLayout));
+  assert.equal(pageErrors.length, 0, 'Site should not throw during the Government Exam Desk and PYQ smoke checks: ' + pageErrors.join(' | '));
+
+  console.log('Government Exam Desk + PYQ browser smoke: calendar horizon and toggle, PYQ group width at desktop/mobile, Exam Desk feeds, filters, Career Map, archive, XSS, reduced motion and responsive layouts passed');
 } finally {
   const cleanup = [];
   if (browser || context) {
