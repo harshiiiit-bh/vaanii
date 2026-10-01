@@ -219,7 +219,8 @@ try {
     'Changing to Air Force should update the active account');
   assert.equal(await page.evaluate(() => State.xp), 0,
     'Changing to Air Force should preserve learning XP');
-  await page.locator('#serviceRankLadder summary').click();
+  const ladderOpen = await page.locator('#serviceRankLadder').evaluate(el => el.open);
+  if (!ladderOpen) await page.locator('#serviceRankLadder summary').click();
   const airforceLadder = await page.locator('#serviceRankList .vp-service-rank-row').allInnerTexts();
   const airforceRankNames = await page.locator('#serviceRankList .vp-service-rank-name').allTextContents();
   assert.match(airforceLadder[0], /Flying Officer/, 'Air Force ladder should start at Flying Officer');
