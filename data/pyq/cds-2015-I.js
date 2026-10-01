@@ -1236,4 +1236,127 @@ var PYQ_CDS_2015_I = [
     "passage": "We all like listening to stories, and the person who is good at telling stories will always be a popular member of any company. The art of good story-telling covers much more than making up fabulous adventures; it includes telling about the doings of living people or famous men and women of the past, about your own travels and adventures and experiences, about the books you have read and the films you have seen. Practising the art of story-telling can be very useful too. It will help you to think clearly and logically, to sort out your ideas, to express yourself clearly and effectively, to gain and hold the attention of others. It will help you to shake off shyness and self-consciousness, and give you that feeling of freedom which is so important to success in life."
   }
 
+,
+
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 88,
+    "sec": "Comprehension",
+    "q": "The noise was made by",
+    "o": [
+      "the old man",
+      "the aeroplane",
+      "the little man",
+      "the boy"
+    ],
+    "ans": 3,
+    "passage": "A little man beside me was turning over the pages of a magazine quickly and nervously. Opposite me there was a young mother who was trying to restrain her son from making a noise. The boy had obviously grown weary of waiting. He had placed an ashtray on the floor and was making aeroplane-noises as he waved a pencil in his hands. Near him, an old man was fast asleep, snoring quietly to himself and the boy’s mother was afraid that sooner or later her son would wake the gentleman up."
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 89,
+    "sec": "Comprehension",
+    "q": "The person who was the least disturbed was",
+    "o": [
+      "the observer",
+      "the son",
+      "the old man",
+      "the little man"
+    ],
+    "ans": 2,
+    "passage": "A little man beside me was turning over the pages of a magazine quickly and nervously. Opposite me there was a young mother who was trying to restrain her son from making a noise. The boy had obviously grown weary of waiting. He had placed an ashtray on the floor and was making aeroplane-noises as he waved a pencil in his hands. Near him, an old man was fast asleep, snoring quietly to himself and the boy’s mother was afraid that sooner or later her son would wake the gentleman up."
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 90,
+    "sec": "Comprehension",
+    "q": "The factor common to all the people was that they were all",
+    "o": [
+      "watching a film",
+      "waiting for something",
+      "looking at the little boy’s playfulness",
+      "reading a magazine"
+    ],
+    "ans": 1,
+    "passage": "A little man beside me was turning over the pages of a magazine quickly and nervously. Opposite me there was a young mother who was trying to restrain her son from making a noise. The boy had obviously grown weary of waiting. He had placed an ashtray on the floor and was making aeroplane-noises as he waved a pencil in his hands. Near him, an old man was fast asleep, snoring quietly to himself and the boy’s mother was afraid that sooner or later her son would wake the gentleman up."
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 91,
+    "sec": "Comprehension",
+    "q": "Among those present the one who appeared to be the most bored was the",
+    "o": [
+      "child",
+      "little man",
+      "old man",
+      "mother"
+    ],
+    "ans": 0,
+    "passage": "A little man beside me was turning over the pages of a magazine quickly and nervously. Opposite me there was a young mother who was trying to restrain her son from making a noise. The boy had obviously grown weary of waiting. He had placed an ashtray on the floor and was making aeroplane-noises as he waved a pencil in his hands. Near him, an old man was fast asleep, snoring quietly to himself and the boy’s mother was afraid that sooner or later her son would wake the gentleman up."
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 92,
+    "sec": "Comprehension",
+    "q": "The man was troubled because",
+    "o": [
+      "the blacksmiths always fought with each other",
+      "the blacksmiths’ hammers made a lot of noise",
+      "he was afraid of blacksmiths",
+      "the blacksmiths did not do their work properly"
+    ],
+    "ans": 1,
+    "passage": "A man had two blacksmiths for his neighbours. Their names were Pengu and Shengu. The man was greatly troubled by the noise of their hammers. He decided to talk to them. The next day he called both of them and offered Rs. 100 each, if they found new huts for themselves. They took the money and agreed to find new huts for themselves. The next morning he woke up again to the sound of their hammers. He went out to see why the blacksmiths hadn’t found new huts and he discovered that Pengu and Shengu had kept their promise. They had exchanged their huts."
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 93,
+    "sec": "Comprehension",
+    "q": "The man gave them money because",
+    "o": [
+      "the blacksmiths were poor",
+      "the blacksmiths had asked him for money",
+      "he did not want them to make a noise",
+      "he wanted them to find new huts"
+    ],
+    "ans": 3,
+    "passage": "A man had two blacksmiths for his neighbours. Their names were Pengu and Shengu. The man was greatly troubled by the noise of their hammers. He decided to talk to them. The next day he called both of them and offered Rs. 100 each, if they found new huts for themselves. They took the money and agreed to find new huts for themselves. The next morning he woke up again to the sound of their hammers. He went out to see why the blacksmiths hadn’t found new huts and he discovered that Pengu and Shengu had kept their promise. They had exchanged their huts."
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 94,
+    "sec": "Comprehension",
+    "q": "The man went out of his house because",
+    "o": [
+      "he wanted to fight with the blacksmiths",
+      "he wanted to ask the blacksmiths to stop the noise",
+      "he wanted to find out why they hadn’t found new huts",
+      "he wanted his money back from the blacksmiths"
+    ],
+    "ans": 2,
+    "passage": "A man had two blacksmiths for his neighbours. Their names were Pengu and Shengu. The man was greatly troubled by the noise of their hammers. He decided to talk to them. The next day he called both of them and offered Rs. 100 each, if they found new huts for themselves. They took the money and agreed to find new huts for themselves. The next morning he woke up again to the sound of their hammers. He went out to see why the blacksmiths hadn’t found new huts and he discovered that Pengu and Shengu had kept their promise. They had exchanged their huts."
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 95,
+    "sec": "Comprehension",
+    "q": "The man came to know that",
+    "o": [
+      "the blacksmiths were not in their huts",
+      "the blacksmiths had exchanged huts",
+      "the blacksmiths were going away",
+      "the blacksmiths had not kept their promise"
+    ],
+    "ans": 1,
+    "passage": "A man had two blacksmiths for his neighbours. Their names were Pengu and Shengu. The man was greatly troubled by the noise of their hammers. He decided to talk to them. The next day he called both of them and offered Rs. 100 each, if they found new huts for themselves. They took the money and agreed to find new huts for themselves. The next morning he woke up again to the sound of their hammers. He went out to see why the blacksmiths hadn’t found new huts and he discovered that Pengu and Shengu had kept their promise. They had exchanged their huts."
+  }
+
 ];
