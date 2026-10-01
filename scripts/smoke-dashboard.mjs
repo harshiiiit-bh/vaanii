@@ -242,7 +242,10 @@ try {
     'New-account form retained the previous account name after logout');
   const accountB = await page.evaluate(async () => {
     generateCode=()=> '654321';
-    return await createNewAccount();
+    const code=await createNewAccount();
+    State.serviceForce='navy';
+    await persistCombinedAccount();
+    return code;
   });
   assert.notEqual(accountB, accountA, 'Regression accounts unexpectedly share a code');
   const cleanB = await page.evaluate(() => ({xp:State.xp,completed:State.completedTopics,scores:State.quizScores,
