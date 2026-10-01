@@ -108,7 +108,7 @@
 /* Service selection modal and commissioned rank progress */
 .service-force-overlay[hidden]{display:none!important}
 .service-force-overlay{
-  position:fixed;inset:0;z-index:800;display:flex;align-items:center;justify-content:center;
+  position:fixed;inset:0;z-index:1100;display:flex;align-items:center;justify-content:center;
   padding:16px;background:rgba(5,10,15,.78);backdrop-filter:blur(8px);box-sizing:border-box;
 }
 .service-force-dialog{
