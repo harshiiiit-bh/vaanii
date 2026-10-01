@@ -117,6 +117,12 @@ jobs:
             res.raise_for_status()
             root=BeautifulSoup(res.text,"html.parser").select_one(".entry-content")
             if not root:raise RuntimeError(f"Missing article root for {session}")
+            if session=="II":
+              for debug_ol in root.find_all("ol"):
+                if debug_ol.get("start")=="47":
+                  print("DEBUG_Q47_PARENT",str(debug_ol.parent)[:12000])
+                  print("DEBUG_Q48_PARENT",str(debug_ol.find_next("ol").parent)[:3000] if debug_ol.find_next("ol") else "none")
+                  break
             lists=outer_lists(root)
             records=[]
             next_n=1
