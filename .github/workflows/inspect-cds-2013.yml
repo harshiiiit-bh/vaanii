@@ -159,6 +159,9 @@ jobs:
                 q=text_without_lists(li)
                 opts_el=choice_list(li)
                 opts=[norm(x.get_text(" ",strip=True)) for x in direct_list_items(opts_el)] if opts_el else []
+                # The public transcription omits option (d) for this item; use the uploaded paper scan.
+                if session=="II" and n==120:
+                  opts=["Rare","Frequent","Sharp","Coordinated"]
                 if sec=="Spotting Errors":
                   segs=underlines(li)
                   if len(segs)>=3:
