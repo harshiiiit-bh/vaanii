@@ -448,6 +448,20 @@
     </div>
   </div>
 
+  <!-- ===== XP ARCADE ===== -->
+  <section class="card vd-card reveal" style="margin-top:22px;padding:26px" aria-label="XP Arcade">
+    <div class="panel-title"><span class="bar"></span>⚡ XP Arcade</div>
+    <p style="color:var(--muted);max-width:760px;margin:0 0 18px">No daily cap. Keep your XP moving with real practice, quick challenges and repeatable learning activities.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px">
+      <button class="btn ghost" style="justify-content:flex-start;text-align:left" onclick="switchView('pyq')"><strong>🎯 PYQ Vault</strong><small style="display:block;opacity:.72;margin-top:4px">+2 XP per correct answer</small></button>
+      <button class="btn ghost" style="justify-content:flex-start;text-align:left" onclick="switchView('grammar')"><strong>🧠 Grammar Blitz</strong><small style="display:block;opacity:.72;margin-top:4px">Correct answers +2 XP</small></button>
+      <button class="btn ghost" style="justify-content:flex-start;text-align:left" onclick="switchView('games')"><strong>🎮 Memory Match</strong><small style="display:block;opacity:.72;margin-top:4px">+20 XP clear bonus</small></button>
+      <button class="btn ghost" style="justify-content:flex-start;text-align:left" onclick="switchView('vocab')"><strong>📚 Word Hunt</strong><small style="display:block;opacity:.72;margin-top:4px">+10 XP per new word</small></button>
+      <button class="btn ghost" style="justify-content:flex-start;text-align:left" onclick="document.getElementById('spinBtn')?.click()"><strong>🎡 Lucky Spin</strong><small style="display:block;opacity:.72;margin-top:4px">Daily bonus XP</small></button>
+      <button class="btn ghost" style="justify-content:flex-start;text-align:left" onclick="document.getElementById('focusSprintWidget')?.scrollIntoView({behavior:'smooth',block:'center'})"><strong>⏱️ Focus Sprint</strong><small style="display:block;opacity:.72;margin-top:4px">+5 XP completion</small></button>
+    </div>
+  </section>
+
   <!-- ===== FOCUS SPRINT ===== -->
   <section class="vd-focus-sprint reveal" aria-label="Focus Sprint">
     <div id="focusSprintWidget"></div>
@@ -1101,29 +1115,26 @@
         <div class="vp-rank-bar bar-wrap"><div class="bar-fill" id="rankBar" style="width:0%"></div></div>
         <p class="vp-rank-hint" id="rankXPText">0 / 100 XP to next learning milestone</p>
         <p class="vp-rank-pace" id="rankPaceHint">Choose a service to view your next milestone pace.</p>
-        <div class="vp-rank-daily-panel" aria-label="Daily XP allowance">
-          <div class="vp-rank-daily-head"><span>Daily earning allowance</span><strong id="rankDailyXPHint">Today's XP earned: 0 / 80</strong></div>
-          <div class="vp-rank-daily-track" id="rankDailyXPTrack" role="progressbar" aria-label="XP earned today" aria-valuemin="0" aria-valuemax="80" aria-valuenow="0" aria-valuetext="0 of 80 XP earned; 80 XP remaining">
-            <span id="rankDailyXPFill"></span>
-          </div>
-          <p class="vp-rank-daily-remaining" id="rankDailyXPRemaining">80 XP remaining today</p>
+        <div class="vp-rank-daily-panel" aria-label="XP earning status">
+          <div class="vp-rank-daily-head"><span>Daily XP earning</span><strong id="rankDailyXPHint">Today's XP earned: 0 · UNLIMITED</strong></div>
+          <p class="vp-rank-daily-remaining" id="rankDailyXPRemaining">No daily cap · 3+ day streak = +22 XP/day</p>
         </div>
         <p class="vp-rank-disclaimer">VAANI XP tracks learning milestones only; it does not grant or represent an actual military rank or promotion.</p>
         <details class="vp-xp-rules"><summary>XP rules &amp; deductions</summary>
           <div class="vp-xp-rules-grid">
             <section><strong>Ways to earn</strong><ul>
-              <li>Quiz accuracy rewards: 70–79% +6 XP; 80–89% +8; 90–99% +10; 100% +12. Lower accuracy follows the deduction tiers.</li>
-              <li>Clear a grammar topic: +25 XP.</li>
-              <li>Clear a match game: +20 XP.</li>
+              <li>Every correct question answer: <strong>+2 XP</strong> — the base XP is identical across questions and exam sources.</li>
+              <li>Clear a grammar topic: +25 XP; clear a synonym match game: +20 XP.</li>
               <li>Learn a word: +10 XP; complete a Focus Sprint: +5 XP.</li>
-              <li>Correct PYQ or quick answer: +2 XP. Combo, Lucky Spin and Mystery Box rewards vary.</li>
+              <li>Combo bonuses, Lucky Spin and Mystery Box rewards add separate activity XP.</li>
+              <li>Reach a 3+ day streak: <strong>+22 XP every active day</strong> from the third day onward.</li>
             </ul></section>
             <section><strong>Discipline rules</strong><ul>
-              <li>Maximum 80 earned XP per local calendar day, shared across activities and devices for the account.</li>
-              <li>Completed-attempt accuracy deductions: 60–69% −10 XP; 50–59% −20; 40–49% −45; 33–39% −60; below 33% −80. Scores use their exact percentage; no accuracy deduction applies when no question was answered. Accuracy of 70% or more has no accuracy deduction.</li>
-              <li>Completed PYQ exam net-marks deductions (after −⅓ negative marking): 70% or more −5 XP; 50–69% −8; 33–49% −12; below 33% −15. Accuracy and net-marks deductions stack on exam simulations.</li>
-              <li>Each missed login day resets the streak and deducts 15 XP; missed-day deductions are capped at 75 XP per return.</li>
-              <li>XP cannot fall below zero. Losing XP never refills the daily earning allowance.</li>
+              <li><strong>No daily XP cap.</strong> XP can keep accumulating through genuine study and activity.</li>
+              <li>Accuracy deductions: 60–69% −10 XP; 50–59% −20; 40–49% −45; 33–39% −60; below 33% −80. No accuracy deduction when no question was answered; 70%+ has no accuracy deduction.</li>
+              <li>PYQ exam net-marks deductions after −⅓ negative marking: 70%+ −5; 50–69% −8; 33–49% −12; below 33% −15. Accuracy and net-marks deductions stack.</li>
+              <li>Missing a login day resets the streak and deducts 15 XP; missed-day deductions are capped at 75 XP per return.</li>
+              <li>XP cannot fall below zero. Deductions do not affect your ability to earn more XP later.</li>
             </ul></section>
           </div>
         </details>
