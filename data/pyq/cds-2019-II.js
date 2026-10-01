@@ -726,6 +726,7 @@ var PYQ_CDS_2019_II = [
     "s": "II",
     "n": 37,
     "sec": "Synonyms",
+    "keyword": "impounded",
     "q": "The properties of the family have been impounded by the order of the court.",
     "o": [
       "Confiscated",
@@ -746,6 +747,7 @@ var PYQ_CDS_2019_II = [
     "s": "II",
     "n": 38,
     "sec": "Synonyms",
+    "keyword": "impugned",
     "q": "The officer in charge of the operations has been impugned for the excesses.",
     "o": [
       "Expelled",
@@ -766,6 +768,7 @@ var PYQ_CDS_2019_II = [
     "s": "II",
     "n": 39,
     "sec": "Synonyms",
+    "keyword": "innate",
     "q": "Cognitivist and linguists believe that every child is born with innate qualities.",
     "o": [
       "Biological",
@@ -1306,6 +1309,7 @@ var PYQ_CDS_2019_II = [
     "s": "II",
     "n": 66,
     "sec": "Antonyms",
+    "keyword": "beauty",
     "q": "Beauty lies in the eyes of the beholder.",
     "o": [
       "Allure",
@@ -1326,6 +1330,7 @@ var PYQ_CDS_2019_II = [
     "s": "II",
     "n": 67,
     "sec": "Antonyms",
+    "keyword": "vulnerable",
     "q": "Reading details about suicide cases can push vulnerable people taking the extreme step.",
     "o": [
       "Imperious",
@@ -1346,6 +1351,7 @@ var PYQ_CDS_2019_II = [
     "s": "II",
     "n": 68,
     "sec": "Antonyms",
+    "keyword": "daunting",
     "q": "Standing before a judge in a courtroom can be daunting for anyone.",
     "o": [
       "Uncomfortable",
@@ -1366,6 +1372,7 @@ var PYQ_CDS_2019_II = [
     "s": "II",
     "n": 69,
     "sec": "Antonyms",
+    "keyword": "intimidation",
     "q": "He has been facing a kind of intimidation by his friends for last two years.",
     "o": [
       "Wiles",

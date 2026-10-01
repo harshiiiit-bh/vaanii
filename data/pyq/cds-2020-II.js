@@ -1276,6 +1276,7 @@ var PYQ_CDS_2020_II = [
     "s": "II",
     "n": 61,
     "sec": "Synonyms",
+    "keyword": "emboldened",
     "q": "Emboldened by its success, the leader now plans to go ahead with the plan and implementation.",
     "o": [
       "Encouraged",
@@ -1296,6 +1297,7 @@ var PYQ_CDS_2020_II = [
     "s": "II",
     "n": 62,
     "sec": "Synonyms",
+    "keyword": "indigenous",
     "q": "It is encouraging to see India's indigenous cinema is going places.",
     "o": [
       "homogenous",
@@ -1316,6 +1318,7 @@ var PYQ_CDS_2020_II = [
     "s": "II",
     "n": 63,
     "sec": "Synonyms",
+    "keyword": "pleonexia",
     "q": "The ability to imagine and connective a common good is inconsistent with what is known as 'pleonexia' is a major struggle for a good democracy to realize.",
     "o": [
       "Greed to grab everything for oneself",
@@ -1476,6 +1479,7 @@ var PYQ_CDS_2020_II = [
     "s": "II",
     "n": 71,
     "sec": "Antonyms",
+    "keyword": "archaic",
     "q": "The archaic thinking leads to unfounded beliefs.",
     "o": [
       "antiquated",
@@ -1496,6 +1500,7 @@ var PYQ_CDS_2020_II = [
     "s": "II",
     "n": 72,
     "sec": "Antonyms",
+    "keyword": "diffuse",
     "q": "Police had to resort to tear gas to diffuse tension among the crowd.",
     "o": [
       "concentrate",
@@ -1516,6 +1521,7 @@ var PYQ_CDS_2020_II = [
     "s": "II",
     "n": 73,
     "sec": "Antonyms",
+    "keyword": "unrest",
     "q": "Unrest in some pockets made the city dwellers confine themselves at home.",
     "o": [
       "Turbulence",
@@ -1536,6 +1542,7 @@ var PYQ_CDS_2020_II = [
     "s": "II",
     "n": 74,
     "sec": "Antonyms",
+    "keyword": "tranquility",
     "q": "Peace and tranquility are instruments which would boost the development of society.",
     "o": [
       "uproar",

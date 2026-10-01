@@ -1727,6 +1727,7 @@ var PYQ_CDS_2018_I = [
     "s": "I",
     "n": 81,
     "sec": "Antonyms",
+    "keyword": "vulnerable",
     "q": "Rakesh is vulnerable to political pressure.",
     "o": [
       "weak",
@@ -1767,6 +1768,7 @@ var PYQ_CDS_2018_I = [
     "s": "I",
     "n": 83,
     "sec": "Antonyms",
+    "keyword": "abominable",
     "q": "Macbeth is a/an abominable figure.",
     "o": [
       "abhorrent",
@@ -1787,6 +1789,7 @@ var PYQ_CDS_2018_I = [
     "s": "I",
     "n": 84,
     "sec": "Antonyms",
+    "keyword": "charming",
     "q": "The princess charming was the centre of attraction today.",
     "o": [
       "enchanting",
@@ -1807,6 +1810,7 @@ var PYQ_CDS_2018_I = [
     "s": "I",
     "n": 85,
     "sec": "Antonyms",
+    "keyword": "peculiar",
     "q": "Indian culture has been, from time immemorial, of a peculiar cast and mould.",
     "o": [
       "ordinary",
@@ -1827,6 +1831,7 @@ var PYQ_CDS_2018_I = [
     "s": "I",
     "n": 86,
     "sec": "Antonyms",
+    "keyword": "activity",
     "q": "It could not have been expected that, with such a bent of mind of the people, there should have been much activity for the cultivation of the physical sciences in this part of the world.",
     "o": [
       "dull",
@@ -1847,6 +1852,7 @@ var PYQ_CDS_2018_I = [
     "s": "I",
     "n": 87,
     "sec": "Antonyms",
+    "keyword": "anxious",
     "q": "I would beg of all friends not to rush to Birla house nor try to dissuade me or be anxious about me.",
     "o": [
       "certain",
@@ -1867,6 +1873,7 @@ var PYQ_CDS_2018_I = [
     "s": "I",
     "n": 88,
     "sec": "Antonyms",
+    "keyword": "criticisms",
     "q": "Some of the criticisms which they had to put up were very unfair.",
     "o": [
       "scold",
@@ -1887,6 +1894,7 @@ var PYQ_CDS_2018_I = [
     "s": "I",
     "n": 89,
     "sec": "Antonyms",
+    "keyword": "suitable",
     "q": "It’s the only treatment suitable for cancer.",
     "o": [
       "insufficient",
@@ -1907,6 +1915,7 @@ var PYQ_CDS_2018_I = [
     "s": "I",
     "n": 90,
     "sec": "Antonyms",
+    "keyword": "naive",
     "q": "It was a mystery as to where the young girl had acquired such a naive belief.",
     "o": [
       "credulous",
@@ -2487,6 +2496,7 @@ var PYQ_CDS_2018_I = [
     "s": "I",
     "n": 119,
     "sec": "Synonyms",
+    "keyword": "repulsed",
     "q": "The soldiers repulsed the enemy.",
     "o": [
       "Defeated",

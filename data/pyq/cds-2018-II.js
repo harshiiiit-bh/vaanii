@@ -226,6 +226,7 @@ var PYQ_CDS_2018_II = [
     "s": "II",
     "n": 12,
     "sec": "Antonyms",
+    "keyword": "soggy",
     "q": "The baby could not move as the place was soggy.",
     "o": [
       "Sodden",
@@ -246,6 +247,7 @@ var PYQ_CDS_2018_II = [
     "s": "II",
     "n": 13,
     "sec": "Antonyms",
+    "keyword": "rebuttal",
     "q": "Her rebuttal that she was not involved in the case was considered by the court.",
     "o": [
       "Refusal",
@@ -266,6 +268,7 @@ var PYQ_CDS_2018_II = [
     "s": "II",
     "n": 14,
     "sec": "Antonyms",
+    "keyword": "efficacy",
     "q": "Efficacy of the project needs an examination.",
     "o": [
       "Inefficiency",
@@ -286,6 +289,7 @@ var PYQ_CDS_2018_II = [
     "s": "II",
     "n": 15,
     "sec": "Antonyms",
+    "keyword": "disdainful",
     "q": "The whole audience showed a disdainful attitude during the match.",
     "o": [
       "Sneering",
@@ -306,6 +310,7 @@ var PYQ_CDS_2018_II = [
     "s": "II",
     "n": 16,
     "sec": "Antonyms",
+    "keyword": "inadvertently",
     "q": "The entry was carried out inadvertently.",
     "o": [
       "Purposely",
@@ -406,6 +411,7 @@ var PYQ_CDS_2018_II = [
     "s": "II",
     "n": 21,
     "sec": "Antonyms",
+    "keyword": "sanguine",
     "q": "Ravi is jovial and he makes the environment sanguine.",
     "o": [
       "Pessimistic",
@@ -2094,6 +2100,7 @@ var PYQ_CDS_2018_II = [
     "s": "II",
     "n": 102,
     "sec": "Synonyms",
+    "keyword": "derisive",
     "q": "His derisive behaviour has led to the situation we face now.",
     "o": [
       "Mockery",
@@ -2114,6 +2121,7 @@ var PYQ_CDS_2018_II = [
     "s": "II",
     "n": 103,
     "sec": "Synonyms",
+    "keyword": "detrimental",
     "q": "It was felt that the decision to remove the group from the exercise would be detrimental to the organization.",
     "o": [
       "Beneficial",
@@ -2154,6 +2162,7 @@ var PYQ_CDS_2018_II = [
     "s": "II",
     "n": 105,
     "sec": "Synonyms",
+    "keyword": "impede",
     "q": "Learning of foreign language should not impede one’s mother tongue learning.",
     "o": [
       "Facilitate",
@@ -2174,6 +2183,7 @@ var PYQ_CDS_2018_II = [
     "s": "II",
     "n": 106,
     "sec": "Synonyms",
+    "keyword": "ineptitude",
     "q": "A good work place shall not encourage ineptitude even in a hidden manner.",
     "o": [
       "incompetence",

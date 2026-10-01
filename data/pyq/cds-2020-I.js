@@ -806,6 +806,7 @@ var PYQ_CDS_2020_I = [
     "s": "I",
     "n": 41,
     "sec": "Antonyms",
+    "keyword": "charitable",
     "q": "All business activities need not result in profit-making. There is a need to be charitable.",
     "o": [
       "Lenient",
@@ -826,6 +827,7 @@ var PYQ_CDS_2020_I = [
     "s": "I",
     "n": 42,
     "sec": "Antonyms",
+    "keyword": "elated",
     "q": "One feels elated when someone praises one’s work.",
     "o": [
       "Feels good",
@@ -846,6 +848,7 @@ var PYQ_CDS_2020_I = [
     "s": "I",
     "n": 43,
     "sec": "Antonyms",
+    "keyword": "bestowed",
     "q": "The highest award was bestowed upon her for her yeoman service.",
     "o": [
       "Conferred",
@@ -866,6 +869,7 @@ var PYQ_CDS_2020_I = [
     "s": "I",
     "n": 44,
     "sec": "Antonyms",
+    "keyword": "wooing",
     "q": "Wooing everyone over an issue for support will not serve much purpose.",
     "o": [
       "Discouraging",
@@ -1006,6 +1010,7 @@ var PYQ_CDS_2020_I = [
     "s": "I",
     "n": 51,
     "sec": "Synonyms",
+    "keyword": "ascertained",
     "q": "The cause of the accident is yet to be ascertained, but police officials suspect the driver of the vehicle allegedly fell asleep.",
     "o": [
       "Determined",
@@ -1026,6 +1031,7 @@ var PYQ_CDS_2020_I = [
     "s": "I",
     "n": 52,
     "sec": "Synonyms",
+    "keyword": "aghast",
     "q": "The leader said, “I am aghast with the developments so far. I will take time to understand this.”",
     "o": [
       "Satisfied",
@@ -1046,6 +1052,7 @@ var PYQ_CDS_2020_I = [
     "s": "I",
     "n": 53,
     "sec": "Synonyms",
+    "keyword": "fatigued",
     "q": "Uninterrupted rain had fatigued the commuters from the outskirts to the city and work suffered.",
     "o": [
       "Excited",

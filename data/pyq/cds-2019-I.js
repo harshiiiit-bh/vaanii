@@ -26,6 +26,7 @@ var PYQ_CDS_2019_I = [
     "s": "I",
     "n": 2,
     "sec": "Synonyms",
+    "keyword": "asset",
     "q": "For Gandhiji, India’s religious and linguistic diversity was an asset, not a liability.",
     "o": [
       "obligation",
@@ -66,6 +67,7 @@ var PYQ_CDS_2019_I = [
     "s": "I",
     "n": 4,
     "sec": "Synonyms",
+    "keyword": "prejudiced",
     "q": "Mahesh is mostly prejudiced in his political opinion.",
     "o": [
       "objectionable",
@@ -86,6 +88,7 @@ var PYQ_CDS_2019_I = [
     "s": "I",
     "n": 5,
     "sec": "Synonyms",
+    "keyword": "tautology",
     "q": "Do not indulge in tautology",
     "o": [
       "truth telling",
@@ -1306,6 +1309,7 @@ var PYQ_CDS_2019_I = [
     "s": "I",
     "n": 61,
     "sec": "Synonyms",
+    "keyword": "reluctant",
     "q": "Doctors are reluctant to take rural postings despite big salary offers.",
     "o": [
       "disinclined",
@@ -2446,6 +2450,7 @@ var PYQ_CDS_2019_I = [
     "s": "I",
     "n": 117,
     "sec": "Synonyms",
+    "keyword": "provocative",
     "q": "A provocative message had been doing rounds on social media to instigate the mob against migrants.",
     "o": [
       "dexterous",
@@ -2486,6 +2491,7 @@ var PYQ_CDS_2019_I = [
     "s": "I",
     "n": 119,
     "sec": "Synonyms",
+    "keyword": "anonymously",
     "q": "The portal will help victims and complainants to anonymously report cybercrime.",
     "o": [
       "incognito",
@@ -2506,6 +2512,7 @@ var PYQ_CDS_2019_I = [
     "s": "I",
     "n": 120,
     "sec": "Synonyms",
+    "keyword": "terminal",
     "q": "He is suffering from a terminal disease.",
     "o": [
       "sublunary",
