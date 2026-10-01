@@ -48,6 +48,7 @@ function createDefaultState(){
   };
 }
 const State = createDefaultState();
+State.serviceForce = Object.prototype.hasOwnProperty.call(VAANI_SERVICE_CHOICES,State.serviceForce)?State.serviceForce:null;
 function loadState(){
   // Account records are the only active source of learning progress. The
   // device-wide vaani_state key is read only by the explicit legacy migration.
@@ -272,6 +273,7 @@ async function handleGateCreate(){
   showGateStage('showcode');
 }
 function finishGateEntry(){
+  if(!Object.prototype.hasOwnProperty.call(VAANI_SERVICE_CHOICES,State.serviceForce)){openServiceForcePicker('onboarding');return;}
   if(typeof requestGyroParallax==='function') requestGyroParallax();
   const today = new Date().toDateString();
   if(State.lastActive !== today){
@@ -4047,6 +4049,173 @@ async function copyAccountCode(){
   return copied;
 }
 
+/* Service-specific commissioned officer ladders. XP is a learning milestone, not promotion. */
+const VAANI_SERVICE_RANKS = Object.freeze({
+  army: Object.freeze([
+    {name:'Lieutenant',mark:'stars-2'},{name:'Captain',mark:'stars-3'},
+    {name:'Major',mark:'emblem'},{name:'Lieutenant Colonel',mark:'emblem-star-1'},
+    {name:'Colonel',mark:'emblem-star-2'},{name:'Brigadier',mark:'emblem-star-3'},
+    {name:'Major General',mark:'sword-star'},{name:'Lieutenant General',mark:'sword-emblem'},
+    {name:'General',mark:'sword-emblem-star'}
+  ]),
+  navy: Object.freeze([
+    {name:'Sub Lieutenant',mark:'stripe-1'},{name:'Lieutenant',mark:'stripe-2'},
+    {name:'Lieutenant Commander',mark:'stripe-3'},{name:'Commander',mark:'stripe-4'},
+    {name:'Captain',mark:'stripe-5'},{name:'Commodore',mark:'flag-1'},
+    {name:'Rear Admiral',mark:'flag-2'},{name:'Vice Admiral',mark:'flag-3'},
+    {name:'Admiral',mark:'flag-4'}
+  ]),
+  airforce: Object.freeze([
+    {name:'Flying Officer',mark:'stripe-1'},{name:'Flight Lieutenant',mark:'stripe-2'},
+    {name:'Squadron Leader',mark:'stripe-3'},{name:'Wing Commander',mark:'stripe-4'},
+    {name:'Group Captain',mark:'stripe-5'},{name:'Air Commodore',mark:'flag-1'},
+    {name:'Air Vice Marshal',mark:'flag-2'},{name:'Air Marshal',mark:'flag-3'},
+    {name:'Air Chief Marshal',mark:'flag-4'}
+  ])
+});
+const VAANI_SERVICE_CHOICES = Object.freeze({
+  army:{label:'Indian Army',short:'ARMY',scene:'https://commons.wikimedia.org/wiki/Special:FilePath/T-90_firing.jpg?width=1000',source:'https://commons.wikimedia.org/wiki/File:T-90_firing.jpg',credit:'Photo: cell105 · CC BY 2.0',alt:'Indian Army T-90 tank firing during a demonstration'},
+  navy:{label:'Indian Navy',short:'NAVY',scene:'https://commons.wikimedia.org/wiki/Special:FilePath/INS_VIkrant_%28R11%29_underway_in_the_Arabian_Sea_with_4_Mig-29K_Fighter_Jets.jpg?width=1000',source:'https://commons.wikimedia.org/wiki/File:INS_VIkrant_(R11)_underway_in_the_Arabian_Sea_with_4_Mig-29K_Fighter_Jets.jpg',credit:'Government of India · GODL-India',alt:'INS Vikrant underway in the Arabian Sea with MiG-29K fighter jets'},
+  airforce:{label:'Indian Air Force',short:'AIR FORCE',scene:'https://commons.wikimedia.org/wiki/Special:FilePath/Indian_Air_Force_Su-30MKI_and_Dassault_Rafale.jpg?width=1000',source:'https://commons.wikimedia.org/wiki/File:Indian_Air_Force_Su-30MKI_and_Dassault_Rafale.jpg',credit:'Indian Air Force · Government of India',alt:'Indian Air Force Rafale and Su-30MKI aircraft flying together'}
+});
+function getServiceRankProgress(xp,force){
+  const ranks=VAANI_SERVICE_RANKS[force]||[];
+  const points=Math.max(0,Math.floor(Number(xp)||0));
+  const unlocked=Math.min(ranks.length,Math.floor(points/100));
+  const current=unlocked? ranks[unlocked-1]:null;
+  const next=unlocked<ranks.length?ranks[unlocked]:null;
+  return {ranks,points,unlocked,current,next,progress:next?points%100:100,force};
+}
+function serviceInsigniaSvg(force,index){
+  const navy=force==='navy',air=force==='airforce';
+  const fill=navy?'#102338':air?'#253c62':'#344536';
+  const gold='#e7bd62';
+  const ranks=VAANI_SERVICE_RANKS[force]||[];
+  const rank=ranks[index];
+  if(!rank)return '';
+  let marks='';
+  if(force==='army'){
+    const stars=rank.mark==='stars-2'?2:rank.mark==='stars-3'?3:
+      rank.mark==='emblem-star-1'?1:rank.mark==='emblem-star-2'?2:
+      rank.mark==='emblem-star-3'?3:rank.mark==='sword-star'?1:
+      rank.mark==='sword-emblem-star'?1:0;
+    const emblem=/emblem/.test(rank.mark);
+    const swords=/sword/.test(rank.mark);
+    if(swords)marks+='<path d="M37 17L79 55M79 17L37 55" stroke="'+gold+'" stroke-width="3.5" stroke-linecap="round"/><path d="M34 14l10 1-3 8zM76 58l10 1-3-8zM82 14l-10 1 3 8zM40 58l-10 1 3-8z" fill="'+gold+'"/>';
+    if(emblem)marks+='<g fill="'+gold+'" stroke="'+gold+'" stroke-width="1"><path d="M56 17c-7-9-17-3-15 3 1 4 5 5 9 2l-1 11h15l-1-11c4 3 8 2 9-2 2-6-8-12-15-3z"/><path d="M42 36h28v4H42zM39 42h34v4H39zM44 48h24v3H44z"/></g>';
+    if(stars){const xs=stars===1?[56]:stars===2?[47,65]:[38,56,74];marks+=xs.map(x=>'<path d="M'+x+' 21l2.3 5h5.3l-4.2 3.2 1.6 5-5-3-5 3 1.6-5-4.2-3.2h5.3z" fill="'+gold+'" stroke="#fff0bd" stroke-width=".55"/>').join('');}
+  }else{
+    const flag=rank.mark.startsWith('flag-');
+    const n=flag?Number(rank.mark.slice(5)):Number(rank.mark.slice(7));
+    const y0=flag?21:18, gap=flag?9:8;
+    for(let k=0;k<n;k++){
+      const yy=y0+k*gap;
+      marks+='<path d="M34 '+yy+'h35" fill="none" stroke="'+gold+'" stroke-width="'+(flag?5:3.5)+'"/>';
+    }
+    // The curled executive sleeve stripe is part of commissioned-officer lace.
+    marks+='<path d="M69 '+y0+'c14 0 14 16 0 16h-8" fill="none" stroke="'+gold+'" stroke-width="3.5" stroke-linecap="round"/>';
+  }
+  return '<svg viewBox="0 0 112 72" role="img" aria-label="'+VAANI_SERVICE_CHOICES[force].label+' '+rank.name+' rank insignia" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="108" height="68" rx="11" fill="'+fill+'" stroke="'+gold+'" stroke-width="1.5"/><path d="M10 9h92" stroke="rgba(255,255,255,.18)" stroke-width="1"/>'+marks+'</svg>';
+}
+function renderServiceRankLadder(){
+  const list=document.getElementById('serviceRankList');
+  const force=State.serviceForce;
+  if(!list)return;
+  const rows=VAANI_SERVICE_RANKS[force]||[];
+  const progress=getServiceRankProgress(State.xp,force);
+  if(!rows.length){list.innerHTML='<p class="vp-service-rank-empty">Choose a service to see its commissioned officer ranks.</p>';return;}
+  list.innerHTML=rows.map((rank,index)=>{
+    const status=index<progress.unlocked?'MILESTONE REACHED':index===progress.unlocked?'NEXT MILESTONE':'UPCOMING';
+    const cls=index<progress.unlocked?'is-reached':index===progress.unlocked?'is-next':'is-upcoming';
+    return '<div class="vp-service-rank-row '+cls+'"><span class="vp-service-rank-insignia">'+serviceInsigniaSvg(force,index)+'</span><span class="vp-service-rank-name">'+rank.name+'</span><span class="vp-service-rank-status">'+status+'</span></div>';
+  }).join('');
+}
+function renderServiceRankProgress(){
+  const force=State.serviceForce;
+  const meta=VAANI_SERVICE_CHOICES[force];
+  const progress=getServiceRankProgress(State.xp,force);
+  const crest=document.getElementById('rankBadge');
+  const image=document.getElementById('serviceRankInsignia');
+  const title=document.getElementById('rankTitle');
+  const forceLabel=document.getElementById('serviceRankForce');
+  const bar=document.getElementById('rankBar');
+  const hint=document.getElementById('rankXPText');
+  if(!title||!bar||!hint)return;
+  if(!meta||!progress.ranks.length){
+    title.textContent='Officer Aspirant';
+    if(forceLabel)forceLabel.textContent='Select a service to view its actual officer rank ladder.';
+    if(image){image.removeAttribute('src');image.alt='';}
+    if(crest)crest.classList.add('is-unselected');
+    bar.style.width='0%';hint.textContent='Choose a service to begin your learning milestones';
+    renderServiceRankLadder();return;
+  }
+  if(crest)crest.classList.remove('is-unselected');
+  if(forceLabel)forceLabel.textContent=meta.label+' · Commissioned officer ranks';
+  if(progress.current){
+    title.textContent=progress.current.name;
+    const index=progress.unlocked-1;
+    if(image){image.src='data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(serviceInsigniaSvg(force,index));image.alt=meta.label+' '+progress.current.name+' rank insignia';}
+  }else{
+    title.textContent='Officer Aspirant';
+    if(image){image.removeAttribute('src');image.alt='No commissioned rank insignia before commissioning';}
+  }
+  bar.style.width=progress.progress+'%';
+  hint.textContent=progress.next
+    ?progress.points%100+' / 100 XP to VAANI learning milestone: '+progress.next.name
+    :'All VAANI rank milestones completed · highest listed rank: '+progress.ranks[progress.ranks.length-1].name;
+  renderServiceRankLadder();
+}
+function closeServiceForcePicker(){
+  const overlay=document.getElementById('serviceForcePicker');
+  if(overlay){overlay.remove();document.body.classList.remove('service-force-modal-open');}
+}
+function openServiceForcePicker(mode){
+  const current=State.serviceForce||'';
+  const onboarding=mode==='onboarding';
+  let overlay=document.getElementById('serviceForcePicker');
+  if(!overlay){
+    overlay=document.createElement('div');overlay.id='serviceForcePicker';overlay.className='service-force-overlay';
+    overlay.innerHTML='<section class="service-force-dialog" role="dialog" aria-modal="true" aria-labelledby="serviceForceTitle"><div class="service-force-head"><span class="vp-profile-kicker">SERVICE PREFERENCE</span><h2 id="serviceForceTitle">Which force do you aspire to join?</h2><p>Choose your officer-entry path. You can change this later from Rank Progress.</p></div><div class="service-force-options" id="serviceForceOptions"></div><div class="service-force-footer"><p>These are learning milestones, not military appointment or promotion.</p><button type="button" id="serviceForceCancel" class="btn ghost" onclick="closeServiceForcePicker()">Cancel</button></div></section>';
+    overlay.addEventListener('click',event=>{if(event.target===overlay&&overlay.dataset.mode!=='onboarding')closeServiceForcePicker();});
+    document.body.appendChild(overlay);
+  }
+  overlay.dataset.mode=onboarding?'onboarding':'change';
+  const options=document.getElementById('serviceForceOptions');
+  const cancel=document.getElementById('serviceForceCancel');
+  if(cancel)cancel.hidden=onboarding;
+  if(options)options.innerHTML=Object.entries(VAANI_SERVICE_CHOICES).map(([key,item])=>
+    '<button type="button" class="service-force-option '+(current===key?'is-selected':'')+'" onclick="chooseServiceForce(\''+key+'\')"><span class="service-force-image"><img src="'+item.scene+'" alt="'+item.alt+'" loading="lazy" decoding="async"></span><span class="service-force-option-body"><strong>'+item.label+'</strong><span>'+(current===key?'Currently selected · ':'')+'View '+VAANI_SERVICE_RANKS[key].length+' commissioned officer ranks</span><small><a href="'+item.source+'" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">'+item.credit+' · Wikimedia Commons</a></small></span><span class="service-force-check" aria-hidden="true">'+(current===key?'✓':'›')+'</span></button>'
+  ).join('');
+  document.body.classList.add('service-force-modal-open');
+  const heading=document.getElementById('serviceForceTitle');
+  if(heading)heading.textContent=onboarding?'Which force do you aspire to join?':'Change your service';
+  if(cancel)cancel.textContent='Keep current service';
+  const first=options?.querySelector('button');
+  if(first)first.focus();
+}
+async function chooseServiceForce(force){
+  if(!Object.prototype.hasOwnProperty.call(VAANI_SERVICE_CHOICES,force))return false;
+  const old=State.serviceForce||null;
+  const overlay=document.getElementById('serviceForcePicker');
+  const onboarding=overlay?.dataset.mode==='onboarding';
+  State.serviceForce=force;
+  if(typeof persistCombinedAccount==='function'&&typeof ACTIVE_CODE!=='undefined'&&ACTIVE_CODE){
+    let saved=false;
+    try{saved=await persistCombinedAccount();}catch(e){saved=false;}
+    if(!saved){
+      State.serviceForce=old;
+      if(typeof toast==='function')toast('Could not save your service choice. Please try again.');
+      renderServiceRankProgress();return false;
+    }
+  }
+  closeServiceForcePicker();
+  renderServiceRankProgress();
+  if(typeof refreshDashboard==='function')refreshDashboard();
+  if(onboarding&&typeof finishGateEntry==='function')finishGateEntry();
+  if(typeof toast==='function'&&!onboarding)toast('Service updated to '+VAANI_SERVICE_CHOICES[force].label+'.');
+  return true;
+}
+
 function renderProfileSnapshot(){
   refreshAccountCodeControls();
   const name=String(State.name||'Cadet').trim()||'Cadet';
@@ -4116,6 +4285,8 @@ function renderProfileSnapshot(){
       rhythmNote.innerHTML='<span>'+active+' active day'+(active===1?'':'s')+'</span><span>'+totalXp+' XP in 14 days</span>';
     }
   }
+  renderServiceRankProgress();
+
 }
 function renderDashboardMissions(){
   const host=document.getElementById('missionList');
@@ -4224,6 +4395,8 @@ function refreshDashboard(){
   renderReviewWidget();
   renderFocusSprint();
   refreshHomeV2();
+  renderServiceRankProgress();
+
 }
 /* ---- Focus Sprint: a local, timed study session with capped XP ---- */
 let focusSprint = {minutes:15,remaining:900,running:false,endsAt:0,interval:null,task:'Grammar'};
