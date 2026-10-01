@@ -1,41 +1,256 @@
-/* VAANI OFFICER ELITE LAYER */
-#vaaniMentor{--ve-gold:#d7ad55;--ve-ink:#15262f;--ve-soft:#f6f5f0;--ve-shadow:0 24px 70px rgba(10,22,28,.24)}
-#vaaniMentor .vc-aura{position:absolute;inset:auto 20px -4px auto;width:105px;height:28px;border-radius:50%;background:rgba(201,162,75,.16);filter:blur(12px);pointer-events:none}
-#vaaniMentor .vc-orb{position:relative;width:46px;height:46px;border-radius:50%;border:1px solid rgba(215,173,85,.55);background:linear-gradient(145deg,#203740,#0f2028);color:#f2d58e;box-shadow:0 10px 30px rgba(10,22,28,.25),inset 0 1px 0 rgba(255,255,255,.16);cursor:pointer;display:grid;place-items:center;font-size:19px;transition:.25s}
-#vaaniMentor .vc-orb:hover{transform:translateY(-3px) scale(1.05);box-shadow:0 15px 34px rgba(10,22,28,.32)}
-#vaaniMentor .vc-orb:after{content:"";position:absolute;inset:-5px;border:1px solid rgba(215,173,85,.18);border-radius:50%;animation:vePulse 2.6s ease-out infinite}
-#vaaniMentor .vc-panel{position:absolute;right:0;bottom:58px;width:min(430px,calc(100vw - 24px));background:rgba(250,249,245,.985);border:1px solid rgba(215,173,85,.36);border-radius:24px;box-shadow:var(--ve-shadow);overflow:hidden;opacity:0;transform:translateY(12px) scale(.96);pointer-events:none;transition:.25s ease}
-#vaaniMentor.open .vc-panel{opacity:1;transform:none;pointer-events:auto}
-#vaaniMentor.open .vc-orb{opacity:.75}
-#vaaniMentor .vc-panel-head{display:flex;justify-content:space-between;align-items:center;padding:15px 17px 10px;border-bottom:1px solid rgba(21,38,47,.08);background:linear-gradient(135deg,rgba(255,255,255,.98),rgba(244,241,232,.9))}
-#vaaniMentor .vc-title{font:800 .84rem/1.2 var(--mono,monospace);letter-spacing:.06em;color:var(--ve-ink)}
-#vaaniMentor .vc-x{border:0;background:transparent;font-size:22px;line-height:1;color:#66757d;cursor:pointer}
-#vaaniMentor .vc-body{display:grid;grid-template-columns:150px 1fr;gap:10px;padding:13px 16px 10px;align-items:center}
-#vaaniMentor .vc-character{width:150px;height:142px;flex:none;background-image:url("assets/vaani-officer-pack.webp");background-size:400% 300%;background-repeat:no-repeat;filter:drop-shadow(0 14px 13px rgba(8,18,24,.22));transform:translateY(4px);transition:.3s}
-#vaaniMentor .vc-copy{min-width:0}
-#vaaniMentor .vc-text{font-size:.79rem;line-height:1.55;color:#4e5e68}
-#vaaniMentor .vc-quote{margin-top:8px;padding-left:10px;border-left:3px solid var(--ve-gold);font:600 .79rem/1.45 var(--serif,Georgia);color:#293c45}
-#vaaniMentor .vc-intel{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
-#vaaniMentor .vc-intel span{padding:4px 7px;border:1px solid rgba(21,38,47,.1);border-radius:999px;background:#fff;color:#66747b;font:700 .56rem var(--mono,monospace)}
-#vaaniMentor .vc-actions{display:flex;justify-content:flex-end;gap:7px;padding:9px 16px 14px;border-top:1px solid rgba(21,38,47,.07)}
-#vaaniMentor .vc-actions button{min-height:31px;padding:6px 10px;border-radius:999px;border:1px solid rgba(21,38,47,.12);background:#fff;color:#4d5d66;font:700 .61rem var(--mono,monospace);cursor:pointer}
-#vaaniMentor .vc-actions button.primary{background:var(--ve-ink);border-color:var(--ve-ink);color:#fff}
-#vaaniMentor.celebrate .vc-character{animation:veCelebrate .65s ease 2}
-#vaaniMentor.result-flash .vc-panel{animation:veResult .8s ease}
-#vaaniMentor.result-low .vc-panel{border-color:rgba(179,117,72,.55)}
-#vaaniMentor.mini .vc-panel{display:block}
-#vaaniMentor.bad-result{z-index:9200}
-@keyframes vePulse{0%{transform:scale(.88);opacity:.7}70%,100%{transform:scale(1.28);opacity:0}}
-@keyframes veCelebrate{0%,100%{transform:translateY(4px) rotate(0)}35%{transform:translateY(-8px) rotate(-3deg)}70%{transform:translateY(-2px) rotate(3deg)}}
-@keyframes veResult{0%{transform:translateY(0) scale(1)}30%{transform:translateY(-3px) scale(1.015)}100%{transform:none}}
+/* VAANI OFFICER — professional presentation layer */
+#vaaniMentor:not(.bad-result){
+  right:20px;
+  bottom:22px;
+  z-index:9100;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:8px;
+  pointer-events:none;
+  width:min(382px,calc(100vw - 24px));
+}
+#vaaniMentor:not(.bad-result) .vc-bubble{
+  order:1;
+  width:100%;
+  max-width:none;
+  padding:0;
+  overflow:hidden;
+  border:1px solid rgba(21,38,47,.12);
+  border-radius:20px;
+  background:rgba(252,251,247,.985);
+  box-shadow:0 22px 64px rgba(13,26,35,.22),0 3px 12px rgba(13,26,35,.08);
+  backdrop-filter:blur(16px);
+  pointer-events:auto;
+}
+#vaaniMentor:not(.bad-result) .vc-bubble::before{
+  content:"";
+  display:block;
+  height:3px;
+  background:linear-gradient(90deg,#b58936,#e8cc8d,#b58936);
+}
+#vaaniMentor:not(.bad-result) .vc-kicker{
+  margin:0;
+  padding:13px 15px 3px;
+  font:800 .57rem var(--mono,monospace);
+  letter-spacing:.15em;
+  color:#98702b;
+}
+#vaaniMentor:not(.bad-result) .vc-text{
+  margin:0;
+  padding:2px 15px 0;
+  font-size:.78rem;
+  line-height:1.55;
+  color:#334751;
+}
+#vaaniMentor:not(.bad-result) .vc-quote{
+  margin:8px 15px 0;
+  padding:7px 0 0 10px;
+  border-left:2px solid #d7ad55;
+  font:600 .76rem/1.45 var(--serif,Georgia);
+  color:#59666d;
+}
+#vaaniMentor:not(.bad-result) .vc-intel{
+  display:flex;
+  flex-wrap:wrap;
+  gap:5px;
+  padding:9px 15px 0;
+}
+#vaaniMentor:not(.bad-result) .vc-intel span{
+  padding:4px 7px;
+  border:1px solid rgba(21,38,47,.09);
+  border-radius:999px;
+  background:#f7f6f1;
+  color:#66757d;
+  font:700 .53rem var(--mono,monospace);
+}
+#vaaniMentor:not(.bad-result) .vc-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:7px;
+  margin:0;
+  padding:11px 15px 14px;
+}
+#vaaniMentor:not(.bad-result) .vc-actions button{
+  min-height:31px;
+  padding:6px 11px;
+  border-radius:999px;
+  border:1px solid rgba(21,38,47,.12);
+  background:#fff;
+  color:#53636c;
+  font:800 .59rem var(--mono,monospace);
+  letter-spacing:.02em;
+  transition:transform .18s ease,box-shadow .18s ease,background .18s ease;
+}
+#vaaniMentor:not(.bad-result) .vc-actions button:hover{
+  transform:translateY(-1px);
+  box-shadow:0 6px 18px rgba(15,32,40,.10);
+}
+#vaaniMentor:not(.bad-result) .vc-actions button.primary{
+  background:#172a33;
+  border-color:#172a33;
+  color:#fff;
+}
+#vaaniMentor:not(.bad-result) .ve-meta{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  padding:10px 15px 0;
+  color:#708089;
+  font:700 .52rem var(--mono,monospace);
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+#vaaniMentor:not(.bad-result) .ve-meta strong{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  color:#465860;
+}
+#vaaniMentor:not(.bad-result) .ve-meta strong::before{
+  content:"";
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:#5b8b69;
+  box-shadow:0 0 0 3px rgba(91,139,105,.12);
+}
+#vaaniMentor:not(.bad-result) .ve-meta span{
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+#vaaniMentor:not(.bad-result) .vc-character{
+  order:2;
+  width:104px;
+  height:104px;
+  flex:0 0 104px;
+  border-radius:24px;
+  border:1px solid rgba(201,162,75,.30);
+  background-color:rgba(248,246,238,.96);
+  box-shadow:0 14px 34px rgba(8,18,24,.18),inset 0 1px 0 rgba(255,255,255,.75);
+  filter:drop-shadow(0 10px 10px rgba(8,18,24,.13));
+  transform:translateY(0);
+  overflow:visible;
+  pointer-events:auto;
+}
+#vaaniMentor:not(.bad-result) .vc-character::before{
+  content:"";
+  position:absolute;
+  right:10px;
+  top:10px;
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:#5b8b69;
+  box-shadow:0 0 0 4px rgba(91,139,105,.11);
+  z-index:4;
+}
+#vaaniMentor:not(.bad-result) .vc-character::after{
+  content:"VAANI";
+  position:absolute;
+  left:10px;
+  bottom:7px;
+  padding:3px 6px;
+  border-radius:999px;
+  background:rgba(23,42,51,.88);
+  color:#f5e2ae;
+  font:800 .47rem var(--mono,monospace);
+  letter-spacing:.11em;
+  z-index:4;
+}
+#vaaniMentor:not(.bad-result) .vc-character:hover{
+  transform:translateY(-3px);
+  box-shadow:0 18px 42px rgba(8,18,24,.22),inset 0 1px 0 rgba(255,255,255,.78);
+}
+#vaaniMentor:not(.bad-result) .vc-character:focus-visible{
+  outline:3px solid rgba(201,162,75,.42);
+  outline-offset:3px;
+}
+#vaaniMentor:not(.bad-result) .vc-aura{
+  display:none!important;
+}
+#vaaniMentor:not(.bad-result) .vc-panel,
+#vaaniMentor:not(.bad-result) .vc-orb{
+  display:none!important;
+}
+#vaaniMentor.noted .vc-bubble{animation:veProfessionalIn .34s ease both}
+#vaaniMentor.gesture-wave .vc-character{animation:veWave .62s cubic-bezier(.22,.8,.32,1) both}
+#vaaniMentor.gesture-point .vc-character{animation:vePoint .55s cubic-bezier(.22,.8,.32,1) both}
+#vaaniMentor.gesture-think .vc-character{animation:veThink .52s ease both}
+#vaaniMentor.gesture-celebrate .vc-character{animation:veCelebratePro .72s cubic-bezier(.18,.88,.26,1.2) both}
+#vaaniMentor.gesture-focus .vc-character{animation:veFocus .58s ease both}
+#vaaniMentor.gesture-salute .vc-character{animation:veSalute .7s cubic-bezier(.2,.8,.2,1) both}
+#vaaniMentor.gesture-write .vc-character{animation:veWrite .62s ease both}
+#vaaniMentor.gesture-observe .vc-character{animation:veObserve .58s ease both}
+
+@keyframes veProfessionalIn{
+  0%{opacity:.65;transform:translateY(7px) scale(.985)}
+  100%{opacity:1;transform:none}
+}
+@keyframes veWave{
+  0%{transform:translateY(0) rotate(0)}
+  28%{transform:translateY(-4px) rotate(-2deg)}
+  54%{transform:translateY(-1px) rotate(2deg)}
+  80%{transform:translateY(-3px) rotate(-1deg)}
+  100%{transform:none}
+}
+@keyframes vePoint{
+  0%{transform:translateX(0) scale(1)}
+  45%{transform:translateX(-4px) scale(1.015)}
+  100%{transform:none}
+}
+@keyframes veThink{
+  0%{transform:translateY(0)}
+  45%{transform:translateY(-3px) rotate(-1.5deg)}
+  100%{transform:none}
+}
+@keyframes veCelebratePro{
+  0%{transform:translateY(0) scale(1)}
+  35%{transform:translateY(-8px) scale(1.025)}
+  65%{transform:translateY(-3px) scale(1.01)}
+  100%{transform:none}
+}
+@keyframes veFocus{
+  0%{transform:translateY(0)}
+  40%{transform:translateY(-4px)}
+  100%{transform:none}
+}
+@keyframes veSalute{
+  0%{transform:translateY(0)}
+  35%{transform:translateY(-5px) rotate(1deg)}
+  70%{transform:translateY(-2px) rotate(-1deg)}
+  100%{transform:none}
+}
+@keyframes veWrite{
+  0%{transform:translateY(0)}
+  50%{transform:translateY(-2px) rotate(.6deg)}
+  100%{transform:none}
+}
+@keyframes veObserve{
+  0%{transform:translateY(0) scale(1)}
+  50%{transform:translateY(-2px) scale(1.015)}
+  100%{transform:none}
+}
 @media(max-width:600px){
- #vaaniMentor{right:8px;bottom:calc(var(--bottomnav-h,64px) + 10px)}
- #vaaniMentor .vc-panel{bottom:55px;width:calc(100vw - 16px)}
- #vaaniMentor .vc-body{grid-template-columns:94px 1fr;padding:10px 11px}
- #vaaniMentor .vc-character{width:94px;height:92px}
- #vaaniMentor .vc-text{font-size:.72rem}.vc-quote{font-size:.7rem!important}
- #vaaniMentor .vc-intel span{font-size:.5rem;padding:3px 5px}
+  #vaaniMentor:not(.bad-result){
+    right:8px;
+    bottom:calc(var(--bottomnav-h,64px) + 12px);
+    width:min(344px,calc(100vw - 16px));
+  }
+  #vaaniMentor:not(.bad-result) .vc-character{
+    width:88px;
+    height:88px;
+    flex-basis:88px;
+    border-radius:20px;
+  }
+  #vaaniMentor:not(.bad-result) .vc-text{font-size:.73rem}
+  #vaaniMentor:not(.bad-result) .vc-quote{font-size:.71rem}
+  #vaaniMentor:not(.bad-result) .vc-actions{padding-bottom:11px}
 }
 @media(prefers-reduced-motion:reduce){
- #vaaniMentor *{animation:none!important;transition:none!important}
+  #vaaniMentor:not(.bad-result) *{
+    animation:none!important;
+    transition:none!important;
+  }
 }
