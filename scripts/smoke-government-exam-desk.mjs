@@ -209,6 +209,8 @@ await page.goto(baseURL + '?v=notifications', { waitUntil: 'domcontentloaded' })
   await page.locator('#gateBtn').click();
   await page.waitForSelector('#gate-stage-showcode', { state: 'visible', timeout: 15000 });
   await page.locator('#gate-stage-showcode .gate-btn').click();
+  await page.waitForSelector('#serviceForcePicker[data-mode="onboarding"]', { state: 'visible', timeout: 15000 });
+  await page.locator('#serviceForcePicker .service-force-option[data-force="army"]').click();
   await page.waitForFunction(() => document.getElementById('gate')?.classList.contains('hide'), null, { timeout: 15000 });
   await page.locator('#vxSyncStamp').waitFor();
   await page.waitForFunction(() => {
