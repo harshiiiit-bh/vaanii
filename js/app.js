@@ -339,7 +339,26 @@ function toggleTheme(){
 }
 
 const VAANI_DAILY_XP_CAP=80;
-const VAANI_LOW_ACCURACY_PENALTY=10;
+function getAccuracyPenalty(pct){
+  const score=Number(pct);
+  if(!Number.isFinite(score))return 0;
+  const accuracy=Math.max(0,Math.min(100,Math.round(score)));
+  if(accuracy<33)return 80;
+  if(accuracy<=39)return 60;
+  if(accuracy<=49)return 45;
+  if(accuracy<=59)return 20;
+  if(accuracy<=69)return 10;
+  return 0;
+}
+function getTotalMarksPenalty(pct){
+  const score=Number(pct);
+  if(!Number.isFinite(score))return 0;
+  const marks=Math.max(0,Math.min(100,Math.round(score)));
+  if(marks>=70)return 5;
+  if(marks>=50)return 8;
+  if(marks>=33)return 12;
+  return 15;
+}
 function dailyXPDayKey(date=new Date()){return date.toDateString();}
 function getTodayXPEarned(){
   const key=dailyXPDayKey();
@@ -404,16 +423,23 @@ function deductXP(n, reason){
   }
   return deducted;
 }
+function deductExamMarksXP(pct,reason){
+  const penalty=getTotalMarksPenalty(pct);
+  if(!penalty)return 0;
+  const score=Math.max(0,Math.min(100,Math.round(Number(pct)||0)));
+  return deductXP(penalty,(reason||'PYQ exam')+' · '+score+'% net marks');
+}
 function awardAccuracyXP(pct, reason){
   const score=Number(pct);
   if(!Number.isFinite(score))return 0;
   const accuracy=Math.max(0,Math.min(100,Math.round(score)));
-  if(accuracy<50){
-    deductXP(VAANI_LOW_ACCURACY_PENALTY,(reason||'Quiz')+' below 50% accuracy');
+  const penalty=getAccuracyPenalty(accuracy);
+  if(penalty){
+    deductXP(penalty,(reason||'Quiz')+' · '+accuracy+'% accuracy');
     return 0;
   }
-  const reward=accuracy===100?12:accuracy>=90?10:accuracy>=80?8:accuracy>=70?6:accuracy>=60?4:2;
-  return addXP(reward,(reason||'Quiz')+' · '+accuracy+'% accuracy');
+  const reward=accuracy===100?12:accuracy>=90?10:accuracy>=80?8:accuracy>=70?6:0;
+  return reward?addXP(reward,(reason||'Quiz')+' · '+accuracy+'% accuracy'):0;
 }
 function refreshServiceRankDailyHint(){
   const el=document.getElementById('rankDailyXPHint');
@@ -2342,8 +2368,24 @@ function pvFinishSession(){
   s.finished=true;
   pvClearContinue();
   const total=Array.isArray(s.questions)?s.questions.length:0;
-  const correct=Object.values(s.answers||{}).filter(answer=>answer&&answer.correct).length;
-  if(total>0)awardAccuracyXP(Math.round(correct/total*100),'PYQ '+(s.mode==='exam'?'exam':'practice')+' session');
+  let correct=0,attempted=0;
+  s.questions.forEach(question=>{
+    const answer=s.answers&&s.answers[question._id];
+    if(!answer||answer.choice===-1)return;
+    attempted++;
+    if(answer.correct)correct++;
+  });
+  const accuracy=attempted?Math.round(correct/attempted*100):0;
+  if(total>0){
+    const label='PYQ '+(s.mode==='exam'?'exam':'practice')+' session';
+    awardAccuracyXP(accuracy,label);
+    if(s.mode==='exam'){
+      const wrong=attempted-correct;
+      const netScore=correct-(wrong/3);
+      const marksPct=Math.max(0,netScore/total*100);
+      deductExamMarksXP(marksPct,label);
+    }
+  }
   if(s.mode==='exam'){PV.screen='summary';pvRender();return;}
   toast('Session complete — nice work, Cadet!');
   pvGoHome();
@@ -2510,6 +2552,10 @@ function pvSummaryHTML(){
   const scoreLabel = (Math.round(rawScore*100)/100).toString();
   const total = s.questions.length;
   const acc = (correct+wrong) ? Math.round(correct/(correct+wrong)*100) : 0;
+  const marksPct = total ? Math.max(0,rawScore/total*100) : 0;
+  const accuracyPenalty = getAccuracyPenalty(acc);
+  const marksPenalty = getTotalMarksPenalty(marksPct);
+  const marksPctLabel = (Math.round(marksPct*10)/10).toString().replace(/\\.0$/,'');
 
   const reviewHTML = s.questions.map((q,i)=>{
     const a = s.answers[q._id];
@@ -2532,9 +2578,11 @@ function pvSummaryHTML(){
         <div class="pv-summary-stat"><div class="n" style="color:var(--red)">${wrong}</div><div class="l">Wrong</div></div>
         <div class="pv-summary-stat"><div class="n" style="color:var(--muted)">${unattempted}</div><div class="l">Skipped</div></div>
       </div>
-      <div class="pv-summary-grid" style="grid-template-columns:1fr">
+      <div class="pv-summary-grid" style="grid-template-columns:1fr 1fr">
         <div class="pv-summary-stat"><div class="n">${acc}%</div><div class="l">Accuracy on attempted questions</div></div>
+        <div class="pv-summary-stat"><div class="n">${marksPctLabel}%</div><div class="l">Net marks as % of total</div></div>
       </div>
+      <div class="pv-summary-label pv-summary-xp-adjustments" role="status">XP deductions: accuracy −${accuracyPenalty} XP · net marks −${marksPenalty} XP</div>
     </div>
     <div class="pv-section-title"><h3><span class="bar"></span>Review Every Question</h3></div>
     ${reviewHTML}

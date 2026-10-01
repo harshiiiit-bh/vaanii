@@ -271,21 +271,37 @@ try {
     value:'79',label:'79 of 80 XP earned; 1 XP remaining',fill:'99%',remaining:'1 XP remaining today'
   },'Daily XP allowance meter should accurately show near-cap progress and remaining XP');
 
+  const penaltyTiers=await page.evaluate(()=>({
+    accuracy:[100,70,69,60,59,50,49,40,39,33,32,0].map(score=>({score,penalty:getAccuracyPenalty(score)})),
+    marks:[100,70,69,50,49,33,32,0].map(score=>({score,penalty:getTotalMarksPenalty(score)}))
+  }));
+  assert.deepEqual(penaltyTiers.accuracy,[
+    {score:100,penalty:0},{score:70,penalty:0},{score:69,penalty:10},
+    {score:60,penalty:10},{score:59,penalty:20},{score:50,penalty:20},
+    {score:49,penalty:45},{score:40,penalty:45},{score:39,penalty:60},
+    {score:33,penalty:60},{score:32,penalty:80},{score:0,penalty:80}
+  ],'Accuracy penalty tiers must match every requested boundary');
+  assert.deepEqual(penaltyTiers.marks,[
+    {score:100,penalty:5},{score:70,penalty:5},{score:69,penalty:8},
+    {score:50,penalty:8},{score:49,penalty:12},{score:33,penalty:12},
+    {score:32,penalty:15},{score:0,penalty:15}
+  ],'Total-marks penalty tiers must match every requested boundary');
   const accuracy=await page.evaluate(()=>{
     const original={xp:State.xp,ledger:{...State.dailyXpEarned},activity:{...State.dailyActivity},xpLedger:[...(State.xpLedger||[])]};
     const today=new Date().toDateString();
-    State.xp=20;State.dailyXpEarned={[today]:0};State.dailyActivity={[today]:0};
-    const low=awardAccuracyXP(49,'accuracy regression');
-    const afterLow=State.xp;
-    const pass=awardAccuracyXP(50,'accuracy regression');
-    const perfect=awardAccuracyXP(100,'accuracy regression');
-    const result={low,afterLow,pass,perfect,xp:State.xp,earned:State.dailyXpEarned[today]};
-    State.xp=original.xp;State.dailyXpEarned=original.ledger;State.dailyActivity=original.activity;
+    State.xp=100;State.dailyXpEarned={[today]:0};State.dailyActivity={[today]:0};
+    awardAccuracyXP(50,'accuracy regression');
+    const afterAccuracy=State.xp;
+    const marksDeducted=deductExamMarksXP(50,'marks regression');
+    const afterMarks=State.xp;
+    const reward=awardAccuracyXP(70,'accuracy regression');
+    const result={afterAccuracy,marksDeducted,afterMarks,reward,xp:State.xp,earned:State.dailyXpEarned[today]};
+    State.xp=original.xp;State.dailyXpEarned=original.ledger;State.dailyActivity=original.activity;State.xpLedger=original.xpLedger;
     saveState();refreshDashboard();
     return result;
   });
-  assert.deepEqual(accuracy,{low:0,afterLow:10,pass:2,perfect:12,xp:24,earned:14},
-    'Accuracy below 50% must deduct XP; passing and perfect scores should earn tiered XP');
+  assert.deepEqual(accuracy,{afterAccuracy:80,marksDeducted:8,afterMarks:72,reward:6,xp:78,earned:6},
+    'Accuracy and exam-marks deductions should be applied independently, while passing accuracy earns XP');
 
   const history=await page.evaluate(()=>{
     const original=State.xpLedger;
