@@ -204,11 +204,35 @@ try {
     'Changing service should update the active account');
   assert.equal(await page.evaluate(() => State.xp), 0,
     'Changing service should preserve learning XP');
+  await page.locator('#serviceRankLadder summary').click();
+  const navyLadder = await page.locator('#serviceRankList .vp-service-rank-row').allInnerTexts();
+  assert.match(navyLadder[0], /Sub Lieutenant/, 'Navy ladder should start at Sub Lieutenant');
+  assert.match(navyLadder[8], /Admiral/, 'Navy regular ladder should end at Admiral');
+  assert.match(navyLadder[9], /Admiral of the Fleet/, 'Navy honorary rank should be visibly separate');
+
+  await page.locator('#serviceRankCard .vp-service-change').click();
+  await page.locator('#serviceForcePicker .service-force-option[data-force="airforce"]').click();
+  await page.waitForFunction(() => !document.getElementById('serviceForcePicker'));
+  assert.equal(await page.evaluate(() => State.serviceForce), 'airforce',
+    'Changing to Air Force should update the active account');
+  assert.equal(await page.evaluate(() => State.xp), 0,
+    'Changing to Air Force should preserve learning XP');
+  await page.locator('#serviceRankLadder summary').click();
+  const airforceLadder = await page.locator('#serviceRankList .vp-service-rank-row').allInnerTexts();
+  assert.match(airforceLadder[0], /Flying Officer/, 'Air Force ladder should start at Flying Officer');
+  assert.match(airforceLadder[8], /Air Chief Marshal/, 'Air Force regular ladder should end at Air Chief Marshal');
+  assert.match(airforceLadder[9], /Marshal of the Indian Air Force/, 'Air Force honorary rank should be visibly separate');
+  assert.notDeepEqual(
+    [armyLadder.map(row => row.match(/^[^\\n]+/)?.[0]), navyLadder.map(row => row.match(/^[^\\n]+/)?.[0]), airforceLadder.map(row => row.match(/^[^\\n]+/)?.[0])],
+    [],
+    'Each service must display its own distinct ladder'
+  );
+
   await page.locator('#serviceRankCard .vp-service-change').click();
   await page.locator('#serviceForcePicker .service-force-option[data-force="army"]').click();
   await page.waitForFunction(() => !document.getElementById('serviceForcePicker'));
   await clickMainView('dashboard');
-  console.log('PASS service ranks: onboarding, officer order, insignia sources, milestone mapping and force changes');
+  console.log('PASS service ranks: distinct Army/Navy/Air Force ladders, insignia sources, milestone mapping, reset persistence and force changes');
 
   // Account isolation regression: seed account A, logout, create account B in
   // the same browser, then switch repeatedly and verify each saved profile.
