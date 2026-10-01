@@ -1437,4 +1437,287 @@ var PYQ_CDS_2015_I = [
     "passage": "The tigress was a mile away and the ground between her and us was densely wooded, scattered over with great rocks and cut up by a number of deep ravines, but she could cover the distance well within the half-hour—if she wanted to. The question I had to decide was whether or not I should try to call her. If I called and she heard me, and came while it was still daylight and gave me a chance to shoot her, all would be well; on the other hand, if she came and did not give me a shot, some of us would not reach camp, for we had nearly two miles to go and the path the whole way ran through heavy jungle."
   }
 
+,
+
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 101,
+    "sec": "Comprehension",
+    "q": "The flat did not really suit him any more because",
+    "o": [
+      "the rooms were too small",
+      "he was living on his own now",
+      "his mother needed too much rooms",
+      "the flat itself was too little"
+    ],
+    "ans": 1
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 102,
+    "sec": "Comprehension",
+    "q": "He did not look after the rest of the flat because",
+    "o": [
+      "he did not use it",
+      "the bedroom was much too large",
+      "he needed only the brass bedstead",
+      "he had too much furniture"
+    ],
+    "ans": 0
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 103,
+    "sec": "Comprehension",
+    "q": "“... now I was by myself it was too large”. The word it here refers to",
+    "o": [
+      "the dining room table",
+      "the dining room",
+      "the bedroom",
+      "the flat"
+    ],
+    "ans": 3
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 104,
+    "sec": "Comprehension",
+    "q": "From the passage we learn that the writer was",
+    "o": [
+      "scared of living alone in the flat",
+      "dissatisfied with the flat",
+      "satisfied with the space in his bedroom",
+      "an eccentric person"
+    ],
+    "ans": 2
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 105,
+    "sec": "Comprehension",
+    "q": "“After lunch I felt at a loose end” means",
+    "o": [
+      "he had nothing specific to do",
+      "had a rope with a loose end",
+      "had much work to do",
+      "had a feeling of anxiety"
+    ],
+    "ans": 0
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 106,
+    "sec": "Comprehension",
+    "q": "According to the passage, most of us prefer films which",
+    "o": [
+      "overwhelm our imagination",
+      "depict our times",
+      "fulfil our secret wishes",
+      "appeal to our reason"
+    ],
+    "ans": 2
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 107,
+    "sec": "Comprehension",
+    "q": "By watching thrilling adventures in films we make up for",
+    "o": [
+      "the effectiveness of our desires",
+      "the shortcomings in our life",
+      "the stimulation of our everyday life",
+      "the influence which we don’t have"
+    ],
+    "ans": 1
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 108,
+    "sec": "Comprehension",
+    "q": "Film stars present situations",
+    "o": [
+      "which are familiar to us, the city dwellers",
+      "which we have seen only in jungles",
+      "which we meet every day at work",
+      "which excite us"
+    ],
+    "ans": 3
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 109,
+    "sec": "Comprehension",
+    "q": "Whether we admit it to ourselves or not, we are aware that",
+    "o": [
+      "we are weak and plain",
+      "we are both powerful and handsome",
+      "we are as strong as film heroes",
+      "we are more beautiful than film stars"
+    ],
+    "ans": 0
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 110,
+    "sec": "Comprehension",
+    "q": "The daily life of students, office-goers and housewives is",
+    "o": [
+      "full of new adventures",
+      "the same dull repetition",
+      "stimulating to their imagination",
+      "very exciting to them"
+    ],
+    "ans": 1
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 111,
+    "sec": "Ordering of Sentences",
+    "q": "S1: While teaching in the class-room, our teacher suddenly fainted. S6: The headmaster at once sanctioned his leave. P: The headmaster soon joined us and spoke to them in a soft voice. Q: He was told that the patient needed complete rest for a month. R: He was at once taken to the hospital. S: The doctors examined him with serious faces. The proper sequence should be:",
+    "o": [
+      "QRPS",
+      "SPQR",
+      "QPSR",
+      "RSPQ"
+    ],
+    "ans": 3
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 112,
+    "sec": "Ordering of Sentences",
+    "q": "S1: The colonial powers had a very simple technique to rule the world. S6: Partition was the culmination. P: They lumped tribes and people together, played one against the other. Q: India’s provinces were more elaborately designed to play the game of divide and rule. R: Africa was divided on the basis of lines of longitude and latitude. S: They also purchased the loyalties of those locals who were needed as supports for the colonial presence. The proper sequence should be:",
+    "o": [
+      "PQRS",
+      "SPQR",
+      "SPQR",
+      "RPSQ"
+    ],
+    "ans": 1
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 113,
+    "sec": "Ordering of Sentences",
+    "q": "S1: The bank opened at 10.00 a.m. S6: The safe was empty. P: The peon opened the safe and returned the keys to the manager. Q: The manager and the peon went to the safe in the vault. R: The manager and the peon looked into the safe. S: They were shocked at what they saw there. The proper sequence should be:",
+    "o": [
+      "QRPS",
+      "QPRS",
+      "QPSR",
+      "RSPQ"
+    ],
+    "ans": 1
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 114,
+    "sec": "Ordering of Sentences",
+    "q": "S1: The crowd swelled round the thief. S6: They were followed by the crowd which left the thief alone. P: Suddenly he whipped out a knife from under his shirt. Q: The thief stood quiet, his head hung in shame. R: The two young men holding him were scared by the sight of the shining knife. S: They took to their heels. The proper sequence should be:",
+    "o": [
+      "QPRS",
+      "SQPR",
+      "SPQR",
+      "RQSP"
+    ],
+    "ans": 0
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 115,
+    "sec": "Ordering of Sentences",
+    "q": "S1: The old man wanted to cross the road. S6: Holding him by hand the driver helped him to cross the road. P: The driver got off and came to him. Q: He was fed up and was about to return. R: Then a car stopped in front of him. S: He waited for a long time. The proper sequence should be:",
+    "o": [
+      "SQRP",
+      "SPRQ",
+      "QRSP",
+      "PSRQ"
+    ],
+    "ans": 0
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 116,
+    "sec": "Ordering of Sentences",
+    "q": "S1: The first thing you have to do is to speak with a strong foreign accent and speak broken English. S6: Half a dozen people will immediately overwhelm you with directions. P: He will be interested in you because you are a foreigner and he will be pleased that he could figure out what you said. Q: He will not expect you to be polite and use elaborate grammatical phrases. R: Then every English person to whom you speak will at once know that you are a foreigner and try to understand you and be ready to help you. S: If you shout, “Please! Charing Cross! Which way?” you will have no difficulty. The proper sequence should be:",
+    "o": [
+      "SRQP",
+      "SRPQ",
+      "RQPS",
+      "RSPQ"
+    ],
+    "ans": 2
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 117,
+    "sec": "Ordering of Sentences",
+    "q": "S1: When a lamb is born its mother may die. S6: If a means of overcoming this natural tendency is found, the lives of millions of lambs can be saved. P: Thus there will nearly always be both motherless lambs and sheep without lambs. Q: However, a sheep which has lost its own lamb will not feed or look after a motherless lamb. R: At the same time some newborn lambs are too weak to live. S: This happens in large flocks where many sheep give birth to lambs at the same time. The proper sequence should be:",
+    "o": [
+      "PQSR",
+      "RPQS",
+      "SRQP",
+      "SRPQ"
+    ],
+    "ans": 3
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 118,
+    "sec": "Ordering of Sentences",
+    "q": "S1: People very seldom have everything they want. S6: Our decisions indicate our scale of preferences and therefore our priorities. P: Usually we have to decide carefully how to spend our income. Q: They may all seem important, but their true importance can be measured by deciding which we are prepared to live without. R: When we exercise our choice, we do so according to our personal scale of preferences. S: In this scale of preferences essential commodities come first, then the kind of luxuries which help us to be comfortable, and finally those non-essentials which give us personal pleasure. The proper sequence should be:",
+    "o": [
+      "PSQR",
+      "PRSQ",
+      "QPSR",
+      "RPQS"
+    ],
+    "ans": 1
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 119,
+    "sec": "Ordering of Sentences",
+    "q": "S1: On 5th October 1818, when young Lincoln was approaching his tenth year, his mother Nancy died of fever. S6: His total education at school comprised only about a year during which he, however, managed to master reading, writing, spelling and some arithmetic. P: She was illiterate, but she brought with her several books, among which were Pilgrim’s Progress, Sindbad the Sailor, Robinson Crusoe and Aesop’s Fables. Q: Lincoln always acknowledged this moral and intellectual debt to his step mother. R: The following year, his father married Sarah Bush Johnson, a widow with three children. S: These books provided Lincoln with a mass of knowledge. The proper sequence should be:",
+    "o": [
+      "RPQS",
+      "PSRQ",
+      "RPSQ",
+      "PSQR"
+    ],
+    "ans": 2
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 120,
+    "sec": "Ordering of Sentences",
+    "q": "S1: Crude oil obtained from the field is taken to a refinery for treatment. S6: Lubricating oils of various grades are obtained last of all. P: The gas that comes off later is condensed into paraffin. Q: This allows substances with different boiling points to be separated. R: The first vapours to rise when cooled provide the finest petrol. S: The commonest form of treatment is heating. The proper sequence should be:",
+    "o": [
+      "SQRP",
+      "RSPQ",
+      "SRPQ",
+      "RPQS"
+    ],
+    "ans": 0
+  }
+
 ];
