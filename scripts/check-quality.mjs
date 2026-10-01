@@ -205,7 +205,10 @@ try {
           q.parts.every(part => typeof part === 'string' && part.trim());
         const normalizeSegmentText = value => String(value).toLocaleLowerCase()
           .replace(/[“”‘’]/g, "'").replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
-        if (explicitParts && normalizeSegmentText(q.parts.join(' ')) !== normalizeSegmentText(q.q)) {
+        const reconstructablePrompt = explicitParts
+          ? String(q.q).replace(/\s*\|\s*no\s+error\.?\s*$/i, '')
+          : q.q;
+        if (explicitParts && normalizeSegmentText(q.parts.join(' ')) !== normalizeSegmentText(reconstructablePrompt)) {
           throw new Error('Spotting Errors parts do not reconstruct the sentence: ' + at);
         }
         const inlineLabels = [...q.q.matchAll(/\(([abc])\)/gi)].map(match => match[1].toLowerCase()).slice(0, 3);
