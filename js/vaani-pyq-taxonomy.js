@@ -137,7 +137,10 @@
     if (!question || typeof question !== 'object') return [];
     var exam = String(question._exam || (Array.isArray(question.tags) && question.tags.indexOf('AFCAT') >= 0 ? 'AFCAT' : Array.isArray(question.tags) && question.tags.indexOf('CDS') >= 0 ? 'CDS' : 'NDA')).toUpperCase();
     var original = Array.isArray(question._sourceTags) ? question._sourceTags : (Array.isArray(question.tags) ? question.tags : []);
-    var out = [], seen = Object.create(null);
+    // Source tags are archival metadata: retain their exact values and order.
+    // The normalized de-duplication applies only to additional generated tags.
+    var out = original.slice(), seen = Object.create(null);
+    out.forEach(function (value) { if (typeof value === 'string' && norm(value)) seen[norm(value)] = true; });
     function add(value) {
       if (typeof value !== 'string') return;
       var label = value.replace(/\s+/g, ' ').trim();
@@ -147,7 +150,6 @@
       seen[key] = true;
       out.push(label);
     }
-    original.forEach(add);
     add(exam);
     add('English');
     var section = topic(question);
