@@ -1,0 +1,17 @@
+/* VAANI emblem integration — artwork is used as supplied. */
+.brand{gap:9px}
+.vaani-brand-logo{
+  display:block;
+  width:clamp(34px,3vw,42px);
+  height:clamp(34px,3vw,42px);
+  flex:0 0 auto;
+  object-fit:contain;
+  object-position:center;
+  border-radius:50%;
+  background:#111820;
+  box-shadow:0 0 0 1px rgba(201,162,75,.42),0 2px 10px rgba(0,0,0,.18);
+}
+.brand-name{line-height:1;letter-spacing:.08em}
+@media (max-width:520px){
+  .vaani-brand-logo{width:34px;height:34px}
+}
