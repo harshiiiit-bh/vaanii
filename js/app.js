@@ -438,8 +438,21 @@ function switchView(name, options={}){
 
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   target.classList.add('active');
-  document.querySelectorAll('#vaaniMainNav button').forEach(b=>b.classList.toggle('active',b.dataset.view===name));
-  document.querySelectorAll('.bottomnav button').forEach(b=>b.classList.toggle('active',b.dataset.view===name));
+  // Keep both navigation surfaces in sync and expose the current destination
+  // to assistive technology. Detail views inherit their parent section's state.
+  const navView = ({journey:'grammar',topic:'grammar','compare-detail':'compare',worddetail:'vocab'})[name] || name;
+  document.querySelectorAll('#vaaniMainNav button').forEach(b=>{
+    const current=b.dataset.view===navView;
+    b.classList.toggle('active',current);
+    if(current)b.setAttribute('aria-current','page');
+    else b.removeAttribute('aria-current');
+  });
+  document.querySelectorAll('.bottomnav button').forEach(b=>{
+    const current=b.dataset.view===navView;
+    b.classList.toggle('active',current);
+    if(current)b.setAttribute('aria-current','page');
+    else b.removeAttribute('aria-current');
+  });
   if(['grammar','compare','vocab','practice','reading','tests','games','pyq'].includes(name)) lastListView=name;
   if(name==='leaderboard') safeCall(renderLeaderboard,'renderLeaderboard');
   if(name==='pyq') safeCall(renderPyqView,'renderPyqView');
