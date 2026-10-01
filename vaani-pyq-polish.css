@@ -17,9 +17,23 @@
 #view-pyq .pv-topic-search input{width:100%;min-width:0;padding:11px 0;border:0;outline:0;background:transparent;color:var(--text);font:inherit;font-size:.8rem}
 #view-pyq .pv-topic-search input::placeholder{color:var(--muted)}
 #view-pyq .pv-topic-results{font-family:var(--mono);font-size:.65rem;color:var(--muted);white-space:nowrap}
-#view-pyq .pv-topic-grid{
-  display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:13px;align-items:stretch;
+#view-pyq .pv-topic-group{
+  margin:0 0 20px;padding:14px;border:1px solid var(--line);border-radius:18px;
+  background:linear-gradient(145deg,rgba(201,162,75,.035),var(--panel));
 }
+#view-pyq .pv-topic-group[hidden]{display:none!important}
+#view-pyq .pv-topic-group-head{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:14px;
+  margin:0 0 12px;padding:2px 2px 11px;border-bottom:1px solid var(--line);
+}
+#view-pyq .pv-topic-group-copy{display:flex;flex-direction:column;gap:3px;min-width:0}
+#view-pyq .pv-topic-group-kicker{font-family:var(--mono);font-size:.54rem;letter-spacing:.13em;color:var(--gold-d)}
+[data-theme="dark"] #view-pyq .pv-topic-group-kicker{color:var(--gold-l)}
+#view-pyq .pv-topic-group-copy strong{font-family:var(--serif);font-size:.95rem;line-height:1.2;color:var(--text)}
+#view-pyq .pv-topic-group-copy small{font-size:.66rem;line-height:1.4;color:var(--muted);max-width:760px}
+#view-pyq .pv-topic-group-count{flex:none;font-family:var(--mono);font-size:.58rem;color:var(--muted);padding-top:4px;white-space:nowrap}
+#view-pyq .pv-topic-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:13px;align-items:stretch}
+#view-pyq .pv-topic-subgrid{margin:0}
 #view-pyq .pv-topic-card{
   appearance:none;-webkit-appearance:none;position:relative;min-width:0;width:100%;min-height:96px;
   display:grid;grid-template-columns:40px minmax(0,1fr) auto;align-items:center;gap:10px;
@@ -58,6 +72,13 @@
 #view-pyq .pv-topic-card:hover .pv-topic-open b{transform:translateX(2px)}
 #view-pyq .pv-topic-open b{display:inline-block;transition:transform .17s ease}
 #view-pyq .pv-topic-empty{margin-top:8px}
+@media (max-width:1100px){#view-pyq .pv-topic-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:700px){
+  #view-pyq .pv-topic-group{padding:12px;border-radius:16px;margin-bottom:14px}
+  #view-pyq .pv-topic-group-head{gap:10px;margin-bottom:10px}
+  #view-pyq .pv-topic-grid{grid-template-columns:1fr;gap:10px}
+  #view-pyq .pv-topic-card{min-height:88px}
+}
 #view-pyq .pv-topic-empty[hidden]{display:none!important}
 
 /* Focus the learner on the question, then make each answer feel like a
