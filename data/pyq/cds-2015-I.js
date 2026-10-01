@@ -1359,4 +1359,82 @@ var PYQ_CDS_2015_I = [
     "passage": "A man had two blacksmiths for his neighbours. Their names were Pengu and Shengu. The man was greatly troubled by the noise of their hammers. He decided to talk to them. The next day he called both of them and offered Rs. 100 each, if they found new huts for themselves. They took the money and agreed to find new huts for themselves. The next morning he woke up again to the sound of their hammers. He went out to see why the blacksmiths hadn’t found new huts and he discovered that Pengu and Shengu had kept their promise. They had exchanged their huts."
   }
 
+,
+
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 96,
+    "sec": "Comprehension",
+    "q": "According to the author",
+    "o": [
+      "the tigress wanted to cover the distance within the half-hour",
+      "the tigress did not wish to cover the distance within the half-hour",
+      "the tigress actually covered the distance within the half-hour",
+      "there was a possibility of the tigress covering the distance within the half-hour"
+    ],
+    "ans": 3,
+    "passage": "The tigress was a mile away and the ground between her and us was densely wooded, scattered over with great rocks and cut up by a number of deep ravines, but she could cover the distance well within the half-hour—if she wanted to. The question I had to decide was whether or not I should try to call her. If I called and she heard me, and came while it was still daylight and gave me a chance to shoot her, all would be well; on the other hand, if she came and did not give me a shot, some of us would not reach camp, for we had nearly two miles to go and the path the whole way ran through heavy jungle."
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 97,
+    "sec": "Comprehension",
+    "q": "The author says, “Some of us would not reach camp”, because",
+    "o": [
+      "it was two miles away",
+      "the tigress would kill some of them",
+      "the path was not suitable for walking",
+      "the ground was scattered over with great rocks"
+    ],
+    "ans": 1,
+    "passage": "The tigress was a mile away and the ground between her and us was densely wooded, scattered over with great rocks and cut up by a number of deep ravines, but she could cover the distance well within the half-hour—if she wanted to. The question I had to decide was whether or not I should try to call her. If I called and she heard me, and came while it was still daylight and gave me a chance to shoot her, all would be well; on the other hand, if she came and did not give me a shot, some of us would not reach camp, for we had nearly two miles to go and the path the whole way ran through heavy jungle."
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 98,
+    "sec": "Comprehension",
+    "q": "The author found it difficult to decide the question because",
+    "o": [
+      "he was afraid",
+      "the tigress was only a mile away",
+      "the ground between them was densely wooded",
+      "there was uncertainty about the reaction of the tigress to his call"
+    ],
+    "ans": 3,
+    "passage": "The tigress was a mile away and the ground between her and us was densely wooded, scattered over with great rocks and cut up by a number of deep ravines, but she could cover the distance well within the half-hour—if she wanted to. The question I had to decide was whether or not I should try to call her. If I called and she heard me, and came while it was still daylight and gave me a chance to shoot her, all would be well; on the other hand, if she came and did not give me a shot, some of us would not reach camp, for we had nearly two miles to go and the path the whole way ran through heavy jungle."
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 99,
+    "sec": "Comprehension",
+    "q": "The time available to the author for shooting the tigress was",
+    "o": [
+      "the whole day",
+      "one night",
+      "a few hours",
+      "thirty minutes"
+    ],
+    "ans": 3,
+    "passage": "The tigress was a mile away and the ground between her and us was densely wooded, scattered over with great rocks and cut up by a number of deep ravines, but she could cover the distance well within the half-hour—if she wanted to. The question I had to decide was whether or not I should try to call her. If I called and she heard me, and came while it was still daylight and gave me a chance to shoot her, all would be well; on the other hand, if she came and did not give me a shot, some of us would not reach camp, for we had nearly two miles to go and the path the whole way ran through heavy jungle."
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 100,
+    "sec": "Comprehension",
+    "q": "When the author says ‘all would be well’, he means",
+    "o": [
+      "that they would be able to hide themselves in the heavy jungle",
+      "that the tigress would run away to the deep ravines",
+      "that they would be able to shoot her down without difficulty",
+      "that they would be able to return in daylight"
+    ],
+    "ans": 2,
+    "passage": "The tigress was a mile away and the ground between her and us was densely wooded, scattered over with great rocks and cut up by a number of deep ravines, but she could cover the distance well within the half-hour—if she wanted to. The question I had to decide was whether or not I should try to call her. If I called and she heard me, and came while it was still daylight and gave me a chance to shoot her, all would be well; on the other hand, if she came and did not give me a shot, some of us would not reach camp, for we had nearly two miles to go and the path the whole way ran through heavy jungle."
+  }
+
 ];
