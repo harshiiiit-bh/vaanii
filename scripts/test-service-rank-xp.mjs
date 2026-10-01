@@ -40,7 +40,7 @@ for(const [force,ranks] of Object.entries(VAANI_SERVICE_RANKS)){
 }
 assert(VAANI_HONORARY_RANKS.army.xp===19000&&VAANI_HONORARY_RANKS.navy.xp===19000&&VAANI_HONORARY_RANKS.airforce.xp===19000,'honorary XP mismatch');
 
-const accuracyCases=[[70,0],[60,10],[59.9,10],[50,20],[49.9,45],[40,45],[39.9,60],[33,60],[32.99,80],[0,80]];
+const accuracyCases=[[70,0],[60,10],[59.9,20],[50,20],[49.9,45],[40,45],[39.9,60],[33,60],[32.99,80],[0,80]];
 for(const [score,want] of accuracyCases) assert(getAccuracyPenalty(score)===want,'accuracy penalty failed at '+score);
 const marksCases=[[100,5],[70,5],[69.99,8],[50,8],[49.99,12],[33,12],[32.99,15],[0,15]];
 for(const [score,want] of marksCases) assert(getTotalMarksPenalty(score)===want,'marks penalty failed at '+score);
