@@ -38,6 +38,11 @@ var PYQ_PAPER_FILES = [
   // Only CDS/AFCAT papers whose source files are present in this repository.
   "cds-2013-I","cds-2013-II",
   "cds-2014-I","cds-2014-II","cds-2015-I",
+  "cds-2016-I","cds-2016-II",
+  "cds-2017-I","cds-2017-II",
+  "cds-2018-I","cds-2018-II",
+  "cds-2019-I","cds-2019-II",
+  "cds-2020-I","cds-2020-II",
   "cds-2021-I","cds-2021-II",
   "cds-2022-I","cds-2022-II",
   "cds-2023-I","cds-2023-II",
