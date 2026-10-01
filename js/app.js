@@ -1892,7 +1892,7 @@ function pvHomeHTML(){
       <div class="pv-topic-tool-actions" aria-label="Topic group controls"><button type="button" class="pv-topic-tool-btn" onclick="pvSetAllTopicGroups(true)">Expand all</button><button type="button" class="pv-topic-tool-btn" onclick="pvSetAllTopicGroups(false)">Collapse all</button></div>
       <span class="pv-topic-results" id="pvTopicResults" aria-live="polite">${topicList.length} skills</span>
     </div>
-    <div class="pv-topic-grid" id="pvTopicGrid">${topicsHTML}</div>
+    <div class="pv-topic-group-list" id="pvTopicGrid">${topicsHTML}</div>
     <div class="pv-empty-note pv-topic-empty" id="pvTopicEmpty" hidden>No matching topic. Try another search.</div>
   </div>`;
 }

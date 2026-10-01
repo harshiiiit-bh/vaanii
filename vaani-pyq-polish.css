@@ -306,3 +306,38 @@
   #view-pyq .ma-archive-search{flex-basis:100%;max-width:none}
   #view-pyq #pvArchiveResults{white-space:normal}
 }
+
+
+/* The outer container holds topic groups; only each group's contents are a card grid.
+   Keeping these layouts separate prevents long group headings from collapsing to
+   one character per line when five skill columns are available. */
+#view-pyq .pv-topic-group-list{
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  gap:12px;
+  align-items:stretch;
+  width:100%;
+  min-width:0;
+}
+#view-pyq .pv-topic-group-list>.pv-topic-group{
+  width:100%;
+  min-width:0;
+  margin:0;
+}
+#view-pyq .pv-topic-group-head{min-width:0;flex-wrap:wrap}
+#view-pyq .pv-topic-group-copy{
+  flex:1 1 16rem;
+  min-width:0;
+  overflow-wrap:normal;
+  word-break:normal;
+}
+#view-pyq .pv-topic-group-copy strong,
+#view-pyq .pv-topic-group-copy small{overflow-wrap:break-word;word-break:normal;white-space:normal}
+#view-pyq .pv-topic-group-head-side{flex:0 1 auto;min-width:0;max-width:100%}
+#view-pyq .pv-topic-group-metrics{max-width:100%}
+@media(max-width:700px){
+  #view-pyq .pv-topic-group-list{gap:10px}
+  #view-pyq .pv-topic-group-head{align-items:flex-start;gap:10px}
+  #view-pyq .pv-topic-group-copy{flex:1 1 100%}
+  #view-pyq .pv-topic-group-head-side{flex:1 1 100%;justify-content:space-between;flex-direction:row;align-items:center}
+}
