@@ -205,8 +205,8 @@ try {
   assert.ok(await page.locator('#serviceRankList .vp-service-rank-insignia img').count() >= 9,
     'Army ladder is missing insignia images');
   assert.deepEqual(await page.locator('#serviceRankList .vp-service-rank-threshold').allTextContents(),
-    ['100 total XP','350 total XP','800 total XP','1,500 total XP','2,600 total XP','4,200 total XP','6,500 total XP','9,500 total XP','13,500 total XP','18,000 total XP'],
-    'Army milestones should have distinct increasing cumulative XP thresholds');
+    ['100 total XP · +100 for this step','350 total XP · +250 for this step','800 total XP · +450 for this step','1,500 total XP · +700 for this step','2,600 total XP · +1,100 for this step','4,200 total XP · +1,600 for this step','6,500 total XP · +2,300 for this step','9,500 total XP · +3,000 for this step','13,500 total XP · +4,000 for this step','18,000 total XP · +4,500 for this step'],
+    'Army milestones should show increasing cumulative thresholds and step costs');
   await page.evaluate(() => { State.xp=500; refreshDashboard(); });
   assert.equal(await page.locator('#rankTitle').textContent(), 'Captain',
     'Army 350-XP threshold should unlock Captain, not several ranks at once');
@@ -220,6 +220,19 @@ try {
   }));
   assert.deepEqual(rankBoundary,{before:'Lieutenant',at:'Captain',after:'Field Marshal',next:null},
     'Rank transitions should occur only at their threshold and continue to Field Marshal');
+  const paceMath=await page.evaluate(()=>({
+    first:getMinimumXPDays(100,0,80),
+    next:getMinimumXPDays(250,0,80),
+    partiallyAvailable:getMinimumXPDays(50,30,80),
+    canFinishToday:getMinimumXPDays(50,80,80),
+    afterTop:getMinimumXPDays(0,80,80)
+  }));
+  assert.deepEqual(paceMath,{first:2,next:4,partiallyAvailable:2,canFinishToday:0,afterTop:0},
+    'Milestone pace should respect today’s remaining cap and never estimate beyond the top rank');
+  assert.equal(await page.locator('#rankDailyXPTrack').getAttribute('role'),'progressbar',
+    'Daily XP allowance should expose an accessible progress meter');
+  assert.equal(await page.locator('#rankPaceHint').count(),1,
+    'Rank card should provide an explicit next-milestone pace guide');
   await page.evaluate(() => { State.xp=0; refreshDashboard(); });
 
   const economy=await page.evaluate(()=>{
@@ -239,6 +252,24 @@ try {
   });
   assert.deepEqual(economy,{first:80,overflow:0,atCap:80,penalty:10,afterPenalty:70,afterLoss:0,earned:80},
     'Daily XP cap must clamp earnings, survive deductions and never be reopened by XP loss');
+  const dailyMeter=await page.evaluate(()=>{
+    const original={xp:State.xp,ledger:{...State.dailyXpEarned},activity:{...State.dailyActivity}};
+    const today=new Date().toDateString();
+    State.dailyXpEarned={[today]:79};State.dailyActivity={[today]:79};
+    renderServiceRankProgress();
+    const result={
+      value:document.getElementById('rankDailyXPTrack')?.getAttribute('aria-valuenow'),
+      label:document.getElementById('rankDailyXPTrack')?.getAttribute('aria-valuetext'),
+      fill:document.getElementById('rankDailyXPFill')?.style.width,
+      remaining:document.getElementById('rankDailyXPRemaining')?.textContent
+    };
+    State.xp=original.xp;State.dailyXpEarned=original.ledger;State.dailyActivity=original.activity;
+    saveState();refreshDashboard();
+    return result;
+  });
+  assert.deepEqual(dailyMeter,{
+    value:'79',label:'79 of 80 XP earned; 1 XP remaining',fill:'99%',remaining:'1 XP remaining today'
+  },'Daily XP allowance meter should accurately show near-cap progress and remaining XP');
 
   const accuracy=await page.evaluate(()=>{
     const original={xp:State.xp,ledger:{...State.dailyXpEarned},activity:{...State.dailyActivity}};
