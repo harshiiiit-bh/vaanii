@@ -4130,8 +4130,7 @@ async function copyAccountCode(){
   return copied;
 }
 
-/* Service-specific commissioned officer ladders. Official insignia are loaded from Wikimedia Commons.
-   XP is only a VAANI learning milestone; it never represents an appointment or promotion. */
+/* Service-specific commissioned officer ladders. XP is only a VAANI learning milestone; it never represents an appointment or promotion. */
 const VAANI_SERVICE_RANKS = Object.freeze({
   army: Object.freeze([
     {name:'Lieutenant',file:'Lieutenant of the Indian Army.svg',xp:100},
@@ -4173,15 +4172,12 @@ const VAANI_HONORARY_RANKS = Object.freeze({
   airforce:{name:'Marshal of the Indian Air Force',file:'Indian IAF OF-10.svg',xp:18000,honorary:true,note:'Honorary five-star rank; separate from the regular officer career ladder.'}
 });
 const VAANI_SERVICE_CHOICES = Object.freeze({
-  army:{label:'Indian Army',short:'ARMY',scene:'https://commons.wikimedia.org/wiki/Special:FilePath/T-90_firing.jpg?width=1000',source:'https://commons.wikimedia.org/wiki/File:T-90_firing.jpg',credit:'Photo: cell105 · CC BY 2.0',alt:'Indian Army T-90 tank firing during a demonstration'},
-  navy:{label:'Indian Navy',short:'NAVY',scene:'https://commons.wikimedia.org/wiki/Special:FilePath/INS_VIkrant_%28R11%29_underway_in_the_Arabian_Sea_with_4_Mig-29K_Fighter_Jets.jpg?width=1000',source:'https://commons.wikimedia.org/wiki/File:INS_VIkrant_(R11)_underway_in_the_Arabian_Sea_with_4_Mig-29K_Fighter_Jets.jpg',credit:'Government of India · GODL-India',alt:'INS Vikrant underway in the Arabian Sea with MiG-29K fighter jets'},
-  airforce:{label:'Indian Air Force',short:'AIR FORCE',scene:'https://commons.wikimedia.org/wiki/Special:FilePath/Indian_Air_Force_Su-30MKI_and_Dassault_Rafale.jpg?width=1000',source:'https://commons.wikimedia.org/wiki/File:Indian_Air_Force_Su-30MKI_and_Dassault_Rafale.jpg',credit:'Indian Air Force · Government of India',alt:'Indian Air Force Rafale and Su-30MKI aircraft flying together'}
+  army:{label:'Indian Army',short:'ARMY',scene:'https://commons.wikimedia.org/wiki/Special:FilePath/T-90_firing.jpg?width=1000',alt:'Indian Army T-90 tank firing during a demonstration'},
+  navy:{label:'Indian Navy',short:'NAVY',scene:'https://commons.wikimedia.org/wiki/Special:FilePath/INS_VIkrant_%28R11%29_underway_in_the_Arabian_Sea_with_4_Mig-29K_Fighter_Jets.jpg?width=1000',alt:'INS Vikrant underway in the Arabian Sea with MiG-29K fighter jets'},
+  airforce:{label:'Indian Air Force',short:'AIR FORCE',scene:'https://commons.wikimedia.org/wiki/Special:FilePath/Indian_Air_Force_Su-30MKI_and_Dassault_Rafale.jpg?width=1000',alt:'Indian Air Force Rafale and Su-30MKI aircraft flying together'}
 });
 function getServiceRankImageUrl(filename,width=180){
   return 'https://commons.wikimedia.org/wiki/Special:FilePath/'+encodeURIComponent(filename)+'?width='+width;
-}
-function getServiceRankSourceUrl(filename){
-  return filename?'https://commons.wikimedia.org/wiki/File:'+encodeURIComponent(filename.replace(/ /g,'_')):'https://commons.wikimedia.org/wiki/Indian_Navy';
 }
 function getServiceRankProgress(xp,force){
   const ranks=VAANI_SERVICE_RANKS[force]||[];
