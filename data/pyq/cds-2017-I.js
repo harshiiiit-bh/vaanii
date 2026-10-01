@@ -1927,6 +1927,11 @@ var PYQ_CDS_2017_I = [
     "n": 92,
     "sec": "Spotting Errors",
     "q": "Considering about these facts the principal has offered him a seat",
+    "parts": [
+      "Considering about these facts",
+      "the principal has offered",
+      "him a seat"
+    ],
     "o": [
       "Considering about these facts",
       "him a seat",
