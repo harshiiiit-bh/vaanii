@@ -190,13 +190,75 @@ try {
   assert.match(armyLadder[8], /General/, 'Army regular ladder should end at General');
   assert.match(armyLadder[9], /Field Marshal/, 'Army honorary rank should be displayed separately');
   assert.ok(await page.locator('#serviceRankList .vp-service-rank-insignia img').count() >= 9,
-    'Army ladder is missing sourced insignia images');
+    'Army ladder is missing insignia images');
+  assert.deepEqual(await page.locator('#serviceRankList .vp-service-rank-threshold').allTextContents(),
+    ['100 total XP','350 total XP','800 total XP','1,500 total XP','2,600 total XP','4,200 total XP','6,500 total XP','9,500 total XP','13,500 total XP','18,000 total XP'],
+    'Army milestones should have distinct increasing cumulative XP thresholds');
   await page.evaluate(() => { State.xp=500; refreshDashboard(); });
-  assert.equal(await page.locator('#rankTitle').textContent(), 'Colonel',
-    'Army officer milestone should map 500 XP to Colonel');
-  assert.match(await page.locator('#rankXPText').textContent(), /Brigadier/,
-    'Army rank progress should name Brigadier as the next milestone');
+  assert.equal(await page.locator('#rankTitle').textContent(), 'Captain',
+    'Army 350-XP threshold should unlock Captain, not several ranks at once');
+  assert.match(await page.locator('#rankXPText').textContent(), /Major.*800 total XP/,
+    'Army rank progress should name Major and show its cumulative threshold');
+  const rankBoundary=await page.evaluate(()=>({
+    before:getServiceRankProgress(349,'army').current.name,
+    at:getServiceRankProgress(350,'army').current.name,
+    after:getServiceRankProgress(18000,'army').current.name,
+    next:getServiceRankProgress(18000,'army').next
+  }));
+  assert.deepEqual(rankBoundary,{before:'Lieutenant',at:'Captain',after:'Field Marshal',next:null},
+    'Rank transitions should occur only at their threshold and continue to Field Marshal');
   await page.evaluate(() => { State.xp=0; refreshDashboard(); });
+
+  const economy=await page.evaluate(()=>{
+    const original={xp:State.xp,ledger:{...State.dailyXpEarned},activity:{...State.dailyActivity}};
+    const today=new Date().toDateString();
+    State.xp=0;State.dailyXpEarned={[today]:0};State.dailyActivity={[today]:0};
+    const first=addXP(200,'cap regression');
+    const overflow=addXP(50,'overflow regression');
+    const atCap=State.xp;
+    const penalty=deductXP(10,'cap regression');
+    const afterPenalty=State.xp;
+    const afterLoss=addXP(50,'no cap reset regression');
+    const earned=State.dailyXpEarned[today];
+    State.xp=original.xp;State.dailyXpEarned=original.ledger;State.dailyActivity=original.activity;
+    saveState();refreshDashboard();
+    return {first,overflow,atCap,penalty,afterPenalty,afterLoss,earned};
+  });
+  assert.deepEqual(economy,{first:80,overflow:0,atCap:80,penalty:10,afterPenalty:70,afterLoss:0,earned:80},
+    'Daily XP cap must clamp earnings, survive deductions and never be reopened by XP loss');
+
+  const accuracy=await page.evaluate(()=>{
+    const original={xp:State.xp,ledger:{...State.dailyXpEarned},activity:{...State.dailyActivity}};
+    const today=new Date().toDateString();
+    State.xp=20;State.dailyXpEarned={[today]:0};State.dailyActivity={[today]:0};
+    const low=awardAccuracyXP(49,'accuracy regression');
+    const afterLow=State.xp;
+    const pass=awardAccuracyXP(50,'accuracy regression');
+    const perfect=awardAccuracyXP(100,'accuracy regression');
+    const result={low,afterLow,pass,perfect,xp:State.xp,earned:State.dailyXpEarned[today]};
+    State.xp=original.xp;State.dailyXpEarned=original.ledger;State.dailyActivity=original.activity;
+    saveState();refreshDashboard();
+    return result;
+  });
+  assert.deepEqual(accuracy,{low:0,afterLow:10,pass:2,perfect:12,xp:24,earned:14},
+    'Accuracy below 50% must deduct XP; passing and perfect scores should earn tiered XP');
+
+  const loginPenalty=await page.evaluate(()=>{
+    const original={xp:State.xp,streak:State.streak,lastActive:State.lastActive,ledger:{...State.dailyXpEarned},activity:{...State.dailyActivity}};
+    const prior=new Date();prior.setDate(prior.getDate()-2);
+    State.xp=100;State.streak=5;State.lastActive=prior.toDateString();
+    finishGateEntry();
+    const once={xp:State.xp,streak:State.streak,lastActive:State.lastActive};
+    finishGateEntry();
+    const twice={xp:State.xp,streak:State.streak,lastActive:State.lastActive};
+    State.xp=original.xp;State.streak=original.streak;State.lastActive=original.lastActive;
+    State.dailyXpEarned=original.ledger;State.dailyActivity=original.activity;
+    saveState();refreshDashboard();
+    return {once,twice};
+  });
+  assert.equal(loginPenalty.once.xp,85,'One missed login day should deduct 15 XP');
+  assert.equal(loginPenalty.once.streak,1,'A missed day should reset the daily streak');
+  assert.deepEqual(loginPenalty.twice,loginPenalty.once,'Logging in twice on the same day must not repeat the penalty');
   await page.locator('#serviceRankLadder summary').click();
   await page.locator('#serviceRankCard .vp-service-change').click();
   await page.locator('#serviceForcePicker .service-force-option[data-force="navy"]').click();
