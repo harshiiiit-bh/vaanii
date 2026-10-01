@@ -477,7 +477,7 @@ await page.goto(baseURL + '?v=notifications', { waitUntil: 'domcontentloaded' })
       containerWidth: element.getBoundingClientRect().width,
       groupWidth: group?.getBoundingClientRect().width || 0,
       titleWidth: title?.getBoundingClientRect().width || 0,
-      columns: getComputedStyle(element).gridTemplateColumns.split(/\\s+/).filter(Boolean).length
+      columns: getComputedStyle(element).gridTemplateColumns.trim().split(' ').filter(Boolean).length
     };
   });
   assert.equal(pyqDesktopLayout.columns, 1, 'PYQ groups should use a single outer column on desktop: ' + JSON.stringify(pyqDesktopLayout));
