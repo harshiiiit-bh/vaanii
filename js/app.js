@@ -44,7 +44,7 @@ function createDefaultState(){
     dailyActivity:{}, dailyXpEarned:{}, focusSessions:{}, mysteryBoxesClaimed:0, reviewQueue:[],
     personalBests:{ bestCombo:0, longestStreak:0, highestQuizScore:0, fastestQuizSeconds:null, fastestQuizLabel:'', totalQuizzesTaken:0 },
     pyqStats:{ attempts:{} }, topicProgress:{}, topicLastAttempt:{}, bookmarkedTopics:{}, topicNotes:{}, pyqBookmarks:[], grammarMastery:{},
-    pyqContinue:null, lastSpinDate:null, activity:[]
+    pyqContinue:null, lastSpinDate:null, activity:[], xpLedger:[]
   };
 }
 const State = createDefaultState();
@@ -71,7 +71,20 @@ function normalizeState(){
     if(!/^.{3,40}$/.test(day)||!Number.isFinite(value)||value<0)delete State.dailyXpEarned[day];
     else State.dailyXpEarned[day]=Math.min(VAANI_DAILY_XP_CAP,Math.floor(value));
   });
-  State.focusSessions=isRecord(State.focusSessions)?State.focusSessions:{};
+  State.xpLedger=Array.isArray(State.xpLedger)?State.xpLedger
+    .filter(entry=>entry&&typeof entry==='object'&&!Array.isArray(entry))
+    .map(entry=>{
+      const amount=Number(entry.amount),at=Number(entry.at);
+      return {
+        type:entry.type==='earned'||entry.type==='deducted'?entry.type:null,
+        amount:Number.isFinite(amount)?Math.floor(amount):0,
+        reason:typeof entry.reason==='string'?entry.reason.trim().slice(0,140):'Learning activity',
+        at:Number.isFinite(at)&&at>0?Math.floor(at):0
+      };
+    })
+    .filter(entry=>entry.type&&entry.amount>0&&entry.at>0)
+    .slice(0,50):[];
+  State.focusSessions=isRecord(State.focusSessions)?State.focusSessions:{}
   State.topicProgress=isRecord(State.topicProgress)?State.topicProgress:{};
   State.topicLastAttempt=isRecord(State.topicLastAttempt)?State.topicLastAttempt:{};
   State.bookmarkedTopics=isRecord(State.bookmarkedTopics)?State.bookmarkedTopics:{};
@@ -338,6 +351,19 @@ function getTodayXPEarned(){
   }
   return Math.min(VAANI_DAILY_XP_CAP,Math.max(0,Math.floor(Number(State.dailyXpEarned[key])||0)));
 }
+function recordXPTransaction(type,amount,reason){
+  const kind=type==='deducted'?'deducted':type==='earned'?'earned':null;
+  const value=Math.floor(Number(amount));
+  if(!kind||!Number.isFinite(value)||value<=0)return false;
+  State.xpLedger=Array.isArray(State.xpLedger)?State.xpLedger:[];
+  State.xpLedger.unshift({
+    type:kind,amount:value,
+    reason:String(reason||'Learning activity').trim().slice(0,140),
+    at:Date.now()
+  });
+  if(State.xpLedger.length>50)State.xpLedger.length=50;
+  return true;
+}
 function addXP(n, reason){
   const requested=Math.max(0,Math.floor(Number(n)||0));
   if(!requested)return 0;
@@ -356,6 +382,7 @@ function addXP(n, reason){
   State.xp=Math.max(0,Math.floor(Number(State.xp)||0))+awarded;
   State.dailyActivity=State.dailyActivity||{};
   State.dailyActivity[dayKey]=(Number(State.dailyActivity[dayKey])||0)+awarded;
+  recordXPTransaction('earned',awarded,reason);
   saveState();refreshTopBar();refreshDashboard();
   toast('+'+awarded+' XP — '+reason+(awarded<requested?' (daily cap applied)':''));
   checkBadges();checkMysteryBox();
@@ -368,6 +395,7 @@ function deductXP(n, reason){
   const deducted=Math.min(before,requested);
   State.xp=before-deducted;
   if(deducted){
+    recordXPTransaction('deducted',deducted,reason);
     saveState();refreshTopBar();refreshDashboard();
     toast('−'+deducted+' XP — '+reason);
   }else{
@@ -4262,6 +4290,40 @@ function renderServiceRankLadder(){
     note.textContent=honorary.note;list.appendChild(note);
   }
 }
+function renderServiceXPLedger(){
+  const host=document.getElementById('rankXPLedger');
+  if(!host)return;
+  host.replaceChildren();
+  const entries=(Array.isArray(State.xpLedger)?State.xpLedger:[])
+    .filter(entry=>entry&&typeof entry==='object'&&!Array.isArray(entry))
+    .slice().sort((a,b)=>(Number(b.at)||0)-(Number(a.at)||0)).slice(0,8);
+  if(!entries.length){
+    const empty=document.createElement('p');
+    empty.className='vp-xp-ledger-empty';
+    empty.textContent='No XP transactions recorded yet.';
+    host.appendChild(empty);return;
+  }
+  entries.forEach(entry=>{
+    const row=document.createElement('div');
+    row.className='vp-xp-ledger-entry '+(entry.type==='deducted'?'is-deducted':'is-earned');
+    const reason=document.createElement('span');
+    reason.className='vp-xp-ledger-reason';
+    reason.textContent=String(entry.reason||'Learning activity').slice(0,140);
+    const amount=document.createElement('strong');
+    amount.className='vp-xp-ledger-amount';
+    amount.textContent=(entry.type==='deducted'?'−':'+')+Math.max(0,Math.floor(Number(entry.amount)||0)).toLocaleString('en-IN')+' XP';
+    const time=document.createElement('time');
+    const date=new Date(Number(entry.at));
+    if(Number.isFinite(date.getTime())){
+      time.dateTime=date.toISOString();
+      time.textContent=date.toLocaleString(undefined,{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+    }else{
+      time.textContent='Date unavailable';
+    }
+    row.append(reason,amount,time);
+    host.appendChild(row);
+  });
+}
 function renderServiceRankProgress(){
   const force=State.serviceForce,meta=VAANI_SERVICE_CHOICES[force];
   const progress=getServiceRankProgress(State.xp,force);
@@ -4273,6 +4335,7 @@ function renderServiceRankProgress(){
   const dailyFill=document.getElementById('rankDailyXPFill');
   const dailyRemaining=document.getElementById('rankDailyXPRemaining');
   const paceHint=document.getElementById('rankPaceHint');
+  renderServiceXPLedger();
   if(!title||!bar||!hint)return;
   const todayEarned=getTodayXPEarned();
   const todayRemaining=Math.max(0,VAANI_DAILY_XP_CAP-todayEarned);

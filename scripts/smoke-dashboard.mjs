@@ -236,7 +236,7 @@ try {
   await page.evaluate(() => { State.xp=0; refreshDashboard(); });
 
   const economy=await page.evaluate(()=>{
-    const original={xp:State.xp,ledger:{...State.dailyXpEarned},activity:{...State.dailyActivity}};
+    const original={xp:State.xp,ledger:{...State.dailyXpEarned},activity:{...State.dailyActivity},xpLedger:[...(State.xpLedger||[])]};
     const today=new Date().toDateString();
     State.xp=0;State.dailyXpEarned={[today]:0};State.dailyActivity={[today]:0};
     const first=addXP(200,'cap regression');
@@ -246,7 +246,7 @@ try {
     const afterPenalty=State.xp;
     const afterLoss=addXP(50,'no cap reset regression');
     const earned=State.dailyXpEarned[today];
-    State.xp=original.xp;State.dailyXpEarned=original.ledger;State.dailyActivity=original.activity;
+    State.xp=original.xp;State.dailyXpEarned=original.ledger;State.dailyActivity=original.activity;State.xpLedger=original.xpLedger;
     saveState();refreshDashboard();
     return {first,overflow,atCap,penalty,afterPenalty,afterLoss,earned};
   });
@@ -263,7 +263,7 @@ try {
       fill:document.getElementById('rankDailyXPFill')?.style.width,
       remaining:document.getElementById('rankDailyXPRemaining')?.textContent
     };
-    State.xp=original.xp;State.dailyXpEarned=original.ledger;State.dailyActivity=original.activity;
+    State.xp=original.xp;State.dailyXpEarned=original.ledger;State.dailyActivity=original.activity;State.xpLedger=original.xpLedger;
     saveState();refreshDashboard();
     return result;
   });
@@ -287,8 +287,46 @@ try {
   assert.deepEqual(accuracy,{low:0,afterLow:10,pass:2,perfect:12,xp:24,earned:14},
     'Accuracy below 50% must deduct XP; passing and perfect scores should earn tiered XP');
 
+  const history=await page.evaluate(()=>{
+    const original=State.xpLedger;
+    State.xpLedger=[];
+    recordXPTransaction('earned',7,'Reward ledger regression');
+    recordXPTransaction('deducted',10,'Penalty ledger regression');
+    renderServiceXPLedger();
+    const host=document.getElementById('rankXPLedger');
+    const initial={
+      entries:host?.querySelectorAll('.vp-xp-ledger-entry').length,
+      text:host?.textContent||'',
+      unsafeNodes:host?.querySelectorAll('img,script').length||0
+    };
+    recordXPTransaction('earned',3,'<img src=x onerror=alert(1)>');
+    for(let i=1;i<=55;i++)recordXPTransaction('earned',i,'History '+i);
+    renderServiceXPLedger();
+    const bounded={
+      stored:State.xpLedger.length,
+      newest:State.xpLedger[0]?.reason,
+      oldest:State.xpLedger[State.xpLedger.length-1]?.reason,
+      visible:host?.querySelectorAll('.vp-xp-ledger-entry').length,
+      text:host?.textContent||'',
+      unsafeNodes:host?.querySelectorAll('img,script').length||0
+    };
+    State.xpLedger=original;
+    renderServiceXPLedger();
+    return {initial,bounded};
+  });
+  assert.equal(history.initial.entries,2,'XP history should render recorded gains and losses');
+  assert.match(history.initial.text,/\+7 XP/,'XP history should show earned amounts with a plus sign');
+  assert.match(history.initial.text,/−10 XP/,'XP history should show deductions with a minus sign');
+  assert.equal(history.initial.unsafeNodes,0,'XP reasons must render as text, not executable markup');
+  assert.equal(history.bounded.stored,50,'XP history must retain no more than 50 entries');
+  assert.equal(history.bounded.newest,'History 55','XP history should keep the newest transaction first');
+  assert.equal(history.bounded.oldest,'History 6','XP history should evict the oldest entries');
+  assert.equal(history.bounded.visible,8,'XP history should render only its eight most recent entries');
+  assert.equal(history.bounded.unsafeNodes,0,'XP history must remain safe after repeated rendering');
+  assert.ok(history.bounded.text.includes('History 55'),'XP history should render the latest entry');
+
   const loginPenalty=await page.evaluate(()=>{
-    const original={xp:State.xp,streak:State.streak,lastActive:State.lastActive,ledger:{...State.dailyXpEarned},activity:{...State.dailyActivity}};
+    const original={xp:State.xp,streak:State.streak,lastActive:State.lastActive,ledger:{...State.dailyXpEarned},activity:{...State.dailyActivity},xpLedger:[...(State.xpLedger||[])]};
     const prior=new Date();prior.setDate(prior.getDate()-2);
     State.xp=100;State.streak=5;State.lastActive=prior.toDateString();
     finishGateEntry();

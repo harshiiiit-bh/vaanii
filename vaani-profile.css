@@ -247,3 +247,20 @@
 @media(prefers-reduced-motion:reduce){
   .vp-rank-daily-track span{transition:none}
 }
+
+/* Bounded XP transaction history; amounts and reasons stay readable on phones. */
+.vp-xp-ledger{width:min(100%,650px);box-sizing:border-box;border-top:1px solid var(--line);padding-top:8px;text-align:center}
+.vp-xp-ledger summary{cursor:pointer;color:var(--muted);font:600 .58rem/1.4 var(--mono);letter-spacing:.06em;list-style-position:inside}
+.vp-xp-ledger summary:hover{color:var(--gold-d)}
+.vp-xp-ledger-list{display:flex;flex-direction:column;gap:5px;margin-top:8px;text-align:left}
+.vp-xp-ledger-entry{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:10px;min-width:0;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:var(--panel2)}
+.vp-xp-ledger-reason{min-width:0;color:var(--text);font-size:.63rem;line-height:1.35;overflow-wrap:anywhere}
+.vp-xp-ledger-amount{font:700 .58rem/1.3 var(--mono);white-space:nowrap}
+.vp-xp-ledger-entry.is-earned .vp-xp-ledger-amount{color:var(--green)}
+.vp-xp-ledger-entry.is-deducted .vp-xp-ledger-amount{color:#c85e51}
+.vp-xp-ledger-entry time{color:var(--muted);font:500 .5rem/1.3 var(--mono);white-space:nowrap;text-align:right}
+.vp-xp-ledger-empty{margin:3px 0;color:var(--muted);font-size:.62rem;text-align:center}
+@media(max-width:560px){
+  .vp-xp-ledger-entry{grid-template-columns:minmax(0,1fr) auto;gap:3px 8px}
+  .vp-xp-ledger-entry time{grid-column:1 / -1;text-align:left}
+}
