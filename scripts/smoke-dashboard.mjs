@@ -87,6 +87,55 @@ async function clickMainView(name) {
 try {
   await page.goto(baseURL, { waitUntil: 'domcontentloaded' });
   await page.waitForSelector('#gate-stage-start', { state: 'visible', timeout: 15000 });
+  // Branding regression: check the circular site emblem and the actual local
+  // favicon response, including alpha transparency at all four corners.
+  const logoState = await page.evaluate(() => {
+    const headerLogo = document.querySelector('.vaani-brand-logo');
+    const gateLogo = document.querySelector('.gate-emblem-image');
+    const favicon = document.querySelector('link[rel~="icon"][type="image/png"]');
+    return {
+      headerSrc: headerLogo?.getAttribute('src') || '',
+      gateSrc: gateLogo?.getAttribute('src') || '',
+      faviconHref: favicon?.getAttribute('href') || '',
+      headerClip: headerLogo ? getComputedStyle(headerLogo).clipPath : '',
+      gateClip: gateLogo ? getComputedStyle(gateLogo).clipPath : ''
+    };
+  });
+  const expectedLogo = 'https://gcdn.picsart.com/cloud-storage/139d6748-1bf1-4286-b8d6-03414b61deb6.png';
+  assert.equal(logoState.headerSrc, expectedLogo, 'header should use the supplied VAANI emblem');
+  assert.equal(logoState.gateSrc, expectedLogo, 'welcome screen should use the supplied VAANI emblem');
+  assert.equal(logoState.faviconHref, 'assets/vaani-emblem-favicon.png?v=20261001-circle1', 'browser tab should use the local circular favicon');
+  assert.ok(logoState.headerClip.includes('47%'), 'header logo should crop only the square corners');
+  assert.ok(logoState.gateClip.includes('47%'), 'welcome logo should crop only the square corners');
+  const faviconUrl = new URL(logoState.faviconHref, page.url()).toString();
+  const faviconResponse = await page.request.get(faviconUrl);
+  assert.equal(faviconResponse.status(), 200, 'local browser favicon should return HTTP 200');
+  assert.match(faviconResponse.headers()['content-type'] || '', /image\\/png/i, 'favicon response should be PNG');
+  const faviconAlpha = await page.evaluate(async src => {
+    const image = new Image();
+    image.src = src;
+    await image.decode();
+    const canvas = document.createElement('canvas');
+    canvas.width = image.naturalWidth;
+    canvas.height = image.naturalHeight;
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    ctx.drawImage(image, 0, 0);
+    return {
+      width: image.naturalWidth,
+      height: image.naturalHeight,
+      cornerAlpha: ctx.getImageData(0, 0, 1, 1).data[3],
+      centerAlpha: ctx.getImageData(Math.floor(canvas.width / 2), Math.floor(canvas.height / 2), 1, 1).data[3]
+    };
+  }, faviconUrl);
+  assert.deepEqual([faviconAlpha.width, faviconAlpha.height], [32, 32], 'favicon should remain a compact 32px image');
+  assert.equal(faviconAlpha.cornerAlpha, 0, 'favicon corners should be transparent');
+  assert.ok(faviconAlpha.centerAlpha > 0, 'favicon should retain the emblem center');
+  await page.waitForFunction(() => {
+    const images = [document.querySelector('.vaani-brand-logo'), document.querySelector('.gate-emblem-image')];
+    return images.every(image => image && image.complete && image.naturalWidth > 0);
+  }, null, { timeout: 15000 });
+  console.log('PASS branding: circular header/welcome emblem and transparent local favicon');
+
   const logoState = await page.evaluate(() => ({
     headerSrc: document.querySelector('.vaani-brand-logo')?.getAttribute('src') || '',
     gateSrc: document.querySelector('.gate-emblem-image')?.getAttribute('src') || '',

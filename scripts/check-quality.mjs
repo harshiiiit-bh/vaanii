@@ -38,20 +38,25 @@ if (/\\n\s*<link\b/i.test(html)) {
 } else {
   console.log('HTML markup: no escaped-newline leak near stylesheet links');
 }
-// Keep the supplied VAANI emblem consistent across the page, browser tab and install metadata.
+// Keep the supplied VAANI emblem consistent across page branding and icons.
 const vaaniLogoUrl = 'https://gcdn.picsart.com/cloud-storage/139d6748-1bf1-4286-b8d6-03414b61deb6.png';
+const vaaniFaviconHref = 'assets/vaani-emblem-favicon.png?v=20261001-circle1';
 const requiredBrandingMarkup = [
   ['header logo', '<img class="vaani-brand-logo" src="' + vaaniLogoUrl + '"'],
   ['welcome logo', '<img class="gate-emblem-image" src="' + vaaniLogoUrl + '"'],
-  ['browser tab PNG favicon', '<link rel="icon" type="image/png" href="' + vaaniLogoUrl + '">'],
+  ['browser tab PNG favicon', '<link rel="icon" type="image/png" sizes="32x32" href="' + vaaniFaviconHref + '">'],
   ['Apple touch icon', '<link rel="apple-touch-icon" href="' + vaaniLogoUrl + '">'],
-  ['social preview image', '<meta property="og:image" content="' + vaaniLogoUrl + '">']
+  ['social preview image', '<meta property="og:image" content="' + vaaniLogoUrl + '>']
 ];
 for (const [label, markup] of requiredBrandingMarkup) {
   if (!html.includes(markup)) {
     console.error('Branding asset missing or inconsistent:', label);
     process.exitCode = 1;
   }
+}
+if (!existsSync('assets/vaani-emblem-favicon.png')) {
+  console.error('Local circular VAANI favicon asset is missing');
+  process.exitCode = 1;
 }
 try {
   const manifest = JSON.parse(readFileSync('manifest.webmanifest', 'utf8'));
@@ -63,7 +68,7 @@ try {
   console.error('PWA manifest is invalid:', error.message);
   process.exitCode = 1;
 }
-if (!html.includes('vaani-brand-emblem.css?v=20261001-logo2')) {
+if (!html.includes('vaani-brand-emblem.css?v=20261001-circle1')) {
   console.error('VAANI emblem styling cache key is outdated');
   process.exitCode = 1;
 }
