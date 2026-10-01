@@ -1,0 +1,41 @@
+/* VAANI OFFICER ELITE LAYER */
+#vaaniMentor{--ve-gold:#d7ad55;--ve-ink:#15262f;--ve-soft:#f6f5f0;--ve-shadow:0 24px 70px rgba(10,22,28,.24)}
+#vaaniMentor .vc-aura{position:absolute;inset:auto 20px -4px auto;width:105px;height:28px;border-radius:50%;background:rgba(201,162,75,.16);filter:blur(12px);pointer-events:none}
+#vaaniMentor .vc-orb{position:relative;width:46px;height:46px;border-radius:50%;border:1px solid rgba(215,173,85,.55);background:linear-gradient(145deg,#203740,#0f2028);color:#f2d58e;box-shadow:0 10px 30px rgba(10,22,28,.25),inset 0 1px 0 rgba(255,255,255,.16);cursor:pointer;display:grid;place-items:center;font-size:19px;transition:.25s}
+#vaaniMentor .vc-orb:hover{transform:translateY(-3px) scale(1.05);box-shadow:0 15px 34px rgba(10,22,28,.32)}
+#vaaniMentor .vc-orb:after{content:"";position:absolute;inset:-5px;border:1px solid rgba(215,173,85,.18);border-radius:50%;animation:vePulse 2.6s ease-out infinite}
+#vaaniMentor .vc-panel{position:absolute;right:0;bottom:58px;width:min(430px,calc(100vw - 24px));background:rgba(250,249,245,.985);border:1px solid rgba(215,173,85,.36);border-radius:24px;box-shadow:var(--ve-shadow);overflow:hidden;opacity:0;transform:translateY(12px) scale(.96);pointer-events:none;transition:.25s ease}
+#vaaniMentor.open .vc-panel{opacity:1;transform:none;pointer-events:auto}
+#vaaniMentor.open .vc-orb{opacity:.75}
+#vaaniMentor .vc-panel-head{display:flex;justify-content:space-between;align-items:center;padding:15px 17px 10px;border-bottom:1px solid rgba(21,38,47,.08);background:linear-gradient(135deg,rgba(255,255,255,.98),rgba(244,241,232,.9))}
+#vaaniMentor .vc-title{font:800 .84rem/1.2 var(--mono,monospace);letter-spacing:.06em;color:var(--ve-ink)}
+#vaaniMentor .vc-x{border:0;background:transparent;font-size:22px;line-height:1;color:#66757d;cursor:pointer}
+#vaaniMentor .vc-body{display:grid;grid-template-columns:150px 1fr;gap:10px;padding:13px 16px 10px;align-items:center}
+#vaaniMentor .vc-character{width:150px;height:142px;flex:none;background-image:url("assets/vaani-officer-pack.webp");background-size:400% 300%;background-repeat:no-repeat;filter:drop-shadow(0 14px 13px rgba(8,18,24,.22));transform:translateY(4px);transition:.3s}
+#vaaniMentor .vc-copy{min-width:0}
+#vaaniMentor .vc-text{font-size:.79rem;line-height:1.55;color:#4e5e68}
+#vaaniMentor .vc-quote{margin-top:8px;padding-left:10px;border-left:3px solid var(--ve-gold);font:600 .79rem/1.45 var(--serif,Georgia);color:#293c45}
+#vaaniMentor .vc-intel{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
+#vaaniMentor .vc-intel span{padding:4px 7px;border:1px solid rgba(21,38,47,.1);border-radius:999px;background:#fff;color:#66747b;font:700 .56rem var(--mono,monospace)}
+#vaaniMentor .vc-actions{display:flex;justify-content:flex-end;gap:7px;padding:9px 16px 14px;border-top:1px solid rgba(21,38,47,.07)}
+#vaaniMentor .vc-actions button{min-height:31px;padding:6px 10px;border-radius:999px;border:1px solid rgba(21,38,47,.12);background:#fff;color:#4d5d66;font:700 .61rem var(--mono,monospace);cursor:pointer}
+#vaaniMentor .vc-actions button.primary{background:var(--ve-ink);border-color:var(--ve-ink);color:#fff}
+#vaaniMentor.celebrate .vc-character{animation:veCelebrate .65s ease 2}
+#vaaniMentor.result-flash .vc-panel{animation:veResult .8s ease}
+#vaaniMentor.result-low .vc-panel{border-color:rgba(179,117,72,.55)}
+#vaaniMentor.mini .vc-panel{display:block}
+#vaaniMentor.bad-result{z-index:9200}
+@keyframes vePulse{0%{transform:scale(.88);opacity:.7}70%,100%{transform:scale(1.28);opacity:0}}
+@keyframes veCelebrate{0%,100%{transform:translateY(4px) rotate(0)}35%{transform:translateY(-8px) rotate(-3deg)}70%{transform:translateY(-2px) rotate(3deg)}}
+@keyframes veResult{0%{transform:translateY(0) scale(1)}30%{transform:translateY(-3px) scale(1.015)}100%{transform:none}}
+@media(max-width:600px){
+ #vaaniMentor{right:8px;bottom:calc(var(--bottomnav-h,64px) + 10px)}
+ #vaaniMentor .vc-panel{bottom:55px;width:calc(100vw - 16px)}
+ #vaaniMentor .vc-body{grid-template-columns:94px 1fr;padding:10px 11px}
+ #vaaniMentor .vc-character{width:94px;height:92px}
+ #vaaniMentor .vc-text{font-size:.72rem}.vc-quote{font-size:.7rem!important}
+ #vaaniMentor .vc-intel span{font-size:.5rem;padding:3px 5px}
+}
+@media(prefers-reduced-motion:reduce){
+ #vaaniMentor *{animation:none!important;transition:none!important}
+}
