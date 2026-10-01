@@ -143,6 +143,7 @@ var PYQ_CDS_2014_II = (function () {
     ['Ordering of Sentences','S1: There are several tribes in East Africa. S6: All the other tribes were afraid of them because of their skill in war. P: The Masais were famous fighters. Q: They used to raid the neighbouring tribes and carry away their cattle. R: They lived on the wide plains in Southern Kenya and Northern Tanzania. S: But the most famous among them is the Masai tribe.',['SPRQ','PRQS','RQSP','QRPS']],
     ['Ordering of Sentences','S1: I had my eye especially on the long jump. S6: He turned out to be a German named Luz Long. P: Everyone expected me to win that Olympic event hands down. Q: I was in for a surprise. R: When the time came for the long jump trials, I was startled to see a tall boy hitting the pit at almost 26 feet on his practice leaps. S: A year before I had set the world record of 26 feet 3 inches.',['PQRS','PSQR','PRSQ','SRPQ']]
   ];
+  rows.slice(0,20).forEach(function(r){ if(r[0]==='Spotting Errors') r[1]=r[2].slice(0,3).join(' | '); });
   if (rows.length !== 120) throw new Error('CDS-II 2014 data must contain 120 questions; got '+rows.length);
   return rows.map(function (r, i) {
     var item = { y: 2014, s: 'II', n: i + 1, sec: r[0], q: r[1], o: r[2], ans: answers[i] };
