@@ -271,6 +271,14 @@ await page.goto(baseURL + '?v=notifications', { waitUntil: 'domcontentloaded' })
   const nearVisible = Math.min(4, nearTotal);
   assert.equal(await page.locator('#vxOngoingList .vx-notice-card').count(), ongoingVisible, 'open applications outside seven days, including title date ranges, should be Ongoing');
   assert.equal(await page.locator('#vxNearList .vx-notice-card').count(), nearVisible, 'today, seven-day and inferred title deadlines should be Deadline Near');
+  const nearMore = page.locator('#vxNearMore');
+  if (nearTotal > 4) {
+    assert.equal(await nearMore.isVisible(), true, 'large deadline lanes should expose a View all control');
+    const label = (await nearMore.innerText()).trim();
+    assert.equal(label, 'View all ' + nearTotal, 'deadline preview should disclose the complete result count');
+    await nearMore.click();
+    assert.equal(await page.locator('#vxNearList .vx-notice-card').count(), nearTotal, 'View all should expose every deadline notice');
+  }
   const extensionCard = page.locator('#vxNearList .vx-notice-card').filter({ hasText: 'Online Registration Extended till 05.10.2026' });
   assert.equal(await extensionCard.count(), 1, 'an explicitly extended application should appear in Deadline Near');
   assert.match(await extensionCard.innerText(), /CLOSING DATE[\s\S]*05 Oct 2026/i, 'the extension date should be labelled as the closing date');
@@ -279,6 +287,10 @@ await page.goto(baseURL + '?v=notifications', { waitUntil: 'domcontentloaded' })
     'a range ending within the next seven days should appear in Deadline Near');
   assert.equal(await page.locator('#vxOngoingList .vx-notice-card').filter({ hasText: '30.09.2026 to 21.10.2026' }).count(), 1,
     'a date range that is open today and closes beyond seven days should appear in Ongoing');
+  if (nearTotal > 4) {
+    await nearMore.click();
+    assert.equal(await page.locator('#vxNearList .vx-notice-card').count(), nearVisible, 'Show fewer should restore the deadline preview');
+  }
   assert.equal(await page.locator('#vxUpcomingList').innerText().then(text => text.includes('NDA Officer Entry Calendar 2027')), true);
   assert.equal(await page.locator('#vxUpcomingList').innerText().then(text => text.includes('answer key')), false,
     'a post-exam notice must not become an active opportunity');
