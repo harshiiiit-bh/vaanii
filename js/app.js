@@ -438,6 +438,7 @@ function switchView(name, options={}){
 
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   target.classList.add('active');
+  refreshAccountCodeControls();
   // Keep both navigation surfaces in sync and expose the current destination
   // to assistive technology. Detail views inherit their parent section's state.
   const navView = ({journey:'grammar',topic:'grammar','compare-detail':'compare',worddetail:'vocab'})[name] || name;
@@ -3973,7 +3974,81 @@ function logActivity(action,detail){
   State.activity = State.activity.slice(0,8);
   saveState();
 }
+/* Account login code: read only from the authenticated in-memory account. */
+function currentAccountLoginCode(){
+  const code=typeof ACTIVE_CODE==='undefined'?'':String(ACTIVE_CODE||'');
+  return /^\d{6}$/.test(code)?code:'';
+}
+function formatAccountLoginCode(code){return code.slice(0,3)+' '+code.slice(3);}
+function refreshAccountCodeControls(){
+  const code=currentAccountLoginCode();
+  const gate=document.getElementById('gate');
+  const authenticated=!!code&&!!gate&&gate.classList.contains('hide');
+  const desktopCard=document.getElementById('vpAccountCodeCard');
+  const desktopValue=document.getElementById('vpAccountCodeValue');
+  const mobileBar=document.getElementById('mobileAccountCodeBar');
+  const mobilePanel=document.getElementById('mobileAccountCodePanel');
+  const mobileValue=document.getElementById('mobileAccountCodeValue');
+  const mobileToggle=document.getElementById('mobileAccountCodeToggle');
+  const mobileHint=document.getElementById('mobileAccountCodeHint');
+  const isMobile=!!(window.matchMedia&&window.matchMedia('(max-width: 767px)').matches);
+  if(desktopCard)desktopCard.hidden=!authenticated;
+  if(desktopValue)desktopValue.textContent=authenticated&&!isMobile?formatAccountLoginCode(code):'••• •••';
+  if(mobileBar)mobileBar.hidden=!authenticated;
+  if(!authenticated&&mobilePanel)mobilePanel.hidden=true;
+  const mobileOpen=!!(authenticated&&mobilePanel&&!mobilePanel.hidden);
+  if(mobileValue)mobileValue.textContent=mobileOpen?formatAccountLoginCode(code):'';
+  if(mobileToggle)mobileToggle.setAttribute('aria-expanded',mobileOpen?'true':'false');
+  if(mobileHint)mobileHint.textContent=mobileOpen?'Tap to hide':'Tap to reveal';
+}
+function toggleMobileAccountCode(){
+  const code=currentAccountLoginCode();
+  const gate=document.getElementById('gate');
+  const panel=document.getElementById('mobileAccountCodePanel');
+  const value=document.getElementById('mobileAccountCodeValue');
+  const toggle=document.getElementById('mobileAccountCodeToggle');
+  const hint=document.getElementById('mobileAccountCodeHint');
+  if(!code||!gate||!gate.classList.contains('hide')||!panel||!toggle)return;
+  const opening=panel.hidden;
+  panel.hidden=!opening;
+  if(value)value.textContent=opening?formatAccountLoginCode(code):'';
+  toggle.setAttribute('aria-expanded',opening?'true':'false');
+  if(hint)hint.textContent=opening?'Tap to hide':'Tap to reveal';
+}
+async function copyAccountCode(){
+  const code=currentAccountLoginCode();
+  const gate=document.getElementById('gate');
+  if(!code||!gate||!gate.classList.contains('hide')){
+    if(typeof toast==='function')toast('Sign in to view your account code.');
+    return false;
+  }
+  let copied=false;
+  try{
+    if(navigator.clipboard&&typeof navigator.clipboard.writeText==='function'){
+      await navigator.clipboard.writeText(code);
+      copied=true;
+    }
+  }catch(e){}
+  if(!copied){
+    const field=document.createElement('textarea');
+    field.value=code;
+    field.setAttribute('readonly','');
+    field.setAttribute('aria-hidden','true');
+    field.style.position='fixed';
+    field.style.top='0';
+    field.style.left='-9999px';
+    field.style.opacity='0';
+    document.body.appendChild(field);
+    try{field.focus();field.select();copied=!!document.execCommand('copy');}
+    catch(e){copied=false;}
+    finally{field.remove();}
+  }
+  if(typeof toast==='function')toast(copied?'Login code copied. Keep it private.':'Copy is unavailable here. Select the displayed code and copy it manually.');
+  return copied;
+}
+
 function renderProfileSnapshot(){
+  refreshAccountCodeControls();
   const name=String(State.name||'Cadet').trim()||'Cadet';
   const initials=name.split(/\s+/).filter(Boolean).slice(0,2).map(part=>part.charAt(0).toUpperCase()).join('')||'C';
   const avatar=document.getElementById('vpProfileAvatar');if(avatar)avatar.textContent=initials;
