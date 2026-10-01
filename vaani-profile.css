@@ -203,3 +203,8 @@
 @media(max-width:680px){
   .service-force-choice{gap:4px}
   }
+
+.vp-xp-rules{margin:8px auto 0;max-width:470px;border-top:1px solid var(--line);padding-top:8px;text-align:center}
+.vp-xp-rules summary{cursor:pointer;color:var(--muted);font:600 .58rem/1.4 var(--mono);letter-spacing:.06em;list-style-position:inside}
+.vp-xp-rules summary:hover{color:var(--gold-d)}
+.vp-xp-rules p{margin:7px auto 0;max-width:620px;color:var(--muted);font-size:.64rem;line-height:1.55}
