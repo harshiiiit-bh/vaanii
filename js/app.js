@@ -402,7 +402,7 @@ function addXP(n, reason){
   State.dailyActivity[dayKey]=(Number(State.dailyActivity[dayKey])||0)+awarded;
   recordXPTransaction('earned',awarded,reason);
   saveState();refreshTopBar();refreshDashboard();
-  toast('+'+awarded+' XP — '+reason+(awarded<requested?' (daily cap applied)':''));
+  toast('+'+awarded+' XP — '+reason);
   checkBadges();checkMysteryBox();
   return awarded;
 }
@@ -2394,7 +2394,7 @@ function pvFinishSession(){
       marksChange=State.xp-marksBefore;
     }
     // Keep the actual applied delta for an honest result summary when the XP
-    // balance is smaller than a requested penalty or a daily cap limits a reward.
+    // balance can be smaller than a requested penalty.
     s.xpAdjustments={accuracy:accuracyChange,marks:marksChange};
   }
   if(s.mode==='exam'){PV.screen='summary';pvRender();return;}
