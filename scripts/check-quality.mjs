@@ -183,6 +183,7 @@ try {
 
   const ids = new Set();
   const topicCounts = new Map();
+  const topicIssues = [], directionIssues = [], targetWordIssues = [];
   let questionCount = 0;
   for (const filename of paperNames) {
     const path = 'data/pyq/' + filename + '.js';
@@ -228,21 +229,28 @@ try {
       if (ids.has(id)) throw new Error('Duplicate PYQ question ID: ' + id);
       ids.add(id);
       const tag = taxonomy.topic({ ...q, _exam: exam });
-      if (!tag || tag === 'Grammar' || tag === 'Grammar (Mixed)') throw new Error('Unresolved question type tag: ' + at + ' (' + q.sec + ')');
-      topicCounts.set(tag, (topicCounts.get(tag) || 0) + 1);
+      if (!tag || tag === 'Grammar' || tag === 'Grammar (Mixed)') topicIssues.push(at + ' (' + q.sec + ')');
+      if (tag) topicCounts.set(tag, (topicCounts.get(tag) || 0) + 1);
       const prompt = q.q.toLocaleLowerCase();
       const asksAntonym = /\b(?:antonym|opposite in meaning|opposite meaning)\b/.test(prompt);
       const asksSynonym = /\b(?:synonym|similar in meaning|same in meaning)\b/.test(prompt);
-      if (asksAntonym && !asksSynonym && tag !== 'Antonyms') throw new Error('Question asks for an antonym but is tagged ' + tag + ': ' + at);
-      if (asksSynonym && !asksAntonym && tag !== 'Synonyms') throw new Error('Question asks for a synonym but is tagged ' + tag + ': ' + at);
+      if (asksAntonym && !asksSynonym && tag !== 'Antonyms') directionIssues.push('antonym tagged ' + tag + ': ' + at);
+      if (asksSynonym && !asksAntonym && tag !== 'Synonyms') directionIssues.push('synonym tagged ' + tag + ': ' + at);
       if (q.sec === 'Synonyms' || q.sec === 'Antonyms' || tag === 'Synonyms' || tag === 'Antonyms') {
         const keyword = taxonomy.keyword(q);
         if (!keyword || !prompt.includes(keyword.toLocaleLowerCase())) {
-          throw new Error('Synonym/antonym target word missing or not present in question: ' + at);
+          targetWordIssues.push(at);
         }
       }
     }
     questionCount += context[variable].length;
+  }
+  if (topicIssues.length || directionIssues.length || targetWordIssues.length) {
+    const summary = [];
+    if (topicIssues.length) summary.push('unresolved topics (' + topicIssues.length + '): ' + topicIssues.slice(0, 12).join(', '));
+    if (directionIssues.length) summary.push('wrong question-type tags (' + directionIssues.length + '): ' + directionIssues.slice(0, 12).join(', '));
+    if (targetWordIssues.length) summary.push('missing target words (' + targetWordIssues.length + '): ' + targetWordIssues.slice(0, 30).join(', '));
+    throw new Error(summary.join(' | '));
   }
   const forbidden = ['Comprehension', 'Word Classes', 'Parts of Speech', 'Active and Passive Voice', 'Active/Passive Voice', 'Homonyms/Homophones', 'Homophones'];
   for (const label of forbidden) if (topicCounts.has(label)) throw new Error('Duplicate/legacy topic label remains: ' + label);
