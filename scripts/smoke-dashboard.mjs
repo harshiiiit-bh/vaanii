@@ -184,6 +184,7 @@ try {
   await assertVisibleText('#vpProfileRank', 'Service-aware Profile rank');
   await page.locator('#serviceRankLadder summary').click();
   const armyLadder = await page.locator('#serviceRankList .vp-service-rank-row').allInnerTexts();
+  const armyRankNames = await page.locator('#serviceRankList .vp-service-rank-name').allTextContents();
   assert.equal(armyLadder.length, 10, 'Army ladder should show 9 regular and 1 honorary officer rank');
   assert.match(armyLadder[0], /Lieutenant/, 'Army commissioned ladder should start at Lieutenant');
   assert.match(armyLadder[8], /General/, 'Army regular ladder should end at General');
@@ -206,6 +207,7 @@ try {
     'Changing service should preserve learning XP');
   await page.locator('#serviceRankLadder summary').click();
   const navyLadder = await page.locator('#serviceRankList .vp-service-rank-row').allInnerTexts();
+  const navyRankNames = await page.locator('#serviceRankList .vp-service-rank-name').allTextContents();
   assert.match(navyLadder[0], /Sub Lieutenant/, 'Navy ladder should start at Sub Lieutenant');
   assert.match(navyLadder[8], /Admiral/, 'Navy regular ladder should end at Admiral');
   assert.match(navyLadder[9], /Admiral of the Fleet/, 'Navy honorary rank should be visibly separate');
@@ -219,14 +221,16 @@ try {
     'Changing to Air Force should preserve learning XP');
   await page.locator('#serviceRankLadder summary').click();
   const airforceLadder = await page.locator('#serviceRankList .vp-service-rank-row').allInnerTexts();
+  const airforceRankNames = await page.locator('#serviceRankList .vp-service-rank-name').allTextContents();
   assert.match(airforceLadder[0], /Flying Officer/, 'Air Force ladder should start at Flying Officer');
   assert.match(airforceLadder[8], /Air Chief Marshal/, 'Air Force regular ladder should end at Air Chief Marshal');
   assert.match(airforceLadder[9], /Marshal of the Indian Air Force/, 'Air Force honorary rank should be visibly separate');
-  assert.notDeepEqual(
-    [armyLadder.map(row => row.match(/^[^\\n]+/)?.[0]), navyLadder.map(row => row.match(/^[^\\n]+/)?.[0]), airforceLadder.map(row => row.match(/^[^\\n]+/)?.[0])],
-    [],
-    'Each service must display its own distinct ladder'
-  );
+  assert.notDeepEqual(armyRankNames.slice(0,9),navyRankNames.slice(0,9),
+    'Army and Navy should display different regular ranks');
+  assert.notDeepEqual(armyRankNames.slice(0,9),airforceRankNames.slice(0,9),
+    'Army and Air Force should display different regular ranks');
+  assert.notDeepEqual(navyRankNames.slice(0,9),airforceRankNames.slice(0,9),
+    'Navy and Air Force should display different regular ranks');
 
   await page.locator('#serviceRankCard .vp-service-change').click();
   await page.locator('#serviceForcePicker .service-force-option[data-force="army"]').click();
