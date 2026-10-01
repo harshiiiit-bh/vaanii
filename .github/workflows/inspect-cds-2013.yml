@@ -166,6 +166,7 @@ jobs:
                       if part:fragments.append(part)
                   if fragments:q=norm(q+" "+" ".join(fragments))
                 q=re.sub(r"\bS\s+([126])\s*:",r"S\1:",q)
+                q=re.sub(r"\b([PQRS])\s*[;]\s*",r"\1: ",q)
                 opts_el=choice_list(li)
                 opts=[norm(x.get_text(" ",strip=True)) for x in direct_list_items(opts_el)] if opts_el else []
                 # The public transcription omits option (d) for this item; use the uploaded paper scan.
@@ -218,9 +219,7 @@ jobs:
             for n in [1,16,36,51,57,66,78,90,103] if session=="I" else [1,20,25,47,65,81,101]:
               x=records[n-1]
               print(f"SAMPLE {session}-{n} [{x['sec']}] Q={x['q'][:160]!r} O={x['o']} passage={len(x.get('passage',''))}")
-            if session=="II":
-              for n in [51,53,54,55,63]:
-                print("FULL_ORDER",n,repr(records[n-1]["q"]))
+
             return records
           allq={s:parse(s) for s in ("I","II")}
           for s,qs in allq.items():
