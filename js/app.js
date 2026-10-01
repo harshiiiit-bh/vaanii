@@ -4131,43 +4131,43 @@ async function copyAccountCode(){
    XP is only a VAANI learning milestone; it never represents an appointment or promotion. */
 const VAANI_SERVICE_RANKS = Object.freeze({
   army: Object.freeze([
-    {name:'Lieutenant',file:'Lieutenant of the Indian Army.svg'},
-    {name:'Captain',file:'Captain of the Indian Army.svg'},
-    {name:'Major',file:'Major of the Indian Army.svg'},
-    {name:'Lieutenant Colonel',file:'Lieutenant Colonel of the Indian Army.svg'},
-    {name:'Colonel',file:'Colonel of the Indian Army.svg'},
-    {name:'Brigadier',file:'Brigadier of the Indian Army.svg'},
-    {name:'Major General',file:'Major General of the Indian Army.svg'},
-    {name:'Lieutenant General',file:'Lieutenant General of the Indian Army.svg'},
-    {name:'General',file:'General of the Indian Army.svg'}
+    {name:'Lieutenant',file:'Lieutenant of the Indian Army.svg',xp:100},
+    {name:'Captain',file:'Captain of the Indian Army.svg',xp:350},
+    {name:'Major',file:'Major of the Indian Army.svg',xp:800},
+    {name:'Lieutenant Colonel',file:'Lieutenant Colonel of the Indian Army.svg',xp:1500},
+    {name:'Colonel',file:'Colonel of the Indian Army.svg',xp:2600},
+    {name:'Brigadier',file:'Brigadier of the Indian Army.svg',xp:4200},
+    {name:'Major General',file:'Major General of the Indian Army.svg',xp:6500},
+    {name:'Lieutenant General',file:'Lieutenant General of the Indian Army.svg',xp:9500},
+    {name:'General',file:'General of the Indian Army.svg',xp:13500}
   ]),
   navy: Object.freeze([
-    {name:'Sub Lieutenant',file:'06-Indian Navy-SLT.svg'},
-    {name:'Lieutenant',file:'07-Indian Navy-LT.svg'},
-    {name:'Lieutenant Commander',file:'08-Indian Navy-LCDR.svg'},
-    {name:'Commander',file:'09-Indian Navy-CDR.svg'},
-    {name:'Captain',file:'10-Indian Navy-CAPT.svg'},
-    {name:'Commodore',file:'11-Indian Navy-CDRE.svg'},
-    {name:'Rear Admiral',file:'12-Indian Navy-RADM.svg'},
-    {name:'Vice Admiral',file:'13-Indian Navy-VADM.svg'},
-    {name:'Admiral',file:'14-Indian Navy-ADM.svg'}
+    {name:'Sub Lieutenant',file:'06-Indian Navy-SLT.svg',xp:100},
+    {name:'Lieutenant',file:'07-Indian Navy-LT.svg',xp:350},
+    {name:'Lieutenant Commander',file:'08-Indian Navy-LCDR.svg',xp:800},
+    {name:'Commander',file:'09-Indian Navy-CDR.svg',xp:1500},
+    {name:'Captain',file:'10-Indian Navy-CAPT.svg',xp:2600},
+    {name:'Commodore',file:'11-Indian Navy-CDRE.svg',xp:4200},
+    {name:'Rear Admiral',file:'12-Indian Navy-RADM.svg',xp:6500},
+    {name:'Vice Admiral',file:'13-Indian Navy-VADM.svg',xp:9500},
+    {name:'Admiral',file:'14-Indian Navy-ADM.svg',xp:13500}
   ]),
   airforce: Object.freeze([
-    {name:'Flying Officer',file:'Indian IAF OF-1b.svg'},
-    {name:'Flight Lieutenant',file:'Indian IAF OF-2.svg'},
-    {name:'Squadron Leader',file:'Indian IAF OF-3.svg'},
-    {name:'Wing Commander',file:'Indian IAF OF-4.svg'},
-    {name:'Group Captain',file:'Indian IAF OF-5.svg'},
-    {name:'Air Commodore',file:'Indian IAF OF-6.svg'},
-    {name:'Air Vice Marshal',file:'Indian IAF OF-7.svg'},
-    {name:'Air Marshal',file:'Indian IAF OF-8.svg'},
-    {name:'Air Chief Marshal',file:'Indian IAF OF-9.svg'}
+    {name:'Flying Officer',file:'Indian IAF OF-1b.svg',xp:100},
+    {name:'Flight Lieutenant',file:'Indian IAF OF-2.svg',xp:350},
+    {name:'Squadron Leader',file:'Indian IAF OF-3.svg',xp:800},
+    {name:'Wing Commander',file:'Indian IAF OF-4.svg',xp:1500},
+    {name:'Group Captain',file:'Indian IAF OF-5.svg',xp:2600},
+    {name:'Air Commodore',file:'Indian IAF OF-6.svg',xp:4200},
+    {name:'Air Vice Marshal',file:'Indian IAF OF-7.svg',xp:6500},
+    {name:'Air Marshal',file:'Indian IAF OF-8.svg',xp:9500},
+    {name:'Air Chief Marshal',file:'Indian IAF OF-9.svg',xp:13500}
   ])
 });
 const VAANI_HONORARY_RANKS = Object.freeze({
-  army:{name:'Field Marshal',file:'Field Marshal of the Indian Army.svg',note:'Honorary five-star rank; separate from the regular officer career ladder.'},
-  navy:{name:'Admiral of the Fleet',file:null,note:'Honorary five-star rank; it has never been awarded in India, so no Indian insignia is shown.'},
-  airforce:{name:'Marshal of the Indian Air Force',file:'Indian IAF OF-10.svg',note:'Honorary five-star rank; separate from the regular officer career ladder.'}
+  army:{name:'Field Marshal',file:'Field Marshal of the Indian Army.svg',xp:18000,honorary:true,note:'Honorary five-star rank; separate from the regular officer career ladder.'},
+  navy:{name:'Admiral of the Fleet',file:null,xp:18000,honorary:true,note:'Honorary five-star rank; it has never been awarded in India, so no Indian insignia is shown.'},
+  airforce:{name:'Marshal of the Indian Air Force',file:'Indian IAF OF-10.svg',xp:18000,honorary:true,note:'Honorary five-star rank; separate from the regular officer career ladder.'}
 });
 const VAANI_SERVICE_CHOICES = Object.freeze({
   army:{label:'Indian Army',short:'ARMY',scene:'https://commons.wikimedia.org/wiki/Special:FilePath/T-90_firing.jpg?width=1000',source:'https://commons.wikimedia.org/wiki/File:T-90_firing.jpg',credit:'Photo: cell105 · CC BY 2.0',alt:'Indian Army T-90 tank firing during a demonstration'},
@@ -4182,11 +4182,17 @@ function getServiceRankSourceUrl(filename){
 }
 function getServiceRankProgress(xp,force){
   const ranks=VAANI_SERVICE_RANKS[force]||[];
+  const honorary=VAANI_HONORARY_RANKS[force]||null;
+  const allRanks=honorary?[...ranks,honorary]:ranks.slice();
   const points=Math.max(0,Math.floor(Number(xp)||0));
-  const unlocked=Math.min(ranks.length,Math.floor(points/100));
-  const current=unlocked?ranks[unlocked-1]:null;
-  const next=unlocked<ranks.length?ranks[unlocked]:null;
-  return {ranks,points,unlocked,current,next,progress:next?points%100:100,force};
+  const unlocked=allRanks.filter(rank=>points>=rank.xp).length;
+  const current=unlocked?allRanks[unlocked-1]:null;
+  const next=unlocked<allRanks.length?allRanks[unlocked]:null;
+  const previousThreshold=current?current.xp:0;
+  const requiredToNext=next?Math.max(1,next.xp-previousThreshold):0;
+  const earnedToNext=next?Math.max(0,Math.min(requiredToNext,points-previousThreshold)):0;
+  const progress=next?Math.round(earnedToNext/requiredToNext*100):100;
+  return {ranks,honorary,allRanks,points,unlocked,current,next,previousThreshold,requiredToNext,earnedToNext,progress,force};
 }
 function makeServiceInsignia(force,rank,className,alt){
   const wrap=document.createElement('span');
