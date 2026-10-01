@@ -4289,6 +4289,127 @@ function renderServiceRankProgress(){
   renderServiceRankLadder();
 }
 
+
+let __vaaniForcePickerReturnFocus=null;
+let __vaaniForceSaving=false;
+function closeServiceForcePicker(forceClose=false){
+  const overlay=document.getElementById('serviceForcePicker');
+  if(!overlay)return;
+  if(overlay.dataset.mode==='onboarding'&&!forceClose)return;
+  overlay.remove();
+  document.body.classList.remove('service-force-modal-open');
+  if(__vaaniForcePickerReturnFocus&&typeof __vaaniForcePickerReturnFocus.focus==='function'){
+    __vaaniForcePickerReturnFocus.focus();
+  }
+  __vaaniForcePickerReturnFocus=null;
+}
+function openServiceForcePicker(mode){
+  const onboarding=mode==='onboarding';
+  const current=State.serviceForce||'';
+  let overlay=document.getElementById('serviceForcePicker');
+  if(!overlay){
+    overlay=document.createElement('div');
+    overlay.id='serviceForcePicker';
+    overlay.className='service-force-overlay';
+    overlay.innerHTML='<section class="service-force-dialog" role="dialog" aria-modal="true" aria-labelledby="serviceForceTitle" tabindex="-1"><div class="service-force-head"><span class="vp-profile-kicker">SERVICE PREFERENCE</span><h2 id="serviceForceTitle"></h2><p>Choose the service whose rank ladder you want to follow. You can change this later.</p></div><div class="service-force-options" id="serviceForceOptions"></div><p class="service-force-error" id="serviceForceError" role="status" aria-live="polite"></p><div class="service-force-footer"><p>VAANI XP is a learning milestone only. Military ranks and promotions are awarded by the services.</p><button type="button" id="serviceForceCancel" class="btn ghost">Keep current service</button></div></section>';
+    overlay.addEventListener('click',event=>{
+      if(event.target===overlay&&overlay.dataset.mode!=='onboarding'&&!__vaaniForceSaving)closeServiceForcePicker();
+    });
+    overlay.addEventListener('keydown',event=>{
+      if(event.key==='Escape'&&overlay.dataset.mode!=='onboarding'&&!__vaaniForceSaving){
+        event.preventDefault();closeServiceForcePicker();return;
+      }
+      if(event.key!=='Tab')return;
+      const focusables=Array.from(overlay.querySelectorAll('button:not([disabled])'));
+      if(!focusables.length)return;
+      const first=focusables[0],last=focusables[focusables.length-1];
+      if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
+      else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
+    });
+    document.body.appendChild(overlay);
+  }
+  overlay.dataset.mode=onboarding?'onboarding':'change';
+  const heading=document.getElementById('serviceForceTitle');
+  const options=document.getElementById('serviceForceOptions');
+  const cancel=document.getElementById('serviceForceCancel');
+  const error=document.getElementById('serviceForceError');
+  if(heading)heading.textContent=onboarding?'Which force do you aspire to join?':'Change your service';
+  if(error)error.textContent='';
+  if(cancel){
+    cancel.hidden=onboarding;
+    cancel.textContent='Keep current service';
+    cancel.onclick=()=>closeServiceForcePicker();
+  }
+  if(options){
+    options.replaceChildren();
+    Object.entries(VAANI_SERVICE_CHOICES).forEach(([key,item])=>{
+      const button=document.createElement('button');
+      button.type='button';
+      button.className='service-force-option'+(current===key?' is-selected':'');
+      button.dataset.force=key;
+      button.setAttribute('aria-pressed',current===key?'true':'false');
+      button.disabled=__vaaniForceSaving;
+      button.addEventListener('click',()=>{void chooseServiceForce(key);});
+      const media=document.createElement('span');media.className='service-force-image';
+      const picture=document.createElement('img');
+      picture.src=item.scene;picture.alt=item.alt;
+      picture.loading=onboarding?'eager':'lazy';picture.decoding='async';
+      picture.addEventListener('error',()=>media.classList.add('is-image-unavailable'),{once:true});
+      media.appendChild(picture);
+      const body=document.createElement('span');body.className='service-force-option-body';
+      const title=document.createElement('strong');title.textContent=item.label;
+      const desc=document.createElement('span');
+      desc.textContent=(current===key?'Currently selected · ':'')+'View '+VAANI_SERVICE_RANKS[key].length+' commissioned officer ranks';
+      body.append(title,desc);
+      const check=document.createElement('span');check.className='service-force-check';
+      check.setAttribute('aria-hidden','true');check.textContent=current===key?'✓':'›';
+      button.append(media,body,check);options.appendChild(button);
+    });
+  }
+  __vaaniForcePickerReturnFocus=document.activeElement;
+  document.body.classList.add('service-force-modal-open');
+  const first=options&&options.querySelector('button');
+  if(first)first.focus();
+  else{
+    const dialog=overlay.querySelector('.service-force-dialog');
+    if(dialog)dialog.focus();
+  }
+}
+async function chooseServiceForce(force){
+  if(!Object.prototype.hasOwnProperty.call(VAANI_SERVICE_CHOICES,force)||__vaaniForceSaving)return false;
+  const previous=State.serviceForce||null;
+  const overlay=document.getElementById('serviceForcePicker');
+  const onboarding=!!(overlay&&overlay.dataset.mode==='onboarding');
+  const error=document.getElementById('serviceForceError');
+  __vaaniForceSaving=true;
+  if(error)error.textContent='';
+  document.querySelectorAll('.service-force-option').forEach(button=>{button.disabled=true;});
+  State.serviceForce=force;
+  let saved=true;
+  if(typeof persistCombinedAccount==='function'&&typeof ACTIVE_CODE!=='undefined'&&ACTIVE_CODE){
+    try{saved=await persistCombinedAccount()!==false;}catch(err){saved=false;}
+  }
+  if(!saved){
+    State.serviceForce=previous;
+    __vaaniForceSaving=false;
+    if(error)error.textContent='Could not save your service choice. Please try again.';
+    document.querySelectorAll('.service-force-option').forEach(button=>{
+      button.disabled=false;
+      button.setAttribute('aria-pressed',button.dataset.force===State.serviceForce?'true':'false');
+      button.classList.toggle('is-selected',button.dataset.force===State.serviceForce);
+    });
+    renderServiceRankProgress();
+    return false;
+  }
+  __vaaniForceSaving=false;
+  closeServiceForcePicker(true);
+  renderServiceRankProgress();
+  if(typeof refreshDashboard==='function')refreshDashboard();
+  if(onboarding&&typeof finishGateEntry==='function')finishGateEntry();
+  if(typeof toast==='function'&&!onboarding)toast('Service updated to '+VAANI_SERVICE_CHOICES[force].label+'.');
+  return true;
+}
+
 function renderProfileSnapshot(){
   refreshAccountCodeControls();
   const name=String(State.name||'Cadet').trim()||'Cadet';
