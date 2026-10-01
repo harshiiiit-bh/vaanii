@@ -1,0 +1,33 @@
+name: Inspect CDS 2013 article blocks
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/inspect-cds-2013.yml"
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Inspect article structure
+        run: |
+          python -m pip install --quiet beautifulsoup4 requests
+          python - <<'PY'
+          import requests
+          from bs4 import BeautifulSoup
+          urls = [
+            "https://examvictor.com/cds-2013-english-question-paper-1/",
+            "https://examvictor.com/cds-2013-english-question-paper-2/",
+          ]
+          for url in urls:
+            soup=BeautifulSoup(requests.get(url,headers={"User-Agent":"Mozilla/5.0"},timeout=30).text,"html.parser")
+            root=soup.select_one(".entry-content")
+            print("\nURL",url,"ROOT",bool(root),"CHILDREN",len(root.find_all(recursive=False)) if root else 0)
+            if not root: continue
+            for i,tag in enumerate(root.find_all(["h1","h2","h3","h4","p","li"])):
+              if i>=180: break
+              if tag.find_parent(["p","li"]): continue
+              txt=" ".join(tag.get_text(" ",strip=True).split())
+              if txt: print(i,tag.name,repr(txt[:280]))
+          PY
