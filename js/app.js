@@ -41,7 +41,7 @@ function createDefaultState(){
   return {
     name:'Cadet', xp:0, streak:0, lastActive:null, serviceForce:null,
     completedTopics:{}, quizScores:{}, vocabLearned:{}, theme:'light', missions:{},
-    dailyActivity:{}, focusSessions:{}, mysteryBoxesClaimed:0, reviewQueue:[],
+    dailyActivity:{}, dailyXpEarned:{}, focusSessions:{}, mysteryBoxesClaimed:0, reviewQueue:[],
     personalBests:{ bestCombo:0, longestStreak:0, highestQuizScore:0, fastestQuizSeconds:null, fastestQuizLabel:'', totalQuizzesTaken:0 },
     pyqStats:{ attempts:{} }, topicProgress:{}, topicLastAttempt:{}, bookmarkedTopics:{}, topicNotes:{}, pyqBookmarks:[], grammarMastery:{},
     pyqContinue:null, lastSpinDate:null, activity:[]
@@ -65,6 +65,12 @@ function normalizeState(){
   State.vocabLearned=isRecord(State.vocabLearned)?State.vocabLearned:{};
   State.missions=isRecord(State.missions)?State.missions:{};
   State.dailyActivity=isRecord(State.dailyActivity)?State.dailyActivity:{};
+  State.dailyXpEarned=isRecord(State.dailyXpEarned)?State.dailyXpEarned:{};
+  Object.keys(State.dailyXpEarned).forEach(day=>{
+    const value=Number(State.dailyXpEarned[day]);
+    if(!/^.{3,40}$/.test(day)||!Number.isFinite(value)||value<0)delete State.dailyXpEarned[day];
+    else State.dailyXpEarned[day]=Math.min(VAANI_DAILY_XP_CAP,Math.floor(value));
+  });
   State.focusSessions=isRecord(State.focusSessions)?State.focusSessions:{};
   State.topicProgress=isRecord(State.topicProgress)?State.topicProgress:{};
   State.topicLastAttempt=isRecord(State.topicLastAttempt)?State.topicLastAttempt:{};
@@ -275,12 +281,28 @@ async function handleGateCreate(){
 function finishGateEntry(){
   if(!Object.prototype.hasOwnProperty.call(VAANI_SERVICE_CHOICES,State.serviceForce)){openServiceForcePicker('onboarding');return;}
   if(typeof requestGyroParallax==='function') requestGyroParallax();
-  const today = new Date().toDateString();
-  if(State.lastActive !== today){
-    const y = new Date(); y.setDate(y.getDate()-1);
-    State.streak = (State.lastActive === y.toDateString()) ? State.streak+1 : 1;
-    State.lastActive = today;
-  }
+  const now=new Date();
+  const today=now.toDateString();
+  if(State.lastActive!==today){
+    let dayGap=null;
+    if(typeof State.lastActive==='string'&&State.lastActive){
+      const previous=new Date(State.lastActive);
+      if(Number.isFinite(previous.getTime())){
+        const ordinal=date=>Math.floor(Date.UTC(date.getFullYear(),date.getMonth(),date.getDate())/86400000);
+        dayGap=ordinal(now)-ordinal(previous);
+      }
+    }
+    if(dayGap===1)State.streak=Math.max(0,Number(State.streak)||0)+1;
+    else{
+      State.streak=1;
+      if(dayGap!==null&&dayGap>1){
+        const missedDays=dayGap-1;
+        const penalty=Math.min(75,missedDays*15);
+        deductXP(penalty,missedDays+' missed login day'+(missedDays===1?'':'s')+'; streak reset');
+      }
+    }
+    State.lastActive=today;
+  }else if(!State.streak){State.streak=1;}
   normalizeState();
   State.personalBests.longestStreak = Math.max(State.personalBests.longestStreak||0, State.streak);
   saveState();
@@ -303,15 +325,71 @@ function toggleTheme(){
   saveState();
 }
 
+const VAANI_DAILY_XP_CAP=80;
+const VAANI_LOW_ACCURACY_PENALTY=10;
+function dailyXPDayKey(date=new Date()){return date.toDateString();}
+function getTodayXPEarned(){
+  const key=dailyXPDayKey();
+  State.dailyXpEarned=State.dailyXpEarned&&typeof State.dailyXpEarned==='object'?State.dailyXpEarned:{};
+  if(!Object.prototype.hasOwnProperty.call(State.dailyXpEarned,key)){
+    // Seed from legacy activity so today's existing earnings cannot be farmed again.
+    const legacy=Math.max(0,Math.floor(Number(State.dailyActivity&&State.dailyActivity[key])||0));
+    State.dailyXpEarned[key]=Math.min(VAANI_DAILY_XP_CAP,legacy);
+  }
+  return Math.min(VAANI_DAILY_XP_CAP,Math.max(0,Math.floor(Number(State.dailyXpEarned[key])||0)));
+}
 function addXP(n, reason){
-  State.xp += n;
-  const dayKey = new Date().toDateString();
-  State.dailyActivity = State.dailyActivity || {};
-  State.dailyActivity[dayKey] = (State.dailyActivity[dayKey]||0) + n;
-  saveState(); refreshTopBar(); refreshDashboard();
-  toast('+'+n+' XP — '+reason);
-  checkBadges();
-  checkMysteryBox();
+  const requested=Math.max(0,Math.floor(Number(n)||0));
+  if(!requested)return 0;
+  const dayKey=dailyXPDayKey();
+  const already=getTodayXPEarned();
+  const awarded=Math.min(requested,Math.max(0,VAANI_DAILY_XP_CAP-already));
+  if(!awarded){
+    if(!window.__vaaniDailyCapToastDate||window.__vaaniDailyCapToastDate!==dayKey){
+      window.__vaaniDailyCapToastDate=dayKey;
+      toast('Daily XP cap reached: '+VAANI_DAILY_XP_CAP+' XP. Come back tomorrow.');
+    }
+    refreshServiceRankDailyHint();
+    return 0;
+  }
+  State.dailyXpEarned[dayKey]=already+awarded;
+  State.xp=Math.max(0,Math.floor(Number(State.xp)||0))+awarded;
+  State.dailyActivity=State.dailyActivity||{};
+  State.dailyActivity[dayKey]=(Number(State.dailyActivity[dayKey])||0)+awarded;
+  saveState();refreshTopBar();refreshDashboard();
+  toast('+'+awarded+' XP — '+reason+(awarded<requested?' (daily cap applied)':''));
+  checkBadges();checkMysteryBox();
+  return awarded;
+}
+function deductXP(n, reason){
+  const requested=Math.max(0,Math.floor(Number(n)||0));
+  if(!requested)return 0;
+  const before=Math.max(0,Math.floor(Number(State.xp)||0));
+  const deducted=Math.min(before,requested);
+  State.xp=before-deducted;
+  if(deducted){
+    saveState();refreshTopBar();refreshDashboard();
+    toast('−'+deducted+' XP — '+reason);
+  }else{
+    refreshServiceRankDailyHint();
+    toast('No XP deducted — your balance is already 0.');
+  }
+  return deducted;
+}
+function awardAccuracyXP(pct, reason){
+  const score=Number(pct);
+  if(!Number.isFinite(score))return 0;
+  const accuracy=Math.max(0,Math.min(100,Math.round(score)));
+  if(accuracy<50){
+    deductXP(VAANI_LOW_ACCURACY_PENALTY,(reason||'Quiz')+' below 50% accuracy');
+    return 0;
+  }
+  const reward=accuracy===100?12:accuracy>=90?10:accuracy>=80?8:accuracy>=70?6:accuracy>=60?4:2;
+  return addXP(reward,(reason||'Quiz')+' · '+accuracy+'% accuracy');
+}
+function refreshServiceRankDailyHint(){
+  const el=document.getElementById('rankDailyXPHint');
+  if(el)el.textContent="Today's XP earned: "+getTodayXPEarned()+" / "+VAANI_DAILY_XP_CAP;
 }
 function toast(msg){
   const w = document.getElementById('toast-wrap');
@@ -5093,9 +5171,10 @@ async function resetProgress(){
   if(!confirm('Reset all progress? This cannot be undone.'))return;
   if(typeof ACTIVE_CODE==='undefined'||!ACTIVE_CODE){toast('Sign in before resetting account progress.');return;}
   const previous=JSON.stringify(State),name=State.name,theme=State.theme,serviceForce=State.serviceForce;
+  const dailyXpEarned=JSON.parse(JSON.stringify(State.dailyXpEarned||{}));
   resetStateForAccount();
-  // A learning reset must not erase the aspirant's service preference.
-  State.name=name;State.theme=theme;State.serviceForce=serviceForce;
+  // A learning reset must not erase service preference or reopen today's XP cap.
+  State.name=name;State.theme=theme;State.serviceForce=serviceForce;State.dailyXpEarned=dailyXpEarned;
   document.body.setAttribute('data-theme',theme);
   try{
     if(!await persistCombinedAccount())throw new Error('Account progress save failed');
