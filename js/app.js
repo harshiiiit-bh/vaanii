@@ -2189,7 +2189,8 @@ function pvPaperIdentity(q){
 
 function pvPaperChipHTML(q){
   const p=pvPaperIdentity(q);
-  return '<span class="pyq-chip yr" title="Source paper">'+escapeHtmlVaani(p.label||'PYQ')+'</span>';
+  const title=p.label?'Source paper · '+p.code+(p.year?' '+p.year:''):'Source paper';
+  return '<span class="pyq-chip yr" data-exam="'+escapeHtmlVaani(p.code||'PYQ')+'" title="'+escapeHtmlVaani(title)+'">'+escapeHtmlVaani(p.label||'PYQ')+'</span>';
 }
 
 function pvSessionHTML(){
@@ -2275,7 +2276,7 @@ function pvSessionHTML(){
     <div class="pv-qcard reveal">
       <div class="pv-qmeta-row">
 ${pvPaperChipHTML(q)}
-        <span class="pyq-chip tp">${escapeHtmlVaani(q.sec||pvOriginalTopicTag(q)||'PYQ')}</span>
+        <span class="pyq-chip tp" title="Original source topic">${escapeHtmlVaani(pvOriginalTopicTag(q)||'PYQ')}</span>
         ${q.diff?`<span class="pyq-chip diff-${q.diff}">${q.diff}</span>`:''}
         <button class="bm-star ${bookmarked?'active':''}" onclick="toggleBookmark('${bmId}', this)" title="Bookmark" style="margin-left:auto">★</button>
       </div>
