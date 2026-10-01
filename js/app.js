@@ -4191,7 +4191,16 @@ function getServiceRankProgress(xp,force){
   const requiredToNext=next?Math.max(1,next.xp-previousThreshold):0;
   const earnedToNext=next?Math.max(0,Math.min(requiredToNext,points-previousThreshold)):0;
   const progress=next?Math.round(earnedToNext/requiredToNext*100):100;
-  return {ranks,honorary,allRanks,points,unlocked,current,next,previousThreshold,requiredToNext,earnedToNext,progress,force};
+  const remainingXP=next?Math.max(0,next.xp-points):0;
+  return {ranks,honorary,allRanks,points,unlocked,current,next,previousThreshold,requiredToNext,earnedToNext,remainingXP,progress,force};
+}
+function getMinimumXPDays(remainingXP,todayRemaining,cap=VAANI_DAILY_XP_CAP){
+  const required=Math.max(0,Math.floor(Number(remainingXP)||0));
+  const available=Math.max(0,Math.floor(Number(todayRemaining)||0));
+  const dailyCap=Math.max(1,Math.floor(Number(cap)||1));
+  if(required===0||required<=available)return 0;
+  if(available>0)return 1+Math.ceil((required-available)/dailyCap);
+  return Math.ceil(required/dailyCap);
 }
 function makeServiceInsignia(force,rank,className,alt){
   const wrap=document.createElement('span');
@@ -4235,7 +4244,9 @@ function renderServiceRankLadder(){
     const name=document.createElement('span');name.className='vp-service-rank-name';
     name.appendChild(document.createTextNode(rank.name));
     const requirement=document.createElement('small');requirement.className='vp-service-rank-threshold';
-    requirement.textContent=rank.xp.toLocaleString('en-IN')+' total XP';name.appendChild(requirement);
+    const previous=progress.allRanks[index-1];
+    const stepXP=rank.xp-(previous?previous.xp:0);
+    requirement.textContent=rank.xp.toLocaleString('en-IN')+' total XP · +'+stepXP.toLocaleString('en-IN')+' for this step';name.appendChild(requirement);
     const status=document.createElement('span');status.className='vp-service-rank-status';
     status.textContent=reached?(honorary?'MILESTONE REACHED':'REACHED'):isNext?'NEXT MILESTONE':'UPCOMING';
     item.append(name,status);list.appendChild(item);
@@ -4257,9 +4268,22 @@ function renderServiceRankProgress(){
   const title=document.getElementById('rankTitle'),forceLabel=document.getElementById('serviceRankForce');
   const bar=document.getElementById('rankBar'),hint=document.getElementById('rankXPText');
   const dailyHint=document.getElementById('rankDailyXPHint');
+  const dailyTrack=document.getElementById('rankDailyXPTrack');
+  const dailyFill=document.getElementById('rankDailyXPFill');
+  const dailyRemaining=document.getElementById('rankDailyXPRemaining');
+  const paceHint=document.getElementById('rankPaceHint');
   if(!title||!bar||!hint)return;
   const todayEarned=getTodayXPEarned();
+  const todayRemaining=Math.max(0,VAANI_DAILY_XP_CAP-todayEarned);
   if(dailyHint)dailyHint.textContent="Today's XP earned: "+todayEarned+' / '+VAANI_DAILY_XP_CAP;
+  if(dailyFill)dailyFill.style.width=Math.round(todayEarned/VAANI_DAILY_XP_CAP*100)+'%';
+  if(dailyTrack){
+    dailyTrack.setAttribute('aria-valuemin','0');
+    dailyTrack.setAttribute('aria-valuemax',String(VAANI_DAILY_XP_CAP));
+    dailyTrack.setAttribute('aria-valuenow',String(todayEarned));
+    dailyTrack.setAttribute('aria-valuetext',todayEarned+' of '+VAANI_DAILY_XP_CAP+' XP earned; '+todayRemaining+' XP remaining');
+  }
+  if(dailyRemaining)dailyRemaining.textContent=todayRemaining+' XP remaining today';
   if(!meta||!progress.allRanks.length){
     title.textContent='Officer Aspirant';
     if(forceLabel)forceLabel.textContent='Select a service to view its commissioned officer ranks.';
@@ -4267,6 +4291,7 @@ function renderServiceRankProgress(){
     if(crest)crest.classList.add('is-unselected');
     bar.style.width='0%';bar.setAttribute('aria-valuenow','0');
     hint.textContent='Choose a service to begin your learning milestones.';
+    if(paceHint)paceHint.textContent='Your service preference does not affect your saved XP.';
     renderServiceRankLadder();return;
   }
   if(crest)crest.classList.remove('is-unselected');
@@ -4283,8 +4308,13 @@ function renderServiceRankProgress(){
   if(progress.next){
     hint.textContent=progress.earnedToNext.toLocaleString('en-IN')+' / '+progress.requiredToNext.toLocaleString('en-IN')+
       ' XP toward '+progress.next.name+' ('+progress.next.xp.toLocaleString('en-IN')+' total XP)';
+    const minimumDays=getMinimumXPDays(progress.remainingXP,todayRemaining);
+    if(paceHint)paceHint.textContent=minimumDays===0
+      ?'Next milestone is within today’s remaining XP allowance.'
+      :'Minimum '+minimumDays+' earning day'+(minimumDays===1?'':'s')+' at the daily cap, before any deductions.';
   }else{
     hint.textContent='Top VAANI milestone reached · XP keeps accumulating (daily cap: '+VAANI_DAILY_XP_CAP+').';
+    if(paceHint)paceHint.textContent='All listed milestones cleared. Daily XP remains available.';
   }
   renderServiceRankLadder();
 }
