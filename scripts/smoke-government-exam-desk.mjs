@@ -34,6 +34,7 @@ const server = createServer(async (request, response) => {
 
 let browser = null;
 let context = null;
+let directoryContext = null;
 try {
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
 const address = server.address();
@@ -475,9 +476,23 @@ await page.goto(baseURL + '?v=notifications', { waitUntil: 'domcontentloaded' })
   const cardMotion = await page.locator('#vxNearList .vx-notice-card').first().evaluate(element => getComputedStyle(element).transitionDuration);
   assert.ok(Number.parseFloat(cardMotion) <= 0.0001, 'reduced-motion preference should reduce notice-card transitions to a negligible duration: ' + cardMotion);
 
+  // The live Exam Desk mounts over the static HTML fallback during boot.
+  // Inspect the fallback directory in a separate JavaScript-disabled page so
+  // the responsive-card checks target the markup they are intended to cover.
+  directoryContext = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+    javaScriptEnabled: false,
+    reducedMotion: 'reduce'
+  });
+  const directoryPage = await directoryContext.newPage();
+  await directoryPage.goto(baseURL, { waitUntil: 'domcontentloaded' });
+  await directoryPage.addStyleTag({ content: '.view{display:none!important}#view-notifications{display:block!important}#gate{display:none!important}' });
+  await directoryPage.locator('#ncDirectoryGrid').waitFor({ state: 'attached', timeout: 10000 });
+
   for (const viewport of [{ width: 320, height: 740 }, { width: 390, height: 844 }, { width: 768, height: 900 }, { width: 1024, height: 900 }, { width: 1440, height: 1000 }]) {
     await page.setViewportSize(viewport);
-    const directoryLayout = await page.locator('#ncDirectoryGrid').evaluate(element => {
+    await directoryPage.setViewportSize(viewport);
+    const directoryLayout = await directoryPage.locator('#ncDirectoryGrid').evaluate(element => {
       const card = element.querySelector('.nc-directory-card');
       const title = card && card.querySelector('h3');
       const description = card && card.querySelector('p');
@@ -524,6 +539,7 @@ await page.goto(baseURL + '?v=notifications', { waitUntil: 'domcontentloaded' })
   console.log('Government Exam Desk + PYQ browser smoke: calendar horizon and toggle, PYQ group width at desktop/mobile, Exam Desk feeds, filters, Career Map, archive, XSS, reduced motion and responsive layouts passed');
 } finally {
   const cleanup = [];
+  if (directoryContext) cleanup.push(directoryContext.close());
   if (browser || context) {
     cleanup.push((async () => {
       try {
