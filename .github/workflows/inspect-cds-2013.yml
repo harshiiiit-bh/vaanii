@@ -133,6 +133,25 @@ jobs:
               if start>120:continue
               unresolved=[]
               staged=[]
+              # CDS-II Q32 is one item formatted as a list of three statements plus a stem.
+              if session=="II" and start==32 and len(lis)==4 and "consider the following statements" in norm(lis[0].get_text(" ",strip=True)).lower():
+                prompt=norm(" ".join(norm(x.get_text(" ",strip=True)) for x in lis))
+                following=lst.find_next("p")
+                if following:
+                  tail=norm(following.get_text(" ",strip=True))
+                  if tail.lower().startswith("which of the statements"):
+                    prompt=norm(prompt+" "+tail)
+                next_ul=next((x for x in lists[ix+1:] if x.name=="ul" and len(direct_list_items(x))==4),None)
+                next_ol=next((x for x in lists[ix+1:] if x.name=="ol"),None)
+                if not next_ul or (next_ol and lists.index(next_ul)>lists.index(next_ol)):
+                  raise RuntimeError("CDS-II Q32 options not found")
+                opts=[norm(x.get_text(" ",strip=True)) for x in direct_list_items(next_ul)]
+                staged.append({"y":2013,"s":session,"n":32,"sec":section(session,32),"q":prompt,"o":opts,
+                               "ans":"ABCD".index(KEYS[session][31]),
+                               **({"passage":passage_for(lis[0],root,session,32)} if passage_for(lis[0],root,session,32) else {})})
+                records.extend(staged)
+                next_n=max(next_n,33)
+                continue
               for off,li in enumerate(lis):
                 n=start+off
                 if n>120:continue
