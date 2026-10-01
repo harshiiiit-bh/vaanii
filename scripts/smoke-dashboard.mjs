@@ -87,6 +87,25 @@ async function clickMainView(name) {
 try {
   await page.goto(baseURL, { waitUntil: 'domcontentloaded' });
   await page.waitForSelector('#gate-stage-start', { state: 'visible', timeout: 15000 });
+  const logoState = await page.evaluate(() => ({
+    headerSrc: document.querySelector('.vaani-brand-logo')?.getAttribute('src') || '',
+    gateSrc: document.querySelector('.gate-emblem-image')?.getAttribute('src') || '',
+    pngFavicon: document.querySelector('link[rel~="icon"][type="image/png"]')?.getAttribute('href') || '',
+    headerFit: document.querySelector('.vaani-brand-logo') ? getComputedStyle(document.querySelector('.vaani-brand-logo')).objectFit : '',
+    gateFit: document.querySelector('.gate-emblem-image') ? getComputedStyle(document.querySelector('.gate-emblem-image')).objectFit : ''
+  }));
+  const expectedLogo = 'https://gcdn.picsart.com/cloud-storage/139d6748-1bf1-4286-b8d6-03414b61deb6.png';
+  assert.equal(logoState.headerSrc, expectedLogo, 'header should use the supplied VAANI emblem');
+  assert.equal(logoState.gateSrc, expectedLogo, 'welcome screen should use the supplied VAANI emblem');
+  assert.equal(logoState.pngFavicon, expectedLogo, 'browser tab should use the supplied VAANI emblem');
+  assert.equal(logoState.headerFit, 'contain', 'header logo should retain the complete artwork');
+  assert.equal(logoState.gateFit, 'contain', 'welcome logo should retain the complete artwork');
+  await page.waitForFunction(() => {
+    const images = [document.querySelector('.vaani-brand-logo'), document.querySelector('.gate-emblem-image')];
+    return images.every(image => image && image.complete && image.naturalWidth > 0);
+  }, null, { timeout: 15000 });
+  assert.ok(await page.locator('.gate-emblem-image').isVisible(), 'VAANI emblem should be visible on the welcome screen');
+
   await page.evaluate(() => { generateCode=()=> '123456'; });
   await page.locator('#cadetName').fill('VAANI Smoke Cadet');
   await page.locator('#gateBtn').click();
