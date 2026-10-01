@@ -85,7 +85,8 @@
     ['🏟️','Arena','Open timed arena practice',()=>nav('games'),'G A'],
     ['🧘','Focus / Zen','Open the display & focus panel',()=>{if(typeof window.toggleFocusPanel==='function')window.toggleFocusPanel();closePalette()},'F'],
     ['🌗','Theme','Toggle dark/light mode',()=>{if(typeof window.toggleTheme==='function')window.toggleTheme();closePalette()},'T'],
-    ['🩺','System Health','Inspect the current client-side health',health,'H']
+    ['🩺','System Health','Inspect the current client-side health',health,'H'],
+    ['ⓘ','VAANI Guide','Open the dedicated information centre',()=>{if(typeof window.openInfoCenter==='function')window.openInfoCenter();closePalette()},'I']
   ];
 
   function buildUI(){
