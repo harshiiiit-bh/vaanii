@@ -196,3 +196,14 @@
 .vp-service-rank-row.is-honorary{border-style:dashed;background:transparent}
 .vp-service-honorary-note{margin:0;padding:0 10px 7px;color:var(--muted);font:500 .55rem/1.4 var(--mono);text-align:center}
 .vp-service-rank-empty{margin:4px 0;color:var(--muted);font-size:.7rem;text-align:center}
+.service-force-choice{display:flex;flex-direction:column;min-width:0;gap:5px}
+.service-force-option{width:100%;box-sizing:border-box}
+.service-force-credit{margin:0 3px;color:var(--muted);font:500 .53rem/1.35 var(--mono);overflow-wrap:anywhere}
+.service-force-credit a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.service-force-error{min-height:1.1em;margin:9px 0 0;color:#d96759;font:500 .65rem/1.4 var(--mono);text-align:center}
+.service-force-error:empty{display:none}
+.service-force-option:disabled{opacity:.65;cursor:wait;transform:none}
+@media(max-width:680px){
+  .service-force-choice{gap:4px}
+  .service-force-credit{font-size:.49rem}
+}
