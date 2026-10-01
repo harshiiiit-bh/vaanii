@@ -44,7 +44,7 @@
       ['p2','FIELD MANUAL','This guide is your map of VAANI. Come back here whenever a feature needs explaining.','Know the system. Then master it.']
     ],
     default:[
-      ['p1','VAANI MENTOR','Choose a task, focus for a while, and finish what you started.','One mission at a time.']
+      ['p1','OFFICER VAANI','Choose a task, focus for a while, and finish what you started.','One mission at a time.']
     ]
   };
 
@@ -124,7 +124,7 @@
             '<h3>Not your result. Just your feedback.</h3>'+
             '<p>You missed more than you wanted today. That is useful information. Review the wrong answers, find the pattern, and run the mission again with a better method.</p>'+
             '<blockquote>“A poor score is a report on today’s preparation — not a verdict on tomorrow’s performance.”</blockquote>'+
-            '<div class="vc-recovery-actions"><button class="btn" type="button" id="vcRecoveryClose">Back to training</button><button class="btn ghost" type="button" id="vcRecoveryGuide">Open VAANI Guide</button></div>'+
+            '<div class="vc-recovery-actions"><button class="btn" type="button" id="vcRecoveryClose">Back to training</button><button class="btn ghost" type="button" id="vcRecoveryGuide">Open OFFICER VAANI Guide</button></div>'+
           '</div>'+
         '</div>';
       wrap.querySelector('.vc-close').onclick=closeRecovery;
