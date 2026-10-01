@@ -962,8 +962,11 @@ const PYQ_PAPERS = getSortedPYQPapers();
 // exam ever shares a year+session+question-number with an NDA paper.
 function _pyqQuestionId(exam, q){ return (exam && exam!=='NDA' ? exam+'-' : '') + `${q.y}-${q.s}-${q.n}`; }
 const PYQ_ALL = PYQ_PAPERS.flatMap(p=>p.data.map(q=>{
-  const item={...q,_id:_pyqQuestionId(p.exam,q),_exam:p.exam,_sourceSec:q.sec};
+  const originalTags=Array.isArray(q.tags)?q.tags.slice():[];
+  const item={...q,_id:_pyqQuestionId(p.exam,q),_exam:p.exam,_sourceSec:q.sec,_sourceTags:originalTags};
   if(window.VaaniPyqTaxonomy&&typeof window.VaaniPyqTaxonomy.topic==='function') item.sec=window.VaaniPyqTaxonomy.topic(item);
+  if(window.VaaniPyqTaxonomy&&typeof window.VaaniPyqTaxonomy.tags==='function') item.tags=window.VaaniPyqTaxonomy.tags(item);
+  else item.tags=originalTags;
   return item;
 }));
 const PYQ_BY_ID = {}; PYQ_ALL.forEach(q=>PYQ_BY_ID[q._id]=q);
@@ -1519,7 +1522,11 @@ function pvRender(){
     if(topicSearch)topicSearch.addEventListener('input',()=>pvFilterTopicCards(topicSearch.value));
   }
   else if(PV.screen==='examtype') root.innerHTML = pvExamTypeHTML();
-  else if(PV.screen==='archive') root.innerHTML = pvArchiveHTML();
+  else if(PV.screen==='archive') {
+    root.innerHTML = pvArchiveHTML();
+    const archiveSearch=root.querySelector('#pvArchiveSearch');
+    if(archiveSearch)archiveSearch.addEventListener('input',()=>pvFilterArchiveYears(archiveSearch.value));
+  }
   else if(PV.screen==='archiveSessions') root.innerHTML = pvArchiveSessionsHTML();
   else if(PV.screen==='paper') root.innerHTML = pvPaperHTML();
   else if(PV.screen==='exampicker') root.innerHTML = pvExamPickerHTML();
@@ -1618,7 +1625,7 @@ function pvArchiveHTML(){
   const erasHTML = eras.length ? eras.map((e,i)=>{
     const expanded = PV.archiveEra===e.key;
     const yearsHTML = e.years.map(y=>`
-      <div class="ma-year-tile" onclick="pvOpenArchiveYear('${y.year}')">
+      <div class="ma-year-tile" data-year="${y.year}" role="button" tabindex="0" aria-label="Open ${y.year} papers" onkeydown="pvActivateOnKey(event)" onclick="pvOpenArchiveYear('${y.year}')">
         <div class="ma-year-top">
           <span class="ma-year-folder">🗂️</span>
           ${pvRingSVG(y.completion,40,4,'--gold')}
@@ -1627,7 +1634,7 @@ function pvArchiveHTML(){
         <div class="ma-year-meta">${y.papers.length} paper${y.papers.length>1?'s':''} · ${y.completion}%</div>
       </div>`).join('');
     return `<div class="ma-era-card ${expanded?'expanded':''}" style="animation-delay:${i*60}ms">
-      <div class="ma-era-head" onclick="pvToggleEra(${e.key})">
+      <div class="ma-era-head" role="button" tabindex="0" aria-expanded="${expanded?'true':'false'}" aria-label="Toggle ${e.label} era" onkeydown="pvActivateOnKey(event)" onclick="pvToggleEra(${e.key})">
         <div class="ma-era-icon">${expanded?'📂':'📁'}</div>
         <div class="ma-era-body">
           <div class="ma-era-name">${e.label}</div>
@@ -1667,8 +1674,53 @@ function pvArchiveHTML(){
         <div class="ma-hero-stat"><b>${overallPct}%</b><span>Cleared</span></div>
       </div>
     </div>
-    <div class="ma-era-list">${erasHTML}</div>
+    <div class="ma-archive-tools">
+      <label class="ma-archive-search"><span aria-hidden="true">⌕</span><input id="pvArchiveSearch" type="search" maxlength="12" inputmode="numeric" autocomplete="off" placeholder="Find a year (e.g. 2021)" aria-label="Search archive by year"><button type="button" id="pvArchiveClear" onclick="pvClearArchiveSearch()" aria-label="Clear year search" hidden>×</button></label>
+      <span id="pvArchiveResults" aria-live="polite">Years and papers by selected exam</span>
+    </div>
+    <div class="ma-era-list" id="pvArchiveEraList">${erasHTML}</div>
+    <div class="pv-empty-note pv-topic-empty" id="pvArchiveEmpty" hidden>No matching year. Try a different year.</div>
   </div>`;
+}
+
+function pvActivateOnKey(event){
+  if(!event || (event.key!=='Enter'&&event.key!==' '))return;
+  event.preventDefault();
+  if(event.currentTarget)event.currentTarget.click();
+}
+function pvFilterArchiveYears(value){
+  const root=document.getElementById('pvArchiveEraList');if(!root)return;
+  const term=String(value||'').trim().toLocaleLowerCase();
+  let visibleYears=0,visiblePapers=0;
+  root.querySelectorAll('.ma-era-card').forEach(card=>{
+    const tiles=Array.from(card.querySelectorAll('.ma-year-tile'));
+    let inEra=0;
+    tiles.forEach(tile=>{
+      const year=String(tile.dataset.year||'').toLocaleLowerCase();
+      const match=!term||year.includes(term);
+      tile.hidden=!match;
+      if(match){inEra++;visibleYears++;}
+    });
+    card.hidden=inEra===0;
+    const shouldOpen=!!term&&inEra>0;
+    const isOpen=shouldOpen||(!term&&String(card.querySelector('.ma-era-name')?.textContent||'').startsWith(String(PV.archiveEra||'NO_MATCH')));
+    card.classList.toggle('expanded',isOpen);
+    const head=card.querySelector('.ma-era-head');
+    if(head)head.setAttribute('aria-expanded',String(isOpen));
+    const icon=card.querySelector('.ma-era-icon');if(icon)icon.textContent=isOpen?'📂':'📁';
+    if(inEra){
+      const label=card.querySelector('.ma-era-meta');
+      if(label)visiblePapers+=Number((label.textContent.match(/\d+/)||[])[0]||0);
+    }
+  });
+  const results=document.getElementById('pvArchiveResults');
+  if(results)results.textContent=term?(visibleYears+' matching year'+(visibleYears===1?'':'s')+' · '+visiblePapers+' papers'):(visibleYears+' years · '+visiblePapers+' papers');
+  const empty=document.getElementById('pvArchiveEmpty');if(empty)empty.hidden=visibleYears>0;
+  const clear=document.getElementById('pvArchiveClear');if(clear)clear.hidden=!term;
+}
+function pvClearArchiveSearch(){
+  const input=document.getElementById('pvArchiveSearch');if(!input)return;
+  input.value='';pvFilterArchiveYears('');input.focus();
 }
 
 function pvArchiveSessionsHTML(){
@@ -1681,7 +1733,7 @@ function pvArchiveSessionsHTML(){
     const qs = pvPaperQuestions(p.year,p.session,exam);
     const attempted = qs.filter(q=>st.attempts[q._id]!==undefined).length;
     const pct = qs.length ? Math.round(attempted/qs.length*100) : 0;
-    return `<div class="ma-session-card" style="animation-delay:${i*80}ms" onclick="pvOpenSessionFromArchive(${p.year},'${p.session}')">
+    return `<div class="ma-session-card" role="button" tabindex="0" aria-label="Open ${p.label}" onkeydown="pvActivateOnKey(event)" style="animation-delay:${i*80}ms" onclick="pvOpenSessionFromArchive(${p.year},'${p.session}')">
       <div class="ma-session-icon">🎖️</div>
       <div class="ma-session-body">
         <div class="ma-session-title">${p.label}</div>
@@ -1706,10 +1758,10 @@ function pvArchiveSessionsHTML(){
 function pvHomeHTML(){
   const st = ensurePyqStats();
   const totalQ = PYQ_ALL.length;
-  const solvedIds = Object.keys(st.attempts);
+  const solvedIds = Object.keys(st.attempts).filter(id=>!!PYQ_BY_ID[id]);
   const solved = solvedIds.length;
   const acc = pyqAccuracyFor(PYQ_ALL);
-  const bm = getBookmarks().filter(b=>b.startsWith('pyq:')).length;
+  const bm = getBookmarks().filter(b=>b.startsWith('pyq:')&&!!PYQ_BY_ID[b.slice(4)]).length;
   const mistakesCount = solvedIds.filter(id=>st.attempts[id]===false).length;
   const pct = totalQ ? Math.round(solved/totalQ*100) : 0;
   const streakDays = State.streak || 0;
@@ -1742,7 +1794,7 @@ function pvHomeHTML(){
     </div>`).join('');
 
   const eraGroups = pvEraGroups();
-  const archiveGateHTML = `<div class="ma-gate-card" onclick="pvGoExamType()">
+  const archiveGateHTML = `<div class="ma-gate-card" role="button" tabindex="0" aria-label="Browse previous-year papers" onkeydown="pvActivateOnKey(event)" onclick="pvGoExamType()">
     <div class="ma-gate-icon">🗃️</div>
     <div class="ma-gate-body">
       <div class="ma-gate-title">Previous Years Papers</div>
@@ -1880,7 +1932,7 @@ function pvLaunchTopicGroup(groupId){
 
 function pvOriginalTopicTag(q){
   if(!q)return '';
-  return String(q._sourceSec||q.sec||'').trim() || 'PYQ';
+  return String(q.sec||q._sourceSec||'').trim() || 'English (Unclassified)';
 }
 
 function pvFilterTopicCards(value){
@@ -1934,18 +1986,18 @@ function pvLaunchMode(mode){
   } else if(mode==='exam'){
     PV.screen='exampicker'; pvRender();
   } else if(mode==='revision'){
-    const ids = Object.keys(st.attempts);
+    const ids = Object.keys(st.attempts).filter(id=>!!PYQ_BY_ID[id]);
     if(!ids.length){ toast("Solve a few PYQs first — Revision Mode reviews what you've already attempted."); return; }
-    const list = ids.map(id=>PYQ_BY_ID[id]).filter(Boolean);
+    const list = ids.map(id=>PYQ_BY_ID[id]);
     pvStartSession('revision', list, {title:'Revision Mode'});
   } else if(mode==='bookmarks'){
     const list = getBookmarks().filter(b=>b.startsWith('pyq:')).map(b=>PYQ_BY_ID[b.slice(4)]).filter(Boolean);
     if(!list.length){ toast('No bookmarks yet — tap ★ on any question to save it here.'); return; }
     pvStartSession('bookmarks', list, {title:'Bookmarks'});
   } else if(mode==='mistakes'){
-    const ids = Object.keys(st.attempts).filter(id=>st.attempts[id]===false);
+    const ids = Object.keys(st.attempts).filter(id=>st.attempts[id]===false&&!!PYQ_BY_ID[id]);
     if(!ids.length){ toast('No mistakes logged yet — nice work, Cadet.'); return; }
-    const list = ids.map(id=>PYQ_BY_ID[id]).filter(Boolean);
+    const list = ids.map(id=>PYQ_BY_ID[id]);
     pvStartSession('mistakes', list, {title:'Mistakes Only'});
   }
 }
@@ -2276,7 +2328,7 @@ function pvSessionHTML(){
     <div class="pv-qcard reveal">
       <div class="pv-qmeta-row">
 ${pvPaperChipHTML(q)}
-        <span class="pyq-chip tp" title="Original source topic">${escapeHtmlVaani(pvOriginalTopicTag(q)||'PYQ')}</span>
+        <span class="pyq-chip tp" title="Normalized skill · Source section: ${escapeHtmlVaani(q._sourceSec||q.sec||'English')}">${escapeHtmlVaani(pvOriginalTopicTag(q)||'PYQ')}</span>
         ${q.diff?`<span class="pyq-chip diff-${q.diff}">${q.diff}</span>`:''}
         <button class="bm-star ${bookmarked?'active':''}" onclick="toggleBookmark('${bmId}', this)" title="Bookmark" style="margin-left:auto">★</button>
       </div>

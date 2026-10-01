@@ -274,3 +274,35 @@
 @media(prefers-reduced-motion:reduce){
   #view-pyq .pv-topic-progress>span,#view-pyq .pv-topic-group{transition:none}
 }
+
+/* PYQ archive search, keyboard states and normalized skill metadata. */
+#view-pyq .ma-archive-tools{
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:16px 0 14px;
+  padding:12px 14px;border:1px solid var(--line);border-radius:14px;
+  background:linear-gradient(145deg,var(--panel),var(--panel2));
+}
+#view-pyq .ma-archive-search{
+  display:flex;align-items:center;gap:9px;flex:1 1 240px;max-width:420px;min-width:180px;
+  min-height:42px;padding:0 10px;border:1px solid var(--line);border-radius:10px;
+  background:var(--bg);color:var(--muted);transition:border-color .16s,box-shadow .16s;
+}
+#view-pyq .ma-archive-search:focus-within{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,162,75,.12)}
+#view-pyq .ma-archive-search>span{font-size:1rem;color:var(--gold);line-height:1}
+#view-pyq .ma-archive-search input{flex:1;min-width:0;padding:10px 0;border:0;outline:0;background:transparent;color:var(--text);font:inherit;font-size:.78rem}
+#view-pyq .ma-archive-search input::placeholder{color:var(--muted)}
+#view-pyq .ma-archive-search button{display:grid;place-items:center;width:28px;height:28px;border:0;border-radius:8px;background:transparent;color:var(--muted);font:inherit;font-size:1.1rem;cursor:pointer}
+#view-pyq .ma-archive-search button:hover{background:rgba(201,162,75,.12);color:var(--text)}
+#view-pyq #pvArchiveResults{font-family:var(--mono);font-size:.62rem;color:var(--muted);white-space:nowrap}
+#view-pyq .ma-year-tile[hidden],#view-pyq .ma-era-card[hidden]{display:none!important}
+#view-pyq .ma-era-head:focus-visible,#view-pyq .ma-year-tile:focus-visible,
+#view-pyq .ma-session-card:focus-visible,#view-pyq .ma-gate-card:focus-visible,
+#view-pyq .pv-section-card:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+#view-pyq .ma-era-head[role="button"],#view-pyq .ma-year-tile[role="button"],
+#view-pyq .ma-session-card[role="button"],#view-pyq .ma-gate-card[role="button"],
+#view-pyq .pv-section-card[role="button"]{cursor:pointer}
+#view-pyq .pyq-chip.tp{max-width:min(52vw,360px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media(max-width:680px){
+  #view-pyq .ma-archive-tools{align-items:stretch}
+  #view-pyq .ma-archive-search{flex-basis:100%;max-width:none}
+  #view-pyq #pvArchiveResults{white-space:normal}
+}
