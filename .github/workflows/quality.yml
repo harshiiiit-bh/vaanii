@@ -33,6 +33,7 @@ jobs:
           node --check scripts/test-government-exam-desk.mjs
           node --check scripts/notification-sync-utils.mjs
           node --check scripts/test-notification-sync-utils.mjs
+          node --check scripts/test-service-rank-xp.mjs
           node --check scripts/smoke-government-exam-desk.mjs
           node --check supabase/functions/_shared/arena-leaderboard.mjs
       - name: Test Arena leaderboard contract
@@ -43,6 +44,8 @@ jobs:
         run: node scripts/test-government-exam-desk.mjs
       - name: Test notification sync utilities
         run: node scripts/test-notification-sync-utils.mjs
+      - name: Test service rank XP rules
+        run: node scripts/test-service-rank-xp.mjs
       - name: Test PYQ bank metadata and taxonomy
         run: node scripts/test-pyq-bank.mjs
       - name: Set up Deno
