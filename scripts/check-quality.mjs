@@ -452,7 +452,10 @@ try {
 /* PYQ presentation compatibility audit. */
 try {
   const pyqApp=readFileSync('js/app.js','utf8');
+  const pyqCss=readFileSync('vaani-pyq-polish.css','utf8');
   if(!pyqApp.includes('function pyqSpottingParts(')||!pyqApp.includes('function pyqSpottingFormat(')||!pyqApp.includes('function pyqLabeledBlocks(')||!pyqApp.includes('function pyqPromptHTML(')) throw new Error('PYQ structured renderer helpers are missing.');
+  if(!pyqApp.includes('<div class="pv-topic-group-list" id="pvTopicGrid">')||!pyqApp.includes('<div class="pv-topic-grid pv-topic-subgrid">')) throw new Error('PYQ outer group list must be separate from the inner skill-card grid.');
+  if(!/#view-pyq \.pv-topic-group-list\s*\{[^}]*grid-template-columns\s*:\s*minmax\(0,\s*1fr\)/s.test(pyqCss)) throw new Error('PYQ group list must use a full-width single-column layout.');
   const ctx=Object.create(null); vm.runInNewContext(readFileSync('data/pyq/manifest.js','utf8'),ctx,{timeout:1000});
   const paperNames=ctx.PYQ_PAPER_FILES;
   const renderableSpot=q=>{

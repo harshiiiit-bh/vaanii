@@ -762,6 +762,32 @@ try {
   console.log('PASS Leaderboard: personal metrics, bests, activity, missions and earned/locked citation filters');
 
   await clickMainView('pyq');
+  await page.waitForSelector('#pvTopicGrid.pv-topic-group-list > .pv-topic-group', { timeout: 10000 });
+  const measureTopicGroup = () => page.locator('#pvTopicGrid').evaluate(root => {
+    const group = root.querySelector('.pv-topic-group');
+    const title = group && group.querySelector('.pv-topic-group-copy strong');
+    return {
+      isSeparated: root.classList.contains('pv-topic-group-list') && !root.classList.contains('pv-topic-grid'),
+      rootWidth: root.getBoundingClientRect().width,
+      groupWidth: group ? group.getBoundingClientRect().width : 0,
+      titleWidth: title ? title.getBoundingClientRect().width : 0,
+      titleHeight: title ? title.getBoundingClientRect().height : 0
+    };
+  });
+  const desktopTopicLayout = await measureTopicGroup();
+  assert.equal(desktopTopicLayout.isSeparated, true, 'outer topic groups must not reuse the inner skill-card grid');
+  assert.ok(desktopTopicLayout.groupWidth > desktopTopicLayout.rootWidth * 0.9,
+    'desktop topic group should span the available width: ' + JSON.stringify(desktopTopicLayout));
+  assert.ok(desktopTopicLayout.titleWidth > 240 && desktopTopicLayout.titleHeight < 100,
+    'desktop topic heading should not collapse into vertical character wrapping: ' + JSON.stringify(desktopTopicLayout));
+  await page.setViewportSize({ width: 390, height: 844 });
+  const mobileTopicLayout = await measureTopicGroup();
+  assert.ok(mobileTopicLayout.groupWidth > mobileTopicLayout.rootWidth * 0.9,
+    'mobile topic group should span the available width: ' + JSON.stringify(mobileTopicLayout));
+  assert.ok(mobileTopicLayout.titleWidth > 200 && mobileTopicLayout.titleHeight < 130,
+    'mobile topic heading should remain readable: ' + JSON.stringify(mobileTopicLayout));
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  console.log('PASS PYQ layout: full-width group panels and readable headings at desktop and mobile widths');
   await page.evaluate(() => {
     const question = PYQ_ALL.find(q => q._exam === 'CDS' && q.y === 2022 && q.s === 'I' &&
       q.n === 1 && q.sec === 'Spotting Errors');
