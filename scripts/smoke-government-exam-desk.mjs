@@ -270,6 +270,13 @@ await page.goto(baseURL + '?v=notifications', { waitUntil: 'domcontentloaded' })
   const ongoingVisible = Math.min(4, ongoingTotal);
   const nearVisible = Math.min(4, nearTotal);
   assert.equal(await page.locator('#vxOngoingList .vx-notice-card').count(), ongoingVisible, 'open applications outside seven days, including title date ranges, should be Ongoing');
+  const ongoingMore = page.locator('#vxOngoingMore');
+  if (ongoingTotal > 4) {
+    assert.equal(await ongoingMore.isVisible(), true, 'large ongoing lanes should expose a View all control');
+    assert.equal((await ongoingMore.innerText()).trim(), 'View all ' + ongoingTotal, 'ongoing preview should disclose the full result count');
+    await ongoingMore.click();
+    assert.equal(await page.locator('#vxOngoingList .vx-notice-card').count(), ongoingTotal, 'View all should expose every ongoing notice');
+  }
   assert.equal(await page.locator('#vxNearList .vx-notice-card').count(), nearVisible, 'today, seven-day and inferred title deadlines should be Deadline Near');
   const nearMore = page.locator('#vxNearMore');
   if (nearTotal > 4) {
@@ -287,6 +294,10 @@ await page.goto(baseURL + '?v=notifications', { waitUntil: 'domcontentloaded' })
     'a range ending within the next seven days should appear in Deadline Near');
   assert.equal(await page.locator('#vxOngoingList .vx-notice-card').filter({ hasText: '30.09.2026 to 21.10.2026' }).count(), 1,
     'a date range that is open today and closes beyond seven days should appear in Ongoing');
+  if (ongoingTotal > 4) {
+    await ongoingMore.click();
+    assert.equal(await page.locator('#vxOngoingList .vx-notice-card').count(), ongoingVisible, 'Show fewer should restore the ongoing preview');
+  }
   if (nearTotal > 4) {
     await nearMore.click();
     assert.equal(await page.locator('#vxNearList .vx-notice-card').count(), nearVisible, 'Show fewer should restore the deadline preview');
