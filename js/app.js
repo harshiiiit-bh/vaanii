@@ -39,7 +39,7 @@ document.addEventListener('mousemove',(e)=>{
 =============================================================*/
 function createDefaultState(){
   return {
-    name:'Cadet', xp:0, streak:0, lastActive:null, serviceForce:null,
+    name:'Cadet', xp:0, streak:0, lastActive:null, lastStreakRewardDate:null, serviceForce:null,
     completedTopics:{}, quizScores:{}, vocabLearned:{}, theme:'light', missions:{},
     dailyActivity:{}, dailyXpEarned:{}, focusSessions:{}, mysteryBoxesClaimed:0, reviewQueue:[],
     personalBests:{ bestCombo:0, longestStreak:0, highestQuizScore:0, fastestQuizSeconds:null, fastestQuizLabel:'', totalQuizzesTaken:0 },
@@ -69,7 +69,7 @@ function normalizeState(){
   Object.keys(State.dailyXpEarned).forEach(day=>{
     const value=Number(State.dailyXpEarned[day]);
     if(!/^.{3,40}$/.test(day)||!Number.isFinite(value)||value<0)delete State.dailyXpEarned[day];
-    else State.dailyXpEarned[day]=Math.min(VAANI_DAILY_XP_CAP,Math.floor(value));
+    else State.dailyXpEarned[day]=Math.floor(value);
   });
   State.xpLedger=Array.isArray(State.xpLedger)?State.xpLedger
     .filter(entry=>entry&&typeof entry==='object'&&!Array.isArray(entry))
@@ -107,6 +107,7 @@ function normalizeState(){
   State.name=typeof State.name==='string'?(State.name.trim().slice(0,40)||'Cadet'):'Cadet';
   State.xp=Number.isFinite(Number(State.xp))?Math.max(0,Math.floor(Number(State.xp))):0;
   State.streak=Number.isFinite(Number(State.streak))?Math.max(0,Math.floor(Number(State.streak))):0;
+  State.lastStreakRewardDate=typeof State.lastStreakRewardDate==='string'?State.lastStreakRewardDate:null;
   State.theme=State.theme==='dark'?'dark':'light';
   State.serviceForce=['army','navy','airforce'].includes(State.serviceForce)?State.serviceForce:null;
 }
@@ -316,6 +317,10 @@ function finishGateEntry(){
     }
     State.lastActive=today;
   }else if(!State.streak){State.streak=1;}
+  if(State.streak>=3 && State.lastStreakRewardDate!==today){
+    State.lastStreakRewardDate=today;
+    addXP(VAANI_STREAK_DAILY_XP,State.streak+'-day streak reward');
+  }
   normalizeState();
   State.personalBests.longestStreak = Math.max(State.personalBests.longestStreak||0, State.streak);
   saveState();
@@ -338,7 +343,8 @@ function toggleTheme(){
   saveState();
 }
 
-const VAANI_DAILY_XP_CAP=80;
+const VAANI_CORRECT_ANSWER_XP=2;
+const VAANI_STREAK_DAILY_XP=22;
 function getAccuracyPenalty(pct){
   const score=Number(pct);
   if(!Number.isFinite(score))return 0;
@@ -368,9 +374,9 @@ function getTodayXPEarned(){
   if(!Object.prototype.hasOwnProperty.call(State.dailyXpEarned,key)){
     // Seed from legacy activity so today's existing earnings cannot be farmed again.
     const legacy=Math.max(0,Math.floor(Number(State.dailyActivity&&State.dailyActivity[key])||0));
-    State.dailyXpEarned[key]=Math.min(VAANI_DAILY_XP_CAP,legacy);
+    State.dailyXpEarned[key]=legacy;
   }
-  return Math.min(VAANI_DAILY_XP_CAP,Math.max(0,Math.floor(Number(State.dailyXpEarned[key])||0)));
+  return Math.max(0,Math.floor(Number(State.dailyXpEarned[key])||0));
 }
 function recordXPTransaction(type,amount,reason){
   const kind=type==='deducted'?'deducted':type==='earned'?'earned':null;
@@ -389,17 +395,8 @@ function addXP(n, reason){
   const requested=Math.max(0,Math.floor(Number(n)||0));
   if(!requested)return 0;
   const dayKey=dailyXPDayKey();
-  const already=getTodayXPEarned();
-  const awarded=Math.min(requested,Math.max(0,VAANI_DAILY_XP_CAP-already));
-  if(!awarded){
-    if(!window.__vaaniDailyCapToastDate||window.__vaaniDailyCapToastDate!==dayKey){
-      window.__vaaniDailyCapToastDate=dayKey;
-      toast('Daily XP cap reached: '+VAANI_DAILY_XP_CAP+' XP. Come back tomorrow.');
-    }
-    refreshServiceRankDailyHint();
-    return 0;
-  }
-  State.dailyXpEarned[dayKey]=already+awarded;
+  const awarded=requested;
+  State.dailyXpEarned[dayKey]=(Number(State.dailyXpEarned[dayKey])||0)+awarded;
   State.xp=Math.max(0,Math.floor(Number(State.xp)||0))+awarded;
   State.dailyActivity=State.dailyActivity||{};
   State.dailyActivity[dayKey]=(Number(State.dailyActivity[dayKey])||0)+awarded;
@@ -444,12 +441,11 @@ function awardAccuracyXP(pct, reason){
     deductXP(penalty,(reason||'Quiz')+' · '+formatXPPercent(accuracy)+'% accuracy');
     return 0;
   }
-  const reward=accuracy===100?12:accuracy>=90?10:accuracy>=80?8:accuracy>=70?6:0;
-  return reward?addXP(reward,(reason||'Quiz')+' · '+formatXPPercent(accuracy)+'% accuracy'):0;
+  return 0;
 }
 function refreshServiceRankDailyHint(){
   const el=document.getElementById('rankDailyXPHint');
-  if(el)el.textContent="Today's XP earned: "+getTodayXPEarned()+" / "+VAANI_DAILY_XP_CAP;
+  if(el)el.textContent="Today's XP earned: "+getTodayXPEarned()+" · UNLIMITED";
 }
 function toast(msg){
   const w = document.getElementById('toast-wrap');
@@ -2338,7 +2334,7 @@ function pvSelectOption(choiceIdx){
   if(s.answers[q._id]) return; // already answered
   const correct = choiceIdx===q.ans;
   s.answers[q._id] = { choice: choiceIdx, correct };
-  if(correct){ s.streak++; s.bestStreak = Math.max(s.bestStreak, s.streak); addXP(2,'PYQ solved correctly'); }
+  if(correct){ s.streak++; s.bestStreak = Math.max(s.bestStreak, s.streak); addXP(VAANI_CORRECT_ANSWER_XP,'Correct answer'); }
   else { s.streak = 0; }
   recordPyqAttempt(q._id, correct);
   refreshDashboardPyqCard();
@@ -3711,7 +3707,7 @@ function renderQuizPane(id, quiz){
     const card=pane.querySelector('.quiz-card'),wrap=pane.querySelector('#optsWrap');qTimer=startQTimer(pane.querySelector('#qTimerRing'));
     (Array.isArray(item.opts)?item.opts:[]).forEach((option,i)=>{const b=document.createElement('button');b.type='button';b.className='opt-btn quiz-option';b.setAttribute('aria-pressed','false');const letter=document.createElement('span');letter.className='quiz-option-letter';letter.textContent=String.fromCharCode(65+i);const label=document.createElement('span');label.className='quiz-option-text';label.textContent=String(option);b.append(letter,label);b.addEventListener('click',()=>{if(b.disabled)return;const elapsed=qElapsedSeconds(qTimer);if(qTimer){qTimer.stop();qTimer=null;}wrap.querySelectorAll('button').forEach(x=>{x.disabled=true;x.setAttribute('aria-pressed','false');});b.setAttribute('aria-pressed','true');const fb=pane.querySelector('#qFeedback');
       const wasCorrect=i===item.ans;
-      if(wasCorrect){correctCount++;b.classList.add('correct');handleQuizCorrect(b,card);fb.className='quiz-feedback is-correct';fb.textContent='Correct. '+String(item.exp||'You selected the right answer.');if(item.lessonId)recordGrammarMastery(item.lessonId,true);if(elapsed<=5){addXP(2,'Quick answer');const speed=document.createElement('span');speed.className='speed-tag';speed.textContent='⚡ Quick answer +2 XP';fb.appendChild(speed);}}
+      if(wasCorrect){correctCount++;b.classList.add('correct');handleQuizCorrect(b,card);fb.className='quiz-feedback is-correct';fb.textContent='Correct. '+String(item.exp||'You selected the right answer.');if(item.lessonId)recordGrammarMastery(item.lessonId,true);addXP(VAANI_CORRECT_ANSWER_XP,'Correct answer');}
       else{b.classList.add('wrong');const right=wrap.querySelectorAll('button')[item.ans];if(right)right.classList.add('correct');handleQuizWrong(card);fb.className='quiz-feedback is-wrong';fb.textContent='Not quite. Correct answer: '+String((item.opts||[])[item.ans]||'the highlighted option')+'. '+String(item.exp||'Review the rule and try again.');if(item.lessonId)recordGrammarMastery(item.lessonId,false);}
       if(Array.isArray(item.reasons)&&item.reasons.length){const rationale=document.createElement('ul');rationale.className='ga-choice-reasons';item.reasons.forEach((reason,index)=>{const li=document.createElement('li');li.textContent=String.fromCharCode(65+index)+'. '+String(reason);rationale.appendChild(li);});fb.appendChild(rationale);}
       const next=pane.querySelector('#nextBtn');next.disabled=false;next.focus();});wrap.appendChild(b);});
@@ -4291,13 +4287,8 @@ function getServiceRankProgress(xp,force){
   const remainingXP=next?Math.max(0,next.xp-points):0;
   return {ranks,honorary,allRanks,points,unlocked,current,next,previousThreshold,requiredToNext,earnedToNext,remainingXP,progress,force};
 }
-function getMinimumXPDays(remainingXP,todayRemaining,cap=VAANI_DAILY_XP_CAP){
-  const required=Math.max(0,Math.floor(Number(remainingXP)||0));
-  const available=Math.max(0,Math.floor(Number(todayRemaining)||0));
-  const dailyCap=Math.max(1,Math.floor(Number(cap)||1));
-  if(required===0||required<=available)return 0;
-  if(available>0)return 1+Math.ceil((required-available)/dailyCap);
-  return Math.ceil(required/dailyCap);
+function getMinimumXPDays(){
+  return 0;
 }
 function makeServiceInsignia(force,rank,className,alt){
   const wrap=document.createElement('span');
@@ -4407,16 +4398,9 @@ function renderServiceRankProgress(){
   renderServiceXPLedger();
   if(!title||!bar||!hint)return;
   const todayEarned=getTodayXPEarned();
-  const todayRemaining=Math.max(0,VAANI_DAILY_XP_CAP-todayEarned);
-  if(dailyHint)dailyHint.textContent="Today's XP earned: "+todayEarned+' / '+VAANI_DAILY_XP_CAP;
-  if(dailyFill)dailyFill.style.width=Math.round(todayEarned/VAANI_DAILY_XP_CAP*100)+'%';
-  if(dailyTrack){
-    dailyTrack.setAttribute('aria-valuemin','0');
-    dailyTrack.setAttribute('aria-valuemax',String(VAANI_DAILY_XP_CAP));
-    dailyTrack.setAttribute('aria-valuenow',String(todayEarned));
-    dailyTrack.setAttribute('aria-valuetext',todayEarned+' of '+VAANI_DAILY_XP_CAP+' XP earned; '+todayRemaining+' XP remaining');
-  }
-  if(dailyRemaining)dailyRemaining.textContent=todayRemaining+' XP remaining today';
+  if(dailyHint)dailyHint.textContent="Today's XP earned: "+todayEarned+' · UNLIMITED';
+  if(dailyTrack)dailyTrack.style.display='none';
+  if(dailyRemaining)dailyRemaining.textContent='No daily XP cap · 3+ day streak = +22 XP/day';
   if(!meta||!progress.allRanks.length){
     title.textContent='Officer Aspirant';
     if(forceLabel)forceLabel.textContent='Select a service to view its commissioned officer ranks.';
@@ -4441,12 +4425,10 @@ function renderServiceRankProgress(){
   if(progress.next){
     hint.textContent=progress.earnedToNext.toLocaleString('en-IN')+' / '+progress.requiredToNext.toLocaleString('en-IN')+
       ' XP toward '+progress.next.name+' ('+progress.next.xp.toLocaleString('en-IN')+' total XP)';
-    const minimumDays=getMinimumXPDays(progress.remainingXP,todayRemaining);
-    if(paceHint)paceHint.textContent=minimumDays===0
-      ?'Next milestone is within today’s remaining XP allowance.'
-      :'Minimum '+minimumDays+' earning day'+(minimumDays===1?'':'s')+' at the daily cap, before any deductions.';
+    const minimumDays=getMinimumXPDays(progress.remainingXP);
+    if(paceHint)paceHint.textContent='Next milestone can be earned through continued practice — there is no daily XP cap.';
   }else{
-    hint.textContent='Top VAANI milestone reached · XP keeps accumulating (daily cap: '+VAANI_DAILY_XP_CAP+').';
+    hint.textContent='Top VAANI milestone reached · XP keeps accumulating with no daily cap.';
     if(paceHint)paceHint.textContent='All listed milestones cleared. Daily XP remains available.';
   }
   renderServiceRankLadder();
@@ -5300,7 +5282,7 @@ async function resetProgress(){
   const previous=JSON.stringify(State),name=State.name,theme=State.theme,serviceForce=State.serviceForce;
   const dailyXpEarned=JSON.parse(JSON.stringify(State.dailyXpEarned||{}));
   resetStateForAccount();
-  // A learning reset must not erase service preference or reopen today's XP cap.
+  // A learning reset must not erase service preference or reset the XP economy.
   State.name=name;State.theme=theme;State.serviceForce=serviceForce;State.dailyXpEarned=dailyXpEarned;
   document.body.setAttribute('data-theme',theme);
   try{
@@ -5490,7 +5472,7 @@ function renderComparePane(id, quiz){
         if(i===item.ans){
           b.classList.add('correct');correctCount++;
           handleQuizCorrect(b, cardEl);
-          if(qElapsedSeconds(qTimer)<=5){ addXP(2,'Quick answer'); fb.insertAdjacentHTML('afterend','<span class="speed-tag">⚡ Quick answer +2 XP</span>'); }
+          addXP(VAANI_CORRECT_ANSWER_XP,'Correct answer');
         } else {
           b.classList.add('wrong');document.querySelectorAll('#cmpOptsWrap .opt-btn')[item.ans].classList.add('correct');
           handleQuizWrong(cardEl);
