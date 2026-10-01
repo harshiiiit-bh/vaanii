@@ -44,7 +44,7 @@
     if(!meta){
       meta=document.createElement('div');
       meta.className='ve-meta';
-      meta.innerHTML='<strong>VAANI · ONLINE</strong><span id="veContext">COMMAND CENTRE</span>';
+      meta.innerHTML='<strong>OFFICER VAANI · ONLINE</strong><span id="veContext">COMMAND CENTRE</span>';
       const kicker=bubble.querySelector('.vc-kicker');
       bubble.insertBefore(meta,kicker||bubble.firstChild);
     }
@@ -83,7 +83,7 @@
       void c.offsetWidth;
       m.classList.add('gesture-'+gesture);
     }
-    c.setAttribute('aria-label','VAANI officer mentor — '+(gesture||'ready'));
+    c.setAttribute('aria-label','OFFICER VAANI — '+(gesture||'ready'));
   }
 
   function setText(kicker,text,quote,poseName,gesture,section){
@@ -94,7 +94,7 @@
     if(k)k.textContent=kicker;
     if(t) t.textContent=text;
     if(q) q.textContent=quote||quotes[Math.floor(Date.now()/86400000)%quotes.length];
-    if(ctx) ctx.textContent=section||context[active()]?.[0]||'VAANI MENTOR';
+    if(ctx) ctx.textContent=section||context[active()]?.[0]||'OFFICER VAANI';
     pose(poseName,gesture);
     intel();
   }
@@ -116,7 +116,7 @@
 
   function brief(){
     const v=active();
-    const c=context[v]||['VAANI MENTOR','Choose a task, focus for a while, and finish what you started.','p10','focus'];
+    const c=context[v]||['OFFICER VAANI','Choose a task, focus for a while, and finish what you started.','p10','focus'];
     setText(c[0],c[1],quotes[Math.floor(Date.now()/86400000)%quotes.length],c[2],c[3],c[0]);
     open();
   }
@@ -247,7 +247,7 @@
         p8:'0 100%',p9:'33.333% 100%',p10:'66.667% 100%',p11:'100% 100%'
       })[poseName]||'0 0';
       mini.setAttribute('aria-label','VAANI officer · contextual guide');
-      mini.title='VAANI · contextual guide';
+      mini.title='OFFICER OFFICER VAANI · contextual guide';
       mini.addEventListener('click',brief);
       host.appendChild(mini);
     });
@@ -301,7 +301,7 @@
     if(m){
       const c=m.querySelector('#vcCharacter');
       if(c){
-        c.title='VAANI · click for another line';
+        c.title='OFFICER VAANI · click for another line';
         c.addEventListener('pointerdown',()=>pose(context[active()]?.[2]||'p0','focus'),{passive:true});
       }
     }
