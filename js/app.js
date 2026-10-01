@@ -1395,6 +1395,19 @@ function pvPaperSections(year, session, exam){
   return order.map(sec=>({ sec, list:groups[sec] }));
 }
 function pvTopics(){ return [...new Set(PYQ_ALL.map(q=>q.sec))]; }
+function pvTopicStatsMap(){
+  const st=ensurePyqStats(), map={};
+  PYQ_ALL.forEach(q=>{
+    const key=String(q.sec||'Other').trim()||'Other';
+    if(!map[key]) map[key]={total:0,attempted:0,correct:0};
+    map[key].total++;
+    if(st.attempts[q._id]!==undefined){
+      map[key].attempted++;
+      if(st.attempts[q._id]===true) map[key].correct++;
+    }
+  });
+  return map;
+}
 
 /* ---- topic discovery grouping ----
    The question bank keeps its original topic labels and question data.
@@ -1739,38 +1752,41 @@ function pvHomeHTML(){
     <div class="ma-gate-arrow">→</div>
   </div>`;
 
-  const topicAcc = pyqTopicAccuracy();
   const topicList = pvTopics();
+  const topicStats = pvTopicStatsMap();
   const topicGroups = pvTopicGroups(topicList);
   const topicCardsHTML = items => items.map(entry=>{
-    const t=entry.topic,count=PYQ_ALL.filter(q=>q.sec===t).length,ta=topicAcc.find(x=>x.sec===t),accLabel=ta?`${ta.acc}%`:'New';
-    return `<button type="button" class="pv-topic-card" data-topic="${encodeURIComponent(t)}" aria-label="Practice ${escapeHtmlVaani(t)}, ${count} questions">
-      <span class="pv-topic-emoji" aria-hidden="true">${pvTopicIcon(t)}</span>
-      <span class="pv-topic-copy"><span class="pv-topic-name">${escapeHtmlVaani(t)}</span><span class="pv-topic-count">${count} questions</span><span class="pv-topic-hint">${escapeHtmlVaani(pvTopicHint(t))}</span></span>
-      <span class="pv-topic-side"><span class="pv-topic-acc ${pvAccBadgeClass(ta?ta.acc:null)}">${accLabel}</span><span class="pv-topic-open">Practice <b aria-hidden="true">→</b></span></span>
-    </button>`;
+    const t=entry.topic, ts=topicStats[t]||{total:0,attempted:0,correct:0};
+    const acc=ts.attempted?Math.round(ts.correct/ts.attempted*100):null;
+    const progress=ts.total?Math.round(ts.attempted/ts.total*100):0;
+    const accLabel=acc===null?'New':acc+'%';
+    const p=t+' '+pvTopicHint(t);
+    return '<button type="button" class="pv-topic-card" data-topic="'+encodeURIComponent(t)+'" data-topic-search="'+encodeURIComponent(p.toLocaleLowerCase())+'" aria-label="Practice '+escapeHtmlVaani(t)+', '+ts.total+' questions">'+
+      '<span class="pv-topic-emoji" aria-hidden="true">'+pvTopicIcon(t)+'</span>'+
+      '<span class="pv-topic-copy">'+
+        '<span class="pv-topic-name">'+escapeHtmlVaani(t)+'</span>'+
+        '<span class="pv-topic-count">'+ts.total+' questions · '+ts.attempted+' attempted</span>'+
+        '<span class="pv-topic-progress" aria-hidden="true"><span style="width:'+progress+'%"></span></span>'+
+        '<span class="pv-topic-hint">'+escapeHtmlVaani(pvTopicHint(t))+'</span>'+
+      '</span>'+
+      '<span class="pv-topic-side"><span class="pv-topic-acc '+pvAccBadgeClass(acc)+'">'+accLabel+'</span><span class="pv-topic-open">Practice <b aria-hidden="true">→</b></span></span>'+
+    '</button>';
   }).join('');
-  const topicsHTML = topicGroups.map(group=>`
-    <section class="pv-topic-group" data-topic-group="${group.id}">
-      <button type="button" class="pv-topic-group-head" onclick="pvToggleTopicGroup('${group.id}')" aria-expanded="false" aria-controls="pv-topic-group-${group.id}">
-        <span class="pv-topic-group-copy">
-          <span class="pv-topic-group-kicker">GROUP</span>
-          <strong>${escapeHtmlVaani(group.title)}</strong>
-          <small>${escapeHtmlVaani(group.desc)}</small>
-        </span>
-        <span class="pv-topic-group-head-side">
-          <span class="pv-topic-group-count">${group.items.length} skill${group.items.length!==1?'s':''}</span>
-          <span class="pv-topic-group-chevron" aria-hidden="true">⌄</span>
-        </span>
-      </button>
-      <div class="pv-topic-group-body" id="pv-topic-group-${group.id}" hidden>
-        <div class="pv-topic-group-actions">
-          <span>Practice all ${group.items.reduce((sum,item)=>sum+PYQ_ALL.filter(q=>q.sec===item.topic).length,0)} questions from this group.</span>
-          <button type="button" class="pv-topic-group-practice" onclick="pvLaunchTopicGroup('${group.id}')">Practice all →</button>
-        </div>
-        <div class="pv-topic-grid pv-topic-subgrid">${topicCardsHTML(group.items)}</div>
-      </div>
-    </section>`).join('');
+  const topicsHTML = topicGroups.map(group=>{
+    const gs=group.items.reduce((a,item)=>{ const ts=topicStats[item.topic]||{total:0,attempted:0,correct:0}; a.total+=ts.total; a.attempted+=ts.attempted; a.correct+=ts.correct; return a; },{total:0,attempted:0,correct:0});
+    const gacc=gs.attempted?Math.round(gs.correct/gs.attempted*100):null;
+    const searchText=(group.title+' '+group.desc).toLocaleLowerCase();
+    return '<section class="pv-topic-group" data-topic-group="'+group.id+'" data-topic-group-search="'+encodeURIComponent(searchText)+'">'+
+      '<button type="button" class="pv-topic-group-head" onclick="pvToggleTopicGroup(\''+group.id+'\')" aria-expanded="false" aria-controls="pv-topic-group-'+group.id+'">'+
+        '<span class="pv-topic-group-copy"><span class="pv-topic-group-kicker">GROUPED SKILLS</span><strong>'+escapeHtmlVaani(group.title)+'</strong><small>'+escapeHtmlVaani(group.desc)+'</small></span>'+
+        '<span class="pv-topic-group-head-side"><span class="pv-topic-group-metrics"><span>'+group.items.length+' skills</span><span>'+gs.total+' Q</span><span>'+(gacc===null?'New':gacc+'% acc')+'</span></span><span class="pv-topic-group-chevron" aria-hidden="true">⌄</span></span>'+
+      '</button>'+
+      '<div class="pv-topic-group-body" id="pv-topic-group-'+group.id+'" hidden>'+
+        '<div class="pv-topic-group-actions"><div class="pv-topic-group-summary"><b>'+gs.total+' questions</b><span>'+gs.attempted+' attempted · '+(gacc===null?'No attempts yet':gacc+'% accuracy')+'</span></div><button type="button" class="pv-topic-group-practice" onclick="pvLaunchTopicGroup(\''+group.id+'\')">Practice all →</button></div>'+
+        '<div class="pv-topic-grid pv-topic-subgrid">'+topicCardsHTML(group.items)+'</div>'+
+      '</div>'+
+    '</section>';
+  }).join('');
 
   const recent = st.history.slice(0,5);
   const recentHTML = recent.length ? recent.map(h=>{
@@ -1819,25 +1835,39 @@ function pvHomeHTML(){
 
     <div class="pv-section-title"><h3><span class="bar"></span>Topic-Wise Practice</h3></div>
     <div class="pv-topic-tools">
-      <div class="pv-topic-tools-copy"><strong>Choose a skill</strong><small>Search the question bank by topic.</small></div>
-      <label class="pv-topic-search"><span class="search-mark" aria-hidden="true">⌕</span><input id="pvTopicSearch" type="search" maxlength="60" autocomplete="off" placeholder="Search topics…" aria-label="Search topic-wise practice"></label>
-      <span class="pv-topic-results" id="pvTopicResults" aria-live="polite">${topicList.length} topics</span>
+      <div class="pv-topic-tools-copy"><strong>Choose a skill</strong><small>Grouped for speed. Open a group, then launch a skill or the whole group.</small></div>
+      <label class="pv-topic-search"><span class="search-mark" aria-hidden="true">⌕</span><input id="pvTopicSearch" type="search" maxlength="60" autocomplete="off" placeholder="Search skills, groups or keywords…" aria-label="Search topic-wise practice"><button type="button" class="pv-topic-clear" id="pvTopicClear" onclick="pvClearTopicSearch()" aria-label="Clear topic search" hidden>×</button></label>
+      <div class="pv-topic-tool-actions" aria-label="Topic group controls"><button type="button" class="pv-topic-tool-btn" onclick="pvSetAllTopicGroups(true)">Expand all</button><button type="button" class="pv-topic-tool-btn" onclick="pvSetAllTopicGroups(false)">Collapse all</button></div>
+      <span class="pv-topic-results" id="pvTopicResults" aria-live="polite">${topicList.length} skills</span>
     </div>
     <div class="pv-topic-grid" id="pvTopicGrid">${topicsHTML}</div>
     <div class="pv-empty-note pv-topic-empty" id="pvTopicEmpty" hidden>No matching topic. Try another search.</div>
   </div>`;
 }
 
+function pvSetTopicGroupState(group,open){
+  if(!group)return;
+  const body=group.querySelector('.pv-topic-group-body'), head=group.querySelector('.pv-topic-group-head');
+  if(!body||!head)return;
+  body.hidden=!open;
+  head.setAttribute('aria-expanded',String(!!open));
+  group.classList.toggle('is-open',!!open);
+}
 function pvToggleTopicGroup(groupId){
-  const group=document.querySelector(`.pv-topic-group[data-topic-group="${CSS.escape(groupId)}"]`);
+  const group=document.querySelector('.pv-topic-group[data-topic-group="'+CSS.escape(groupId)+'"]');
   if(!group)return;
   const body=group.querySelector('.pv-topic-group-body');
-  const head=group.querySelector('.pv-topic-group-head');
-  if(!body||!head)return;
-  const open=!body.hidden;
-  body.hidden=open;
-  head.setAttribute('aria-expanded',String(!open));
-  group.classList.toggle('is-open',!open);
+  pvSetTopicGroupState(group,!!body && body.hidden);
+}
+function pvSetAllTopicGroups(open){
+  document.querySelectorAll('#pvTopicGrid .pv-topic-group').forEach(group=>pvSetTopicGroupState(group,!!open));
+}
+function pvClearTopicSearch(){
+  const input=document.getElementById('pvTopicSearch');
+  if(!input)return;
+  input.value='';
+  pvFilterTopicCards('');
+  input.focus();
 }
 function pvLaunchTopicGroup(groupId){
   const group=pvTopicGroups(pvTopics()).find(item=>item.id===groupId);
@@ -1856,27 +1886,27 @@ function pvOriginalTopicTag(q){
 function pvFilterTopicCards(value){
   const grid=document.getElementById('pvTopicGrid');if(!grid)return;
   const term=String(value||'').trim().toLocaleLowerCase();
-  const cards=Array.from(grid.querySelectorAll('.pv-topic-card'));let visible=0;
+  const cards=Array.from(grid.querySelectorAll('.pv-topic-card'));
+  let visible=0, visibleGroups=0;
   cards.forEach(card=>{
     const topic=decodeURIComponent(String(card.dataset.topic||'')).toLocaleLowerCase();
-    const show=!term||topic.includes(term);card.hidden=!show;if(show)visible++;
+    const searchText=decodeURIComponent(String(card.dataset.topicSearch||''));
+    card.hidden=!!term && !topic.includes(term) && !searchText.includes(term);
   });
   grid.querySelectorAll('.pv-topic-group').forEach(group=>{
+    const groupText=decodeURIComponent(String(group.dataset.topicGroupSearch||''));
+    const groupMatch=!!term && groupText.includes(term);
+    const groupCards=Array.from(group.querySelectorAll('.pv-topic-card'));
+    if(groupMatch) groupCards.forEach(card=>{card.hidden=false;});
     const groupVisible=group.querySelectorAll('.pv-topic-card:not([hidden])').length;
     group.hidden=groupVisible===0;
-    if(term && groupVisible>0){
-      const body=group.querySelector('.pv-topic-group-body');
-      const head=group.querySelector('.pv-topic-group-head');
-      if(body && head){
-        body.hidden=false;
-        head.setAttribute('aria-expanded','true');
-        group.classList.add('is-open');
-      }
-    }
+    if(groupVisible>0){visibleGroups++;visible+=groupVisible;}
+    if(term&&groupVisible>0)pvSetTopicGroupState(group,true);
   });
   const results=document.getElementById('pvTopicResults');
-  if(results)results.textContent=term?(visible+' of '+cards.length+' topics'):(cards.length+' topics');
+  if(results)results.textContent=term?(visible+' skills · '+visibleGroups+' groups'):(cards.length+' skills · '+visibleGroups+' groups');
   const empty=document.getElementById('pvTopicEmpty');if(empty)empty.hidden=visible>0;
+  const clear=document.getElementById('pvTopicClear');if(clear)clear.hidden=!term;
 }
 function pvLaunchTopic(sec){
   const list = PYQ_ALL.filter(q=>q.sec===sec);
