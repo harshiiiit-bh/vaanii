@@ -39,7 +39,7 @@ document.addEventListener('mousemove',(e)=>{
 =============================================================*/
 function createDefaultState(){
   return {
-    name:'Cadet', xp:0, streak:0, lastActive:null,
+    name:'Cadet', xp:0, streak:0, lastActive:null, serviceForce:null,
     completedTopics:{}, quizScores:{}, vocabLearned:{}, theme:'light', missions:{},
     dailyActivity:{}, focusSessions:{}, mysteryBoxesClaimed:0, reviewQueue:[],
     personalBests:{ bestCombo:0, longestStreak:0, highestQuizScore:0, fastestQuizSeconds:null, fastestQuizLabel:'', totalQuizzesTaken:0 },
@@ -48,7 +48,6 @@ function createDefaultState(){
   };
 }
 const State = createDefaultState();
-State.serviceForce = Object.prototype.hasOwnProperty.call(VAANI_SERVICE_CHOICES,State.serviceForce)?State.serviceForce:null;
 function loadState(){
   // Account records are the only active source of learning progress. The
   // device-wide vaani_state key is read only by the explicit legacy migration.
@@ -90,6 +89,7 @@ function normalizeState(){
   State.xp=Number.isFinite(Number(State.xp))?Math.max(0,Math.floor(Number(State.xp))):0;
   State.streak=Number.isFinite(Number(State.streak))?Math.max(0,Math.floor(Number(State.streak))):0;
   State.theme=State.theme==='dark'?'dark':'light';
+  State.serviceForce=['army','navy','airforce'].includes(State.serviceForce)?State.serviceForce:null;
 }
 let __vaaniStorageWarningShown=false;
 function saveState(){
@@ -4049,86 +4049,147 @@ async function copyAccountCode(){
   return copied;
 }
 
-/* Service-specific commissioned officer ladders. XP is a learning milestone, not promotion. */
+/* Service-specific commissioned officer ladders. Official insignia are loaded from Wikimedia Commons.
+   XP is only a VAANI learning milestone; it never represents an appointment or promotion. */
 const VAANI_SERVICE_RANKS = Object.freeze({
   army: Object.freeze([
-    {name:'Lieutenant',mark:'stars-2'},{name:'Captain',mark:'stars-3'},
-    {name:'Major',mark:'emblem'},{name:'Lieutenant Colonel',mark:'emblem-star-1'},
-    {name:'Colonel',mark:'emblem-star-2'},{name:'Brigadier',mark:'emblem-star-3'},
-    {name:'Major General',mark:'sword-star'},{name:'Lieutenant General',mark:'sword-emblem'},
-    {name:'General',mark:'sword-emblem-star'}
+    {name:'Lieutenant',file:'Lieutenant of the Indian Army.svg'},
+    {name:'Captain',file:'Captain of the Indian Army.svg'},
+    {name:'Major',file:'Major of the Indian Army.svg'},
+    {name:'Lieutenant Colonel',file:'Lieutenant Colonel of the Indian Army.svg'},
+    {name:'Colonel',file:'Colonel of the Indian Army.svg'},
+    {name:'Brigadier',file:'Brigadier of the Indian Army.svg'},
+    {name:'Major General',file:'Major General of the Indian Army.svg'},
+    {name:'Lieutenant General',file:'Lieutenant General of the Indian Army.svg'},
+    {name:'General',file:'General of the Indian Army.svg'}
   ]),
   navy: Object.freeze([
-    {name:'Sub Lieutenant',mark:'stripe-1'},{name:'Lieutenant',mark:'stripe-2'},
-    {name:'Lieutenant Commander',mark:'stripe-3'},{name:'Commander',mark:'stripe-4'},
-    {name:'Captain',mark:'stripe-5'},{name:'Commodore',mark:'flag-1'},
-    {name:'Rear Admiral',mark:'flag-2'},{name:'Vice Admiral',mark:'flag-3'},
-    {name:'Admiral',mark:'flag-4'}
+    {name:'Sub Lieutenant',file:'06-Indian Navy-SLT.svg'},
+    {name:'Lieutenant',file:'07-Indian Navy-LT.svg'},
+    {name:'Lieutenant Commander',file:'08-Indian Navy-LCDR.svg'},
+    {name:'Commander',file:'09-Indian Navy-CDR.svg'},
+    {name:'Captain',file:'10-Indian Navy-CAPT.svg'},
+    {name:'Commodore',file:'11-Indian Navy-CDRE.svg'},
+    {name:'Rear Admiral',file:'12-Indian Navy-RADM.svg'},
+    {name:'Vice Admiral',file:'13-Indian Navy-VADM.svg'},
+    {name:'Admiral',file:'14-Indian Navy-ADM.svg'}
   ]),
   airforce: Object.freeze([
-    {name:'Flying Officer',mark:'stripe-1'},{name:'Flight Lieutenant',mark:'stripe-2'},
-    {name:'Squadron Leader',mark:'stripe-3'},{name:'Wing Commander',mark:'stripe-4'},
-    {name:'Group Captain',mark:'stripe-5'},{name:'Air Commodore',mark:'flag-1'},
-    {name:'Air Vice Marshal',mark:'flag-2'},{name:'Air Marshal',mark:'flag-3'},
-    {name:'Air Chief Marshal',mark:'flag-4'}
+    {name:'Flying Officer',file:'Indian IAF OF-1b.svg'},
+    {name:'Flight Lieutenant',file:'Indian IAF OF-2.svg'},
+    {name:'Squadron Leader',file:'Indian IAF OF-3.svg'},
+    {name:'Wing Commander',file:'Indian IAF OF-4.svg'},
+    {name:'Group Captain',file:'Indian IAF OF-5.svg'},
+    {name:'Air Commodore',file:'Indian IAF OF-6.svg'},
+    {name:'Air Vice Marshal',file:'Indian IAF OF-7.svg'},
+    {name:'Air Marshal',file:'Indian IAF OF-8.svg'},
+    {name:'Air Chief Marshal',file:'Indian IAF OF-9.svg'}
   ])
+});
+const VAANI_HONORARY_RANKS = Object.freeze({
+  army:{name:'Field Marshal',file:'Field Marshal of the Indian Army.svg',note:'Honorary five-star rank; separate from the regular officer career ladder.'},
+  navy:{name:'Admiral of the Fleet',file:null,note:'Honorary five-star rank; it has never been awarded in India, so no Indian insignia is shown.'},
+  airforce:{name:'Marshal of the Indian Air Force',file:'Indian IAF OF-10.svg',note:'Honorary five-star rank; separate from the regular officer career ladder.'}
 });
 const VAANI_SERVICE_CHOICES = Object.freeze({
   army:{label:'Indian Army',short:'ARMY',scene:'https://commons.wikimedia.org/wiki/Special:FilePath/T-90_firing.jpg?width=1000',source:'https://commons.wikimedia.org/wiki/File:T-90_firing.jpg',credit:'Photo: cell105 · CC BY 2.0',alt:'Indian Army T-90 tank firing during a demonstration'},
   navy:{label:'Indian Navy',short:'NAVY',scene:'https://commons.wikimedia.org/wiki/Special:FilePath/INS_VIkrant_%28R11%29_underway_in_the_Arabian_Sea_with_4_Mig-29K_Fighter_Jets.jpg?width=1000',source:'https://commons.wikimedia.org/wiki/File:INS_VIkrant_(R11)_underway_in_the_Arabian_Sea_with_4_Mig-29K_Fighter_Jets.jpg',credit:'Government of India · GODL-India',alt:'INS Vikrant underway in the Arabian Sea with MiG-29K fighter jets'},
   airforce:{label:'Indian Air Force',short:'AIR FORCE',scene:'https://commons.wikimedia.org/wiki/Special:FilePath/Indian_Air_Force_Su-30MKI_and_Dassault_Rafale.jpg?width=1000',source:'https://commons.wikimedia.org/wiki/File:Indian_Air_Force_Su-30MKI_and_Dassault_Rafale.jpg',credit:'Indian Air Force · Government of India',alt:'Indian Air Force Rafale and Su-30MKI aircraft flying together'}
 });
+function getServiceRankImageUrl(filename,width=180){
+  return 'https://commons.wikimedia.org/wiki/Special:FilePath/'+encodeURIComponent(filename)+'?width='+width;
+}
+function getServiceRankSourceUrl(filename){
+  return filename?'https://commons.wikimedia.org/wiki/File:'+encodeURIComponent(filename.replace(/ /g,'_')):'https://commons.wikimedia.org/wiki/Indian_Navy';
+}
 function getServiceRankProgress(xp,force){
   const ranks=VAANI_SERVICE_RANKS[force]||[];
   const points=Math.max(0,Math.floor(Number(xp)||0));
   const unlocked=Math.min(ranks.length,Math.floor(points/100));
-  const current=unlocked? ranks[unlocked-1]:null;
+  const current=unlocked?ranks[unlocked-1]:null;
   const next=unlocked<ranks.length?ranks[unlocked]:null;
   return {ranks,points,unlocked,current,next,progress:next?points%100:100,force};
 }
-function serviceInsigniaSvg(force,index){
-  const navy=force==='navy',air=force==='airforce';
-  const fill=navy?'#102338':air?'#253c62':'#344536';
-  const gold='#e7bd62';
-  const ranks=VAANI_SERVICE_RANKS[force]||[];
-  const rank=ranks[index];
-  if(!rank)return '';
-  let marks='';
-  if(force==='army'){
-    const stars=rank.mark==='stars-2'?2:rank.mark==='stars-3'?3:
-      rank.mark==='emblem-star-1'?1:rank.mark==='emblem-star-2'?2:
-      rank.mark==='emblem-star-3'?3:rank.mark==='sword-star'?1:
-      rank.mark==='sword-emblem-star'?1:0;
-    const emblem=/emblem/.test(rank.mark);
-    const swords=/sword/.test(rank.mark);
-    if(swords)marks+='<path d="M37 17L79 55M79 17L37 55" stroke="'+gold+'" stroke-width="3.5" stroke-linecap="round"/><path d="M34 14l10 1-3 8zM76 58l10 1-3-8zM82 14l-10 1 3 8zM40 58l-10 1 3-8z" fill="'+gold+'"/>';
-    if(emblem)marks+='<g fill="'+gold+'" stroke="'+gold+'" stroke-width="1"><path d="M56 17c-7-9-17-3-15 3 1 4 5 5 9 2l-1 11h15l-1-11c4 3 8 2 9-2 2-6-8-12-15-3z"/><path d="M42 36h28v4H42zM39 42h34v4H39zM44 48h24v3H44z"/></g>';
-    if(stars){const xs=stars===1?[56]:stars===2?[47,65]:[38,56,74];marks+=xs.map(x=>'<path d="M'+x+' 21l2.3 5h5.3l-4.2 3.2 1.6 5-5-3-5 3 1.6-5-4.2-3.2h5.3z" fill="'+gold+'" stroke="#fff0bd" stroke-width=".55"/>').join('');}
+function makeServiceInsignia(force,rank,className,alt){
+  const wrap=document.createElement('span');
+  wrap.className=className||'vp-service-rank-insignia';
+  if(rank&&rank.file){
+    const link=document.createElement('a');
+    link.href=getServiceRankSourceUrl(rank.file);
+    link.target='_blank';
+    link.rel='noopener noreferrer';
+    link.setAttribute('aria-label','Open the '+rank.name+' insignia source on Wikimedia Commons');
+    const image=document.createElement('img');
+    image.src=getServiceRankImageUrl(rank.file,220);
+    image.alt=alt||VAANI_SERVICE_CHOICES[force].label+' '+rank.name+' insignia';
+    image.loading='lazy';
+    image.decoding='async';
+    image.addEventListener('error',()=>{
+      image.hidden=true;
+      const fallback=document.createElement('span');
+      fallback.className='vp-service-insignia-fallback';
+      fallback.textContent='Insignia unavailable';
+      wrap.appendChild(fallback);
+    },{once:true});
+    link.appendChild(image);
+    wrap.appendChild(link);
   }else{
-    const flag=rank.mark.startsWith('flag-');
-    const n=flag?Number(rank.mark.slice(5)):Number(rank.mark.slice(7));
-    const y0=flag?21:18, gap=flag?9:8;
-    for(let k=0;k<n;k++){
-      const yy=y0+k*gap;
-      marks+='<path d="M34 '+yy+'h35" fill="none" stroke="'+gold+'" stroke-width="'+(flag?5:3.5)+'"/>';
-    }
-    // The curled executive sleeve stripe is part of commissioned-officer lace.
-    marks+='<path d="M69 '+y0+'c14 0 14 16 0 16h-8" fill="none" stroke="'+gold+'" stroke-width="3.5" stroke-linecap="round"/>';
+    wrap.textContent='—';
+    wrap.setAttribute('aria-label','No Indian insignia is available for this honorary rank');
   }
-  return '<svg viewBox="0 0 112 72" role="img" aria-label="'+VAANI_SERVICE_CHOICES[force].label+' '+rank.name+' rank insignia" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="108" height="68" rx="11" fill="'+fill+'" stroke="'+gold+'" stroke-width="1.5"/><path d="M10 9h92" stroke="rgba(255,255,255,.18)" stroke-width="1"/>'+marks+'</svg>';
+  return wrap;
 }
 function renderServiceRankLadder(){
   const list=document.getElementById('serviceRankList');
   const force=State.serviceForce;
   if(!list)return;
+  list.replaceChildren();
   const rows=VAANI_SERVICE_RANKS[force]||[];
   const progress=getServiceRankProgress(State.xp,force);
-  if(!rows.length){list.innerHTML='<p class="vp-service-rank-empty">Choose a service to see its commissioned officer ranks.</p>';return;}
-  list.innerHTML=rows.map((rank,index)=>{
+  if(!rows.length){
+    const empty=document.createElement('p');
+    empty.className='vp-service-rank-empty';
+    empty.textContent='Choose a service to see its commissioned officer ranks.';
+    list.appendChild(empty);
+    return;
+  }
+  rows.forEach((rank,index)=>{
     const status=index<progress.unlocked?'MILESTONE REACHED':index===progress.unlocked?'NEXT MILESTONE':'UPCOMING';
     const cls=index<progress.unlocked?'is-reached':index===progress.unlocked?'is-next':'is-upcoming';
-    return '<div class="vp-service-rank-row '+cls+'"><span class="vp-service-rank-insignia">'+serviceInsigniaSvg(force,index)+'</span><span class="vp-service-rank-name">'+rank.name+'</span><span class="vp-service-rank-status">'+status+'</span></div>';
-  }).join('');
+    const item=document.createElement('div');
+    item.className='vp-service-rank-row '+cls;
+    item.appendChild(makeServiceInsignia(force,rank,'vp-service-rank-insignia',VAANI_SERVICE_CHOICES[force].label+' '+rank.name+' insignia'));
+    const name=document.createElement('span');
+    name.className='vp-service-rank-name';
+    name.textContent=rank.name;
+    const state=document.createElement('span');
+    state.className='vp-service-rank-status';
+    state.textContent=status;
+    item.append(name,state);
+    list.appendChild(item);
+  });
+  const honorary=VAANI_HONORARY_RANKS[force];
+  if(honorary){
+    const heading=document.createElement('div');
+    heading.className='vp-service-honorary-heading';
+    heading.textContent='HONORARY FIVE-STAR RANK';
+    list.appendChild(heading);
+    const item=document.createElement('div');
+    item.className='vp-service-rank-row is-honorary';
+    item.appendChild(makeServiceInsignia(force,honorary,'vp-service-rank-insignia',VAANI_SERVICE_CHOICES[force].label+' '+honorary.name+' insignia'));
+    const name=document.createElement('span');
+    name.className='vp-service-rank-name';
+    name.textContent=honorary.name;
+    const status=document.createElement('span');
+    status.className='vp-service-rank-status';
+    status.textContent='HONORARY';
+    item.append(name,status);
+    list.appendChild(item);
+    const note=document.createElement('p');
+    note.className='vp-service-honorary-note';
+    note.textContent=honorary.note;
+    list.appendChild(note);
+  }
 }
 function renderServiceRankProgress(){
   const force=State.serviceForce;
@@ -4140,34 +4201,53 @@ function renderServiceRankProgress(){
   const forceLabel=document.getElementById('serviceRankForce');
   const bar=document.getElementById('rankBar');
   const hint=document.getElementById('rankXPText');
+  const source=document.getElementById('serviceRankBadgeSource');
   if(!title||!bar||!hint)return;
   if(!meta||!progress.ranks.length){
     title.textContent='Officer Aspirant';
-    if(forceLabel)forceLabel.textContent='Select a service to view its actual officer rank ladder.';
-    if(image){image.removeAttribute('src');image.alt='';}
+    if(forceLabel)forceLabel.textContent='Select a service to view its commissioned officer ranks.';
+    if(image){image.removeAttribute('src');image.alt='';image.hidden=true;}
     if(crest)crest.classList.add('is-unselected');
-    bar.style.width='0%';hint.textContent='Choose a service to begin your learning milestones';
-    renderServiceRankLadder();return;
+    if(source){source.hidden=true;source.removeAttribute('href');}
+    bar.style.width='0%';
+    hint.textContent='Choose a service to begin your learning milestones.';
+    renderServiceRankLadder();
+    return;
   }
   if(crest)crest.classList.remove('is-unselected');
   if(forceLabel)forceLabel.textContent=meta.label+' · Commissioned officer ranks';
-  if(progress.current){
-    title.textContent=progress.current.name;
-    const index=progress.unlocked-1;
-    if(image){image.src='data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(serviceInsigniaSvg(force,index));image.alt=meta.label+' '+progress.current.name+' rank insignia';}
-  }else{
-    title.textContent='Officer Aspirant';
-    if(image){image.removeAttribute('src');image.alt='No commissioned rank insignia before commissioning';}
+  const featured=progress.current||progress.next;
+  if(progress.current)title.textContent=progress.current.name;
+  else title.textContent='Officer Aspirant';
+  if(image){
+    image.hidden=!featured||!featured.file;
+    if(featured&&featured.file){
+      image.src=getServiceRankImageUrl(featured.file,320);
+      image.alt=(progress.current?'Current VAANI milestone insignia: ':'Next officer insignia preview: ')+meta.label+' '+featured.name;
+    }else{image.removeAttribute('src');image.alt='';}
   }
+  if(source){
+    source.hidden=!featured||!featured.file;
+    if(featured&&featured.file)source.href=getServiceRankSourceUrl(featured.file);
+    else source.removeAttribute('href');
+  }
+  if(crest)crest.classList.toggle('is-preview',!progress.current);
   bar.style.width=progress.progress+'%';
+  bar.setAttribute('aria-valuenow',String(progress.progress));
   hint.textContent=progress.next
     ?progress.points%100+' / 100 XP to VAANI learning milestone: '+progress.next.name
-    :'All VAANI rank milestones completed · highest listed rank: '+progress.ranks[progress.ranks.length-1].name;
+    :'All VAANI learning milestones completed · highest regular rank listed: '+progress.ranks[progress.ranks.length-1].name;
   renderServiceRankLadder();
 }
+let __vaaniForcePickerReturnFocus=null;
 function closeServiceForcePicker(){
   const overlay=document.getElementById('serviceForcePicker');
-  if(overlay){overlay.remove();document.body.classList.remove('service-force-modal-open');}
+  if(!overlay)return;
+  if(overlay.dataset.mode==='onboarding')return;
+  overlay.remove();
+  document.body.classList.remove('service-force-modal-open');
+  if(__vaaniForcePickerReturnFocus&&typeof __vaaniForcePickerReturnFocus.focus==='function')__vaaniForcePickerReturnFocus.focus();
+  __vaaniForcePickerReturnFocus=null;
 }
 function openServiceForcePicker(mode){
   const current=State.serviceForce||'';
@@ -4184,9 +4264,11 @@ function openServiceForcePicker(mode){
   const cancel=document.getElementById('serviceForceCancel');
   if(cancel)cancel.hidden=onboarding;
   if(options)options.innerHTML=Object.entries(VAANI_SERVICE_CHOICES).map(([key,item])=>
-    '<button type="button" class="service-force-option '+(current===key?'is-selected':'')+'" onclick="chooseServiceForce(\''+key+'\')"><span class="service-force-image"><img src="'+item.scene+'" alt="'+item.alt+'" loading="lazy" decoding="async"></span><span class="service-force-option-body"><strong>'+item.label+'</strong><span>'+(current===key?'Currently selected · ':'')+'View '+VAANI_SERVICE_RANKS[key].length+' commissioned officer ranks</span><small><a href="'+item.source+'" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">'+item.credit+' · Wikimedia Commons</a></small></span><span class="service-force-check" aria-hidden="true">'+(current===key?'✓':'›')+'</span></button>'
+    '<button type="button" class="service-force-option '+(current===key?'is-selected':'')+'" onclick="chooseServiceForce(\\''+key+'\\')"><span class="service-force-image"><img src="'+item.scene+'" alt="'+item.alt+'" loading="lazy" decoding="async"></span><span class="service-force-option-body"><strong>'+item.label+'</strong><span>'+(current===key?'Currently selected · ':'')+'View '+VAANI_SERVICE_RANKS[key].length+' commissioned officer ranks</span><small><a href="'+item.source+'" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">'+item.credit+' · Wikimedia Commons</a></small></span><span class="service-force-check" aria-hidden="true">'+(current===key?'✓':'›')+'</span></button>'
   ).join('');
+  overlay.dataset.mode=onboarding?'onboarding':'change';
   document.body.classList.add('service-force-modal-open');
+  __vaaniForcePickerReturnFocus=document.activeElement;
   const heading=document.getElementById('serviceForceTitle');
   if(heading)heading.textContent=onboarding?'Which force do you aspire to join?':'Change your service';
   if(cancel)cancel.textContent='Keep current service';
@@ -4224,10 +4306,10 @@ function renderProfileSnapshot(){
   const completed=GRAMMAR.filter(g=>!!State.completedTopics[g.id]).length;
   const scores=Object.values(State.quizScores).map(Number).filter(n=>Number.isFinite(n)&&n>=0&&n<=100);
   const avg=scores.length?Math.round(scores.reduce((sum,n)=>sum+n,0)/scores.length):null;
-  const level=Math.floor(State.xp/100)+1;
-  const ranks=['Recruit','Cadet','Lance Naik','Naik','Havildar','Subedar','Lieutenant','Captain','Major','Colonel'];
-  const rank=ranks[Math.min(level-1,ranks.length-1)];
-  const rankEl=document.getElementById('vpProfileRank');if(rankEl)rankEl.textContent=rank;
+  const rankProgress=getServiceRankProgress(State.xp,State.serviceForce);
+  const rankEl=document.getElementById('vpProfileRank');
+  if(rankEl)rankEl.textContent=rankProgress.current?rankProgress.current.name:'Officer Aspirant';
+  renderServiceRankProgress();
   const host=document.getElementById('vpOverviewStats');
   if(host)host.innerHTML=[
     ['Total XP',String(State.xp||0),'✦'],['Current streak',(State.streak||0)+' days','🔥'],
