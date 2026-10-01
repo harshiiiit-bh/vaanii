@@ -63,13 +63,24 @@
         '<div class="vc-kicker" id="vcKicker">MISSION BRIEFING</div>'+
         '<div class="vc-text" id="vcText"></div>'+
         '<div class="vc-quote" id="vcQuote"></div>'+
-        '<div class="vc-actions"><button type="button" id="vcHide">Dismiss</button><button type="button" id="vcNext" class="primary">Another line</button></div>'+
+        '<div class="vc-actions"><button type="button" id="vcHide">Dismiss</button><button type="button" id="vcNext" class="primary">Next briefing</button></div>'+
       '</div>'+
-      '<div class="vc-character vc-p0" id="vcCharacter" role="button" tabindex="0" aria-label="VAANI mentor">';
+      '<div class="vc-character vc-p0" id="vcCharacter" role="button" tabindex="0" aria-label="OFFICER VAANI mentor">'+
+        '<span class="vc-character-frame" aria-hidden="true">'+
+          '<img class="vc-character-sheet" src="https://gcdn.picsart.com/editing-temp/639f1c75-1e07-49c9-9e70-a8b1018c6eba.png" alt="" draggable="false" decoding="async" fetchpriority="low">'+
+        '</span>'+
+        '<span class="vc-character-fallback" aria-hidden="true">OV</span>'+
+        '<span class="vc-character-nameplate" aria-hidden="true">OFFICER VAANI</span>'+
+      '</div>';
     document.body.appendChild(el);
     document.getElementById('vcHide').addEventListener('click',()=>hide());
     document.getElementById('vcNext').addEventListener('click',()=>speak(currentView(),true));
     const ch=document.getElementById('vcCharacter');
+    const img=ch.querySelector('.vc-character-sheet');
+    if(img){
+      img.addEventListener('load',()=>ch.classList.add('asset-ready'),{once:true});
+      img.addEventListener('error',()=>ch.classList.add('asset-error'),{once:true});
+    }
     ch.addEventListener('click',()=>speak(currentView(),true));
     ch.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();speak(currentView(),true)}});
   }
