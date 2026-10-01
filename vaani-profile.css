@@ -170,10 +170,7 @@
 .vp-service-rank-crest.is-preview{border-style:dashed}
 #serviceRankInsignia{display:block;max-width:100%;width:100px;height:66px;object-fit:contain}
 #serviceRankInsignia[hidden]{display:none!important}
-.vp-service-rank-source{color:var(--gold-d);font:500 .52rem/1.3 var(--mono);text-align:center;text-decoration:underline;text-underline-offset:2px}
-[data-theme="dark"] .vp-service-rank-source{color:var(--gold-l)}
-.vp-service-rank-source[hidden]{display:none!important}
-.vp-service-rank-force{color:var(--muted);font:600 .6rem/1.35 var(--mono);letter-spacing:.08em;text-align:center;text-transform:uppercase}
+[data-theme="dark"] .vp-service-rank-force{color:var(--muted);font:600 .6rem/1.35 var(--mono);letter-spacing:.08em;text-align:center;text-transform:uppercase}
 .vp-rank-disclaimer{max-width:34em;color:var(--muted);font-size:.58rem;line-height:1.45;text-align:center;margin:0}
 .vp-service-rank-ladder{width:100%;border-top:1px solid var(--line);padding-top:8px}
 .vp-service-rank-ladder summary{cursor:pointer;color:var(--text);font:600 .68rem/1.4 var(--mono);letter-spacing:.04em;text-align:center;list-style-position:inside;padding:6px}
@@ -185,6 +182,8 @@
 .vp-service-rank-insignia img{display:block;width:40px;height:38px;object-fit:contain}
 .vp-service-insignia-fallback{color:var(--muted);font:500 .48rem/1.2 var(--mono);text-align:center}
 .vp-service-rank-name{min-width:0;color:var(--text);font:600 .77rem/1.25 var(--serif)}
+.vp-service-rank-threshold{display:block;margin-top:2px;color:var(--muted);font:500 .49rem/1.3 var(--mono);letter-spacing:.02em}
+.vp-rank-daily-hint{margin:0;color:var(--muted);font:600 .56rem/1.4 var(--mono);letter-spacing:.04em;text-align:center}
 .vp-service-rank-status{color:var(--muted);font:600 .51rem/1.25 var(--mono);letter-spacing:.03em;text-align:right}
 .vp-service-rank-row.is-reached{border-color:rgba(61,143,104,.3)}
 .vp-service-rank-row.is-reached .vp-service-rank-status{color:var(--green)}
@@ -198,12 +197,9 @@
 .vp-service-rank-empty{margin:4px 0;color:var(--muted);font-size:.7rem;text-align:center}
 .service-force-choice{display:flex;flex-direction:column;min-width:0;gap:5px}
 .service-force-option{width:100%;box-sizing:border-box}
-.service-force-credit{margin:0 3px;color:var(--muted);font:500 .53rem/1.35 var(--mono);overflow-wrap:anywhere}
-.service-force-credit a{color:inherit;text-decoration:underline;text-underline-offset:2px}
 .service-force-error{min-height:1.1em;margin:9px 0 0;color:#d96759;font:500 .65rem/1.4 var(--mono);text-align:center}
 .service-force-error:empty{display:none}
 .service-force-option:disabled{opacity:.65;cursor:wait;transform:none}
 @media(max-width:680px){
   .service-force-choice{gap:4px}
-  .service-force-credit{font-size:.49rem}
-}
+  }
