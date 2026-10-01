@@ -261,3 +261,185 @@
   transform:translateY(0) scale(1);
   transition:opacity .24s ease,transform .24s ease;
 }
+
+/* VAANI MINIATURE MODEL DOCK
+   The officer is always visible; dialogue expands from the model instead
+   of pushing the model below the mobile bottom navigation. */
+#vaaniMentor:not(.bad-result){
+  position:fixed;
+  right:12px;
+  bottom:calc(var(--bottomnav-h,64px) + 12px);
+  z-index:9190;
+  display:flex;
+  flex-direction:row;
+  align-items:flex-end;
+  justify-content:flex-end;
+  gap:8px;
+  width:auto;
+  max-width:calc(100vw - 18px);
+  pointer-events:none;
+}
+#vaaniMentor:not(.bad-result) .vc-bubble{
+  order:1;
+  flex:0 1 315px;
+  width:min(315px,calc(100vw - 106px));
+  max-height:min(310px,42vh);
+  overflow:auto;
+  border-radius:19px 19px 7px 19px;
+  pointer-events:none;
+}
+#vaaniMentor:not(.bad-result).speaking .vc-bubble{
+  pointer-events:auto;
+}
+#vaaniMentor:not(.bad-result) .vc-character{
+  order:2;
+  position:relative;
+  width:82px;
+  height:92px;
+  flex:0 0 82px;
+  border-radius:22px;
+  background-color:#eef0eb;
+  border:1px solid rgba(215,173,85,.48);
+  box-shadow:0 14px 34px rgba(8,18,24,.22),0 3px 10px rgba(8,18,24,.10),inset 0 1px 0 rgba(255,255,255,.85);
+  overflow:hidden;
+  z-index:3;
+}
+#vaaniMentor:not(.bad-result) .vc-character::after{
+  content:"VAANI";
+  left:7px;
+  bottom:6px;
+  padding:3px 6px;
+  background:rgba(17,31,38,.9);
+  color:#f4dda6;
+  font-size:.44rem;
+  letter-spacing:.12em;
+}
+#vaaniMentor:not(.bad-result) .vc-character::before{
+  right:8px;
+  top:8px;
+  width:7px;
+  height:7px;
+  z-index:5;
+}
+#vaaniMentor:not(.bad-result):not(.speaking) .vc-bubble{
+  opacity:0;
+  transform:translateY(7px) scale(.94);
+}
+#vaaniMentor:not(.bad-result):not(.speaking) .vc-character{
+  animation:veMiniBreath 3.2s ease-in-out infinite;
+}
+#vaaniMentor:not(.bad-result).speaking .vc-character{
+  transform:translateY(0) scale(1.035);
+}
+.ve-score-ticker{display:none!important}
+
+/* Header keeps a tiny officer presence across every route. */
+.ve-header-mini{
+  width:42px;
+  height:42px;
+  flex:0 0 42px;
+  margin-left:2px;
+  border:1px solid rgba(201,162,75,.38);
+  border-radius:50%;
+  background-color:#edf0e9;
+  background-image:url("assets/vaani-officer-pack.webp");
+  background-size:400% 300%;
+  background-position:0 0;
+  background-repeat:no-repeat;
+  box-shadow:0 8px 20px rgba(8,18,24,.16),inset 0 1px 0 rgba(255,255,255,.85);
+  cursor:pointer;
+  transition:transform .2s ease,box-shadow .2s ease;
+  position:relative;
+  overflow:hidden;
+}
+.ve-header-mini:hover{transform:translateY(-2px) scale(1.04);box-shadow:0 12px 26px rgba(8,18,24,.21)}
+.ve-header-mini::after{
+  content:"";
+  position:absolute;
+  right:3px;
+  top:3px;
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:#5b8b69;
+  box-shadow:0 0 0 3px rgba(91,139,105,.14);
+}
+.ve-header-mini:focus-visible{outline:3px solid rgba(201,162,75,.40);outline-offset:2px}
+
+/* Small contextual officer cards for high-value training/result surfaces. */
+.ve-surface-mini{
+  position:absolute;
+  right:12px;
+  top:12px;
+  width:58px;
+  height:62px;
+  border-radius:16px;
+  border:1px solid rgba(201,162,75,.28);
+  background-color:rgba(245,244,237,.9);
+  background-image:url("assets/vaani-officer-pack.webp");
+  background-size:400% 300%;
+  background-repeat:no-repeat;
+  box-shadow:0 8px 20px rgba(8,18,24,.12),inset 0 1px 0 rgba(255,255,255,.7);
+  opacity:.96;
+  z-index:5;
+  pointer-events:auto;
+  cursor:pointer;
+  transition:transform .2s ease,box-shadow .2s ease;
+}
+.ve-surface-mini:hover{transform:translateY(-2px);box-shadow:0 12px 25px rgba(8,18,24,.18)}
+.ve-surface-mini::after{
+  content:"VAANI";
+  position:absolute;
+  left:6px;
+  bottom:5px;
+  padding:2px 5px;
+  border-radius:999px;
+  background:rgba(17,31,38,.86);
+  color:#f4dda6;
+  font:800 .38rem var(--mono,monospace);
+  letter-spacing:.1em;
+}
+@keyframes veMiniBreath{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-3px)}
+}
+@media(max-width:600px){
+  #vaaniMentor:not(.bad-result){
+    right:8px;
+    bottom:calc(var(--bottomnav-h,64px) + 9px);
+    gap:6px;
+    max-width:calc(100vw - 12px);
+  }
+  #vaaniMentor:not(.bad-result) .vc-character{
+    width:74px;
+    height:84px;
+    flex-basis:74px;
+    border-radius:20px;
+  }
+  #vaaniMentor:not(.bad-result) .vc-bubble{
+    flex-basis:0;
+    width:min(248px,calc(100vw - 88px));
+    max-height:38vh;
+  }
+  .ve-header-mini{
+    width:36px;
+    height:36px;
+    flex-basis:36px;
+  }
+  .ve-surface-mini{
+    width:50px;
+    height:54px;
+    right:9px;
+    top:9px;
+  }
+}
+@media(max-width:390px){
+  #vaaniMentor:not(.bad-result) .vc-character{
+    width:68px;
+    height:78px;
+    flex-basis:68px;
+  }
+  #vaaniMentor:not(.bad-result) .vc-bubble{
+    width:calc(100vw - 82px);
+  }
+}
