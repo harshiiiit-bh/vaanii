@@ -1371,7 +1371,8 @@ var PYQ_CDS_2016_I = [
     "topic": "Spotting Errors",
     "parts": [
       "I shall write to you",
-      "when I shall reach Chennai."
+      "when I shall reach",
+      "Chennai."
     ]
   },
   {
@@ -1394,8 +1395,9 @@ var PYQ_CDS_2016_I = [
     ],
     "topic": "Spotting Errors",
     "parts": [
-      "Neither of these two documents",
-      "support the claim on the property."
+      "Neither of these two",
+      "documents support the claim",
+      "on the property."
     ]
   },
   {
@@ -1419,7 +1421,8 @@ var PYQ_CDS_2016_I = [
     "topic": "Spotting Errors",
     "parts": [
       "He is school teacher,",
-      "but all his sons are doctors."
+      "but all his sons",
+      "are doctors."
     ]
   },
   {

@@ -465,7 +465,7 @@ try {
   for(const filename of paperNames){
     const path='data/pyq/'+filename+'.js';if(!existsSync(path))throw new Error('PYQ manifest points to missing paper: '+path);
     const c=Object.create(null);vm.runInNewContext(readFileSync(path,'utf8'),c,{timeout:1500});
-    const variable=Object.keys(c).find(key=>/^PYQ_(?:CDS_)?\d{4}_(?:I|II)$/.test(key));if(!variable)throw new Error('No PYQ array in '+path);
+    const variable=Object.keys(c).find(key=>/^PYQ_(?:(?:CDS|AFCAT)_)?\d{4}_(?:I|II)$/.test(key));if(!variable)throw new Error('No PYQ array in '+path);
     for(const q of c[variable]){
       total++;const sec=String(q.sec||'').trim();const at=path+' question '+q.n;
       if(sec.toLowerCase()==='spotting errors'){spotting++;if(!renderableSpot(q))spottingBad.push(at);}
