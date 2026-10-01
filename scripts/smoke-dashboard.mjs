@@ -157,8 +157,13 @@ try {
   const codeText = await textOf('#gate-code-display');
   assert.match(codeText.replace(/\s/g, ''), /^\d{6}$/, 'New account code should contain six digits');
   await page.locator('#gate-stage-showcode .gate-btn').click();
+  await page.waitForSelector('#serviceForcePicker[ data-mode="onboarding" ], #serviceForcePicker[data-mode="onboarding"]', { state: 'visible', timeout: 15000 });
+  assert.equal(await page.locator('#serviceForcePicker .service-force-option').count(), 3,
+    'New account should be asked to select one of the three services');
+  await page.locator('#serviceForcePicker .service-force-option[data-force="army"]').click();
   await page.waitForFunction(() => document.getElementById('gate')?.classList.contains('hide'), null, { timeout: 15000 });
   await page.waitForTimeout(900);
+  assert.equal(await page.evaluate(() => State.serviceForce), 'army', 'Selected service was not applied to the new account');
 
   assert.equal(await page.locator('#view-dashboard').evaluate(el => el.classList.contains('active')), true);
   await assertVisibleText('#dashName', 'Dashboard cadet name');
@@ -174,6 +179,36 @@ try {
   assert.ok(await page.locator('#dashBadgeGrid .badge').count() > 0, 'Dashboard achievements did not render');
   assert.ok(await page.locator('#focusSprintWidget .vd-focus-body').count() > 0, 'Focus Sprint did not render');
   console.log('PASS dashboard: hero, briefing, roadmap, missions, word, heatmap, badges and focus sprint');
+
+  await clickMainView('profile');
+  await assertVisibleText('#vpProfileRank', 'Service-aware Profile rank');
+  await page.locator('#serviceRankLadder summary').click();
+  const armyLadder = await page.locator('#serviceRankList .vp-service-rank-row').allInnerTexts();
+  assert.equal(armyLadder.length, 10, 'Army ladder should show 9 regular and 1 honorary officer rank');
+  assert.match(armyLadder[0], /Lieutenant/, 'Army commissioned ladder should start at Lieutenant');
+  assert.match(armyLadder[8], /General/, 'Army regular ladder should end at General');
+  assert.match(armyLadder[9], /Field Marshal/, 'Army honorary rank should be displayed separately');
+  assert.ok(await page.locator('#serviceRankList .vp-service-rank-insignia img').count() >= 9,
+    'Army ladder is missing sourced insignia images');
+  await page.evaluate(() => { State.xp=500; refreshDashboard(); });
+  assert.equal(await page.locator('#rankTitle').textContent(), 'Colonel',
+    'Army officer milestone should map 500 XP to Colonel');
+  assert.match(await page.locator('#rankXPText').textContent(), /Brigadier/,
+    'Army rank progress should name Brigadier as the next milestone');
+  await page.evaluate(() => { State.xp=0; refreshDashboard(); });
+  await page.locator('#serviceRankLadder summary').click();
+  await page.locator('#serviceRankCard .vp-service-change').click();
+  await page.locator('#serviceForcePicker .service-force-option[data-force="navy"]').click();
+  await page.waitForFunction(() => !document.getElementById('serviceForcePicker'));
+  assert.equal(await page.evaluate(() => State.serviceForce), 'navy',
+    'Changing service should update the active account');
+  assert.equal(await page.evaluate(() => State.xp), 0,
+    'Changing service should preserve learning XP');
+  await page.locator('#serviceRankCard .vp-service-change').click();
+  await page.locator('#serviceForcePicker .service-force-option[data-force="army"]').click();
+  await page.waitForFunction(() => !document.getElementById('serviceForcePicker'));
+  await clickMainView('dashboard');
+  console.log('PASS service ranks: onboarding, officer order, insignia sources, milestone mapping and force changes');
 
   // Account isolation regression: seed account A, logout, create account B in
   // the same browser, then switch repeatedly and verify each saved profile.
@@ -589,6 +624,10 @@ try {
   await page.waitForFunction(() => document.getElementById('gate')?.classList.contains('hide'), null, { timeout: 15000 });
   await page.waitForTimeout(900);
   await assertVisibleText('#continueTitle', 'Dashboard after saved-session reload');
+  assert.equal(await page.evaluate(() => State.serviceForce), 'army',
+    'Chosen service did not persist when the account resumed');
+  assert.equal(await page.locator('#serviceForcePicker').count(), 0,
+    'Returning account with a saved service should not be prompted again');
   assert.ok(await page.locator('#roadmapTrack .rm-node').count() > 0, 'Roadmap was empty after saved-session reload');
   assert.ok(await page.locator('#missionList .mastery-row').count() >= 3, 'Missions were empty after saved-session reload');
   console.log('PASS theme/session reload: dashboard remains populated in dark mode after reload');
