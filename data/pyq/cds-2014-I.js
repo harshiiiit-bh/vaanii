@@ -89,7 +89,7 @@ var PYQ_CDS_2014_I = [
     "s": "I",
     "n": 7,
     "sec": "Spotting Errors",
-    "q": "Hardly I had left home for Bombay when my son, who is settled in Calcutta, arrived without any prior information.",
+    "q": "Hardly I had left home for Bombay | when my son, who is settled in Calcutta, arrived | without any prior information.",
     "o": [
       "Hardly I had left home for Bombay",
       "when my son who is settled in Calcutta arrived",
