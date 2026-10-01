@@ -244,3 +244,20 @@
   border-radius:9px;
   font-size:9px;
 }
+
+/* Prevent intrinsic-width grid children from widening the narrow mobile shell. */
+#view-notifications .vx-shell-clean{
+  grid-template-columns:minmax(0,1fr);
+  min-width:0;
+  box-sizing:border-box;
+}
+#view-notifications .vx-shell-clean>*{
+  width:100%;
+  min-width:0;
+  max-width:100%;
+  box-sizing:border-box;
+}
+#view-notifications .vx-shell-clean :is(.vx-notice-grid,.vx-link-grid,.vx-date-month-items,.vx-date-row,.vx-force-grid,.vx-career-grid){
+  min-width:0;
+  max-width:100%;
+}
