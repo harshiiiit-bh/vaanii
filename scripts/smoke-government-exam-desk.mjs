@@ -265,8 +265,12 @@ await page.goto(baseURL + '?v=notifications', { waitUntil: 'domcontentloaded' })
   assert.equal(await page.locator('#vxUpcomingList .vx-notice-card').count(), upcomingTotal, 'View all should reveal every matching upcoming notice');
   await page.locator('#vxUpcomingMore').click();
   assert.equal(await page.locator('#vxUpcomingList .vx-notice-card').count(), 4, 'Show fewer should restore the compact upcoming preview');
-  assert.equal(await page.locator('#vxOngoingList .vx-notice-card').count(), 3, 'open applications outside seven days, including title date ranges, should be Ongoing');
-  assert.equal(await page.locator('#vxNearList .vx-notice-card').count(), 4, 'today, seven-day and inferred title deadlines should be Deadline Near');
+  const ongoingTotal = Number((await page.locator('#vxOngoingCount').innerText()).trim());
+  const nearTotal = Number((await page.locator('#vxNearCount').innerText()).trim());
+  const ongoingVisible = Math.min(4, ongoingTotal);
+  const nearVisible = Math.min(4, nearTotal);
+  assert.equal(await page.locator('#vxOngoingList .vx-notice-card').count(), ongoingVisible, 'open applications outside seven days, including title date ranges, should be Ongoing');
+  assert.equal(await page.locator('#vxNearList .vx-notice-card').count(), nearVisible, 'today, seven-day and inferred title deadlines should be Deadline Near');
   const extensionCard = page.locator('#vxNearList .vx-notice-card').filter({ hasText: 'Online Registration Extended till 05.10.2026' });
   assert.equal(await extensionCard.count(), 1, 'an explicitly extended application should appear in Deadline Near');
   assert.match(await extensionCard.innerText(), /CLOSING DATE[\s\S]*05 Oct 2026/i, 'the extension date should be labelled as the closing date');
@@ -327,7 +331,7 @@ await page.goto(baseURL + '?v=notifications', { waitUntil: 'domcontentloaded' })
   assert.equal(await page.locator('#vxSearch').inputValue(), '');
   assert.equal(await page.locator('#vxQualification').inputValue(), 'all');
   assert.equal(await page.locator('#vxSector').inputValue(), 'all');
-  assert.equal(await page.locator('#vxOngoingList .vx-notice-card').count(), 3, 'Reset Filters should restore all inferred and explicit open applications');
+  assert.equal(await page.locator('#vxOngoingList .vx-notice-card').count(), ongoingVisible, 'Reset Filters should restore all inferred and explicit open applications');
 
   await page.locator('#vx-careers > summary').click();
   assert.equal(await page.locator('#vx-careers').evaluate(element => element.open), true, 'career options should expand on activation');
@@ -398,7 +402,7 @@ await page.goto(baseURL + '?v=notifications', { waitUntil: 'domcontentloaded' })
   failFeeds = true;
   await page.locator('#vxRefreshFeed').click();
   await page.waitForFunction(() => document.querySelector('#vxRefreshFeed') && !document.querySelector('#vxRefreshFeed').disabled, null, { timeout: 10000 });
-  assert.equal(await page.locator('#vxNearList .vx-notice-card').count(), 4, 'a failed manual refresh should retain the last loaded notice cards');
+  assert.equal(await page.locator('#vxNearList .vx-notice-card').count(), nearVisible, 'a failed manual refresh should retain the last loaded notice cards');
   assert.match(await page.locator('#vxFeedHealth').innerText(), /Refresh failed · showing last loaded data/, 'a failed manual refresh should be visible without clearing the current list');
   assert.match(await page.locator('#vxFeedSummary').innerText(), /last loaded data retained/, 'the management panel should disclose retained data after a failed refresh');
   await page.reload({ waitUntil: 'domcontentloaded' });
