@@ -190,8 +190,11 @@ try {
   assert.equal(await page.locator('#serviceRankList .vp-service-rank-insignia a').count(), 0,
     'Insignia images should not be clickable source links');
   await page.locator('.vp-xp-rules summary').click();
-  assert.match(await page.locator('.vp-xp-rules').innerText(), /below 50% accuracy deducts 10 XP/,
-    'Profile should disclose low-accuracy XP deduction');
+  const xpRulesText=await page.locator('.vp-xp-rules').innerText();
+  assert.match(xpRulesText,/60–69% −10 XP; 50–59% −20; 40–49% −45; 33–39% −60; below 33% −80/,
+    'Profile should disclose every accuracy deduction tier');
+  assert.match(xpRulesText,/70% or more −5 XP; 50–69% −8; 33–49% −12; below 33% −15/,
+    'Profile should disclose every net-marks deduction tier');
   assert.match(await page.locator('.vp-xp-rules').innerText(), /missed login day resets the streak/,
     'Profile should disclose missed-login penalty');
   await page.locator('.vp-xp-rules summary').click();
