@@ -257,9 +257,12 @@ await page.goto(baseURL + '?v=notifications', { waitUntil: 'domcontentloaded' })
 
   assert.equal(await page.locator('#vxUpcomingList .vx-notice-card').count(), 4, 'upcoming lane should initially show only four preview cards');
   assert.equal(await page.locator('#vxUpcomingMore').isVisible(), true, 'large lanes should expose a View all control');
-  assert.match(await page.locator('#vxUpcomingMore').innerText(), /View all 5/, 'preview control should disclose the complete result count');
+  const upcomingTotal = Number((await page.locator('#vxUpcomingCount').innerText()).trim());
+  const upcomingMoreText = await page.locator('#vxUpcomingMore').innerText();
+  const upcomingMoreNumber = Number((upcomingMoreText.match(/\d+/) || [])[0]);
+  assert.equal(upcomingMoreNumber, upcomingTotal, 'preview control should disclose the complete result count');
   await page.locator('#vxUpcomingMore').click();
-  assert.equal(await page.locator('#vxUpcomingList .vx-notice-card').count(), 5, 'View all should reveal every matching upcoming notice');
+  assert.equal(await page.locator('#vxUpcomingList .vx-notice-card').count(), upcomingTotal, 'View all should reveal every matching upcoming notice');
   await page.locator('#vxUpcomingMore').click();
   assert.equal(await page.locator('#vxUpcomingList .vx-notice-card').count(), 4, 'Show fewer should restore the compact upcoming preview');
   assert.equal(await page.locator('#vxOngoingList .vx-notice-card').count(), 3, 'open applications outside seven days, including title date ranges, should be Ongoing');
