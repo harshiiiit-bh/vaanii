@@ -116,6 +116,10 @@
     var raw = String(question._sourceSec || question.sec || '').trim();
     if (!raw) return '';
     var rawKey = norm(raw);
+    var prompt = String(question.q || '').toLocaleLowerCase();
+    var asksAntonym = /\b(?:antonym|opposite in meaning|opposite meaning)\b/.test(prompt);
+    var asksSynonym = /\b(?:synonym|similar in meaning|same in meaning)\b/.test(prompt);
+    if (asksAntonym !== asksSynonym) return asksAntonym ? 'Antonyms' : 'Synonyms';
     var exam = String(question._exam || 'NDA').toUpperCase();
     if (rawKey === 'english' || rawKey === 'grammar') {
       var detail = sectionFromLabel(question.topic);
