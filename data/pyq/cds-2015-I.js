@@ -855,4 +855,385 @@ var PYQ_CDS_2015_I = [
     ],
     "ans": 3
   }
+,
+
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 61,
+    "sec": "Ordering of Words in a Sentence",
+    "q": "When the car passed by he threw a stone, raising dust in the road with all his might and hit the man who was driving it.",
+    "o": [
+      "PQRS",
+      "QPRS",
+      "RPQS",
+      "RPSQ"
+    ],
+    "ans": 1
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 62,
+    "sec": "Ordering of Words in a Sentence",
+    "q": "A moment comes when we step out from the old to the new, which comes but rarely in history, and when the soul of a nation long suppressed finds utterance.",
+    "o": [
+      "QPRS",
+      "PRSQ",
+      "QRSP",
+      "RSQP"
+    ],
+    "ans": 0
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 63,
+    "sec": "Ordering of Words in a Sentence",
+    "q": "She had a blind belief that inside the bag there were perhaps two or three other children which the big man carried like herself.",
+    "o": [
+      "QRPS",
+      "QPSR",
+      "RQSP",
+      "RQPS"
+    ],
+    "ans": 3
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 64,
+    "sec": "Ordering of Words in a Sentence",
+    "q": "He approached the teacher at school to know how his son was getting on in his studies.",
+    "o": [
+      "PQRS",
+      "PQSR",
+      "QSRP",
+      "QSPR"
+    ],
+    "ans": 2
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 65,
+    "sec": "Ordering of Words in a Sentence",
+    "q": "I was so angry that if I had met him in the street and not waited to ask him why he had written me an insulting letter, I would have knocked him down.",
+    "o": [
+      "PSQR",
+      "PQRS",
+      "SQRP",
+      "RSQP"
+    ],
+    "ans": 0
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 66,
+    "sec": "Ordering of Words in a Sentence",
+    "q": "On the contrary, the Government wants to provide information and education about family planning and its benefits to all citizens.",
+    "o": [
+      "RQSP",
+      "SPQR",
+      "RSPQ",
+      "QPRS"
+    ],
+    "ans": 2
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 67,
+    "sec": "Ordering of Words in a Sentence",
+    "q": "In spite of the extraordinary progress made by medical sciences, the poor and hungry people often die.",
+    "o": [
+      "RPSQ",
+      "RQPS",
+      "PQSR",
+      "RSPQ"
+    ],
+    "ans": 1
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 68,
+    "sec": "Selecting Words",
+    "q": "We all like listening to ___",
+    "o": [
+      "lectures",
+      "theories",
+      "stories"
+    ],
+    "ans": 2,
+    "passage": "We all like listening to stories, and the person who is good at telling stories will always be a popular member of any company. The art of good story-telling covers much more than making up fabulous adventures; it includes telling about the doings of living people or famous men and women of the past, about your own travels and adventures and experiences, about the books you have read and the films you have seen. Practising the art of story-telling can be very useful too. It will help you to think clearly and logically, to sort out your ideas, to express yourself clearly and effectively, to gain and hold the attention of others. It will help you to shake off shyness and self-consciousness, and give you that feeling of freedom which is so important to success in life."
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 69,
+    "sec": "Selecting Words",
+    "q": "and the person who is good ___ telling stories",
+    "o": [
+      "on",
+      "at",
+      "by"
+    ],
+    "ans": 1,
+    "passage": "We all like listening to stories, and the person who is good at telling stories will always be a popular member of any company. The art of good story-telling covers much more than making up fabulous adventures; it includes telling about the doings of living people or famous men and women of the past, about your own travels and adventures and experiences, about the books you have read and the films you have seen. Practising the art of story-telling can be very useful too. It will help you to think clearly and logically, to sort out your ideas, to express yourself clearly and effectively, to gain and hold the attention of others. It will help you to shake off shyness and self-consciousness, and give you that feeling of freedom which is so important to success in life."
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 70,
+    "sec": "Selecting Words",
+    "q": "will always be a ___ member of any company.",
+    "o": [
+      "popular",
+      "good",
+      "necessary"
+    ],
+    "ans": 0,
+    "passage": "We all like listening to stories, and the person who is good at telling stories will always be a popular member of any company. The art of good story-telling covers much more than making up fabulous adventures; it includes telling about the doings of living people or famous men and women of the past, about your own travels and adventures and experiences, about the books you have read and the films you have seen. Practising the art of story-telling can be very useful too. It will help you to think clearly and logically, to sort out your ideas, to express yourself clearly and effectively, to gain and hold the attention of others. It will help you to shake off shyness and self-consciousness, and give you that feeling of freedom which is so important to success in life."
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 71,
+    "sec": "Selecting Words",
+    "q": "The art ___ good story-telling",
+    "o": [
+      "on",
+      "of",
+      "at"
+    ],
+    "ans": 1,
+    "passage": "We all like listening to stories, and the person who is good at telling stories will always be a popular member of any company. The art of good story-telling covers much more than making up fabulous adventures; it includes telling about the doings of living people or famous men and women of the past, about your own travels and adventures and experiences, about the books you have read and the films you have seen. Practising the art of story-telling can be very useful too. It will help you to think clearly and logically, to sort out your ideas, to express yourself clearly and effectively, to gain and hold the attention of others. It will help you to shake off shyness and self-consciousness, and give you that feeling of freedom which is so important to success in life."
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 72,
+    "sec": "Selecting Words",
+    "q": "covers much more than ___ fabulous adventures;",
+    "o": [
+      "describing",
+      "making",
+      "showing"
+    ],
+    "ans": 1,
+    "passage": "We all like listening to stories, and the person who is good at telling stories will always be a popular member of any company. The art of good story-telling covers much more than making up fabulous adventures; it includes telling about the doings of living people or famous men and women of the past, about your own travels and adventures and experiences, about the books you have read and the films you have seen. Practising the art of story-telling can be very useful too. It will help you to think clearly and logically, to sort out your ideas, to express yourself clearly and effectively, to gain and hold the attention of others. It will help you to shake off shyness and self-consciousness, and give you that feeling of freedom which is so important to success in life."
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 73,
+    "sec": "Selecting Words",
+    "q": "it includes telling ___ the doings of living people or",
+    "o": [
+      "about",
+      "by",
+      "for"
+    ],
+    "ans": 0,
+    "passage": "We all like listening to stories, and the person who is good at telling stories will always be a popular member of any company. The art of good story-telling covers much more than making up fabulous adventures; it includes telling about the doings of living people or famous men and women of the past, about your own travels and adventures and experiences, about the books you have read and the films you have seen. Practising the art of story-telling can be very useful too. It will help you to think clearly and logically, to sort out your ideas, to express yourself clearly and effectively, to gain and hold the attention of others. It will help you to shake off shyness and self-consciousness, and give you that feeling of freedom which is so important to success in life."
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 74,
+    "sec": "Selecting Words",
+    "q": "___ men and women of the past,",
+    "o": [
+      "insignificant",
+      "dead",
+      "famous"
+    ],
+    "ans": 2,
+    "passage": "We all like listening to stories, and the person who is good at telling stories will always be a popular member of any company. The art of good story-telling covers much more than making up fabulous adventures; it includes telling about the doings of living people or famous men and women of the past, about your own travels and adventures and experiences, about the books you have read and the films you have seen. Practising the art of story-telling can be very useful too. It will help you to think clearly and logically, to sort out your ideas, to express yourself clearly and effectively, to gain and hold the attention of others. It will help you to shake off shyness and self-consciousness, and give you that feeling of freedom which is so important to success in life."
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 75,
+    "sec": "Selecting Words",
+    "q": "___ your own travels and adventures and",
+    "o": [
+      "in",
+      "about",
+      "through"
+    ],
+    "ans": 1,
+    "passage": "We all like listening to stories, and the person who is good at telling stories will always be a popular member of any company. The art of good story-telling covers much more than making up fabulous adventures; it includes telling about the doings of living people or famous men and women of the past, about your own travels and adventures and experiences, about the books you have read and the films you have seen. Practising the art of story-telling can be very useful too. It will help you to think clearly and logically, to sort out your ideas, to express yourself clearly and effectively, to gain and hold the attention of others. It will help you to shake off shyness and self-consciousness, and give you that feeling of freedom which is so important to success in life."
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 76,
+    "sec": "Selecting Words",
+    "q": "___ about the books you have read",
+    "o": [
+      "experiences",
+      "desires",
+      "worries"
+    ],
+    "ans": 0,
+    "passage": "We all like listening to stories, and the person who is good at telling stories will always be a popular member of any company. The art of good story-telling covers much more than making up fabulous adventures; it includes telling about the doings of living people or famous men and women of the past, about your own travels and adventures and experiences, about the books you have read and the films you have seen. Practising the art of story-telling can be very useful too. It will help you to think clearly and logically, to sort out your ideas, to express yourself clearly and effectively, to gain and hold the attention of others. It will help you to shake off shyness and self-consciousness, and give you that feeling of freedom which is so important to success in life."
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 77,
+    "sec": "Selecting Words",
+    "q": "and ___ the films you have seen.",
+    "o": [
+      "either",
+      "all",
+      "and"
+    ],
+    "ans": 2,
+    "passage": "We all like listening to stories, and the person who is good at telling stories will always be a popular member of any company. The art of good story-telling covers much more than making up fabulous adventures; it includes telling about the doings of living people or famous men and women of the past, about your own travels and adventures and experiences, about the books you have read and the films you have seen. Practising the art of story-telling can be very useful too. It will help you to think clearly and logically, to sort out your ideas, to express yourself clearly and effectively, to gain and hold the attention of others. It will help you to shake off shyness and self-consciousness, and give you that feeling of freedom which is so important to success in life."
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 78,
+    "sec": "Selecting Words",
+    "q": "Practising ___ can be very",
+    "o": [
+      "an art of story-telling",
+      "a",
+      "the"
+    ],
+    "ans": 2,
+    "passage": "We all like listening to stories, and the person who is good at telling stories will always be a popular member of any company. The art of good story-telling covers much more than making up fabulous adventures; it includes telling about the doings of living people or famous men and women of the past, about your own travels and adventures and experiences, about the books you have read and the films you have seen. Practising the art of story-telling can be very useful too. It will help you to think clearly and logically, to sort out your ideas, to express yourself clearly and effectively, to gain and hold the attention of others. It will help you to shake off shyness and self-consciousness, and give you that feeling of freedom which is so important to success in life."
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 79,
+    "sec": "Selecting Words",
+    "q": "can be very ___ too. It will help you to",
+    "o": [
+      "useful",
+      "dangerous",
+      "contagious"
+    ],
+    "ans": 0,
+    "passage": "We all like listening to stories, and the person who is good at telling stories will always be a popular member of any company. The art of good story-telling covers much more than making up fabulous adventures; it includes telling about the doings of living people or famous men and women of the past, about your own travels and adventures and experiences, about the books you have read and the films you have seen. Practising the art of story-telling can be very useful too. It will help you to think clearly and logically, to sort out your ideas, to express yourself clearly and effectively, to gain and hold the attention of others. It will help you to shake off shyness and self-consciousness, and give you that feeling of freedom which is so important to success in life."
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 80,
+    "sec": "Selecting Words",
+    "q": "It will help you to ___ clearly and logically,",
+    "o": [
+      "listen",
+      "remember",
+      "think"
+    ],
+    "ans": 2,
+    "passage": "We all like listening to stories, and the person who is good at telling stories will always be a popular member of any company. The art of good story-telling covers much more than making up fabulous adventures; it includes telling about the doings of living people or famous men and women of the past, about your own travels and adventures and experiences, about the books you have read and the films you have seen. Practising the art of story-telling can be very useful too. It will help you to think clearly and logically, to sort out your ideas, to express yourself clearly and effectively, to gain and hold the attention of others. It will help you to shake off shyness and self-consciousness, and give you that feeling of freedom which is so important to success in life."
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 81,
+    "sec": "Selecting Words",
+    "q": "to sort out ___ ideas,",
+    "o": [
+      "her",
+      "their",
+      "your"
+    ],
+    "ans": 2,
+    "passage": "We all like listening to stories, and the person who is good at telling stories will always be a popular member of any company. The art of good story-telling covers much more than making up fabulous adventures; it includes telling about the doings of living people or famous men and women of the past, about your own travels and adventures and experiences, about the books you have read and the films you have seen. Practising the art of story-telling can be very useful too. It will help you to think clearly and logically, to sort out your ideas, to express yourself clearly and effectively, to gain and hold the attention of others. It will help you to shake off shyness and self-consciousness, and give you that feeling of freedom which is so important to success in life."
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 82,
+    "sec": "Selecting Words",
+    "q": "to express yourself clearly and ___,",
+    "o": [
+      "timidly",
+      "effectively",
+      "bluntly"
+    ],
+    "ans": 1,
+    "passage": "We all like listening to stories, and the person who is good at telling stories will always be a popular member of any company. The art of good story-telling covers much more than making up fabulous adventures; it includes telling about the doings of living people or famous men and women of the past, about your own travels and adventures and experiences, about the books you have read and the films you have seen. Practising the art of story-telling can be very useful too. It will help you to think clearly and logically, to sort out your ideas, to express yourself clearly and effectively, to gain and hold the attention of others. It will help you to shake off shyness and self-consciousness, and give you that feeling of freedom which is so important to success in life."
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 83,
+    "sec": "Selecting Words",
+    "q": "to gain and hold the attention ___ others.",
+    "o": [
+      "at",
+      "on",
+      "of"
+    ],
+    "ans": 2,
+    "passage": "We all like listening to stories, and the person who is good at telling stories will always be a popular member of any company. The art of good story-telling covers much more than making up fabulous adventures; it includes telling about the doings of living people or famous men and women of the past, about your own travels and adventures and experiences, about the books you have read and the films you have seen. Practising the art of story-telling can be very useful too. It will help you to think clearly and logically, to sort out your ideas, to express yourself clearly and effectively, to gain and hold the attention of others. It will help you to shake off shyness and self-consciousness, and give you that feeling of freedom which is so important to success in life."
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 84,
+    "sec": "Selecting Words",
+    "q": "It will help you to ___ shyness and self-consciousness,",
+    "o": [
+      "shake off",
+      "lay",
+      "hit"
+    ],
+    "ans": 0,
+    "passage": "We all like listening to stories, and the person who is good at telling stories will always be a popular member of any company. The art of good story-telling covers much more than making up fabulous adventures; it includes telling about the doings of living people or famous men and women of the past, about your own travels and adventures and experiences, about the books you have read and the films you have seen. Practising the art of story-telling can be very useful too. It will help you to think clearly and logically, to sort out your ideas, to express yourself clearly and effectively, to gain and hold the attention of others. It will help you to shake off shyness and self-consciousness, and give you that feeling of freedom which is so important to success in life."
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 85,
+    "sec": "Selecting Words",
+    "q": "and give ___ that feeling of freedom",
+    "o": [
+      "she that",
+      "you",
+      "I"
+    ],
+    "ans": 1,
+    "passage": "We all like listening to stories, and the person who is good at telling stories will always be a popular member of any company. The art of good story-telling covers much more than making up fabulous adventures; it includes telling about the doings of living people or famous men and women of the past, about your own travels and adventures and experiences, about the books you have read and the films you have seen. Practising the art of story-telling can be very useful too. It will help you to think clearly and logically, to sort out your ideas, to express yourself clearly and effectively, to gain and hold the attention of others. It will help you to shake off shyness and self-consciousness, and give you that feeling of freedom which is so important to success in life."
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 86,
+    "sec": "Selecting Words",
+    "q": "___ is so important to success in life.",
+    "o": [
+      "then",
+      "what",
+      "which"
+    ],
+    "ans": 2,
+    "passage": "We all like listening to stories, and the person who is good at telling stories will always be a popular member of any company. The art of good story-telling covers much more than making up fabulous adventures; it includes telling about the doings of living people or famous men and women of the past, about your own travels and adventures and experiences, about the books you have read and the films you have seen. Practising the art of story-telling can be very useful too. It will help you to think clearly and logically, to sort out your ideas, to express yourself clearly and effectively, to gain and hold the attention of others. It will help you to shake off shyness and self-consciousness, and give you that feeling of freedom which is so important to success in life."
+  },
+  {
+    "y": 2015,
+    "s": "I",
+    "n": 87,
+    "sec": "Selecting Words",
+    "q": "success in life.",
+    "o": [
+      "success",
+      "victory",
+      "gain"
+    ],
+    "ans": 0,
+    "passage": "We all like listening to stories, and the person who is good at telling stories will always be a popular member of any company. The art of good story-telling covers much more than making up fabulous adventures; it includes telling about the doings of living people or famous men and women of the past, about your own travels and adventures and experiences, about the books you have read and the films you have seen. Practising the art of story-telling can be very useful too. It will help you to think clearly and logically, to sort out your ideas, to express yourself clearly and effectively, to gain and hold the attention of others. It will help you to shake off shyness and self-consciousness, and give you that feeling of freedom which is so important to success in life."
+  }
+
 ];
