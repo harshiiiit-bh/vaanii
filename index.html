@@ -1087,16 +1087,23 @@
       <p class="vp-card-sub">All 34 grammar topics, with completed and pending status.</p>
       <div class="prog-tree vp-prog-tree" id="progTree"></div>
     </div>
-    <div class="card vp-card vp-rank-card reveal">
-      <div class="panel-title"><span class="bar"></span>Rank Progress</div>
+    <div class="card vp-card vp-rank-card reveal" id="serviceRankCard">
+      <div class="panel-title"><span class="bar"></span>Service Rank Progress
+        <button type="button" class="vp-service-change" onclick="openServiceForcePicker('change')">Change service</button>
+      </div>
       <div class="vp-rank-content">
-        <svg class="vp-rank-badge" id="rankBadge" data-rank-level="1" viewBox="0 0 100 100" aria-hidden="true">
-          <circle cx="50" cy="50" r="46" class="vp-rank-ring"/>
-          <g class="vp-rank-chevrons" id="vpChevrons"></g>
-        </svg>
-        <div class="vp-rank-title num serif" id="rankTitle">Recruit</div>
+        <div class="vp-service-rank-crest" id="rankBadge" aria-hidden="true">
+          <img id="serviceRankInsignia" alt="" loading="lazy" decoding="async">
+        </div>
+        <div class="vp-rank-title num serif" id="rankTitle">Officer Aspirant</div>
+        <div class="vp-service-rank-force" id="serviceRankForce">Choose a service to view its officer ranks.</div>
         <div class="vp-rank-bar bar-wrap"><div class="bar-fill" id="rankBar" style="width:0%"></div></div>
-        <p class="vp-rank-hint" id="rankXPText">0 / 100 XP to next rank</p>
+        <p class="vp-rank-hint" id="rankXPText">0 / 100 XP to next learning milestone</p>
+        <p class="vp-rank-disclaimer">VAANI XP tracks learning milestones only; it does not grant or represent an actual military rank or promotion.</p>
+        <details class="vp-service-rank-ladder" id="serviceRankLadder">
+          <summary>View complete rank ladder</summary>
+          <div class="vp-service-rank-list" id="serviceRankList"></div>
+        </details>
       </div>
       <button class="btn ghost vp-reset" onclick="resetProgress()">Reset Progress</button>
     </div>
@@ -1678,7 +1685,8 @@
      and add one more <script src="..."> line above. Nothing else to change. -->
 <script src="js/vaani-pyq-taxonomy.js?v=20261001-pyq-audit3"></script>
 <script src="js/vaani-grammar-academy.js"></script>
-<script src="js/app.js?v=20261001-account-code1"></script>
+<script src="js/service-ranks.js?v=20261001-ranks1"></script>
+<script src="js/app.js?v=20261001-ranks1"></script>
 <script src="js/vaani-testkit.js"></script>
 <script src="js/vaani-arena.js"></script>
 <script src="js/vaani-vocab-bridge.js"></script>
