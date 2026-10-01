@@ -2309,11 +2309,14 @@ function pvJumpTo(i){
 }
 
 function pvFinishSession(){
-  const s = PV.session; if(!s) return;
+  const s=PV.session;if(!s||s.finished)return;
   pvStopTimer();
-  s.finished = true;
+  s.finished=true;
   pvClearContinue();
-  if(s.mode==='exam'){ PV.screen='summary'; pvRender(); return; }
+  const total=Array.isArray(s.questions)?s.questions.length:0;
+  const correct=Object.values(s.answers||{}).filter(answer=>answer&&answer.correct).length;
+  if(total>0)awardAccuracyXP(Math.round(correct/total*100),'PYQ '+(s.mode==='exam'?'exam':'practice')+' session');
+  if(s.mode==='exam'){PV.screen='summary';pvRender();return;}
   toast('Session complete — nice work, Cadet!');
   pvGoHome();
 }
@@ -3601,7 +3604,7 @@ function renderQuizPane(id, quiz){
     recordQuizCompletion(pct,started?(Date.now()-started)/1000:null,((GRAMMAR.find(g=>g.id===id)||{}).title)||id);
     pane.innerHTML='<div class="quiz-card quiz-complete-card" role="status"><span class="lesson-kicker">TOPIC CHECK COMPLETE</span><h3>Your result</h3><div class="quiz-result-score">'+pct+'%</div><p>'+correctCount+' of '+questions.length+' answers correct</p><div class="quiz-result-track"><div style="width:'+pct+'%"></div></div><div class="quiz-result-actions"><button class="btn" type="button" id="quizRetry">Try again</button><button class="btn ghost" type="button" id="quizBack">Review lesson</button></div></div>';
     pane.querySelector('#quizRetry').addEventListener('click',()=>renderQuizPane(id,questions));pane.querySelector('#quizBack').addEventListener('click',()=>{const b=document.querySelector('.tab-btn[data-tab="learn"]');if(b)b.click();});
-    addXP(Math.max(5,Math.round(pct/10)),'Quiz score on '+(((GRAMMAR.find(g=>g.id===id)||{}).title)||'topic'));launchConfettiIf(pct>=70);
+    awardAccuracyXP(pct,'Topic quiz: '+(((GRAMMAR.find(g=>g.id===id)||{}).title)||'topic'));launchConfettiIf(pct>=70);
   }
   function draw(){
     if(qTimer){qTimer.stop();qTimer=null;}if(!questions.length){pane.innerHTML='<div class="quiz-card"><h3>Practice coming soon</h3><p>No questions are available for this topic yet.</p></div>';return;}if(idx>=questions.length){finish();return;}
@@ -5179,7 +5182,7 @@ function renderComparePane(id, quiz){
         <div class="num serif" style="font-size:2.4rem;color:var(--gold)">${pct}%</div>
         <p style="color:var(--muted);margin:10px 0">${correctCount} of ${quiz.length} correct${comboBest>=3?` · Best combo ×${comboBest}`:''}</p>
         <button class="btn" onclick="renderComparePane('${id}', COMPARISONS.find(c=>c.id==='${id}').pyq)">Retry Drill</button></div>`;
-      addXP(Math.max(5,Math.round(pct/10)),'Comparison drill: '+(currentCompare?currentCompare.a+' vs '+currentCompare.b:'pair'));
+      awardAccuracyXP(pct,'Comparison drill: '+(currentCompare?currentCompare.a+' vs '+currentCompare.b:'pair'));
       launchConfettiIf(pct>=70);
       return;
     }
@@ -5566,14 +5569,15 @@ function qElapsedSeconds(timer){ return timer ? (Date.now()-timer.startedAt)/100
 /* ---- floating XP popup near XP pill on addXP (visual flourish) ---- */
 const _origAddXP = addXP;
 addXP = function(n, reason){
-  _origAddXP(n, reason);
+  const awarded=_origAddXP(n, reason);
   const pill = document.querySelector('.xp-pill');
-  if(pill){
+  if(pill&&awarded>0){
     const r = pill.getBoundingClientRect();
-    const f = document.createElement('div'); f.className='xp-float'; f.textContent='+'+n+' XP';
+    const f = document.createElement('div'); f.className='xp-float'; f.textContent='+'+awarded+' XP';
     f.style.left = r.left+'px'; f.style.top = (r.top-6)+'px';
     document.body.appendChild(f); setTimeout(()=>f.remove(),1150);
   }
+  return awarded;
 };
 
 /* extend switchView to re-bind magnetic shine layers + scroll-to-top on route change */
