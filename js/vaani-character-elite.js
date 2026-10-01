@@ -202,8 +202,60 @@
     if(span)span.textContent=(context[active()]||context.dashboard)[0]+' · '+new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
   }
 
+  function mountMiniIntegrations(){
+    // Persistent miniature officer in the brand header.
+    const brand=document.querySelector('.brand');
+    if(brand && !brand.querySelector('.ve-header-mini')){
+      const mini=document.createElement('button');
+      mini.type='button';
+      mini.className='ve-header-mini';
+      mini.setAttribute('aria-label','Open VAANI mentor');
+      mini.title='Open VAANI mentor';
+      mini.addEventListener('click',brief);
+      brand.appendChild(mini);
+    }
+
+    // Small contextual officer on the main mission/working surfaces.
+    const surfaces=[
+      ['dashboard','.vd-hero','p0'],
+      ['grammar','.grammar-header, .ga-header, .section-head, .page-head','p2'],
+      ['compare','.compare-header, .section-head, .page-head','p3'],
+      ['vocab','.vocab-header, .section-head, .page-head','p7'],
+      ['books','.book-header, .section-head, .page-head','p2'],
+      ['pyq','.pyq-header, .section-head, .page-head','p9'],
+      ['games','.arena-header, .section-head, .page-head','p4'],
+      ['leaderboard','.leaderboard-header, .section-head, .page-head','p6'],
+      ['profile','.profile-header, .section-head, .page-head','p1'],
+      ['notifications','.notifications-header, .section-head, .page-head','p0']
+    ];
+
+    surfaces.forEach(([viewId,selector,poseName])=>{
+      const view=document.getElementById('view-'+viewId);
+      if(!view || view.querySelector('.ve-surface-mini'))return;
+      const target=view.querySelector(selector);
+      const host=target || view.firstElementChild;
+      if(!host || host===document.body)return;
+      const style=window.getComputedStyle(host);
+      if(style.position==='static')host.style.position='relative';
+
+      const mini=document.createElement('button');
+      mini.type='button';
+      mini.className='ve-surface-mini vc-'+poseName;
+      mini.style.backgroundPosition = ({
+        p0:'0 0',p1:'33.333% 0',p2:'66.667% 0',p3:'100% 0',
+        p4:'0 50%',p5:'33.333% 50%',p6:'66.667% 50%',p7:'100% 50%',
+        p8:'0 100%',p9:'33.333% 100%',p10:'66.667% 100%',p11:'100% 100%'
+      })[poseName]||'0 0';
+      mini.setAttribute('aria-label','VAANI officer · contextual guide');
+      mini.title='VAANI · contextual guide';
+      mini.addEventListener('click',brief);
+      host.appendChild(mini);
+    });
+  }
+
   function boot(){
     wrapNavigation();
+    mountMiniIntegrations();
     wrapResult();
     addMeta();
     intel();
