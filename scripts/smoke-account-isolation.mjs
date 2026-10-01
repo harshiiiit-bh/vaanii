@@ -15,6 +15,7 @@ try{
   await page.locator('#gateBtn').click();
   await page.waitForSelector('#gate-stage-showcode',{state:'visible',timeout:15000});
   const firstCode=await page.locator('#gate-code-display').innerText();
+  await page.evaluate(()=>{State.serviceForce=null;});
   await page.locator('#gate-stage-showcode .gate-btn').click();
   await page.waitForSelector('#serviceForcePicker[data-mode="onboarding"]',{state:'visible',timeout:15000});
   await page.locator('#serviceForcePicker .service-force-option[data-force="army"]').click();
