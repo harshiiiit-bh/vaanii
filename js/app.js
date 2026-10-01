@@ -1687,6 +1687,7 @@ function pvRender(){
   else if(PV.screen==='summary') root.innerHTML = pvSummaryHTML();
   document.body.classList.toggle('pv-session-active', PV.screen==='session');
   window.scrollTo({top:0,behavior:'smooth'});
+  if(typeof window.vaaniCharacterSpeak==='function')window.setTimeout(()=>window.vaaniCharacterSpeak(name),700);
   setTimeout(()=>{ if(typeof initReveal==='function') initReveal(); },30);
 }
 function pvGoHome(){ pvStopTimer(); PV.screen='home'; PV.session=null; PV.paperReturn=null; pvRender(); }
@@ -2399,6 +2400,7 @@ function pvFinishSession(){
     // Keep the actual applied delta for an honest result summary when the XP
     // balance can be smaller than a requested penalty.
     s.xpAdjustments={accuracy:accuracyChange,marks:marksChange};
+    if(typeof window.vaaniCharacterResult==='function')window.vaaniCharacterResult(accuracy!==null?accuracy:0,label);
   }
   if(s.mode==='exam'){PV.screen='summary';pvRender();return;}
   toast('Session complete — nice work, Cadet!');
@@ -3689,6 +3691,7 @@ function recordQuizCompletion(pct, elapsedSec, label){
     pb.fastestQuizLabel = label;
   }
   saveState();
+  if(typeof window.vaaniCharacterResult==='function')window.vaaniCharacterResult(pct,label);
 }
 function renderQuizPane(id, quiz){
   const pane=document.getElementById('pane-quiz');if(!pane)return;
