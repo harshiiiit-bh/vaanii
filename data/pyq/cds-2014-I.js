@@ -159,7 +159,7 @@ var PYQ_CDS_2014_I = [
     "s": "I",
     "n": 12,
     "sec": "Spotting Errors",
-    "q": "The teenager reassured his father at the station: “Don’t worry, Dad. I will pull on very nicely at the hostel.”",
+    "q": "The teenager reassured his father at the station | “Don’t worry, Dad. | I will pull on very nicely at the hostel.”",
     "o": [
       "The teenager reassured his father at the station",
       "“Don’t worry, Dad”",
