@@ -218,6 +218,9 @@ jobs:
             for n in [1,16,36,51,57,66,78,90,103] if session=="I" else [1,20,25,47,65,81,101]:
               x=records[n-1]
               print(f"SAMPLE {session}-{n} [{x['sec']}] Q={x['q'][:160]!r} O={x['o']} passage={len(x.get('passage',''))}")
+            if session=="II":
+              for n in [51,53,54,55,63]:
+                print("FULL_ORDER",n,repr(records[n-1]["q"]))
             return records
           allq={s:parse(s) for s in ("I","II")}
           for s,qs in allq.items():
