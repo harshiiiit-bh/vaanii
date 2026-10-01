@@ -136,7 +136,7 @@
     '<div class="vi-shell">',
       '<section class="vi-hero reveal">',
         '<div class="vi-hero-grid">',
-          '<div><div class="vi-kicker">VAANI FIELD MANUAL · INFORMATION CENTRE</div><h1 id="viTitle">Know the system. Then master it.</h1><p>One dedicated place for every important explanation in VAANI — navigation, learning modules, PYQs, XP, streaks, profile progress, account safety and the tools that make the platform work.</p><div class="vi-hero-actions"><button class="btn" type="button" onclick="switchView('dashboard')">← Back to VAANI</button><button class="btn ghost" type="button" onclick="openGlobalSearch()">⌕ Search VAANI</button></div></div>',
+          '<div><div class="vi-kicker">VAANI FIELD MANUAL · INFORMATION CENTRE</div><h1 id="viTitle">Know the system. Then master it.</h1><p>One dedicated place for every important explanation in VAANI — navigation, learning modules, PYQs, XP, streaks, profile progress, account safety and the tools that make the platform work.</p><div class="vi-hero-actions"><button class="btn" type="button" onclick="switchView(\\'dashboard\\')">← Back to VAANI</button><button class="btn ghost" type="button" onclick="openGlobalSearch()">⌕ Search VAANI</button></div></div>',
           '<div class="vi-command-art" aria-hidden="true"><svg viewBox="0 0 420 290"><g class="vi-svg-orbit" fill="none" stroke="rgba(230,198,111,.42)" stroke-width="1.5"><ellipse cx="210" cy="145" rx="150" ry="62"/><ellipse cx="210" cy="145" rx="150" ry="62" transform="rotate(58 210 145)"/><ellipse cx="210" cy="145" rx="150" ry="62" transform="rotate(-58 210 145)"/></g><circle cx="210" cy="145" r="58" fill="rgba(201,162,75,.13)" stroke="rgba(230,198,111,.64)" stroke-width="2"/><circle class="vi-svg-pulse" cx="210" cy="145" r="32" fill="none" stroke="#e6c66f" stroke-width="2"/><path class="vi-svg-dash" d="M78 235 C142 190 273 190 345 76" fill="none" stroke="#fff" stroke-opacity=".25" stroke-width="2" stroke-dasharray="8 10"/><circle cx="210" cy="145" r="10" fill="#e6c66f"/><path d="M192 167 L210 110 L228 167 L210 184Z" fill="#fff" opacity=".9"/><path d="M202 167 L210 129 L218 167" fill="#1b2a34"/></svg></div>',
         '</div>',
       '</section>',
@@ -181,7 +181,7 @@
         '<div class="vi-step"><div class="vi-step-num">03</div><h3>Test</h3><p>Move to PYQs and full-paper simulations when you are ready for exam-style pressure.</p></div>',
         '<div class="vi-step"><div class="vi-step-num">04</div><h3>Review</h3><p>Use the mistake notebook, bookmarks and profile statistics to target weak areas.</p></div>',
       '</div><div class="vi-callout" style="margin-top:14px">Tip: the dedicated guide explains the platform itself. Learning pages stay focused on learning instead of carrying repeated how-to instructions.</div></section>',
-      '<section class="vi-section reveal"><div class="vi-footer-card"><div><strong style="font:700 1.1rem var(--serif,Georgia)">Still stuck?</strong><p>Open Feedback from More, or return to this guide anytime from the info button.</p></div><button class="btn" type="button" onclick="switchView('dashboard')">Return to Dashboard</button></div></section>',
+      '<section class="vi-section reveal"><div class="vi-footer-card"><div><strong style="font:700 1.1rem var(--serif,Georgia)">Still stuck?</strong><p>Open Feedback from More, or return to this guide anytime from the info button.</p></div><button class="btn" type="button" onclick="switchView(\\'dashboard\\')">Return to Dashboard</button></div></section>',
     '</div>'
   ].join('');
 
