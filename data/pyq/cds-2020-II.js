@@ -1676,7 +1676,7 @@ var PYQ_CDS_2020_II = [
     "s": "II",
     "n": 81,
     "sec": "Ordering of Sentences",
-    "q": "SI: The country's economy is growing and would continue to grow at a rapid pace in the coming years. S6: The market share of electrical vehicles increases with increasing availability of infrastructure. P: It also provides us an opportunity to grow as manufacturer of electric vehicles. Q: According to NITI Aayog (2019), if India reaches an electric vehicles sales penetration, emission and oil savings can be achieved. R: Given the commitments that India has made on the climate front as a nation and on environmental aspect, it is likely that larger and larger share of automobiles sector would be in the form of electric vehicles. S: This presents a great opportunity for the automobile industry, as the demand for automobiles would only increase. The correct sequence should be",
+    "q": "S1: The country's economy is growing and would continue to grow at a rapid pace in the coming years. S6: The market share of electrical vehicles increases with increasing availability of infrastructure. P: It also provides us an opportunity to grow as manufacturer of electric vehicles. Q: According to NITI Aayog (2019), if India reaches an electric vehicles sales penetration, emission and oil savings can be achieved. R: Given the commitments that India has made on the climate front as a nation and on environmental aspect, it is likely that larger and larger share of automobiles sector would be in the form of electric vehicles. S: This presents a great opportunity for the automobile industry, as the demand for automobiles would only increase. The correct sequence should be",
     "o": [
       "S R Q P",
       "R Q S P",
@@ -1696,7 +1696,7 @@ var PYQ_CDS_2020_II = [
     "s": "II",
     "n": 82,
     "sec": "Ordering of Sentences",
-    "q": "SI: Central government receipts can broadly be divided into non-debt and debt receipts. S6: This is also evident from the composition of non-debt receipts. P: Debt receipts mostly consist of market borrowing and other liabilities which the government I obliged to repay in the future. Q: The non-debt receipts comprise of tax revenue, non-tax revenue, recovery of loans and disinvestment receipts. R: The outcomes as reflected in the Provisional Actual figures is lower than the budget estimate owing to reduction in the net tax revenue. S: The Budget 2018-19 targeted significantly high growth in non-debt receipts of the Central Government, which was driven by robust growth. The correct sequence should be",
+    "q": "S1: Central government receipts can broadly be divided into non-debt and debt receipts. S6: This is also evident from the composition of non-debt receipts. P: Debt receipts mostly consist of market borrowing and other liabilities which the government I obliged to repay in the future. Q: The non-debt receipts comprise of tax revenue, non-tax revenue, recovery of loans and disinvestment receipts. R: The outcomes as reflected in the Provisional Actual figures is lower than the budget estimate owing to reduction in the net tax revenue. S: The Budget 2018-19 targeted significantly high growth in non-debt receipts of the Central Government, which was driven by robust growth. The correct sequence should be",
     "o": [
       "S R P Q",
       "R S Q P",

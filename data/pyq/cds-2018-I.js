@@ -1526,7 +1526,7 @@ var PYQ_CDS_2018_I = [
     "s": "I",
     "n": 71,
     "sec": "Ordering of Sentences",
-    "q": "SI: Mass production has increased the tendency to view things as useful rather than delightful. S6: Indeed a lowering of quality usually results when mass production is substituted for more primitive methods. P: These various things share nothing with the buttons except money value. Q: All the rest you wish to exchange for food, shelter, and many other things. R: Suppose you are a manufacturer of buttons: however excellent your buttons may be, you do not want more than a few for your own use. S: And it is not even the money value of the buttons that is important to you: what is important is profit which may be increased by lowering their quality. The correct sequence should be",
+    "q": "S1: Mass production has increased the tendency to view things as useful rather than delightful. S6: Indeed a lowering of quality usually results when mass production is substituted for more primitive methods. P: These various things share nothing with the buttons except money value. Q: All the rest you wish to exchange for food, shelter, and many other things. R: Suppose you are a manufacturer of buttons: however excellent your buttons may be, you do not want more than a few for your own use. S: And it is not even the money value of the buttons that is important to you: what is important is profit which may be increased by lowering their quality. The correct sequence should be",
     "o": [
       "P Q R S",
       "R Q P S",
@@ -1546,7 +1546,7 @@ var PYQ_CDS_2018_I = [
     "s": "I",
     "n": 72,
     "sec": "Ordering of Sentences",
-    "q": "SI: Roderick Usher has always been a quiet person who talked little of himself S6: In the part of the country where he lived, the “House of Usher” had come to mean both the family and its ancestral mansion. P: Many of his ancestors had been famous for their artistic and musical abilities. Q: Others were known for their exceptional generosity and charity. R: Yet I did know that his family was an old one. S: So I did not know too much about him.",
+    "q": "S1: Roderick Usher has always been a quiet person who talked little of himself S6: In the part of the country where he lived, the “House of Usher” had come to mean both the family and its ancestral mansion. P: Many of his ancestors had been famous for their artistic and musical abilities. Q: Others were known for their exceptional generosity and charity. R: Yet I did know that his family was an old one. S: So I did not know too much about him.",
     "o": [
       "P Q R S",
       "S R Q P",
@@ -1566,7 +1566,7 @@ var PYQ_CDS_2018_I = [
     "s": "I",
     "n": 73,
     "sec": "Ordering of Sentences",
-    "q": "SI: At 4 o'clock this morning, Hitler attacked and invaded Russia. S6: Under its cloak of false confidence, the German armies drew up in immense strength along a line which stretches from the White Sea to the Black Sea. P: No complaint had been made by Germany of its non-fulfilment. Q: All his usual formalities of perfidy were observed with scrupulous technique. R: No one could have expected that Hitler would do it. S: A non-aggression treaty had been solemnly signed and was in force between the two countries.",
+    "q": "S1: At 4 o'clock this morning, Hitler attacked and invaded Russia. S6: Under its cloak of false confidence, the German armies drew up in immense strength along a line which stretches from the White Sea to the Black Sea. P: No complaint had been made by Germany of its non-fulfilment. Q: All his usual formalities of perfidy were observed with scrupulous technique. R: No one could have expected that Hitler would do it. S: A non-aggression treaty had been solemnly signed and was in force between the two countries.",
     "o": [
       "R Q S P",
       "R S Q P",
@@ -1606,7 +1606,7 @@ var PYQ_CDS_2018_I = [
     "s": "I",
     "n": 75,
     "sec": "Ordering of Sentences",
-    "q": "SI: I was the secretary of the Philosophical Society of the Patna College. S6: I have been to Kolkata many times since, but never has it been more pleasant than that first visit. P: It was my first visit to the city and its impression on my mind was indelible. Q: In that capacity, I once led a trip to Kolkata. R: I felt I had landed in the midst of beautiful dream world of a fairy land. S: I saw the roads, the trams, the skyscrapers and the magnificent shops at the Chowranghee lane. The correct sequence should be",
+    "q": "S1: I was the secretary of the Philosophical Society of the Patna College. S6: I have been to Kolkata many times since, but never has it been more pleasant than that first visit. P: It was my first visit to the city and its impression on my mind was indelible. Q: In that capacity, I once led a trip to Kolkata. R: I felt I had landed in the midst of beautiful dream world of a fairy land. S: I saw the roads, the trams, the skyscrapers and the magnificent shops at the Chowranghee lane. The correct sequence should be",
     "o": [
       "Q P S R",
       "P S Q R",
@@ -1626,7 +1626,7 @@ var PYQ_CDS_2018_I = [
     "s": "I",
     "n": 76,
     "sec": "English",
-    "q": "SI: To most people, the term technology conjures up images of mills or machines. S6; It includes ways to make chemical reactions occur, ways to breed fish, plant forests or teach history. P: The classic symbol of technology is still the assembly line created by Henry Ford half a century ago. Q: The invention of the horse collar in the Middle Ages led to changes in agricultural methods and was as such a technological advance. R: Moreover, technology includes techniques, as well as the machines that may or may not be necessary to apply them. S: This symbol, however, has always been inadequate, for technology has always been more than factories and machines. The correct sequence should be",
+    "q": "S1: To most people, the term technology conjures up images of mills or machines. S6; It includes ways to make chemical reactions occur, ways to breed fish, plant forests or teach history. P: The classic symbol of technology is still the assembly line created by Henry Ford half a century ago. Q: The invention of the horse collar in the Middle Ages led to changes in agricultural methods and was as such a technological advance. R: Moreover, technology includes techniques, as well as the machines that may or may not be necessary to apply them. S: This symbol, however, has always been inadequate, for technology has always been more than factories and machines. The correct sequence should be",
     "o": [
       "S P R Q",
       "P S Q R",
@@ -1646,7 +1646,7 @@ var PYQ_CDS_2018_I = [
     "s": "I",
     "n": 77,
     "sec": "Ordering of Sentences",
-    "q": "SI: It would be possible to adduce many examples showing what could be done with the limited means' at our ancestor’s disposal in the way of making life comfortable. S6: I hope, in this essay, to make that connection manifest. P: What have comfort and cleanliness to do with politics, morals, and religion? Q: But look more closely and you will discover that there exists the closest connection between the recent growth of comfort and the recent history of ideas. R: They show that if they lived in filth and discomfort, it was because filth and discomfort fitted in with their principles, political, moral and religious. S: At a first glance one would say that there could be no causal connection between armchairs and democracies, sofas and the family system, hot baths and religious orthodoxy.",
+    "q": "S1: It would be possible to adduce many examples showing what could be done with the limited means' at our ancestor’s disposal in the way of making life comfortable. S6: I hope, in this essay, to make that connection manifest. P: What have comfort and cleanliness to do with politics, morals, and religion? Q: But look more closely and you will discover that there exists the closest connection between the recent growth of comfort and the recent history of ideas. R: They show that if they lived in filth and discomfort, it was because filth and discomfort fitted in with their principles, political, moral and religious. S: At a first glance one would say that there could be no causal connection between armchairs and democracies, sofas and the family system, hot baths and religious orthodoxy.",
     "o": [
       "PRQS",
       "RPSQ",
@@ -1666,7 +1666,7 @@ var PYQ_CDS_2018_I = [
     "s": "I",
     "n": 78,
     "sec": "Ordering of Sentences",
-    "q": "SI: Tomorrow it will be a year since we lost our great leader. S6: Though he is no more with us, the qualities he possessed and the ideals he cherished remain with us. P: To these, he added a feminine sensitiveness to atmosphere. Q: He was involved in the major events of his time. R: He participated in them all while maintaining the highest standards of public conduct. S: He was incomparably the greatest figure in our history - a man of dynamic force, intellectual power and profound vision.",
+    "q": "S1: Tomorrow it will be a year since we lost our great leader. S6: Though he is no more with us, the qualities he possessed and the ideals he cherished remain with us. P: To these, he added a feminine sensitiveness to atmosphere. Q: He was involved in the major events of his time. R: He participated in them all while maintaining the highest standards of public conduct. S: He was incomparably the greatest figure in our history - a man of dynamic force, intellectual power and profound vision.",
     "o": [
       "P S R Q",
       "R Q P S",
@@ -1686,7 +1686,7 @@ var PYQ_CDS_2018_I = [
     "s": "I",
     "n": 79,
     "sec": "Ordering of Sentences",
-    "q": "SI: In democratic countries, men are equal before the law. S6: And they live like this not for fun, but because they are too poor to afford another room. P: While some few people live in luxury, many have not enough to eat, drink and wear. Q: There are many families of five or six persons who live in a single room. R: But the sharing-out of money - which means the sharing-out of food and clothing and houses - is still very unfair. S: In this room they sleep and dress and wash and eat, and in this same room they die. The correct sequence should be",
+    "q": "S1: In democratic countries, men are equal before the law. S6: And they live like this not for fun, but because they are too poor to afford another room. P: While some few people live in luxury, many have not enough to eat, drink and wear. Q: There are many families of five or six persons who live in a single room. R: But the sharing-out of money - which means the sharing-out of food and clothing and houses - is still very unfair. S: In this room they sleep and dress and wash and eat, and in this same room they die. The correct sequence should be",
     "o": [
       "R P Q S",
       "P R S Q",
@@ -1706,7 +1706,7 @@ var PYQ_CDS_2018_I = [
     "s": "I",
     "n": 80,
     "sec": "Ordering of Sentences",
-    "q": "SI: First and foremost, there are order and safety in our civilization. S6: Nobody may come and break into my house and steal my goods. P: Thus in disputes between man and man, right has taken the place of might. Q: If today I have a quarrel with another man, I do not get beaten merely because I am physically weaker. R: I go to law, and the law will decide fairly between the two of us. S: Moreover, the law protects me from robbery and violence. The correct sequence should be",
+    "q": "S1: First and foremost, there are order and safety in our civilization. S6: Nobody may come and break into my house and steal my goods. P: Thus in disputes between man and man, right has taken the place of might. Q: If today I have a quarrel with another man, I do not get beaten merely because I am physically weaker. R: I go to law, and the law will decide fairly between the two of us. S: Moreover, the law protects me from robbery and violence. The correct sequence should be",
     "o": [
       "R Q P S",
       "S R Q P",
