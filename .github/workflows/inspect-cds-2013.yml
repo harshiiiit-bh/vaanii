@@ -117,14 +117,6 @@ jobs:
             res.raise_for_status()
             root=BeautifulSoup(res.text,"html.parser").select_one(".entry-content")
             if not root:raise RuntimeError(f"Missing article root for {session}")
-            if session=="II":
-              q47=next((x for x in root.find_all("ol") if x.get("start")=="47"),None)
-              print("Q47_OL",str(q47)[:8000] if q47 else "NONE")
-              if q47:
-                for k,sib in enumerate(q47.next_siblings):
-                  if k>18:break
-                  if getattr(sib,"name",None):
-                    print("Q47_SIB",k,sib.name,repr(norm(sib.get_text(" ",strip=True))[:1000]),str(sib)[:2200])
             lists=outer_lists(root)
             records=[]
             next_n=1
@@ -173,6 +165,7 @@ jobs:
                       part=norm(sib.get_text(" ",strip=True))
                       if part:fragments.append(part)
                   if fragments:q=norm(q+" "+" ".join(fragments))
+                q=re.sub(r"\bS\s+([126])\s*:",r"S\1:",q)
                 opts_el=choice_list(li)
                 opts=[norm(x.get_text(" ",strip=True)) for x in direct_list_items(opts_el)] if opts_el else []
                 # The public transcription omits option (d) for this item; use the uploaded paper scan.
