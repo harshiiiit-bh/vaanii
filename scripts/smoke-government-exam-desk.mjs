@@ -218,6 +218,44 @@ await page.goto(baseURL + '?v=notifications', { waitUntil: 'domcontentloaded' })
     const status = await page.locator('#vxSyncStamp').textContent();
     throw new Error('Notification feed did not settle: ' + JSON.stringify(status) + ' (' + error.message + ')');
   });
+  // Check the screenshot-specific PYQ issue before the unrelated Desk smoke assertions.
+  await page.evaluate(() => switchView('pyq'));
+  await page.waitForSelector('#pvTopicGrid .pv-topic-group', { state: 'attached', timeout: 20000 });
+  await page.waitForFunction(() => {
+    const group = document.querySelector('#pvTopicGrid .pv-topic-group');
+    return Boolean(group && group.getBoundingClientRect().width > 0);
+  }, null, { timeout: 15000 });
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  const pyqDesktopLayout = await page.locator('#pvTopicGrid').evaluate(element => {
+    const group = element.querySelector('.pv-topic-group');
+    const title = group?.querySelector('.pv-topic-group-copy strong');
+    return {
+      containerWidth: element.getBoundingClientRect().width,
+      groupWidth: group?.getBoundingClientRect().width || 0,
+      titleWidth: title?.getBoundingClientRect().width || 0,
+      columns: getComputedStyle(element).gridTemplateColumns.trim().split(' ').filter(Boolean).length
+    };
+  });
+  assert.equal(pyqDesktopLayout.columns, 1, 'PYQ groups should use a single outer column on desktop: ' + JSON.stringify(pyqDesktopLayout));
+  assert.ok(pyqDesktopLayout.groupWidth >= pyqDesktopLayout.containerWidth * 0.85,
+    'PYQ group panels should fill the available desktop width: ' + JSON.stringify(pyqDesktopLayout));
+  assert.ok(pyqDesktopLayout.titleWidth >= 240,
+    'PYQ group headings must not collapse to one-character wrapping: ' + JSON.stringify(pyqDesktopLayout));
+  await page.setViewportSize({ width: 390, height: 844 });
+  const pyqMobileLayout = await page.locator('#pvTopicGrid').evaluate(element => ({
+    containerWidth: element.getBoundingClientRect().width,
+    groupWidth: element.querySelector('.pv-topic-group')?.getBoundingClientRect().width || 0,
+    documentWidth: document.documentElement.clientWidth,
+    documentScrollWidth: document.documentElement.scrollWidth
+  }));
+  assert.ok(pyqMobileLayout.groupWidth >= pyqMobileLayout.containerWidth * 0.85,
+    'PYQ group panels should remain full-width on mobile: ' + JSON.stringify(pyqMobileLayout));
+  assert.ok(pyqMobileLayout.documentScrollWidth <= pyqMobileLayout.documentWidth + 1,
+    'PYQ should not introduce horizontal page scrolling on mobile: ' + JSON.stringify(pyqMobileLayout));
+  await page.evaluate(() => switchView('notifications'));
+  await page.waitForSelector('#vxSyncStamp', { state: 'attached', timeout: 10000 });
+
+
   assert.deepEqual(apiRequests.slice().sort(), ['/api/notifications', '/api/notifications/archive'],
     'the Exam Desk should read the existing live feed and archive once each');
   for (const id of ['vx-links', 'vx-exam-dates', 'vx-defence', 'vx-careers', 'vx-archive']) {
@@ -459,44 +497,6 @@ await page.goto(baseURL + '?v=notifications', { waitUntil: 'domcontentloaded' })
   await page.waitForFunction(() => document.querySelector('#vxSyncStamp')?.textContent.includes('Feed unavailable'));
   assert.equal(await page.locator('#vxUpcomingList .vx-notice-card').count(), 0, 'feed failures should show an empty state rather than stale fake opportunities');
   assert.equal(pageErrors.length, 0, 'Exam Desk should not throw during normal, malformed or unavailable feed responses: ' + pageErrors.join(' | '));
-
-  // Browser-level PYQ layout regression: group panels must span the topic
-  // browser, while preserving a no-horizontal-scroll layout on mobile.
-  failFeeds = false;
-  await page.evaluate(() => switchView('pyq'));
-  await page.waitForSelector('#pvTopicGrid .pv-topic-group', { state: 'attached', timeout: 20000 });
-  await page.waitForFunction(() => {
-    const group = document.querySelector('#pvTopicGrid .pv-topic-group');
-    return Boolean(group && group.getBoundingClientRect().width > 0);
-  }, null, { timeout: 15000 });
-  await page.setViewportSize({ width: 1440, height: 1000 });
-  const pyqDesktopLayout = await page.locator('#pvTopicGrid').evaluate(element => {
-    const group = element.querySelector('.pv-topic-group');
-    const title = group?.querySelector('.pv-topic-group-copy strong');
-    return {
-      containerWidth: element.getBoundingClientRect().width,
-      groupWidth: group?.getBoundingClientRect().width || 0,
-      titleWidth: title?.getBoundingClientRect().width || 0,
-      columns: getComputedStyle(element).gridTemplateColumns.trim().split(' ').filter(Boolean).length
-    };
-  });
-  assert.equal(pyqDesktopLayout.columns, 1, 'PYQ groups should use a single outer column on desktop: ' + JSON.stringify(pyqDesktopLayout));
-  assert.ok(pyqDesktopLayout.groupWidth >= pyqDesktopLayout.containerWidth * 0.85,
-    'PYQ group panels should fill the available desktop width: ' + JSON.stringify(pyqDesktopLayout));
-  assert.ok(pyqDesktopLayout.titleWidth >= 240,
-    'PYQ group headings must not collapse to one-character wrapping: ' + JSON.stringify(pyqDesktopLayout));
-  await page.setViewportSize({ width: 390, height: 844 });
-  const pyqMobileLayout = await page.locator('#pvTopicGrid').evaluate(element => ({
-    containerWidth: element.getBoundingClientRect().width,
-    groupWidth: element.querySelector('.pv-topic-group')?.getBoundingClientRect().width || 0,
-    documentWidth: document.documentElement.clientWidth,
-    documentScrollWidth: document.documentElement.scrollWidth
-  }));
-  assert.ok(pyqMobileLayout.groupWidth >= pyqMobileLayout.containerWidth * 0.85,
-    'PYQ group panels should remain full-width on mobile: ' + JSON.stringify(pyqMobileLayout));
-  assert.ok(pyqMobileLayout.documentScrollWidth <= pyqMobileLayout.documentWidth + 1,
-    'PYQ should not introduce horizontal page scrolling on mobile: ' + JSON.stringify(pyqMobileLayout));
-  assert.equal(pageErrors.length, 0, 'Site should not throw during the Government Exam Desk and PYQ smoke checks: ' + pageErrors.join(' | '));
 
   console.log('Government Exam Desk + PYQ browser smoke: calendar horizon and toggle, PYQ group width at desktop/mobile, Exam Desk feeds, filters, Career Map, archive, XSS, reduced motion and responsive layouts passed');
 } finally {
