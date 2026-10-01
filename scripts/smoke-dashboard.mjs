@@ -276,7 +276,9 @@ try {
 
   const penaltyTiers=await page.evaluate(()=>({
     accuracy:[100,70,69,60,59,50,49,40,39,33,32,0].map(score=>({score,penalty:getAccuracyPenalty(score)})),
-    marks:[100,70,69,50,49,33,32,0].map(score=>({score,penalty:getTotalMarksPenalty(score)}))
+    marks:[100,70,69,50,49,33,32,0].map(score=>({score,penalty:getTotalMarksPenalty(score)})),
+    fractionalAccuracy:[69.99,59.99,49.99,39.99,32.99].map(score=>({score,penalty:getAccuracyPenalty(score)})),
+    fractionalMarks:[69.99,49.99,32.99].map(score=>({score,penalty:getTotalMarksPenalty(score)}))
   }));
   assert.deepEqual(penaltyTiers.accuracy,[
     {score:100,penalty:0},{score:70,penalty:0},{score:69,penalty:10},
@@ -289,6 +291,13 @@ try {
     {score:50,penalty:8},{score:49,penalty:12},{score:33,penalty:12},
     {score:32,penalty:15},{score:0,penalty:15}
   ],'Total-marks penalty tiers must match every requested boundary');
+  assert.deepEqual(penaltyTiers.fractionalAccuracy,[
+    {score:69.99,penalty:10},{score:59.99,penalty:20},{score:49.99,penalty:45},
+    {score:39.99,penalty:60},{score:32.99,penalty:80}
+  ],'Accuracy deductions must not round a below-threshold score into the next tier');
+  assert.deepEqual(penaltyTiers.fractionalMarks,[
+    {score:69.99,penalty:8},{score:49.99,penalty:12},{score:32.99,penalty:15}
+  ],'Net-mark deductions must preserve exact fractional threshold boundaries');
   const accuracy=await page.evaluate(()=>{
     const original={xp:State.xp,ledger:{...State.dailyXpEarned},activity:{...State.dailyActivity},xpLedger:[...(State.xpLedger||[])]};
     const today=new Date().toDateString();

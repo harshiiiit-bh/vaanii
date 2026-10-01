@@ -342,18 +342,20 @@ const VAANI_DAILY_XP_CAP=80;
 function getAccuracyPenalty(pct){
   const score=Number(pct);
   if(!Number.isFinite(score))return 0;
-  const accuracy=Math.max(0,Math.min(100,Math.round(score)));
+  // Compare the unrounded score so 69.9% stays in the 60–69% tier.
+  const accuracy=Math.max(0,Math.min(100,score));
   if(accuracy<33)return 80;
-  if(accuracy<=39)return 60;
-  if(accuracy<=49)return 45;
-  if(accuracy<=59)return 20;
-  if(accuracy<=69)return 10;
+  if(accuracy<40)return 60;
+  if(accuracy<50)return 45;
+  if(accuracy<60)return 20;
+  if(accuracy<70)return 10;
   return 0;
 }
 function getTotalMarksPenalty(pct){
   const score=Number(pct);
   if(!Number.isFinite(score))return 0;
-  const marks=Math.max(0,Math.min(100,Math.round(score)));
+  // Preserve decimal precision at the 33%, 50%, and 70% boundaries.
+  const marks=Math.max(0,Math.min(100,score));
   if(marks>=70)return 5;
   if(marks>=50)return 8;
   if(marks>=33)return 12;
@@ -423,23 +425,27 @@ function deductXP(n, reason){
   }
   return deducted;
 }
+function formatXPPercent(pct){
+  const score=Math.max(0,Math.min(100,Number(pct)||0));
+  return String(Number(score.toFixed(3)));
+}
 function deductExamMarksXP(pct,reason){
   const penalty=getTotalMarksPenalty(pct);
   if(!penalty)return 0;
-  const score=Math.max(0,Math.min(100,Math.round(Number(pct)||0)));
-  return deductXP(penalty,(reason||'PYQ exam')+' · '+score+'% net marks');
+  const score=Math.max(0,Math.min(100,Number(pct)||0));
+  return deductXP(penalty,(reason||'PYQ exam')+' · '+formatXPPercent(score)+'% net marks');
 }
 function awardAccuracyXP(pct, reason){
   const score=Number(pct);
   if(!Number.isFinite(score))return 0;
-  const accuracy=Math.max(0,Math.min(100,Math.round(score)));
+  const accuracy=Math.max(0,Math.min(100,score));
   const penalty=getAccuracyPenalty(accuracy);
   if(penalty){
-    deductXP(penalty,(reason||'Quiz')+' · '+accuracy+'% accuracy');
+    deductXP(penalty,(reason||'Quiz')+' · '+formatXPPercent(accuracy)+'% accuracy');
     return 0;
   }
   const reward=accuracy===100?12:accuracy>=90?10:accuracy>=80?8:accuracy>=70?6:0;
-  return reward?addXP(reward,(reason||'Quiz')+' · '+accuracy+'% accuracy'):0;
+  return reward?addXP(reward,(reason||'Quiz')+' · '+formatXPPercent(accuracy)+'% accuracy'):0;
 }
 function refreshServiceRankDailyHint(){
   const el=document.getElementById('rankDailyXPHint');
@@ -2375,16 +2381,25 @@ function pvFinishSession(){
     attempted++;
     if(answer.correct)correct++;
   });
-  const accuracy=attempted?Math.round(correct/attempted*100):0;
+  const accuracy=attempted?correct/attempted*100:null;
   if(total>0){
     const label='PYQ '+(s.mode==='exam'?'exam':'practice')+' session';
-    awardAccuracyXP(accuracy,label);
+    const accuracyBefore=State.xp;
+    // A skipped-only practice session has no accuracy sample to penalize.
+    if(accuracy!==null)awardAccuracyXP(accuracy,label);
+    const accuracyChange=State.xp-accuracyBefore;
+    let marksChange=0;
     if(s.mode==='exam'){
       const wrong=attempted-correct;
       const netScore=correct-(wrong/3);
       const marksPct=Math.max(0,netScore/total*100);
+      const marksBefore=State.xp;
       deductExamMarksXP(marksPct,label);
+      marksChange=State.xp-marksBefore;
     }
+    // Keep the actual applied delta for an honest result summary when the XP
+    // balance is smaller than a requested penalty or a daily cap limits a reward.
+    s.xpAdjustments={accuracy:accuracyChange,marks:marksChange};
   }
   if(s.mode==='exam'){PV.screen='summary';pvRender();return;}
   toast('Session complete — nice work, Cadet!');
@@ -2551,11 +2566,16 @@ function pvSummaryHTML(){
   const rawScore = correct - (wrong/3);
   const scoreLabel = (Math.round(rawScore*100)/100).toString();
   const total = s.questions.length;
-  const acc = (correct+wrong) ? Math.round(correct/(correct+wrong)*100) : 0;
+  const acc = (correct+wrong) ? correct/(correct+wrong)*100 : null;
+  const accLabel = acc===null?'—':formatXPPercent(acc)+'%';
   const marksPct = total ? Math.max(0,rawScore/total*100) : 0;
-  const accuracyPenalty = getAccuracyPenalty(acc);
+  const accuracyPenalty = acc===null?0:getAccuracyPenalty(acc);
   const marksPenalty = getTotalMarksPenalty(marksPct);
-  const marksPctLabel = (Math.round(marksPct*10)/10).toString().replace(/\\.0$/,'');
+  const marksPctLabel = formatXPPercent(marksPct);
+  const xpAdjustments=s.xpAdjustments||{};
+  const accuracyChange=Number.isFinite(Number(xpAdjustments.accuracy))?Number(xpAdjustments.accuracy):-accuracyPenalty;
+  const marksChange=Number.isFinite(Number(xpAdjustments.marks))?Number(xpAdjustments.marks):-marksPenalty;
+  const showXPChange=value=>(value>0?'+':value<0?'−':'')+Math.abs(Math.trunc(value))+' XP';
 
   const reviewHTML = s.questions.map((q,i)=>{
     const a = s.answers[q._id];
@@ -2579,10 +2599,10 @@ function pvSummaryHTML(){
         <div class="pv-summary-stat"><div class="n" style="color:var(--muted)">${unattempted}</div><div class="l">Skipped</div></div>
       </div>
       <div class="pv-summary-grid" style="grid-template-columns:1fr 1fr">
-        <div class="pv-summary-stat"><div class="n">${acc}%</div><div class="l">Accuracy on attempted questions</div></div>
+        <div class="pv-summary-stat"><div class="n">${accLabel}</div><div class="l">Accuracy on attempted questions</div></div>
         <div class="pv-summary-stat"><div class="n">${marksPctLabel}%</div><div class="l">Net marks as % of total</div></div>
       </div>
-      <div class="pv-summary-label pv-summary-xp-adjustments" role="status">XP deductions: accuracy −${accuracyPenalty} XP · net marks −${marksPenalty} XP</div>
+      <div class="pv-summary-label pv-summary-xp-adjustments" role="status">XP changes applied: accuracy ${showXPChange(accuracyChange)} · net marks ${showXPChange(marksChange)}</div>
     </div>
     <div class="pv-section-title"><h3><span class="bar"></span>Review Every Question</h3></div>
     ${reviewHTML}
@@ -3676,11 +3696,12 @@ function renderQuizPane(id, quiz){
   const questions=Array.isArray(quiz)?quiz:[];let idx=0,correctCount=0,qTimer=null,started=null,finished=false;
   function finish(){
     if(finished)return;finished=true;if(qTimer){qTimer.stop();qTimer=null;}
-    const pct=questions.length?Math.round(correctCount/questions.length*100):0;State.quizScores[id]=pct;State.topicLastAttempt=State.topicLastAttempt||{};State.topicLastAttempt[id]=Date.now();saveState();
+    const exactPct=questions.length?correctCount/questions.length*100:0;
+    const pct=Math.round(exactPct);State.quizScores[id]=pct;State.topicLastAttempt=State.topicLastAttempt||{};State.topicLastAttempt[id]=Date.now();saveState();
     recordQuizCompletion(pct,started?(Date.now()-started)/1000:null,((GRAMMAR.find(g=>g.id===id)||{}).title)||id);
     pane.innerHTML='<div class="quiz-card quiz-complete-card" role="status"><span class="lesson-kicker">TOPIC CHECK COMPLETE</span><h3>Your result</h3><div class="quiz-result-score">'+pct+'%</div><p>'+correctCount+' of '+questions.length+' answers correct</p><div class="quiz-result-track"><div style="width:'+pct+'%"></div></div><div class="quiz-result-actions"><button class="btn" type="button" id="quizRetry">Try again</button><button class="btn ghost" type="button" id="quizBack">Review lesson</button></div></div>';
     pane.querySelector('#quizRetry').addEventListener('click',()=>renderQuizPane(id,questions));pane.querySelector('#quizBack').addEventListener('click',()=>{const b=document.querySelector('.tab-btn[data-tab="learn"]');if(b)b.click();});
-    awardAccuracyXP(pct,'Topic quiz: '+(((GRAMMAR.find(g=>g.id===id)||{}).title)||'topic'));launchConfettiIf(pct>=70);
+    awardAccuracyXP(exactPct,'Topic quiz: '+(((GRAMMAR.find(g=>g.id===id)||{}).title)||'topic'));launchConfettiIf(pct>=70);
   }
   function draw(){
     if(qTimer){qTimer.stop();qTimer=null;}if(!questions.length){pane.innerHTML='<div class="quiz-card"><h3>Practice coming soon</h3><p>No questions are available for this topic yet.</p></div>';return;}if(idx>=questions.length){finish();return;}
@@ -5433,7 +5454,8 @@ function renderComparePane(id, quiz){
     if(idx===0) comboCount=0;
     if(idx===0 && quizStartTs===null) quizStartTs = Date.now();
     if(idx>=quiz.length){
-      const pct = Math.round((correctCount/quiz.length)*100);
+      const exactPct=quiz.length?correctCount/quiz.length*100:0;
+      const pct = Math.round(exactPct);
       State.quizScores['cmp-'+id]=pct; saveState();
       recordQuizCompletion(pct, quizStartTs?(Date.now()-quizStartTs)/1000:null, (currentCompare?currentCompare.a+' vs '+currentCompare.b:'Comparison drill'));
       pane.innerHTML = `<div class="quiz-card" style="text-align:center">
@@ -5441,7 +5463,7 @@ function renderComparePane(id, quiz){
         <div class="num serif" style="font-size:2.4rem;color:var(--gold)">${pct}%</div>
         <p style="color:var(--muted);margin:10px 0">${correctCount} of ${quiz.length} correct${comboBest>=3?` · Best combo ×${comboBest}`:''}</p>
         <button class="btn" onclick="renderComparePane('${id}', COMPARISONS.find(c=>c.id==='${id}').pyq)">Retry Drill</button></div>`;
-      awardAccuracyXP(pct,'Comparison drill: '+(currentCompare?currentCompare.a+' vs '+currentCompare.b:'pair'));
+      awardAccuracyXP(exactPct,'Comparison drill: '+(currentCompare?currentCompare.a+' vs '+currentCompare.b:'pair'));
       launchConfettiIf(pct>=70);
       return;
     }
