@@ -1,12 +1,20 @@
 {
-  "name":"VAANI · English Learning Command Center",
-  "short_name":"VAANI",
-  "description":"A focused English-learning workspace with grammar, vocabulary, PYQs, reading and exam practice.",
-  "start_url":"./",
-  "scope":"./",
-  "display":"standalone",
-  "background_color":"#111820",
-  "theme_color":"#c9a24b",
-  "orientation":"portrait-primary",
-  "lang":"en-IN"
+  "name": "VAANI · English Learning Command Center",
+  "short_name": "VAANI",
+  "description": "A focused English-learning workspace with grammar, vocabulary, PYQs, reading and exam practice.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#111820",
+  "theme_color": "#c9a24b",
+  "orientation": "portrait-primary",
+  "lang": "en-IN",
+  "icons": [
+    {
+      "src": "https://gcdn.picsart.com/cloud-storage/139d6748-1bf1-4286-b8d6-03414b61deb6.png",
+      "sizes": "1254x1254",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
 }
