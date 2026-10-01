@@ -48,3 +48,14 @@
 @media(max-width:900px){.vi-hero-grid{grid-template-columns:1fr}.vi-command-art{min-height:220px}.vi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.vi-flow{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:640px){.info-trigger{width:42px;height:42px;min-width:42px}#view-info{padding:10px 0 96px}.vi-hero{border-radius:20px;padding:22px}.vi-grid,.vi-rule-grid,.vi-flow{grid-template-columns:1fr}.vi-section-head{align-items:start;flex-direction:column}.vi-section-head h2{font-size:1.25rem}.vi-footer-card{align-items:flex-start;flex-direction:column}.vi-tour{align-items:flex-end;padding:12px 12px calc(16px + env(safe-area-inset-bottom))}.vi-tour-scene{grid-template-columns:92px minmax(0,1fr);gap:8px;min-height:225px}.vi-tour-officer{transform:translateX(-170%);animation-name:viOfficerInMobile}@keyframes viOfficerInMobile{to{transform:translateX(0)}}.vi-officer-svg{width:120px}.vi-tour-bubble{padding:15px 15px 16px;border-radius:20px 20px 20px 5px}.vi-tour-bubble h3{font-size:1.05rem}.vi-tour-bubble p{font-size:.8rem;min-height:72px}.vi-tour-bubble::before{left:-9px;bottom:24px;border-width:9px 9px 9px 0}.vi-tour-note{text-align:left}.vi-tour-ring{width:78px;height:78px}}
 @media(prefers-reduced-motion:reduce){.vi-svg-orbit,.vi-svg-pulse,.vi-svg-dash,.vi-tour-ring,.vi-tour-officer,.vi-officer-bob,.vi-officer-salute,.vi-tour-cursor{animation:none!important}.vi-tour-officer{transform:none!important}}
+
+.vi-officer-model{
+  width:230px;height:250px;
+  background-image:url("assets/vaani-officer-pack.webp");
+  background-size:400% 300%;
+  background-position:66.667% 50%;
+  background-repeat:no-repeat;
+  filter:drop-shadow(0 20px 20px rgba(0,0,0,.3));
+  animation:viOfficerBob 2.7s ease-in-out 1.4s infinite;
+}
+@media(max-width:640px){.vi-officer-model{width:120px;height:132px;background-position:66.667% 50%}}
