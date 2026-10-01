@@ -6,47 +6,7 @@
   const INFO_TOUR_VERSION='20261002-info-center1';
   const TOUR_TEXT='Welcome to VAANI, aspirant. I have moved the how-to information into one clean guide. Tap the new info button anytime to understand every feature, every XP rule and every part of your learning system.';
 
-  const officerSVG =
-    '<svg class="vi-officer-svg" viewBox="0 0 210 300" role="img" aria-label="Illustration of an Indian Army officer">'+
-      '<defs>'+
-        '<linearGradient id="viUniform" x1="0" x2="1"><stop offset="0" stop-color="#2f5a43"/><stop offset="1" stop-color="#183a2b"/></linearGradient>'+
-        '<linearGradient id="viSkin" x1="0" x2="1"><stop offset="0" stop-color="#9a5f3c"/><stop offset="1" stop-color="#c7865f"/></linearGradient>'+
-      '</defs>'+
-      '<g class="vi-officer-bob">'+
-        '<ellipse cx="111" cy="288" rx="63" ry="8" fill="rgba(0,0,0,.25)"/>'+
-        '<path d="M69 130 Q108 110 149 130 L169 215 Q154 230 111 232 Q72 230 54 215Z" fill="url(#viUniform)" stroke="#10271c" stroke-width="3"/>'+
-        '<path d="M78 137 L105 160 L90 186 L64 165Z" fill="#406e53"/>'+
-        '<path d="M144 137 L117 160 L132 186 L158 165Z" fill="#406e53"/>'+
-        '<path d="M93 214 H129 V270 H93Z" fill="#172a21"/>'+
-        '<path d="M72 206 H91 V274 H63Z" fill="#234333"/>'+
-        '<path d="M129 206 H149 L159 274 H132Z" fill="#234333"/>'+
-        '<path d="M62 271 H92 V284 H57 Q55 275 62 271Z" fill="#131a1d"/>'+
-        '<path d="M133 271 H159 Q167 275 167 284 H132Z" fill="#131a1d"/>'+
-        '<path d="M92 155 Q111 169 129 155 L127 187 Q111 198 94 187Z" fill="#d6b18d" opacity=".95"/>'+
-        '<path d="M98 159 L111 181 L124 159" fill="#f6f6f2"/>'+
-        '<path d="M98 160 L111 172 L124 160 L121 151 H101Z" fill="#0f2831"/>'+
-        '<circle cx="111" cy="91" r="34" fill="url(#viSkin)" stroke="#71432a" stroke-width="2"/>'+
-        '<path d="M79 91 Q111 54 143 91 Q139 63 111 59 Q83 63 79 91Z" fill="#17251d"/>'+
-        '<path d="M78 86 Q112 54 146 86 L139 99 Q112 80 84 99Z" fill="#1b2920"/>'+
-        '<path d="M74 82 Q111 61 148 82 L145 95 Q112 78 77 95Z" fill="#23382c"/>'+
-        '<rect x="100" y="69" width="22" height="6" rx="3" fill="#d8ae48"/>'+
-        '<circle cx="111" cy="71.5" r="4" fill="#d8ae48"/>'+
-        '<path d="M96 105 Q111 112 126 105" fill="none" stroke="#6b3d29" stroke-width="2" stroke-linecap="round"/>'+
-        '<path d="M96 96 Q101 92 106 96 M116 96 Q121 92 126 96" fill="none" stroke="#4a2d20" stroke-width="2" stroke-linecap="round"/>'+
-        '<rect x="74" y="188" width="74" height="9" rx="4" fill="#3b2a16"/>'+
-        '<rect x="99" y="186" width="24" height="14" rx="3" fill="#d8ae48"/>'+
-        '<circle cx="111" cy="193" r="3" fill="#183a2b"/>'+
-        '<g class="vi-officer-salute">'+
-          '<path d="M143 150 Q164 147 171 127 Q176 114 168 106 Q161 103 156 113 L146 134Z" fill="url(#viSkin)" stroke="#71432a" stroke-width="2"/>'+
-          '<path d="M167 108 L183 111 Q187 121 181 128 L169 126Z" fill="url(#viSkin)" stroke="#71432a" stroke-width="2"/>'+
-        '</g>'+
-        '<rect x="61" y="143" width="18" height="9" rx="2" fill="#d8ae48"/>'+
-        '<rect x="143" y="143" width="18" height="9" rx="2" fill="#d8ae48"/>'+
-        '<circle cx="83" cy="147.5" r="3" fill="#d8ae48"/>'+
-        '<circle cx="139" cy="147.5" r="3" fill="#d8ae48"/>'+
-        '<path d="M95 176 H127" stroke="#d8ae48" stroke-width="2" stroke-dasharray="3 3"/>'+
-      '</g>'+
-    '</svg>';
+  const officerSVG = '<div class="vi-officer-model" aria-hidden="true"></div>';
 
   function positionTourSpot(){
     const btn=document.getElementById('infoBtn');
