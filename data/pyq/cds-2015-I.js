@@ -1443,6 +1443,7 @@ var PYQ_CDS_2015_I = [
     "y": 2015,
     "s": "I",
     "n": 101,
+    "passage": "The flat suited them when his mother was with him. Living alone, he found it too large and used only his bedroom. The rest of the flat was unused.",
     "sec": "Comprehension",
     "q": "The flat did not really suit him any more because",
     "o": [
@@ -1457,6 +1458,7 @@ var PYQ_CDS_2015_I = [
     "y": 2015,
     "s": "I",
     "n": 102,
+    "passage": "The flat suited them when his mother was with him. Living alone, he found it too large and used only his bedroom. The rest of the flat was unused.",
     "sec": "Comprehension",
     "q": "He did not look after the rest of the flat because",
     "o": [
@@ -1471,6 +1473,7 @@ var PYQ_CDS_2015_I = [
     "y": 2015,
     "s": "I",
     "n": 103,
+    "passage": "The flat suited them when his mother was with him. Living alone, he found it too large and used only his bedroom. The rest of the flat was unused.",
     "sec": "Comprehension",
     "q": "“... now I was by myself it was too large”. The word it here refers to",
     "o": [
@@ -1485,6 +1488,7 @@ var PYQ_CDS_2015_I = [
     "y": 2015,
     "s": "I",
     "n": 104,
+    "passage": "The flat suited them when his mother was with him. Living alone, he found it too large and used only his bedroom. The rest of the flat was unused.",
     "sec": "Comprehension",
     "q": "From the passage we learn that the writer was",
     "o": [
@@ -1499,6 +1503,7 @@ var PYQ_CDS_2015_I = [
     "y": 2015,
     "s": "I",
     "n": 105,
+    "passage": "The flat suited them when his mother was with him. Living alone, he found it too large and used only his bedroom. The rest of the flat was unused.",
     "sec": "Comprehension",
     "q": "“After lunch I felt at a loose end” means",
     "o": [
@@ -1513,6 +1518,7 @@ var PYQ_CDS_2015_I = [
     "y": 2015,
     "s": "I",
     "n": 106,
+    "passage": "Most people prefer films that pass time easily and satisfy obvious daydreams. We make up for our deficiencies by watching people who are stronger, more effective, or more beautiful than we are. Film stars act out our daydreams in exciting situations, unlike our daily routine.",
     "sec": "Comprehension",
     "q": "According to the passage, most of us prefer films which",
     "o": [
@@ -1527,6 +1533,7 @@ var PYQ_CDS_2015_I = [
     "y": 2015,
     "s": "I",
     "n": 107,
+    "passage": "Most people prefer films that pass time easily and satisfy obvious daydreams. We make up for our deficiencies by watching people who are stronger, more effective, or more beautiful than we are. Film stars act out our daydreams in exciting situations, unlike our daily routine.",
     "sec": "Comprehension",
     "q": "By watching thrilling adventures in films we make up for",
     "o": [
@@ -1541,6 +1548,7 @@ var PYQ_CDS_2015_I = [
     "y": 2015,
     "s": "I",
     "n": 108,
+    "passage": "Most people prefer films that pass time easily and satisfy obvious daydreams. We make up for our deficiencies by watching people who are stronger, more effective, or more beautiful than we are. Film stars act out our daydreams in exciting situations, unlike our daily routine.",
     "sec": "Comprehension",
     "q": "Film stars present situations",
     "o": [
@@ -1555,6 +1563,7 @@ var PYQ_CDS_2015_I = [
     "y": 2015,
     "s": "I",
     "n": 109,
+    "passage": "Most people prefer films that pass time easily and satisfy obvious daydreams. We make up for our deficiencies by watching people who are stronger, more effective, or more beautiful than we are. Film stars act out our daydreams in exciting situations, unlike our daily routine.",
     "sec": "Comprehension",
     "q": "Whether we admit it to ourselves or not, we are aware that",
     "o": [
@@ -1569,6 +1578,7 @@ var PYQ_CDS_2015_I = [
     "y": 2015,
     "s": "I",
     "n": 110,
+    "passage": "Most people prefer films that pass time easily and satisfy obvious daydreams. We make up for our deficiencies by watching people who are stronger, more effective, or more beautiful than we are. Film stars act out our daydreams in exciting situations, unlike our daily routine.",
     "sec": "Comprehension",
     "q": "The daily life of students, office-goers and housewives is",
     "o": [
