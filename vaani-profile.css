@@ -208,3 +208,42 @@
 .vp-xp-rules summary{cursor:pointer;color:var(--muted);font:600 .58rem/1.4 var(--mono);letter-spacing:.06em;list-style-position:inside}
 .vp-xp-rules summary:hover{color:var(--gold-d)}
 .vp-xp-rules p{margin:7px auto 0;max-width:620px;color:var(--muted);font-size:.64rem;line-height:1.55}
+
+/* XP command panel — clear daily allowance, milestone pace and readable rules. */
+.vp-rank-pace{
+  margin:-3px 0 0;color:var(--gold-d);font:600 .58rem/1.45 var(--mono);
+  letter-spacing:.025em;text-align:center
+}
+[data-theme="dark"] .vp-rank-pace{color:var(--gold-l)}
+.vp-rank-daily-panel{
+  width:min(100%,520px);box-sizing:border-box;padding:10px 13px 8px;
+  border:1px solid var(--line);border-radius:11px;background:var(--panel2)
+}
+.vp-rank-daily-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.vp-rank-daily-head span{color:var(--muted);font:600 .55rem/1.35 var(--mono);letter-spacing:.075em;text-transform:uppercase}
+.vp-rank-daily-head strong{color:var(--text);font:700 .58rem/1.35 var(--mono);text-align:right}
+.vp-rank-daily-track{
+  height:7px;margin:8px 0 5px;overflow:hidden;border-radius:999px;
+  background:var(--line);box-shadow:inset 0 1px 2px rgba(0,0,0,.1)
+}
+.vp-rank-daily-track span{
+  display:block;width:0;height:100%;border-radius:inherit;
+  background:linear-gradient(90deg,var(--gold-d),var(--gold-l));
+  transition:width .28s ease
+}
+.vp-rank-daily-remaining{margin:0;color:var(--muted);font:500 .53rem/1.4 var(--mono);text-align:right}
+.vp-xp-rules{width:min(100%,650px);box-sizing:border-box}
+.vp-xp-rules-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px;text-align:left}
+.vp-xp-rules-grid section{min-width:0;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--panel2)}
+.vp-xp-rules-grid section>strong{display:block;color:var(--text);font:700 .6rem/1.4 var(--mono);letter-spacing:.08em;text-transform:uppercase}
+.vp-xp-rules-grid ul{margin:7px 0 0;padding-left:16px;color:var(--muted);font-size:.62rem;line-height:1.55}
+.vp-xp-rules-grid li+li{margin-top:4px}
+@media(max-width:560px){
+  .vp-rank-daily-panel{padding:9px 10px 7px}
+  .vp-rank-daily-head{align-items:flex-start;flex-direction:column;gap:4px}
+  .vp-rank-daily-head strong{text-align:left}
+  .vp-xp-rules-grid{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){
+  .vp-rank-daily-track span{transition:none}
+}
