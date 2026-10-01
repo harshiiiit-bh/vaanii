@@ -77,6 +77,47 @@ if (html.includes('editing-temp/')) {
   process.exitCode = 1;
 }
 
+// Account-code surfaces must use the active code and keep the mobile reveal responsive.
+const accountCodeMarkup = [
+  '<section class="card vp-account-code-card" id="vpAccountCodeCard" hidden',
+  '<output class="vp-account-code-value" id="vpAccountCodeValue"',
+  '<div class="mobile-account-code" id="mobileAccountCodeBar" hidden',
+  '<button type="button" class="mobile-account-code-toggle" id="mobileAccountCodeToggle"',
+  '<div class="mobile-account-code-panel" id="mobileAccountCodePanel" hidden',
+  'onclick="toggleMobileAccountCode()"',
+  'onclick="copyAccountCode()"'
+];
+for (const markup of accountCodeMarkup) {
+  if (!html.includes(markup)) {
+    console.error('Account-code UI markup missing:', markup);
+    process.exitCode = 1;
+  }
+}
+const accountCodeApp = readFileSync('js/app.js', 'utf8');
+const accountCodeCss = readFileSync('vaani-profile.css', 'utf8');
+for (const [label, marker] of [
+  ['active-code reader', 'function currentAccountLoginCode()'],
+  ['account-code UI refresh', 'function refreshAccountCodeControls()'],
+  ['mobile reveal handler', 'function toggleMobileAccountCode()'],
+  ['copy handler', 'async function copyAccountCode()']
+]) {
+  if (!accountCodeApp.includes(marker)) {
+    console.error('Account-code behavior missing:', label);
+    process.exitCode = 1;
+  }
+}
+if (!accountCodeCss.includes('@media(max-width:767px)') ||
+    !accountCodeCss.includes('.vp-account-code-card{display:none!important}') ||
+    !accountCodeCss.includes('.mobile-account-code:not([hidden])')) {
+  console.error('Account-code responsive profile/mobile layout is incomplete');
+  process.exitCode = 1;
+}
+if (!html.includes('vaani-profile.css?v=20261001-account-code1') ||
+    !html.includes('js/app.js?v=20261001-account-code1')) {
+  console.error('Account-code asset cache keys are outdated');
+  process.exitCode = 1;
+}
+
 const notificationCss = readFileSync('vaani-defence-feed.css', 'utf8');
 if (!/#view-notifications\s+\.nc-hero::before\s*\{[^}]*content\s*:\s*none\s*!important/i.test(notificationCss)) {
   console.error('Notifications hero is still exposed to the global header glass overlay');
