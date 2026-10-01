@@ -477,6 +477,23 @@ await page.goto(baseURL + '?v=notifications', { waitUntil: 'domcontentloaded' })
 
   for (const viewport of [{ width: 320, height: 740 }, { width: 390, height: 844 }, { width: 768, height: 900 }, { width: 1024, height: 900 }, { width: 1440, height: 1000 }]) {
     await page.setViewportSize(viewport);
+    const directoryLayout = await page.locator('#ncDirectoryGrid').evaluate(element => {
+      const card = element.querySelector('.nc-directory-card');
+      const title = card && card.querySelector('h3');
+      const description = card && card.querySelector('p');
+      return {
+        columns: getComputedStyle(element).gridTemplateColumns.trim().split(/\\s+/).filter(Boolean).length,
+        titleSize: title ? parseFloat(getComputedStyle(title).fontSize) : 0,
+        descriptionDisplay: description ? getComputedStyle(description).display : 'missing',
+        descriptionSize: description ? parseFloat(getComputedStyle(description).fontSize) : 0
+      };
+    });
+    if (viewport.width <= 600) {
+      assert.equal(directoryLayout.columns, 2, 'exam directory should use readable two-column cards at ' + viewport.width + 'px');
+      assert.ok(directoryLayout.titleSize >= 11, 'exam directory titles should remain readable on mobile: ' + JSON.stringify(directoryLayout));
+      assert.notEqual(directoryLayout.descriptionDisplay, 'none', 'exam directory descriptions should remain visible on mobile');
+      assert.ok(directoryLayout.descriptionSize >= 10, 'exam directory descriptions should remain readable on mobile: ' + JSON.stringify(directoryLayout));
+    }
     const layout = await page.locator('#view-notifications .vx-shell').evaluate(element => ({
       width: element.clientWidth,
       scrollWidth: element.scrollWidth,
