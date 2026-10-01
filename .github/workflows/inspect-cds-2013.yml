@@ -1,33 +1,197 @@
-name: Inspect CDS 2013 article blocks
+name: Import CDS 2013 papers
 on:
   push:
     branches: [main]
     paths:
       - ".github/workflows/inspect-cds-2013.yml"
 permissions:
-  contents: read
+  contents: write
 jobs:
-  inspect:
+  import:
     runs-on: ubuntu-latest
     steps:
-      - name: Inspect article structure
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Import, validate, and commit the two papers
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           python -m pip install --quiet beautifulsoup4 requests
-          python - <<'PY'
-          import requests
+          cat > /tmp/import_cds_2013.py <<'PY'
+          import json, re, subprocess
+          from pathlib import Path
           from bs4 import BeautifulSoup
-          urls = [
-            "https://examvictor.com/cds-2013-english-question-paper-1/",
-            "https://examvictor.com/cds-2013-english-question-paper-2/",
-          ]
-          for url in urls:
-            soup=BeautifulSoup(requests.get(url,headers={"User-Agent":"Mozilla/5.0"},timeout=30).text,"html.parser")
+
+          SOURCES = {
+            "I": "https://examvictor.com/cds-2013-english-question-paper-1/",
+            "II": "https://examvictor.com/cds-2013-english-question-paper-2/",
+          }
+          KEYS = {
+            "I": "A B A C A B C B B B C A A C C D A D A C C B C B C B B B D A C B A B C C D D B A D C D B B A B D B C B D D A B D B B B A B B B A A B B C A C C B A B B B C D A B B A D A A C D B B D B C D C D B C C B D D C C A D B A A D C B A D A C B A B B C",
+            "II": "B C A C C A C B C C A B B C C B B B C C C D B C C B B B D B B C D A C D B A B A D B C C C A B C A A A B B B A A A B C B C B D C A C D B C A B A C B C B B D A A B D B D D A A B C A B D A A C C A C D B C D B B A B A D B D A C B D A A B A D B",
+          }
+          SECTIONS = {
+            "I": [(1,15,"Spotting Errors"),(16,35,"Sentence Improvement"),(36,50,"Synonyms"),
+                  (51,56,"Fill in the Blanks"),(57,65,"Reconstructing Passage"),(66,77,"Selecting Words"),
+                  (78,89,"Antonyms"),(90,102,"Ordering of Words in a Sentence"),(103,120,"Reading Comprehension")],
+            "II": [(1,19,"Spotting Errors"),(20,46,"Reading Comprehension"),(47,64,"Ordering of Sentences"),
+                   (65,80,"Ordering of Words in a Sentence"),(81,100,"Synonyms"),(101,120,"Antonyms")],
+          }
+          CONTEXT_RANGES = {"I": [(66,77),(103,120)], "II": [(20,46)]}
+          def section(session,n):
+            for lo,hi,name in SECTIONS[session]:
+              if lo<=n<=hi: return name
+            raise ValueError(f"no section for {session}-{n}")
+          def in_context(session,n):
+            return any(lo<=n<=hi for lo,hi in CONTEXT_RANGES[session])
+          def norm(s):
+            return re.sub(r"\s+"," ",s).strip()
+          def is_noise(s):
+            lo=s.lower()
+            return (not s or lo.startswith(("directions","direction","in this section","in the following",
+              "each question in this section","look at the underlined","choose the most appropriate",
+              "select whichever","mark your answer","answer sheet","q-deta","b-bcrb","do not open",
+              "time allowed","maximum marks","test booklet","spotting errors","sentence improvement",
+              "synonyms","antonyms","comprehension","reading comprehension","ordering of sentences",
+              "ordering of words","reconstructing passage","selecting words","fill in the blank")))
+          def get_underlines(el):
+            found=[]
+            for u in el.find_all(True):
+              style=" ".join([str(u.get("style","")), " ".join(u.get("class",[]))]).lower()
+              if u.name in ("u","ins") or "underline" in style:
+                val=norm(u.get_text(" ",strip=True))
+                if val and val not in found: found.append(val)
+            return found
+          def strip_choice(text):
+            text=norm(text).lstrip("*•–— ")
+            return re.sub(r"^\(?[a-dA-D]\)?[.)\:–-]\s*","",text).strip()
+          def parse(session):
+            import requests
+            url=SOURCES[session]
+            resp=requests.get(url,headers={"User-Agent":"Mozilla/5.0 VAANI-paper-import/1.0"},timeout=45)
+            resp.raise_for_status()
+            soup=BeautifulSoup(resp.text,"html.parser")
             root=soup.select_one(".entry-content")
-            print("\nURL",url,"ROOT",bool(root),"CHILDREN",len(root.find_all(recursive=False)) if root else 0)
-            if not root: continue
-            for i,tag in enumerate(root.find_all(["h1","h2","h3","h4","p","li"])):
-              if i>=180: break
-              if tag.find_parent(["p","li"]): continue
-              txt=" ".join(tag.get_text(" ",strip=True).split())
-              if txt: print(i,tag.name,repr(txt[:280]))
+            if not root: raise RuntimeError(f"entry-content missing: {url}")
+            blocks=[]
+            for el in root.find_all(["h1","h2","h3","h4","p","li"]):
+              if el.find_parent(["p","li"]): continue
+              txt=norm(el.get_text(" ",strip=True))
+              if txt: blocks.append((el.name,el,txt))
+            questions=[]
+            current=None
+            expected=1
+            active_passage=""
+            pending_passage=[]
+            def finish():
+              nonlocal current
+              if not current: return
+              n=current["n"]
+              sec=current["sec"]
+              q=norm(current["q"])
+              q=re.sub(r"\s*No error[.,]?\s*$","",q,flags=re.I).strip()
+              if not q: raise RuntimeError(f"empty prompt {session}-{n}")
+              if sec=="Spotting Errors":
+                frags=current["underlines"][:3]
+                opts=frags+["No error"] if len(frags)==3 else ["Part (a)","Part (b)","Part (c)","No error"]
+              else:
+                opts=current["o"]
+                if len(opts)!=4:
+                  raise RuntimeError(f"{session}-{n} has {len(opts)} options; prompt={q[:160]!r}")
+              rec={"y":2013,"s":session,"n":n,"sec":sec,"q":q,"o":opts,
+                   "ans":"ABCD".index(KEYS[session].split()[n-1])}
+              if current.get("keyword"): rec["keyword"]=current["keyword"]
+              if current.get("passage"): rec["passage"]=current["passage"]
+              questions.append(rec)
+              current=None
+            for tag,el,txt in blocks:
+              # Question numbers are sequential in the source. Ignore numeric references
+              # inside passages unless they match the next expected question exactly.
+              m=re.match(r"^\s*(\d{1,3})[.)]\s*(.*)$",txt)
+              qnum=int(m.group(1)) if m else None
+              qbody=m.group(2).strip() if m else txt
+              unnumbered_first=(session=="II" and expected==1 and
+                                 "lack of winter rains" in txt.lower())
+              if (qnum==expected and 1<=qnum<=120) or unnumbered_first:
+                if current: finish()
+                n=expected
+                prompt=qbody if qnum is not None else txt
+                sec=section(session,n)
+                under=get_underlines(el)
+                current={"n":n,"sec":sec,"q":prompt,"o":[],"underlines":under}
+                if sec in ("Synonyms","Antonyms") and under:
+                  current["keyword"]=under[0]
+                if in_context(session,n):
+                  if pending_passage:
+                    active_passage=norm(" ".join(pending_passage))
+                    pending_passage=[]
+                  if active_passage:
+                    current["passage"]=active_passage
+                expected+=1
+                continue
+              # A passage marker starts a fresh context for the next comprehension/cloze item.
+              if re.match(r"^passage\b",txt,re.I) and in_context(session,expected):
+                active_passage=""
+                pending_passage=[]
+                tail=re.sub(r"^Passage\s*[-–—:]?\s*(?:[IVX]+|\d+)?\s*[:.\-–—]?\s*","",txt,flags=re.I).strip()
+                if tail and not is_noise(tail): pending_passage.append(tail)
+                continue
+              if current:
+                if current["sec"]=="Spotting Errors":
+                  continue
+                if tag=="li":
+                  if len(current["o"])<4:
+                    choice=strip_choice(txt)
+                    if choice: current["o"].append(choice)
+                  continue
+                # Some entries place answer choices as labelled paragraphs.
+                cm=re.match(r"^\(?([a-dA-D])\)?[.)\:]\s*(.+)$",txt)
+                if cm and len(current["o"])<4:
+                  current["o"].append(norm(cm.group(2)))
+                  continue
+                if len(current["o"])<4:
+                  if not is_noise(txt): current["q"] += " "+txt
+                elif in_context(session,expected):
+                  if not is_noise(txt): pending_passage.append(txt)
+              elif in_context(session,expected) and not is_noise(txt):
+                pending_passage.append(txt)
+            if current: finish()
+            if expected!=121 or len(questions)!=120:
+              raise RuntimeError(f"{session}: parsed {len(questions)} questions, next expected={expected}; blocks={len(blocks)}")
+            for i,q in enumerate(questions,1):
+              if q["n"]!=i or len(q["o"])!=4 or not 0<=q["ans"]<4:
+                raise RuntimeError(f"invalid record {session}-{i}: {q}")
+            print(f"{session}: parsed {len(questions)} questions; section counts="+
+                  str({name:sum(q["sec"]==name for q in questions) for _,_,name in SECTIONS[session]}))
+            print(f"{session}: first={questions[0]['q'][:120]!r}; last={questions[-1]['q'][:120]!r}")
+            return questions
+          def main():
+            allq={s:parse(s) for s in ("I","II")}
+            for s,qs in allq.items():
+              path=Path(f"data/pyq/cds-2013-{s}.js")
+              var=f"PYQ_CDS_2013_{s.replace('-','_')}"
+              rows=json.dumps(qs,ensure_ascii=False,indent=2)
+              path.write_text(f"var {var} = {rows};\n",encoding="utf-8")
+            manifest=Path("data/pyq/manifest.js")
+            content=manifest.read_text(encoding="utf-8")
+            if '"cds-2013-I"' not in content:
+              needle='  "cds-2014-I","cds-2014-II","cds-2015-I",'
+              if needle not in content: raise RuntimeError("manifest insertion point missing")
+              content=content.replace(needle,'  "cds-2013-I","cds-2013-II",\n'+needle,1)
+              manifest.write_text(content,encoding="utf-8")
+            subprocess.run(["node","--check","data/pyq/cds-2013-I.js"],check=True)
+            subprocess.run(["node","--check","data/pyq/cds-2013-II.js"],check=True)
+            subprocess.run(["node","scripts/check-quality.mjs"],check=True)
+            subprocess.run(["git","config","user.name","github-actions[bot]"],check=True)
+            subprocess.run(["git","config","user.email","41898282+github-actions[bot]@users.noreply.github.com"],check=True)
+            subprocess.run(["git","rm",".github/workflows/inspect-cds-2013.yml"],check=True)
+            subprocess.run(["git","add","data/pyq/cds-2013-I.js","data/pyq/cds-2013-II.js","data/pyq/manifest.js"],check=True)
+            subprocess.run(["git","commit","-m","Add CDS English papers from 2013"],check=True)
+            subprocess.run(["git","push","origin","HEAD:main"],check=True)
+          if __name__=="__main__": main()
           PY
+          python /tmp/import_cds_2013.py
