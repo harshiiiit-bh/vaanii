@@ -1,4 +1,4 @@
-name: Inspect CDS 2013 article blocks
+name: Inspect CDS 2013 lists
 on:
   push:
     branches: [main]
@@ -10,24 +10,20 @@ jobs:
   inspect:
     runs-on: ubuntu-latest
     steps:
-      - name: Inspect question list markup
+      - name: Show list structure
         run: |
           python -m pip install --quiet beautifulsoup4 requests
           python - <<'PY'
           import requests
           from bs4 import BeautifulSoup
-          checks=[
-            ("I","https://examvictor.com/cds-2013-english-question-paper-1/",["I should do the same","She told the children","I am not telling"]),
-            ("II","https://examvictor.com/cds-2013-english-question-paper-2/",["Lack of winter rains","The young man was well dressed","The salesmen in the shop"]),
-          ]
-          for session,url,terms in checks:
-            soup=BeautifulSoup(requests.get(url,headers={"User-Agent":"Mozilla/5.0"},timeout=30).text,"html.parser")
-            root=soup.select_one(".entry-content")
-            print("\nSESSION",session)
-            for term in terms:
-              el=next((x for x in root.find_all(["li","p"]) if term.lower() in x.get_text(" ",strip=True).lower()),None)
-              print("\nTERM",term,"ELEMENT",el.name if el else None)
-              if el:
-                print("OUTER",str(el)[:5000])
-                print("PARENT",str(el.parent)[:1500])
+          for s,u in [("I","https://examvictor.com/cds-2013-english-question-paper-1/"),("II","https://examvictor.com/cds-2013-english-question-paper-2/")]:
+            root=BeautifulSoup(requests.get(u,headers={"User-Agent":"Mozilla/5.0"}).text,"html.parser").select_one(".entry-content")
+            print("\nSESSION",s)
+            for j,x in enumerate(root.find_all(["ol","ul"])):
+              if x.find_parent(["ol","ul"]) is not None: continue
+              items=x.find_all("li",recursive=False)
+              print("LIST",j,x.name,"start",x.get("start"),"count",len(items))
+              for i,li in enumerate(items[:12]):
+                txt=" ".join(li.get_text(" ",strip=True).split())
+                print("  ",i,repr(txt[:180]),"children",[(c.name,len(c.find_all("li",recursive=False))) for c in li.find_all(["ul","ol"],recursive=False)])
           PY
