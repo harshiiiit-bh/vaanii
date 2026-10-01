@@ -57,6 +57,7 @@
 <link rel="stylesheet" href="vaani-exam-directory-mobile.css?v=20261001-dir3">
 <link rel="stylesheet" href="vaani-upgrade-core.css?v=20261001-upgrade1">
 <link rel="stylesheet" href="vaani-brand-emblem.css?v=20261001-circle1">
+<link rel="stylesheet" href="vaani-info-center.css?v=20261002-info1">
 </head>
 <body data-theme="light">
 
@@ -183,7 +184,7 @@
 <header>
   <div class="topbar">
     <div style="display:flex;align-items:center;gap:14px">
-      <button class="hamburger" id="hamburgerBtn" onclick="toggleMobileNav()" aria-label="Menu">☰</button>
+      <button class="info-trigger" id="infoBtn" onclick="openInfoCenter()" aria-label="Open VAANI information guide" title="VAANI Guide"><span class="info-i">i</span></button>
       <div class="brand"><img class="vaani-brand-logo" src="https://gcdn.picsart.com/cloud-storage/139d6748-1bf1-4286-b8d6-03414b61deb6.png" alt="" width="42" height="42" loading="eager" decoding="async" fetchpriority="high"><span class="brand-name">VAANI</span></div>
     </div>
     <nav class="mainnav" id="vaaniMainNav" aria-label="Main">
@@ -280,6 +281,11 @@
 </div>
 
 <main id="mainContent" tabindex="-1">
+
+<!-- ============ DEDICATED INFO CENTER ============ -->
+<section class="view" id="view-info" aria-labelledby="viTitle">
+  <div id="infoCenterMount"></div>
+</section>
 
 <!-- ============ DASHBOARD ============ -->
 <section class="view active vd-dash" id="view-dashboard">
@@ -1115,29 +1121,7 @@
         <div class="vp-rank-bar bar-wrap"><div class="bar-fill" id="rankBar" style="width:0%"></div></div>
         <p class="vp-rank-hint" id="rankXPText">0 / 100 XP to next learning milestone</p>
         <p class="vp-rank-pace" id="rankPaceHint">Choose a service to view your next milestone pace.</p>
-        <div class="vp-rank-daily-panel" aria-label="XP earning status">
-          <div class="vp-rank-daily-head"><span>Daily XP earning</span><strong id="rankDailyXPHint">Today's XP earned: 0 · UNLIMITED</strong></div>
-          <p class="vp-rank-daily-remaining" id="rankDailyXPRemaining">No daily cap · 3+ day streak = +22 XP/day</p>
-        </div>
-        <p class="vp-rank-disclaimer">VAANI XP tracks learning milestones only; it does not grant or represent an actual military rank or promotion.</p>
-        <details class="vp-xp-rules"><summary>XP rules &amp; deductions</summary>
-          <div class="vp-xp-rules-grid">
-            <section><strong>Ways to earn</strong><ul>
-              <li>Every correct question answer: <strong>+2 XP</strong> — the base XP is identical across questions and exam sources.</li>
-              <li>Clear a grammar topic: +25 XP; clear a synonym match game: +20 XP.</li>
-              <li>Learn a word: +10 XP; complete a Focus Sprint: +5 XP.</li>
-              <li>Combo bonuses, Lucky Spin and Mystery Box rewards add separate activity XP.</li>
-              <li>Reach a 3+ day streak: <strong>+22 XP every active day</strong> from the third day onward.</li>
-            </ul></section>
-            <section><strong>Discipline rules</strong><ul>
-              <li><strong>No daily XP cap.</strong> XP can keep accumulating through genuine study and activity.</li>
-              <li>Accuracy deductions: 60–69% −10 XP; 50–59% −20; 40–49% −45; 33–39% −60; below 33% −80. No accuracy deduction when no question was answered; 70%+ has no accuracy deduction.</li>
-              <li>PYQ exam net-marks deductions after −⅓ negative marking: 70%+ −5; 50–69% −8; 33–49% −12; below 33% −15. Accuracy and net-marks deductions stack.</li>
-              <li>Missing a login day resets the streak and deducts 15 XP; missed-day deductions are capped at 75 XP per return.</li>
-              <li>XP cannot fall below zero. Deductions do not affect your ability to earn more XP later.</li>
-            </ul></section>
-          </div>
-        </details>
+        <button class="btn ghost" type="button" style="margin-top:12px" onclick="openInfoCenter()">ⓘ Open VAANI Guide</button>
         <details class="vp-xp-ledger"><summary>Recent XP transactions</summary>
           <div class="vp-xp-ledger-list" id="rankXPLedger" aria-label="Recent XP transactions"></div>
         </details>
@@ -1726,6 +1710,7 @@
      and add one more <script src="..."> line above. Nothing else to change. -->
 <script src="js/vaani-pyq-taxonomy.js?v=20261001-pyq-audit3"></script>
 <script src="js/vaani-grammar-academy.js"></script>
+<script src="js/vaani-info-center.js?v=20261002-info1"></script>
 <script src="js/app.js?v=20261002-service-rank-xp8"></script>
 <script src="js/vaani-testkit.js"></script>
 <script src="js/vaani-arena.js"></script>
