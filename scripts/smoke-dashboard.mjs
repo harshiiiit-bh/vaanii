@@ -253,7 +253,7 @@ try {
   assert.deepEqual(economy,{first:80,overflow:0,atCap:80,penalty:10,afterPenalty:70,afterLoss:0,earned:80},
     'Daily XP cap must clamp earnings, survive deductions and never be reopened by XP loss');
   const dailyMeter=await page.evaluate(()=>{
-    const original={xp:State.xp,ledger:{...State.dailyXpEarned},activity:{...State.dailyActivity}};
+    const original={xp:State.xp,ledger:{...State.dailyXpEarned},activity:{...State.dailyActivity},xpLedger:[...(State.xpLedger||[])]};
     const today=new Date().toDateString();
     State.dailyXpEarned={[today]:79};State.dailyActivity={[today]:79};
     renderServiceRankProgress();
@@ -272,7 +272,7 @@ try {
   },'Daily XP allowance meter should accurately show near-cap progress and remaining XP');
 
   const accuracy=await page.evaluate(()=>{
-    const original={xp:State.xp,ledger:{...State.dailyXpEarned},activity:{...State.dailyActivity}};
+    const original={xp:State.xp,ledger:{...State.dailyXpEarned},activity:{...State.dailyActivity},xpLedger:[...(State.xpLedger||[])]};
     const today=new Date().toDateString();
     State.xp=20;State.dailyXpEarned={[today]:0};State.dailyActivity={[today]:0};
     const low=awardAccuracyXP(49,'accuracy regression');
@@ -334,7 +334,7 @@ try {
     finishGateEntry();
     const twice={xp:State.xp,streak:State.streak,lastActive:State.lastActive};
     State.xp=original.xp;State.streak=original.streak;State.lastActive=original.lastActive;
-    State.dailyXpEarned=original.ledger;State.dailyActivity=original.activity;
+    State.dailyXpEarned=original.ledger;State.dailyActivity=original.activity;State.xpLedger=original.xpLedger;
     saveState();refreshDashboard();
     return {once,twice};
   });
