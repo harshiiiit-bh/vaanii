@@ -50,3 +50,57 @@
 }
 .vp-prog-tree::-webkit-scrollbar{ width:6px; }
 .vp-prog-tree::-webkit-scrollbar-thumb{ background:var(--line); border-radius:3px; }
+
+/* Account login code — desktop/tablet profile card and compact mobile header reveal. */
+.vp-account-code-card[hidden],.mobile-account-code[hidden],.mobile-account-code-panel[hidden]{display:none!important}
+.vp-account-code-card{
+  display:flex;align-items:center;justify-content:space-between;gap:20px;
+  padding:17px 22px;margin:0 0 20px;flex-wrap:wrap;
+}
+.vp-account-code-copy{min-width:0;flex:1 1 300px}
+.vp-account-code-copy .vp-profile-kicker{display:block;margin-bottom:4px}
+.vp-account-code-copy h3{margin:0;color:var(--text);font-family:var(--serif);font-size:1.02rem;letter-spacing:.035em}
+.vp-account-code-copy p{margin:5px 0 0;color:var(--muted);font-size:.78rem;line-height:1.5;max-width:600px}
+.vp-account-code-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex:0 0 auto;flex-wrap:wrap}
+.vp-account-code-value{
+  display:inline-flex;align-items:center;justify-content:center;min-height:40px;
+  padding:7px 14px;border:1px solid var(--line);border-radius:10px;
+  background:var(--panel2);color:var(--text);font:700 1.05rem/1 var(--mono);
+  letter-spacing:.19em;white-space:nowrap;user-select:all;-webkit-user-select:all;
+}
+#vpCopyAccountCode{white-space:nowrap}
+.mobile-account-code{display:none}
+.mobile-account-code-toggle,.mobile-account-code-copy{
+  appearance:none;-webkit-appearance:none;border:1px solid var(--line);cursor:pointer;
+  font:600 .75rem/1.2 var(--body);color:var(--text);
+}
+.mobile-account-code-toggle:focus-visible,.mobile-account-code-copy:focus-visible{
+  outline:3px solid var(--gold);outline-offset:3px
+}
+@media(max-width:767px){
+  .vp-account-code-card{display:none!important}
+  .mobile-account-code:not([hidden]){
+    display:block;width:100%;box-sizing:border-box;
+    padding:0 calc(var(--container-pad) + var(--safe-r)) 8px calc(var(--container-pad) + var(--safe-l));
+  }
+  .mobile-account-code-toggle{
+    display:flex;align-items:center;gap:8px;width:100%;min-height:36px;
+    padding:7px 11px;border-radius:11px;background:var(--panel);
+    box-shadow:0 2px 8px rgba(22,33,46,.05);text-align:left;
+  }
+  .mobile-account-code-icon{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:6px;background:var(--panel2);color:var(--gold);font-size:1rem}
+  .mobile-account-code-label{font-family:var(--serif);font-size:.72rem;letter-spacing:.07em;text-transform:uppercase}
+  .mobile-code-toggle-hint{margin-left:auto;color:var(--muted);font:500 .64rem/1 var(--mono)}
+  .mobile-account-code-chevron{color:var(--gold);font-size:.95rem;transition:transform .16s ease}
+  .mobile-account-code-toggle[aria-expanded="true"] .mobile-account-code-chevron{transform:rotate(180deg)}
+  .mobile-account-code-panel:not([hidden]){
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    margin-top:6px;padding:10px 11px;border:1px solid var(--line);border-radius:11px;
+    background:var(--panel);box-shadow:0 5px 16px rgba(22,33,46,.08);
+  }
+  .mobile-account-code-detail{display:flex;flex-direction:column;gap:3px;min-width:0}
+  .mobile-account-code-detail>span{color:var(--muted);font:500 .58rem/1.2 var(--mono);letter-spacing:.08em;text-transform:uppercase}
+  #mobileAccountCodeValue{color:var(--text);font:700 .98rem/1.25 var(--mono);letter-spacing:.17em;user-select:all;-webkit-user-select:all}
+  .mobile-account-code-copy{flex:0 0 auto;min-width:64px;min-height:34px;padding:7px 12px;border-radius:9px;background:var(--panel2);border-color:rgba(173,122,36,.36);color:var(--gold-d)}
+  [data-theme="dark"] .mobile-account-code-copy{color:var(--gold-l)}
+}
