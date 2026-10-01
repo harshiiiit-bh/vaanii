@@ -342,7 +342,7 @@
   border:1px solid rgba(201,162,75,.38);
   border-radius:50%;
   background-color:#edf0e9;
-  background-image:url("assets/vaani-officer-pack-v2.webp");
+  background-image:url("https://gcdn.picsart.com/editing-temp/639f1c75-1e07-49c9-9e70-a8b1018c6eba.png");
   background-size:400% 300%;
   background-position:0 0;
   background-repeat:no-repeat;
@@ -376,7 +376,7 @@
   border-radius:16px;
   border:1px solid rgba(201,162,75,.28);
   background-color:rgba(245,244,237,.9);
-  background-image:url("assets/vaani-officer-pack-v2.webp");
+  background-image:url("https://gcdn.picsart.com/editing-temp/639f1c75-1e07-49c9-9e70-a8b1018c6eba.png");
   background-size:400% 300%;
   background-repeat:no-repeat;
   box-shadow:0 8px 20px rgba(8,18,24,.12),inset 0 1px 0 rgba(255,255,255,.7);
@@ -442,4 +442,82 @@
   #vaaniMentor:not(.bad-result) .vc-bubble{
     width:calc(100vw - 82px);
   }
+}
+
+/* Officer VAANI renderer v2: real image element + deterministic 4x3 pose viewport */
+#vaaniMentor:not(.bad-result) .vc-character{
+  position:relative;
+  overflow:hidden;
+  isolation:isolate;
+  background:linear-gradient(145deg,#f4f2e9,#e8ece8)!important;
+}
+#vaaniMentor:not(.bad-result) .vc-character::after{
+  display:none!important;
+}
+#vaaniMentor:not(.bad-result) .vc-character-frame{
+  position:absolute;
+  inset:0;
+  overflow:hidden;
+  border-radius:inherit;
+}
+#vaaniMentor:not(.bad-result) .vc-character-sheet{
+  position:absolute;
+  left:calc(var(--pose-col,0) * -100%);
+  top:calc(var(--pose-row,0) * -100%);
+  width:400%;
+  height:300%;
+  max-width:none;
+  display:block;
+  object-fit:fill;
+  user-select:none;
+  -webkit-user-drag:none;
+  pointer-events:none;
+}
+#vaaniMentor:not(.bad-result) .vc-character-fallback{
+  position:absolute;
+  inset:12%;
+  display:grid;
+  place-items:center;
+  border-radius:30%;
+  background:linear-gradient(145deg,#1a3039,#0d1f27);
+  border:1px solid rgba(215,173,85,.5);
+  color:#f3d890;
+  font:800 .8rem var(--mono,monospace);
+  letter-spacing:.08em;
+  z-index:1;
+}
+#vaaniMentor:not(.bad-result) .vc-character.asset-ready .vc-character-fallback{
+  display:none;
+}
+#vaaniMentor:not(.bad-result) .vc-character-nameplate{
+  position:absolute;
+  left:50%;
+  bottom:5px;
+  transform:translateX(-50%);
+  z-index:4;
+  padding:3px 7px;
+  border-radius:999px;
+  background:rgba(17,31,38,.9);
+  color:#f3dda5;
+  font:800 .42rem var(--mono,monospace);
+  letter-spacing:.09em;
+  white-space:nowrap;
+  pointer-events:none;
+}
+#vaaniMentor:not(.bad-result) .vc-p0{--pose-col:0;--pose-row:0}
+#vaaniMentor:not(.bad-result) .vc-p1{--pose-col:1;--pose-row:0}
+#vaaniMentor:not(.bad-result) .vc-p2{--pose-col:2;--pose-row:0}
+#vaaniMentor:not(.bad-result) .vc-p3{--pose-col:3;--pose-row:0}
+#vaaniMentor:not(.bad-result) .vc-p4{--pose-col:0;--pose-row:1}
+#vaaniMentor:not(.bad-result) .vc-p5{--pose-col:1;--pose-row:1}
+#vaaniMentor:not(.bad-result) .vc-p6{--pose-col:2;--pose-row:1}
+#vaaniMentor:not(.bad-result) .vc-p7{--pose-col:3;--pose-row:1}
+#vaaniMentor:not(.bad-result) .vc-p8{--pose-col:0;--pose-row:2}
+#vaaniMentor:not(.bad-result) .vc-p9{--pose-col:1;--pose-row:2}
+#vaaniMentor:not(.bad-result) .vc-p10{--pose-col:2;--pose-row:2}
+#vaaniMentor:not(.bad-result) .vc-p11{--pose-col:3;--pose-row:2}
+
+.ve-header-mini,
+.ve-surface-mini{
+  background-image:url("https://gcdn.picsart.com/editing-temp/639f1c75-1e07-49c9-9e70-a8b1018c6eba.png")!important;
 }
