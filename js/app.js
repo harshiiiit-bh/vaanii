@@ -4289,6 +4289,7 @@ function openServiceForcePicker(mode){
       const button=document.createElement('button');
       button.type='button';
       button.className='service-force-option'+(current===key?' is-selected':'');
+      button.dataset.force=key;
       button.setAttribute('aria-pressed',current===key?'true':'false');
       button.disabled=__vaaniForceSaving;
       button.addEventListener('click',()=>{void chooseServiceForce(key);});
