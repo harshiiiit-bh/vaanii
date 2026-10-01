@@ -4244,7 +4244,8 @@ function renderServiceRankLadder(){
     const name=document.createElement('span');name.className='vp-service-rank-name';
     name.appendChild(document.createTextNode(rank.name));
     const requirement=document.createElement('small');requirement.className='vp-service-rank-threshold';
-    const previous=progress.allRanks[index-1];
+    const index=progress.allRanks.indexOf(rank);
+    const previous=index>0?progress.allRanks[index-1]:null;
     const stepXP=rank.xp-(previous?previous.xp:0);
     requirement.textContent=rank.xp.toLocaleString('en-IN')+' total XP · +'+stepXP.toLocaleString('en-IN')+' for this step';name.appendChild(requirement);
     const status=document.createElement('span');status.className='vp-service-rank-status';
