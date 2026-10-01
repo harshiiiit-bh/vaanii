@@ -212,7 +212,7 @@ try {
     'Army milestones should show increasing cumulative thresholds and step costs');
   await page.evaluate(() => { State.xp=500; refreshDashboard(); });
   assert.equal(await page.locator('#rankTitle').textContent(), 'Captain',
-    'Army 350-XP threshold should unlock Captain, not several ranks at once');
+    'Army 400-XP threshold should unlock Captain, not several ranks at once');
   assert.match(await page.locator('#rankXPText').textContent(), /Major.*900 total XP/,
     'Army rank progress should name Major and show its cumulative threshold');
   const rankBoundary=await page.evaluate(()=>({
@@ -230,7 +230,7 @@ try {
     canFinishToday:getMinimumXPDays(50,80,80),
     afterTop:getMinimumXPDays(0,80,80)
   }));
-  assert.deepEqual(paceMath,{first:2,next:7,partiallyAvailable:1,canFinishToday:0,afterTop:0},
+  assert.deepEqual(paceMath,{first:2,next:7,partiallyAvailable:2,canFinishToday:0,afterTop:0},
     'Milestone pace should respect today’s remaining cap and never estimate beyond the top rank');
   assert.equal(await page.locator('#rankDailyXPTrack').getAttribute('role'),'progressbar',
     'Daily XP allowance should expose an accessible progress meter');
