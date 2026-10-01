@@ -5092,9 +5092,10 @@ function launchConfetti(){
 async function resetProgress(){
   if(!confirm('Reset all progress? This cannot be undone.'))return;
   if(typeof ACTIVE_CODE==='undefined'||!ACTIVE_CODE){toast('Sign in before resetting account progress.');return;}
-  const previous=JSON.stringify(State),name=State.name,theme=State.theme;
+  const previous=JSON.stringify(State),name=State.name,theme=State.theme,serviceForce=State.serviceForce;
   resetStateForAccount();
-  State.name=name;State.theme=theme;
+  // A learning reset must not erase the aspirant's service preference.
+  State.name=name;State.theme=theme;State.serviceForce=serviceForce;
   document.body.setAttribute('data-theme',theme);
   try{
     if(!await persistCombinedAccount())throw new Error('Account progress save failed');
