@@ -244,10 +244,14 @@ await page.goto(baseURL + '?v=notifications', { waitUntil: 'domcontentloaded' })
   assert.equal(await page.locator('#vxBoardResultsList .vx-resource-row').count(), 1, 'link board should separate recent results');
   assert.equal(await page.locator('#vxBoardAdmitList .vx-resource-row').count(), 1, 'link board should separate admit cards');
   assert.equal(await page.locator('#vxBoardKeysList .vx-resource-row').count(), 1, 'link board should separate answer keys');
+  const jobRowCount = page.locator('#vxBoardJobsList .vx-resource-row');
+  const jobTotal = Number((await page.locator('#vxBoardJobsCount').innerText()).trim());
+  const jobPreview = await jobRowCount.count();
+  assert.equal(jobPreview, Math.min(6, jobTotal), 'job board should begin with a six-item preview');
   await page.locator('[data-vx-board-more="jobs"]').click();
-  assert.equal(await page.locator('#vxBoardJobsList .vx-resource-row').count(), 7, 'View all should expand the job list');
+  assert.equal(await jobRowCount.count(), jobTotal, 'View all should reveal every job in the current result set');
   await page.locator('[data-vx-board-more="jobs"]').click();
-  assert.equal(await page.locator('#vxBoardJobsList .vx-resource-row').count(), 6, 'Show fewer should collapse the job list');
+  assert.equal(await jobRowCount.count(), Math.min(6, jobTotal), 'Show fewer should restore the six-item preview');
   await page.locator('#vx-links > summary').click();
   assert.equal(await page.locator('#vx-links').evaluate(element => element.open), false, 'the official links panel should collapse on second activation');
 
