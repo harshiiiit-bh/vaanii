@@ -152,8 +152,7 @@
   function closeRecovery(){
     const wrap=document.getElementById('vaaniMentor');
     if(!wrap)return;
-    wrap.classList.remove('bad-result','show');
-    wrap.innerHTML='';
+    wrap.remove();
     ensure();
   }
 
@@ -172,10 +171,6 @@
     }
   }
 
-  document.addEventListener('click',function(e){
-    const b=e.target.closest?.('[data-view]');
-    if(b)window.setTimeout(onRoute,260);
-  });
   window.addEventListener('hashchange',()=>window.setTimeout(onRoute,300));
   window.addEventListener('load',()=>window.setTimeout(onRoute,1200));
 })();
