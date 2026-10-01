@@ -482,7 +482,7 @@ await page.goto(baseURL + '?v=notifications', { waitUntil: 'domcontentloaded' })
       const title = card && card.querySelector('h3');
       const description = card && card.querySelector('p');
       return {
-        columns: getComputedStyle(element).gridTemplateColumns.trim().split(/\\s+/).filter(Boolean).length,
+        columns: getComputedStyle(element).gridTemplateColumns.trim().split(/\s+/).filter(Boolean).length,
         titleSize: title ? parseFloat(getComputedStyle(title).fontSize) : 0,
         descriptionDisplay: description ? getComputedStyle(description).display : 'missing',
         descriptionSize: description ? parseFloat(getComputedStyle(description).fontSize) : 0
