@@ -1,4 +1,4 @@
-/* VAANI emblem integration — artwork is used as supplied. */
+/* VAANI emblem integration — source artwork is displayed without cropping or decoration. */
 .brand{gap:9px}
 .vaani-brand-logo{
   display:block;
@@ -7,11 +7,29 @@
   flex:0 0 auto;
   object-fit:contain;
   object-position:center;
-  border-radius:50%;
-  background:#111820;
-  box-shadow:0 0 0 1px rgba(201,162,75,.42),0 2px 10px rgba(0,0,0,.18);
+  border:0;
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
 }
 .brand-name{line-height:1;letter-spacing:.08em}
+.gate-logo-wrap{
+  position:relative;
+  width:clamp(78px,8vw,96px);
+  height:clamp(78px,8vw,96px);
+  margin-bottom:14px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.gate-emblem-image{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  object-position:center;
+}
 @media (max-width:520px){
   .vaani-brand-logo{width:34px;height:34px}
+  .gate-logo-wrap{width:78px;height:78px}
 }
