@@ -2292,6 +2292,7 @@ var PYQ_CDS_2017_II = [
     "s": "II",
     "n": 113,
     "sec": "Antonyms",
+    "keyword": "commensurate",
     "q": "Whether the rewards are in commensurate with the efforts or not, a society will always have workaholics and the shirk work groups.",
     "o": [
       "disproportionate",
@@ -2312,6 +2313,7 @@ var PYQ_CDS_2017_II = [
     "s": "II",
     "n": 114,
     "sec": "Antonyms",
+    "keyword": "emaciated",
     "q": "Wars leave behind a large number of emaciated soldiers in the camps of both the victorious and the vanquished.",
     "o": [
       "hefty",
@@ -2332,6 +2334,7 @@ var PYQ_CDS_2017_II = [
     "s": "II",
     "n": 115,
     "sec": "Antonyms",
+    "keyword": "mammoth",
     "q": "There was a mammoth gathering to listen to the leader.",
     "o": [
       "negligible",
@@ -2352,6 +2355,7 @@ var PYQ_CDS_2017_II = [
     "s": "II",
     "n": 116,
     "sec": "Antonyms",
+    "keyword": "hilarious",
     "q": "The audience thoroughly enjoyed the hilarious drama.",
     "o": [
       "amusing",
@@ -2372,6 +2376,7 @@ var PYQ_CDS_2017_II = [
     "s": "II",
     "n": 117,
     "sec": "Antonyms",
+    "keyword": "erudition",
     "q": "The writer’s erudition in science is revealed in every page of the book.",
     "o": [
       "unenlightened",
@@ -2392,6 +2397,7 @@ var PYQ_CDS_2017_II = [
     "s": "II",
     "n": 118,
     "sec": "Antonyms",
+    "keyword": "momentous",
     "q": "The seminar which Ravi organised proved to be momentous event.",
     "o": [
       "trivial",
@@ -2412,6 +2418,7 @@ var PYQ_CDS_2017_II = [
     "s": "II",
     "n": 119,
     "sec": "Antonyms",
+    "keyword": "vindicates",
     "q": "The question is not whether the court vindicates him with regard to his involvement in the case, but how he feels about it.",
     "o": [
       "reprieves",
@@ -2432,6 +2439,7 @@ var PYQ_CDS_2017_II = [
     "s": "II",
     "n": 120,
     "sec": "Antonyms",
+    "keyword": "ecclesiastical",
     "q": "In those days many monarchs enjoyed vast ecclesiastical powers.",
     "o": [
       "permanent",
