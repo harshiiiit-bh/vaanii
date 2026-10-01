@@ -10,6 +10,18 @@ const context = await browser.newContext({
   reducedMotion: 'reduce'
 });
 const page = await context.newPage();
+await page.addInitScript(() => {
+  window.__vaaniClipboardWrites = [];
+  try {
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: { writeText: async value => { window.__vaaniClipboardWrites.push(String(value)); } }
+    });
+    window.__vaaniClipboardMockInstalled = true;
+  } catch (error) {
+    window.__vaaniClipboardMockInstalled = false;
+  }
+});
 const sharedArenaFixture = Array.from({ length: 12 }, (_, i) => ({
   code: '',
   pid: 'legacy-cadet-' + String(i + 1).padStart(2, '0'),
@@ -773,6 +785,21 @@ try {
     initials:String(State.name||'Cadet').trim().split(/\s+/).filter(Boolean).slice(0,2).map(part=>part[0].toUpperCase()).join(''),
     expectedXP:String(State.xp||0)
   }));
+  const profileAccountCode = await page.evaluate(() => String(ACTIVE_CODE||''));
+  assert.match(profileAccountCode,/^\d{6}$/, 'Active login code should contain exactly six digits');
+  assert.ok(await page.locator('#vpAccountCodeCard').isVisible(),
+    'Desktop/tablet Profile should show the account code card');
+  assert.equal((await textOf('#vpAccountCodeValue')).replace(/\D/g,''),profileAccountCode,
+    'Profile account code should match the active account');
+  assert.equal(await page.locator('#mobileAccountCodeBar').isVisible(),false,
+    'Mobile-only account code action should remain hidden on desktop');
+  assert.equal(await page.evaluate(() => window.__vaaniClipboardMockInstalled),true,
+    'Clipboard test harness did not install');
+  await page.evaluate(() => { window.__vaaniClipboardWrites=[]; });
+  await page.locator('#vpCopyAccountCode').click();
+  await page.waitForFunction(() => window.__vaaniClipboardWrites?.length===1, null, {timeout:3000});
+  assert.deepEqual(await page.evaluate(() => window.__vaaniClipboardWrites),[profileAccountCode],
+    'Desktop Copy code button should copy the active account code');
   assert.equal((await page.locator('#profName').textContent()).trim(),profileState.name+"'s Service File",
     'Profile hero does not show the current account');
   assert.equal((await page.locator('#vpProfileAvatar').textContent()).trim(),profileState.initials,
@@ -1140,8 +1167,38 @@ try {
   const academyMobile = await page.evaluate(() => ({ width:innerWidth, scrollWidth:document.documentElement.scrollWidth }));
   assert.ok(academyMobile.scrollWidth <= academyMobile.width + 2, 'Horizontal overflow on mobile Academy: ' + JSON.stringify(academyMobile));
   console.log('PASS mobile Academy: all four cards fit a 390px viewport');
+  await page.setViewportSize({width:390,height:844});
   await clickMainView('profile');
-
+  const mobileAccountCode = await page.evaluate(() => String(ACTIVE_CODE||''));
+  assert.match(mobileAccountCode,/^\d{6}$/, 'Mobile account code should match an active six-digit code');
+  assert.equal(await page.locator('#vpAccountCodeCard').isVisible(),false,
+    'The desktop account-code card should be hidden on phones');
+  assert.ok(await page.locator('#mobileAccountCodeBar').isVisible(),
+    'Mobile should show the Login code option at the top');
+  assert.equal(await page.locator('#mobileAccountCodePanel').isVisible(),false,
+    'Mobile login code should stay hidden until the user taps the option');
+  assert.equal(await page.locator('#mobileAccountCodeToggle').getAttribute('aria-expanded'),'false',
+    'Mobile login code toggle should start collapsed');
+  await page.locator('#mobileAccountCodeToggle').click();
+  assert.ok(await page.locator('#mobileAccountCodePanel').isVisible(),
+    'Tapping Login code should reveal the code panel');
+  assert.equal((await textOf('#mobileAccountCodeValue')).replace(/\D/g,''),mobileAccountCode,
+    'Mobile reveal should show the current account code');
+  assert.equal(await page.locator('#mobileAccountCodeToggle').getAttribute('aria-expanded'),'true',
+    'Mobile login code toggle should expose its expanded state');
+  await page.evaluate(() => { window.__vaaniClipboardWrites=[]; });
+  await page.locator('#mobileAccountCodeCopy').click();
+  await page.waitForFunction(() => window.__vaaniClipboardWrites?.length===1, null, {timeout:3000});
+  assert.deepEqual(await page.evaluate(() => window.__vaaniClipboardWrites),[mobileAccountCode],
+    'Mobile Copy button should copy the active account code');
+  await page.locator('#mobileAccountCodeToggle').click();
+  assert.equal(await page.locator('#mobileAccountCodePanel').isVisible(),false,
+    'Tapping the open Login code option should hide the code panel');
+  assert.equal(await textOf('#mobileAccountCodeValue'),'',
+    'Hidden mobile login code should be cleared from the visible field');
+  assert.equal(await page.locator('#mobileAccountCodeToggle').getAttribute('aria-expanded'),'false',
+    'Mobile login code toggle should return to collapsed state');
+  console.log('PASS Account code: desktop profile display/copy and mobile top-bar reveal/hide/copy');
 
   console.log('PASS mobile layout: dashboard, vocabulary, Book Reading and profile fit a 390px viewport');
 
