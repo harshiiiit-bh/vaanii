@@ -627,8 +627,8 @@ try {
   await page.waitForFunction(() => document.getElementById('gate')?.classList.contains('hide'), null, { timeout: 15000 });
   await page.waitForTimeout(900);
   await assertVisibleText('#continueTitle', 'Dashboard after saved-session reload');
-  assert.equal(await page.evaluate(() => State.serviceForce), 'army',
-    'Chosen service did not persist when the account resumed');
+  assert.equal(await page.evaluate(() => State.serviceForce), 'navy',
+    'The active account service did not persist when the account resumed');
   assert.equal(await page.locator('#serviceForcePicker').count(), 0,
     'Returning account with a saved service should not be prompted again');
   assert.ok(await page.locator('#roadmapTrack .rm-node').count() > 0, 'Roadmap was empty after saved-session reload');
