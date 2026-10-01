@@ -40,8 +40,39 @@ if (/\\n\s*<link\b/i.test(html)) {
 }
 // Keep the supplied VAANI emblem consistent across the page, browser tab and install metadata.
 const vaaniLogoUrl = 'https://gcdn.picsart.com/cloud-storage/139d6748-1bf1-4286-b8d6-03414b61deb6.png';
-const brandingChecks = [
-  ['header logo', new RegExp('<img\\b(?=[^>]*\\bclass=["\\']vaani-brand-logo["\\'])(?=[^>]*\\bsrc=["\\']' + vaaniLogoUrl.replace(/[.*+?^${}()|[\\]\\]/g, '\\const notificationCss = readFileSync('vaani-defence-feed.css', 'utf8');') + '["\\'])[^>]*>', 'i')],
+const requiredBrandingMarkup = [
+  ['header logo', '<img class="vaani-brand-logo" src="' + vaaniLogoUrl + '"'],
+  ['welcome logo', '<img class="gate-emblem-image" src="' + vaaniLogoUrl + '"'],
+  ['browser tab PNG favicon', '<link rel="icon" type="image/png" href="' + vaaniLogoUrl + '">'],
+  ['Apple touch icon', '<link rel="apple-touch-icon" href="' + vaaniLogoUrl + '">'],
+  ['social preview image', '<meta property="og:image" content="' + vaaniLogoUrl + '">']
+];
+for (const [label, markup] of requiredBrandingMarkup) {
+  if (!html.includes(markup)) {
+    console.error('Branding asset missing or inconsistent:', label);
+    process.exitCode = 1;
+  }
+}
+try {
+  const manifest = JSON.parse(readFileSync('manifest.webmanifest', 'utf8'));
+  if (!manifest.icons?.some(icon => icon.src === vaaniLogoUrl && icon.type === 'image/png')) {
+    console.error('PWA manifest icon does not use the supplied VAANI emblem');
+    process.exitCode = 1;
+  }
+} catch (error) {
+  console.error('PWA manifest is invalid:', error.message);
+  process.exitCode = 1;
+}
+if (!html.includes('vaani-brand-emblem.css?v=20261001-logo2')) {
+  console.error('VAANI emblem styling cache key is outdated');
+  process.exitCode = 1;
+}
+if (html.includes('editing-temp/')) {
+  console.error('Temporary image URL leaked into page branding');
+  process.exitCode = 1;
+}
+
+const notificationCss = readFileSync('vaani-defence-feed.css', 'utf8');') + '["\\'])[^>]*>', 'i')],
   ['welcome logo', new RegExp('<img\\b(?=[^>]*\\bclass=["\\']gate-emblem-image["\\'])(?=[^>]*\\bsrc=["\\']' + vaaniLogoUrl.replace(/[.*+?^${}()|[\\]\\]/g, '\\const notificationCss = readFileSync('vaani-defence-feed.css', 'utf8');') + '["\\'])[^>]*>', 'i')],
 ];
 for (const [label, pattern] of brandingChecks) {
