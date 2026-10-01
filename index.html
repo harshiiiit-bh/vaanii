@@ -1100,9 +1100,32 @@
         <div class="vp-service-rank-force" id="serviceRankForce">Choose a service to view its officer ranks.</div>
         <div class="vp-rank-bar bar-wrap"><div class="bar-fill" id="rankBar" style="width:0%"></div></div>
         <p class="vp-rank-hint" id="rankXPText">0 / 100 XP to next learning milestone</p>
-        <p class="vp-rank-daily-hint" id="rankDailyXPHint">XP earned today: 0 / 80</p>
+        <p class="vp-rank-pace" id="rankPaceHint">Choose a service to view your next milestone pace.</p>
+        <div class="vp-rank-daily-panel" aria-label="Daily XP allowance">
+          <div class="vp-rank-daily-head"><span>Daily earning allowance</span><strong id="rankDailyXPHint">Today's XP earned: 0 / 80</strong></div>
+          <div class="vp-rank-daily-track" id="rankDailyXPTrack" role="progressbar" aria-label="XP earned today" aria-valuemin="0" aria-valuemax="80" aria-valuenow="0" aria-valuetext="0 of 80 XP earned; 80 XP remaining">
+            <span id="rankDailyXPFill"></span>
+          </div>
+          <p class="vp-rank-daily-remaining" id="rankDailyXPRemaining">80 XP remaining today</p>
+        </div>
         <p class="vp-rank-disclaimer">VAANI XP tracks learning milestones only; it does not grant or represent an actual military rank or promotion.</p>
-        <details class="vp-xp-rules"><summary>XP rules &amp; deductions</summary><p>Earn up to 80 XP per day. A completed quiz below 50% accuracy deducts 10 XP. Each missed login day resets the streak and deducts 15 XP, up to 75 XP per return. Deductions do not restore daily earning capacity.</p></details>
+        <details class="vp-xp-rules"><summary>XP rules &amp; deductions</summary>
+          <div class="vp-xp-rules-grid">
+            <section><strong>Ways to earn</strong><ul>
+              <li>Quiz accuracy: 50–59% +2 XP; 60–69% +4; 70–79% +6; 80–89% +8; 90–99% +10; 100% +12.</li>
+              <li>Clear a grammar topic: +25 XP.</li>
+              <li>Clear a match game: +20 XP.</li>
+              <li>Learn a word: +10 XP; complete a Focus Sprint: +5 XP.</li>
+              <li>Correct PYQ or quick answer: +2 XP. Combo, Lucky Spin and Mystery Box rewards vary.</li>
+            </ul></section>
+            <section><strong>Discipline rules</strong><ul>
+              <li>Maximum 80 earned XP per local calendar day, shared across activities and devices for the account.</li>
+              <li>Below 50% on a completed scored quiz: −10 XP.</li>
+              <li>Each missed login day: −15 XP and the streak resets; missed-day deductions are capped at 75 XP per return.</li>
+              <li>XP cannot fall below zero. Losing XP never refills the daily earning allowance.</li>
+            </ul></section>
+          </div>
+        </details>
         <details class="vp-service-rank-ladder" id="serviceRankLadder">
           <summary>View complete rank ladder</summary>
           <div class="vp-service-rank-list" id="serviceRankList"></div>
