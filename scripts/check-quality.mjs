@@ -46,7 +46,7 @@ const requiredBrandingMarkup = [
   ['welcome logo', '<img class="gate-emblem-image" src="' + vaaniLogoUrl + '"'],
   ['browser tab PNG favicon', '<link rel="icon" type="image/png" sizes="32x32" href="' + vaaniFaviconHref + '">'],
   ['Apple touch icon', '<link rel="apple-touch-icon" href="' + vaaniLogoUrl + '">'],
-  ['social preview image', '<meta property="og:image" content="' + vaaniLogoUrl + '>']
+  ['social preview image', '<meta property="og:image" content="' + vaaniLogoUrl + '">']
 ];
 for (const [label, markup] of requiredBrandingMarkup) {
   if (!html.includes(markup)) {

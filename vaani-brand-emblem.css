@@ -1,4 +1,4 @@
-/* VAANI emblem integration — source artwork is displayed without cropping or decoration. */
+/* VAANI emblem integration — original artwork is preserved; only canvas corners are clipped. */
 .brand{gap:9px}
 .vaani-brand-logo{
   display:block;
