@@ -1716,3 +1716,7 @@ var PYQ_CDS_2014_I = [
     "ans": 1
   }
 ];
+
+PYQ_CDS_2014_I.forEach(function(q){
+  if(q.sec==='Spotting Errors') q.q=q.o.slice(0,3).join(' | ');
+});
