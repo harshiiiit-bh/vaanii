@@ -214,7 +214,7 @@ try {
         const inlineLabels = [...q.q.matchAll(/\(([abc])\)/gi)].map(match => match[1].toLowerCase()).slice(0, 3);
         const hasInlineLabels = inlineLabels.join('') === 'abc';
         const pipeParts = q.q.split(/\s*\|\s*/).map(part => part.trim()).filter(Boolean);
-        const hasPipeParts = pipeParts.length === 3;
+        const hasPipeParts = pipeParts.length === 3 || (pipeParts.length === 4 && /^no\s+error\.?$/i.test(pipeParts[3]));
         let optionCursor = 0;
         const optionParts = q.o.slice(0, 3).map(option => String(option).trim());
         const hasChoiceParts = optionParts.length === 3 && optionParts.every(phrase => {
