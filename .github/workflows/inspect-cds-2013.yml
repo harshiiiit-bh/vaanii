@@ -33,29 +33,32 @@ jobs:
           }
           KEYS = {
             "I": """A B A C A B C B B B
-C A A C C D A D A C
-C B C B C B B B D A
-C B A B C C D D B A
-D C D B B A B D B C
-B D D A B D B B B A
-B B B A A B B C A C
-C B A B B B C D A B
-B A D A A C D B B D
-B C D C D B C C B D
-D C C A D B A A D C
-B A D A C B A B B C""".split(),
+          C A A C C D A D A C
+          C B C B C B B B D A
+          C B A B C C D D B A
+          D C D B B A B D B C
+          B D D A B D B B B A
+          B B B A A B B C A C
+          C B A B B B C D A B
+          B A D A A C D B B D
+          B C D C D B C C B D
+          D C C A D B A A D C
+          B A D A C B A B B C""".split(),
             "II": """B C A C C A C B C C
-A B B C C B B B C C
-C D B C C B B B D B
-B C D A C D B A B A
-D B C C C C A B C A
-A B B B A A A B C B
-C B D C A C D B C A
-B A C B C B B D A A
-B D B D D A A B C A
-B D A A C C A C D B
-C D B B A B A D B D
-A C B D A A B A D B""".split(),(16,35,"Sentence Improvement"),(36,50,"Synonyms"),
+          A B B C C B B B C C
+          C D B C C B B B D B
+          B C D A C D B A B A
+          D B C C C C A B C A
+          A B B B A A A B C B
+          C B D C A C D B C A
+          B A C B C B B D A A
+          B D B D D A A B C A
+          B D A A C C A C D B
+          C D B B A B A D B D
+          A C B D A A B A D B""".split(),
+          }
+          SECTIONS = {
+            "I": [(1,15,"Spotting Errors"),(16,35,"Sentence Improvement"),(36,50,"Synonyms"),
                   (51,56,"Fill in the Blanks"),(57,65,"Reconstructing Passage"),(66,77,"Selecting Words"),
                   (78,89,"Antonyms"),(90,102,"Ordering of Words in a Sentence"),(103,120,"Reading Comprehension")],
             "II": [(1,19,"Spotting Errors"),(20,46,"Reading Comprehension"),(47,64,"Ordering of Sentences"),
