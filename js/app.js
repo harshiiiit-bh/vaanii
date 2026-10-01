@@ -4258,7 +4258,7 @@ function renderServiceRankProgress(){
   const bar=document.getElementById('rankBar'),hint=document.getElementById('rankXPText');
   const dailyHint=document.getElementById('rankDailyXPHint');
   if(!title||!bar||!hint)return;
-  const todayEarned=Math.max(0,Math.floor(Number(State.dailyXpEarned&&State.dailyXpEarned[dailyXPDayKey()])||0));
+  const todayEarned=getTodayXPEarned();
   if(dailyHint)dailyHint.textContent="Today's XP earned: "+todayEarned+' / '+VAANI_DAILY_XP_CAP;
   if(!meta||!progress.allRanks.length){
     title.textContent='Officer Aspirant';
