@@ -1396,6 +1396,62 @@ function pvPaperSections(year, session, exam){
 }
 function pvTopics(){ return [...new Set(PYQ_ALL.map(q=>q.sec))]; }
 
+/* ---- topic discovery grouping ----
+   The question bank keeps its original topic labels and question data.
+   This layer only controls how those skills are presented in the
+   Topic-Wise Practice browser.
+   Group only concepts that naturally belong together; anything that
+   doesn't fit remains in "Other Skills" rather than being forced into
+   a category. */
+const PV_TOPIC_GROUP_ORDER=['parts-of-speech','determiners','verb-system','sentence-structure','usage-accuracy','vocabulary','reading-exam','other'];
+const PV_TOPIC_GROUPS={
+  'parts-of-speech':{title:'Parts of Speech',desc:'Core word classes — the building blocks of English.',rank:10},
+  'determiners':{title:'Determiners & Articles',desc:'Articles, demonstratives, quantifiers and noun-reference choices.',rank:20},
+  'verb-system':{title:'Verb System',desc:'Verb forms, tense, agreement, modals and related verb patterns.',rank:30},
+  'sentence-structure':{title:'Sentence Structure & Transformation',desc:'Clauses, sentence relationships and structural transformations.',rank:40},
+  'usage-accuracy':{title:'Usage & Accuracy',desc:'Grammar accuracy, word usage and precision-focused practice.',rank:50},
+  'vocabulary':{title:'Vocabulary & Expressions',desc:'Meaning, word choice, idioms and commonly tested vocabulary.',rank:60},
+  'reading-exam':{title:'Reading & Exam Skills',desc:'Comprehension, arrangement and exam-pattern question types.',rank:70},
+  'other':{title:'Other Skills',desc:'Topics that do not belong naturally in another group.',rank:999}
+};
+const PV_PARTS_ORDER=['parts of speech','parts of speech and word classes','word classes','noun','nouns','pronoun','pronouns','verb','verbs','adjective','adjectives','adverb','adverbs','preposition','prepositions','conjunction','conjunctions','interjection','interjections'];
+function pvTopicNorm(value){
+  return String(value==null?'':value).toLocaleLowerCase().replace(/[‐‑‒–—]/g,'-').replace(/&/g,' and ').replace(/\bgrammar\b/g,'').replace(/\s+/g,' ').trim();
+}
+function pvTopicGroupInfo(topic){
+  const compact=pvTopicNorm(topic).replace(/[().,:]/g,'').replace(/\s+/g,' ').trim();
+  const partIndex=PV_PARTS_ORDER.indexOf(compact);
+  if(partIndex>=0)return {id:'parts-of-speech',order:partIndex,label:PV_TOPIC_GROUPS['parts-of-speech']};
+  const determinerTerms=['article','articles','determiner','determiners','demonstrative','demonstratives','quantifier','quantifiers','possessives','possessive determiners'];
+  const determinerIndex=determinerTerms.indexOf(compact);
+  if(determinerIndex>=0)return {id:'determiners',order:determinerIndex,label:PV_TOPIC_GROUPS.determiners};
+  const verbTerms=['verb forms','verb','verbs','tense','tenses','subject-verb agreement','subject verb agreement','sequence of tenses','modals','modal verbs','non-finite verbs','non finite verbs','gerunds and infinitives','gerunds infinitives','gerunds','infinitives','participles'];
+  const verbIndex=verbTerms.indexOf(compact);
+  if(verbIndex>=0)return {id:'verb-system',order:verbIndex,label:PV_TOPIC_GROUPS['verb-system']};
+  const structureTerms=['clauses','clause','phrases','phrase','conditionals','conditional sentences','question tags','comparison','comparisons','sentence structure','sentence transformations','sentence transformation','parallelism','inversion','modifier placement','active passive voice','active passive','active and passive voice','direct indirect speech','narration','reported speech','voice'];
+  const structureIndex=structureTerms.indexOf(compact);
+  if(structureIndex>=0)return {id:'sentence-structure',order:structureIndex,label:PV_TOPIC_GROUPS['sentence-structure']};
+  const usageTerms=['word usage','commonly used words','homonyms and homophones','homonyms homophones','confused words','prepositions and determiners','fill in the blanks','sentence completion','sentence correction','sentence improvement','spotting errors','punctuation','capitalization','word formation','use of phrasal verbs'];
+  const usageIndex=usageTerms.indexOf(compact);
+  if(usageIndex>=0)return {id:'usage-accuracy',order:usageIndex,label:PV_TOPIC_GROUPS['usage-accuracy']};
+  const vocabTerms=['synonyms','antonyms','idioms and phrases','one word substitution','adaptation of borrowed words','word meanings','vocabulary','word choice','usage of paired words'];
+  const vocabIndex=vocabTerms.indexOf(compact);
+  if(vocabIndex>=0)return {id:'vocabulary',order:vocabIndex,label:PV_TOPIC_GROUPS.vocabulary};
+  const readingTerms=['reading comprehension','comprehension','cloze test','selecting words','jumbled sentences','sentence arrangement (pqrs)','ordering of sentences','ordering of words in a sentence','correlating sentences','matching list'];
+  const readingIndex=readingTerms.indexOf(compact);
+  if(readingIndex>=0)return {id:'reading-exam',order:readingIndex,label:PV_TOPIC_GROUPS['reading-exam']};
+  return {id:'other',order:0,label:PV_TOPIC_GROUPS.other};
+}
+function pvTopicGroups(topicList){
+  const buckets={};
+  topicList.forEach((topic,index)=>{const info=pvTopicGroupInfo(topic);if(!buckets[info.id])buckets[info.id]=[];buckets[info.id].push({topic,order:info.order,sourceIndex:index});});
+  return PV_TOPIC_GROUP_ORDER.filter(id=>buckets[id]&&buckets[id].length).map(id=>{
+    const meta=PV_TOPIC_GROUPS[id];
+    const items=buckets[id].slice().sort((a,b)=>a.order!==b.order?a.order-b.order:a.topic.localeCompare(b.topic));
+    return {id,title:meta.title,desc:meta.desc,rank:meta.rank,items};
+  });
+}
+
 /* ---- Military Archive — dynamic era bucketing ----
    Papers are grouped into 4-year Era blocks starting at 2009 (2009–2012,
    2013–2016, 2017–2020, ...). Nothing here hardcodes a specific year or a
@@ -1685,16 +1741,27 @@ function pvHomeHTML(){
 
   const topicAcc = pyqTopicAccuracy();
   const topicList = pvTopics();
-  const topicsHTML = topicList.map(t=>{
-    const count = PYQ_ALL.filter(q=>q.sec===t).length;
-    const ta = topicAcc.find(x=>x.sec===t);
-    const accLabel = ta ? `${ta.acc}%` : 'New';
+  const topicGroups = pvTopicGroups(topicList);
+  const topicCardsHTML = items => items.map(entry=>{
+    const t=entry.topic,count=PYQ_ALL.filter(q=>q.sec===t).length,ta=topicAcc.find(x=>x.sec===t),accLabel=ta?`${ta.acc}%`:'New';
     return `<button type="button" class="pv-topic-card" data-topic="${encodeURIComponent(t)}" aria-label="Practice ${escapeHtmlVaani(t)}, ${count} questions">
       <span class="pv-topic-emoji" aria-hidden="true">${pvTopicIcon(t)}</span>
       <span class="pv-topic-copy"><span class="pv-topic-name">${escapeHtmlVaani(t)}</span><span class="pv-topic-count">${count} questions</span><span class="pv-topic-hint">${escapeHtmlVaani(pvTopicHint(t))}</span></span>
       <span class="pv-topic-side"><span class="pv-topic-acc ${pvAccBadgeClass(ta?ta.acc:null)}">${accLabel}</span><span class="pv-topic-open">Practice <b aria-hidden="true">→</b></span></span>
     </button>`;
   }).join('');
+  const topicsHTML = topicGroups.map(group=>`
+    <section class="pv-topic-group" data-topic-group="${group.id}">
+      <div class="pv-topic-group-head">
+        <div class="pv-topic-group-copy">
+          <span class="pv-topic-group-kicker">SECTION</span>
+          <strong>${escapeHtmlVaani(group.title)}</strong>
+          <small>${escapeHtmlVaani(group.desc)}</small>
+        </div>
+        <span class="pv-topic-group-count">${group.items.length} skill${group.items.length!==1?'s':''}</span>
+      </div>
+      <div class="pv-topic-grid pv-topic-subgrid">${topicCardsHTML(group.items)}</div>
+    </section>`).join('');
 
   const recent = st.history.slice(0,5);
   const recentHTML = recent.length ? recent.map(h=>{
@@ -1757,8 +1824,12 @@ function pvFilterTopicCards(value){
   const term=String(value||'').trim().toLocaleLowerCase();
   const cards=Array.from(grid.querySelectorAll('.pv-topic-card'));let visible=0;
   cards.forEach(card=>{
-    const topic=String(card.dataset.topic||'').toLocaleLowerCase();
+    const topic=decodeURIComponent(String(card.dataset.topic||'')).toLocaleLowerCase();
     const show=!term||topic.includes(term);card.hidden=!show;if(show)visible++;
+  });
+  grid.querySelectorAll('.pv-topic-group').forEach(group=>{
+    const groupVisible=group.querySelectorAll('.pv-topic-card:not([hidden])').length;
+    group.hidden=groupVisible===0;
   });
   const results=document.getElementById('pvTopicResults');
   if(results)results.textContent=term?(visible+' of '+cards.length+' topics'):(cards.length+' topics');
