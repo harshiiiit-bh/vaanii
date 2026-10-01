@@ -36,7 +36,7 @@ try{
     page.evaluate(()=>logout())
   ]);
   await page.waitForSelector('#gate-stage-start',{state:'visible',timeout:15000});
-  const accountB=await page.evaluate(async()=>{generateCode=()=> '222222';return createNewAccount();});
+  const accountB=await page.evaluate(async()=>{generateCode=()=> '222222';const code=await createNewAccount();State.serviceForce='navy';await persistCombinedAccount();return code;});
   assert.equal(accountB,'222222');
   const cleanB=await page.evaluate(()=>({
     xp:State.xp,completed:State.completedTopics,scores:State.quizScores,progress:State.topicProgress,
