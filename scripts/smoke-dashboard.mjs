@@ -104,7 +104,7 @@ try {
   const expectedLogo = 'https://gcdn.picsart.com/cloud-storage/139d6748-1bf1-4286-b8d6-03414b61deb6.png';
   assert.equal(logoState.headerSrc, expectedLogo, 'header should use the supplied VAANI emblem');
   assert.equal(logoState.gateSrc, expectedLogo, 'welcome screen should use the supplied VAANI emblem');
-  assert.equal(logoState.faviconHref, 'assets/vaani-emblem-favicon.png?v=20261001-circle1', 'browser tab should use the local circular favicon');
+  assert.equal(logoState.faviconHref, 'assets/vaani-emblem-favicon.png?v=20261001-circle2', 'browser tab should use the local circular favicon');
   assert.ok(logoState.headerClip.includes('47%'), 'header logo should crop only the square corners');
   assert.ok(logoState.gateClip.includes('47%'), 'welcome logo should crop only the square corners');
   const faviconUrl = new URL(logoState.faviconHref, page.url()).toString();

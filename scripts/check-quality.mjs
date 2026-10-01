@@ -40,7 +40,7 @@ if (/\\n\s*<link\b/i.test(html)) {
 }
 // Keep the supplied VAANI emblem consistent across page branding and icons.
 const vaaniLogoUrl = 'https://gcdn.picsart.com/cloud-storage/139d6748-1bf1-4286-b8d6-03414b61deb6.png';
-const vaaniFaviconHref = 'assets/vaani-emblem-favicon.png?v=20261001-circle1';
+const vaaniFaviconHref = 'assets/vaani-emblem-favicon.png?v=20261001-circle2';
 const requiredBrandingMarkup = [
   ['header logo', '<img class="vaani-brand-logo" src="' + vaaniLogoUrl + '"'],
   ['welcome logo', '<img class="gate-emblem-image" src="' + vaaniLogoUrl + '"'],
