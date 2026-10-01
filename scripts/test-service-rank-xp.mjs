@@ -45,7 +45,7 @@ for(const [score,want] of accuracyCases) assert(getAccuracyPenalty(score)===want
 const marksCases=[[100,5],[70,5],[69.99,8],[50,8],[49.99,12],[33,12],[32.99,15],[0,15]];
 for(const [score,want] of marksCases) assert(getTotalMarksPenalty(score)===want,'marks penalty failed at '+score);
 
-assert(getMinimumXPDays(100,80,80)===1,'100 XP should take one earning day from a fresh 80-XP day');
+assert(getMinimumXPDays(100,80,80)===2,'100 XP should take two earning days when only 80 XP is available today');
 assert(getMinimumXPDays(19000,80,80)===238,'19,000 XP field-marshal milestone should require at least 238 earning days at 80/day');
 assert(getMinimumXPDays(19000,0,80)===238,'19,000 XP milestone day count is wrong with no XP remaining today');
 
