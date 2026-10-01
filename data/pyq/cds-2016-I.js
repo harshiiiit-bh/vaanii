@@ -1345,7 +1345,8 @@ var PYQ_CDS_2016_I = [
     ],
     "topic": "Spotting Errors",
     "parts": [
-      "He told the boys that if they worked hard,",
+      "He told the boys that",
+      "if they worked hard,",
       "they will surely pass."
     ]
   },

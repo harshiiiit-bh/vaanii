@@ -189,9 +189,9 @@ try {
     if (!existsSync(path)) throw new Error('PYQ manifest points to a missing paper: ' + path);
     const context = Object.create(null);
     vm.runInNewContext(readFileSync(path, 'utf8'), context, { timeout: 1500 });
-    const variable = Object.keys(context).find((key) => /^PYQ_(?:CDS_)?\d{4}_(?:I|II)$/.test(key));
+    const variable = Object.keys(context).find((key) => /^PYQ_(?:(?:CDS|AFCAT)_)?\d{4}_(?:I|II)$/.test(key));
     if (!variable || !Array.isArray(context[variable])) throw new Error('No PYQ question array found in ' + path);
-    const exam = filename.startsWith('cds-') ? 'CDS' : 'NDA';
+    const exam = filename.startsWith('cds-') ? 'CDS' : filename.startsWith('afcat-') ? 'AFCAT' : 'NDA';
     for (const [index, q] of context[variable].entries()) {
       const at = path + ' question ' + (q && q.n ? q.n : index + 1);
       if (!q || typeof q.q !== 'string' || !q.q.trim() || !Array.isArray(q.o) || q.o.length < 2 || !Number.isInteger(q.ans) || q.ans < 0 || q.ans >= q.o.length) {
