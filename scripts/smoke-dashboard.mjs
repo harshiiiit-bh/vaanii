@@ -74,6 +74,14 @@ async function clickMainView(name) {
     const el = document.getElementById('view-' + view);
     return !!el && el.classList.contains('active');
   }, name);
+  const navView = ({journey:'grammar',topic:'grammar','compare-detail':'compare',worddetail:'vocab'})[name] || name;
+  for (const selector of ['#vaaniMainNav', '#bottomNav']) {
+    const current = page.locator(selector + ' button[aria-current="page"]');
+    if (await page.locator(selector + ' button[data-view="' + navView + '"]').count()) {
+      assert.equal(await current.getAttribute('data-view'), navView,
+        selector + ' should expose the active section through aria-current after navigating to ' + name);
+    }
+  }
 }
 
 try {
