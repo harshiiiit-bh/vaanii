@@ -446,7 +446,7 @@ try {
   const paperNames=ctx.PYQ_PAPER_FILES;
   const renderableSpot=q=>{
     if(Array.isArray(q.parts)&&(q.parts.length===3||q.parts.length===4)&&q.parts.every(x=>typeof x==='string'&&x.trim()))return true;
-    if(/\s\|\s/.test(String(q.q||''))){const p=String(q.q).split(/\s*\|\s*/).map(x=>x.trim()).filter(Boolean);if(p.length===3)return true;}
+    if(/\s\|\s/.test(String(q.q||''))){const p=String(q.q).split(/\s*\|\s*/).map(x=>x.trim()).filter(Boolean);if(p.length===3||(p.length===4&&/^no\s+error\.?$/i.test(p[3])))return true;}
     if(/\(a\).*\(b\).*\(c\)/i.test(String(q.q||'')))return true;
     const o=Array.isArray(q.o)?q.o.slice(0,3).map(x=>String(x||'').trim()):[];
     return o.length===3&&o.every(x=>x.length>2&&!/error in part/i.test(x));

@@ -1447,7 +1447,7 @@ var PYQ_CDS_2017_II = [
     "s": "II",
     "n": 72,
     "sec": "Spotting Errors",
-    "q": "It is identification with the audience A that makes one come home from the play so much more B satisfied than one ever is after merely passive enjoyment of the show. C No error. D",
+    "q": "It is identification with the audience | that makes one come home from the play so much more | satisfied than one ever is after merely passive enjoyment of the show.",
     "o": [
       "A",
       "B",
@@ -1467,7 +1467,7 @@ var PYQ_CDS_2017_II = [
     "s": "II",
     "n": 73,
     "sec": "Spotting Errors",
-    "q": "CV Raman was one of the greatest sons of India A who has earned everlasting fame B for scientific researches. C No error. D",
+    "q": "CV Raman was one of the greatest sons of India | who has earned everlasting fame | for scientific researches.",
     "o": [
       "A",
       "B",
@@ -1487,7 +1487,7 @@ var PYQ_CDS_2017_II = [
     "s": "II",
     "n": 74,
     "sec": "Spotting Errors",
-    "q": "This box A is heavy than B the other one. C No error. D",
+    "q": "This box | is heavy than | the other one.",
     "o": [
       "A",
       "B",
@@ -1507,7 +1507,7 @@ var PYQ_CDS_2017_II = [
     "s": "II",
     "n": 75,
     "sec": "Spotting Errors",
-    "q": "The writer does not have the freedom A to choose his own themes, B society thrusts them on him. C No error. D",
+    "q": "The writer does not have the freedom | to choose his own themes, | society thrusts them on him.",
     "o": [
       "A",
       "B",
@@ -1527,7 +1527,7 @@ var PYQ_CDS_2017_II = [
     "s": "II",
     "n": 76,
     "sec": "Spotting Errors",
-    "q": "No one knows A as to why he did it, B or who was behind his doing it. C No error. D",
+    "q": "No one knows | as to why he did it, | or who was behind his doing it.",
     "o": [
       "A",
       "B",
@@ -1547,7 +1547,7 @@ var PYQ_CDS_2017_II = [
     "s": "II",
     "n": 77,
     "sec": "Spotting Errors",
-    "q": "How long A you are B in this profession? C No error. D",
+    "q": "How long | you are | in this profession?",
     "o": [
       "A",
       "B",
@@ -1567,7 +1567,7 @@ var PYQ_CDS_2017_II = [
     "s": "II",
     "n": 78,
     "sec": "Spotting Errors",
-    "q": "I know that A ignorance is not bliss, B yet I am ignorant in many things. C No error. D",
+    "q": "I know that | ignorance is not bliss, | yet I am ignorant in many things.",
     "o": [
       "A",
       "B",
@@ -1662,7 +1662,7 @@ var PYQ_CDS_2017_II = [
     "s": "II",
     "n": 82,
     "sec": "Spotting Errors",
-    "q": "I like to A listen the song of the nightingale B in the evening. C No error. D",
+    "q": "I like to | listen the song of the nightingale | in the evening.",
     "o": [
       "A",
       "B",
@@ -1682,7 +1682,7 @@ var PYQ_CDS_2017_II = [
     "s": "II",
     "n": 83,
     "sec": "Spotting Errors",
-    "q": "Each student A from amongst the hundred students in the class B want to watch this movie. C No error. D",
+    "q": "Each student | from amongst the hundred students in the class | want to watch this movie.",
     "o": [
       "A",
       "B",
@@ -1702,7 +1702,7 @@ var PYQ_CDS_2017_II = [
     "s": "II",
     "n": 84,
     "sec": "Spotting Errors",
-    "q": "Although there is virtually no production in India, A the Encyclopaedia Britannica estimate B that India has perhaps the largest accumulated stocks of silver in the world. C No error. D",
+    "q": "Although there is virtually no production in India, | the Encyclopaedia Britannica estimate | that India has perhaps the largest accumulated stocks of silver in the world.",
     "o": [
       "A",
       "B",
@@ -1722,7 +1722,7 @@ var PYQ_CDS_2017_II = [
     "s": "II",
     "n": 85,
     "sec": "Spotting Errors",
-    "q": "We have to reach A there at ten B will you please walk little faster. C No error. D",
+    "q": "We have to reach | there at ten | will you please walk little faster.",
     "o": [
       "A",
       "B",
@@ -1742,7 +1742,7 @@ var PYQ_CDS_2017_II = [
     "s": "II",
     "n": 86,
     "sec": "Spotting Errors",
-    "q": "It is almost difficult, A in case impossible, B to keep awake late after dinner. C No error. D",
+    "q": "It is almost difficult, | in case impossible, | to keep awake late after dinner.",
     "o": [
       "A",
       "B",
@@ -1762,7 +1762,7 @@ var PYQ_CDS_2017_II = [
     "s": "II",
     "n": 87,
     "sec": "Spotting Errors",
-    "q": "What most students need, above all else A is practice in writing B and particularly in writing things that matter to them. C No error. D",
+    "q": "What most students need, above all else | is practice in writing | and particularly in writing things that matter to them.",
     "o": [
       "A",
       "B",
@@ -1782,7 +1782,7 @@ var PYQ_CDS_2017_II = [
     "s": "II",
     "n": 88,
     "sec": "Spotting Errors",
-    "q": "She was out of the mind, A when she made that plan to go abroad B without taking into consideration her present family position. C No error. D",
+    "q": "She was out of the mind, | when she made that plan to go abroad | without taking into consideration her present family position.",
     "o": [
       "A",
       "B",
@@ -1802,7 +1802,7 @@ var PYQ_CDS_2017_II = [
     "s": "II",
     "n": 89,
     "sec": "Spotting Errors",
-    "q": "Are you A through with B that newspaper? C No error. D",
+    "q": "Are you | through with | that newspaper?",
     "o": [
       "A",
       "B",
@@ -1847,7 +1847,7 @@ var PYQ_CDS_2017_II = [
     "s": "II",
     "n": 91,
     "sec": "Spotting Errors",
-    "q": "The Department of Fine Arts has been criticised A for not having much required courses B scheduled for this semester. C No error. D",
+    "q": "The Department of Fine Arts has been criticised | for not having much required courses | scheduled for this semester.",
     "o": [
       "A",
       "B",
@@ -1867,7 +1867,7 @@ var PYQ_CDS_2017_II = [
     "s": "II",
     "n": 92,
     "sec": "Spotting Errors",
-    "q": "If you have thought about the alternatives, A you would not have chosen B such difficult topic for the term paper. C No error. D",
+    "q": "If you have thought about the alternatives, | you would not have chosen | such difficult topic for the term paper.",
     "o": [
       "A",
       "B",
@@ -1887,7 +1887,7 @@ var PYQ_CDS_2017_II = [
     "s": "II",
     "n": 93,
     "sec": "Spotting Errors",
-    "q": "The duties of the secretary are A to take the minutes, mailing the correspondence, B and calling the members before meeting. C No error. D",
+    "q": "The duties of the secretary are | to take the minutes, mailing the correspondence, | and calling the members before meeting.",
     "o": [
       "A",
       "B",
@@ -1927,7 +1927,7 @@ var PYQ_CDS_2017_II = [
     "s": "II",
     "n": 95,
     "sec": "Spotting Errors",
-    "q": "Those of us who have a family history of heart disease A should make a yearly appointment B with their doctors. C No error. D",
+    "q": "Those of us who have a family history of heart disease | should make a yearly appointment | with their doctors.",
     "o": [
       "A",
       "B",

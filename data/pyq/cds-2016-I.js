@@ -1966,6 +1966,7 @@ var PYQ_CDS_2016_I = [
     "s": "I",
     "n": 93,
     "sec": "Synonyms",
+    "keyword": "elucidate",
     "q": "The purpose of this meeting is to elucidate the major points of the new research report.",
     "o": [
       "Clarify",
