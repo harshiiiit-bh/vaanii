@@ -196,8 +196,8 @@
       <button class="hamburger" id="hamburgerBtn" onclick="toggleMobileNav()" aria-label="Menu">☰</button>
       <div class="brand"><span class="dot"></span>VAANI</div>
     </div>
-    <nav class="mainnav" id="vaaniMainNav">
-      <button data-view="dashboard" class="active">Dashboard</button>
+    <nav class="mainnav" id="vaaniMainNav" aria-label="Main">
+      <button data-view="dashboard" class="active" aria-current="page">Dashboard</button>
       <button data-view="grammar">Grammar</button>
       <button data-view="compare">Comparisons</button>
       <button data-view="vocab">Vocabulary</button>
@@ -220,7 +220,7 @@
 
 <!-- BOTTOM NAV (mobile/tablet <1024px) -->
 <nav class="bottomnav" id="bottomNav" aria-label="Primary">
-  <button data-view="dashboard" class="active" onclick="switchView('dashboard')"><span class="bn-ico">🏠</span>Home</button>
+  <button data-view="dashboard" class="active" aria-current="page" onclick="switchView('dashboard')"><span class="bn-ico">🏠</span>Home</button>
   <button data-view="grammar" onclick="switchView('grammar')"><span class="bn-ico">📘</span>Grammar</button>
   <button data-view="vocab" onclick="switchView('vocab')"><span class="bn-ico">🗂️</span>Vocab</button>
   <button data-view="pyq" onclick="switchView('pyq')"><span class="bn-ico">🎯</span>PYQ</button>
@@ -1661,7 +1661,7 @@
      and add one more <script src="..."> line above. Nothing else to change. -->
 <script src="js/vaani-pyq-taxonomy.js?v=20261001-pyq-audit3"></script>
 <script src="js/vaani-grammar-academy.js"></script>
-<script src="js/app.js?v=20261001-pyq-audit4"></script>
+<script src="js/app.js?v=20261001-nav-a11y1"></script>
 <script src="js/vaani-testkit.js"></script>
 <script src="js/vaani-arena.js"></script>
 <script src="js/vaani-vocab-bridge.js"></script>
