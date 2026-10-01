@@ -39,7 +39,7 @@ document.addEventListener('mousemove',(e)=>{
 =============================================================*/
 function createDefaultState(){
   return {
-    name:'Cadet', xp:0, streak:0, lastActive:null, lastStreakRewardDate:null, serviceForce:null,
+    name:'Cadet', xp:0, streak:0, lastActive:null, lastStreakRewardDate:null, infoTourVersion:null, infoTourSeenAt:null, serviceForce:null,
     completedTopics:{}, quizScores:{}, vocabLearned:{}, theme:'light', missions:{},
     dailyActivity:{}, dailyXpEarned:{}, focusSessions:{}, mysteryBoxesClaimed:0, reviewQueue:[],
     personalBests:{ bestCombo:0, longestStreak:0, highestQuizScore:0, fastestQuizSeconds:null, fastestQuizLabel:'', totalQuizzesTaken:0 },
@@ -108,6 +108,8 @@ function normalizeState(){
   State.xp=Number.isFinite(Number(State.xp))?Math.max(0,Math.floor(Number(State.xp))):0;
   State.streak=Number.isFinite(Number(State.streak))?Math.max(0,Math.floor(Number(State.streak))):0;
   State.lastStreakRewardDate=typeof State.lastStreakRewardDate==='string'?State.lastStreakRewardDate:null;
+  State.infoTourVersion=typeof State.infoTourVersion==='string'?State.infoTourVersion:null;
+  State.infoTourSeenAt=Number.isFinite(Number(State.infoTourSeenAt))?Number(State.infoTourSeenAt):null;
   State.theme=State.theme==='dark'?'dark':'light';
   State.serviceForce=['army','navy','airforce'].includes(State.serviceForce)?State.serviceForce:null;
 }
@@ -332,6 +334,7 @@ function finishGateEntry(){
   const active = document.querySelector('.view.active');
   const activeName = active ? active.id.replace('view-','') : 'dashboard';
   safeCall(()=>switchView(activeName),'switchView(finishGateEntry)');
+  if(typeof maybeShowInfoTour==='function')setTimeout(()=>safeCall(maybeShowInfoTour,'maybeShowInfoTour'),900);
   toast('Welcome, '+State.name+'. Streak: '+State.streak+' days.');
 }
 document.getElementById('cadetName').addEventListener('keydown',e=>{if(e.key==='Enter')handleGateCreate();});
@@ -5957,7 +5960,7 @@ function showSheetMenu(){
     {icon:'📊',label:'Statistics',action:"sheetGo('leaderboard')"},
     {icon:'⚙️',label:'Settings',action:"closeMoreSheet();toggleFocusPanel()"},
     {icon:'✉️',label:'Feedback',soon:false, action:"showSheetFeedback()"},
-    {icon:'ℹ️',label:'About VAANI',action:"showSheetAbout()"}
+    {icon:'ⓘ',label:'VAANI Guide',action:"openInfoCenter()"}
   ];
   document.getElementById('sheetBody').innerHTML = items.map(it=>
     `<button class="sheet-menu-item" onclick="${it.action}">
@@ -5994,15 +5997,7 @@ function showSheetFeedback(){
       <p style="text-align:center;font-family:var(--mono);font-size:.72rem;color:var(--muted2);margin-top:10px">h29417221@gmail.com</p>
     </div>`;
 }
-function showSheetAbout(){
-  sheetSubheader('About VAANI');
-  document.getElementById('sheetBody').innerHTML = `
-    <div class="sheet-about">
-      <p><b>VAANI</b> is an NDA/NA English preparation command centre — grammar lessons, vocabulary training, reading comprehension, and a source-verified archive of previous year questions.</p>
-      <p>Every PYQ in the archive is transcribed from an official NDA/NA English paper; nothing is generated or guessed. Currently ${PYQ_PAPERS.length} paper${PYQ_PAPERS.length!==1?'s':''} ${PYQ_PAPERS.length!==1?'are':'is'} available (${PYQ_PAPERS.map(p=>p.label).join(', ')}), with more to follow as they are verified and added.</p>
-      <p>All progress, XP, streaks, and bookmarks are stored locally on this device.</p>
-    </div>`;
-}
+function showSheetAbout(){ openInfoCenter(); }
 
 /* quick nav fab */
 function toggleQuickNav(){
