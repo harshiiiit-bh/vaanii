@@ -774,3 +774,6 @@ body:has(#view-profile.active) #vaaniMentor:not(.bad-result){display:none!import
 
 /* Keep the floating character out of active assessments and their report cards. */
 body.vaani-assessment-active #vaaniMentor:not(.bad-result),body.pv-session-active #vaaniMentor:not(.bad-result){display:none!important}
+
+/* A collapsed idle character must not intercept page navigation; the header launcher opens it. */
+#vaaniMentor:not(.bad-result):not(.speaking):not(.open):not(.ve-move-mode){visibility:hidden!important;pointer-events:none!important}
