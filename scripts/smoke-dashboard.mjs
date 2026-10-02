@@ -1668,6 +1668,8 @@ try {
     assert.equal(immediateBoard.attempts, '1', 'Completed local result disappeared when the board adapter returned an empty list');
     assert.equal(immediateBoard.rows, 1, 'Current local result was not rendered as a leaderboard row');
     assert.equal(immediateBoard.currentRank, '#1', 'Current local result did not receive its local position');
+    assert.equal(await page.locator('#view-games .vaani-result-briefing').count(),1,
+      'Arena match results must embed the Officer VAANI briefing with the report');
     const championshipDesign = await page.evaluate(() => ({
       hero: document.querySelectorAll('#view-games .vx-championship-hero').length,
       svg: document.querySelectorAll('#view-games .vx-championship-svg').length,
