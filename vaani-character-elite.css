@@ -701,3 +701,37 @@
 #vaaniMentor:not(.bad-result) .vc-p11 .vc-character-sheet{left:-300%;top:-200%}
 @media(max-width:700px){#vaaniMentor:not(.bad-result){right:8px;bottom:calc(var(--bottomnav-h,64px) + env(safe-area-inset-bottom,0px) + 9px);gap:6px;max-width:calc(100vw - 12px)}#vaaniMentor:not(.bad-result) .vc-character{width:62px;height:72px;flex-basis:62px}#vaaniMentor:not(.bad-result) .vc-bubble{width:min(260px,calc(100vw - 84px));max-height:38vh}}
 @media(max-width:390px){#vaaniMentor:not(.bad-result) .vc-character{width:56px;height:66px;flex-basis:56px}#vaaniMentor:not(.bad-result) .vc-bubble{width:calc(100vw - 74px)}}
+
+/* User-controlled Officer VAANI dock: move, resize, hide and restore. */
+#vaaniMentor:not(.bad-result){transform:scale(var(--ve-dock-scale,1));transform-origin:bottom right}
+#vaaniMentor:not(.bad-result).ve-positioned{transform-origin:top left}
+#vaaniMentor:not(.bad-result).ve-move-mode .vc-character{cursor:grab;touch-action:none;outline:2px dashed rgba(181,137,54,.82);outline-offset:2px}
+#vaaniMentor:not(.bad-result).ve-dragging .vc-character{cursor:grabbing;filter:drop-shadow(0 13px 12px rgba(8,18,24,.24))}
+#vaaniMentor:not(.bad-result) .ve-adjust-panel{padding:0 12px 11px;border-top:1px solid rgba(21,38,47,.08)}
+#vaaniMentor:not(.bad-result) .ve-adjust-panel[hidden]{display:none!important}
+#vaaniMentor:not(.bad-result) .ve-adjust-controls{display:grid;grid-template-columns:auto auto minmax(60px,1fr) auto auto auto;align-items:center;gap:6px;padding-top:9px}
+#vaaniMentor:not(.bad-result) .ve-adjust-controls label{font:800 .52rem var(--mono,monospace);letter-spacing:.05em;color:#66757d}
+#vaaniMentor:not(.bad-result) .ve-adjust-controls input[type=range]{width:100%;min-width:60px;accent-color:#b58936;cursor:pointer}
+#vaaniMentor:not(.bad-result) .ve-adjust-controls output{min-width:34px;text-align:center;color:#8b692c;font:800 .53rem var(--mono,monospace)}
+#vaaniMentor:not(.bad-result) .ve-adjust-controls button{min-height:27px;padding:4px 7px;border:1px solid rgba(21,38,47,.13);border-radius:999px;background:#fff;color:#45555e;font:800 .51rem var(--mono,monospace);cursor:pointer;white-space:nowrap}
+#vaaniMentor:not(.bad-result) .ve-adjust-controls button[aria-pressed=true]{background:#e9dfc6;border-color:#c9a24b;color:#3f382b}
+#vaaniMentor:not(.bad-result) .ve-adjust-controls .ve-hide-officer{color:#9b4941;border-color:rgba(155,73,65,.24)}
+#vaaniMentor:not(.bad-result) #veDockStatus{margin:6px 0 0;color:#7b888e;font:600 .49rem/1.4 var(--mono,monospace)}
+.ve-restore-officer{position:fixed;left:12px;bottom:16px;z-index:9200;display:flex;align-items:center;gap:7px;min-height:35px;padding:6px 10px;border:1px solid rgba(201,162,75,.44);border-radius:999px;background:rgba(252,251,247,.97);color:#31454e;box-shadow:0 8px 22px rgba(8,18,24,.16);font:800 .58rem var(--mono,monospace);letter-spacing:.02em;cursor:pointer;backdrop-filter:blur(10px)}
+.ve-restore-officer[hidden]{display:none!important}
+.ve-restore-officer>span:first-child{color:#a67d33;font-size:.9rem}
+.ve-restore-officer small{padding:2px 5px;border-radius:999px;background:#172a33;color:#fff;font:800 .48rem var(--mono,monospace);text-transform:uppercase}
+.ve-restore-officer:focus-visible{outline:3px solid rgba(201,162,75,.42);outline-offset:3px}
+body.ve-vaani-hidden #vaaniMentor:not(.bad-result),body.ve-vaani-hidden .ve-header-mini,body.ve-vaani-hidden .ve-officer-station,body.ve-vaani-hidden .ve-surface-mini{display:none!important}
+@media(max-width:700px){
+  #vaaniMentor:not(.bad-result){transform-origin:bottom right}
+  #vaaniMentor:not(.bad-result).ve-positioned{transform-origin:top left}
+  #vaaniMentor:not(.bad-result) .ve-adjust-controls{grid-template-columns:auto minmax(45px,1fr) auto;gap:5px}
+  #vaaniMentor:not(.bad-result) .ve-adjust-controls label{grid-column:1}
+  #vaaniMentor:not(.bad-result) .ve-adjust-controls input[type=range]{grid-column:2}
+  #vaaniMentor:not(.bad-result) .ve-adjust-controls output{grid-column:3}
+  #vaaniMentor:not(.bad-result) .ve-adjust-controls #veDockReset{grid-column:1 / 2}
+  #vaaniMentor:not(.bad-result) .ve-adjust-controls #veDockHide{grid-column:3}
+  .ve-restore-officer{left:8px;bottom:calc(var(--bottomnav-h,64px) + env(safe-area-inset-bottom,0px) + 9px)}
+}
+@media(prefers-reduced-motion:reduce){#vaaniMentor:not(.bad-result),.ve-restore-officer{transition:none!important;animation:none!important}}

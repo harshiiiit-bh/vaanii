@@ -603,6 +603,9 @@ try{
   if(!character.includes('window.vaaniCharacterEnsure=ensure')||!eliteCharacter.includes("window.vaaniCharacterEnsure==='function'"))throw new Error('Officer VAANI mount handshake is missing.');
   if(!character.includes('assets/officer-vaani.svg')||!eliteCharacter.includes('assets/officer-vaani.svg'))throw new Error('Officer VAANI local art fallback is missing.');
   if(!eliteCharacter.includes("window.addEventListener('hashchange',()=>queueRouteBrief(180))"))throw new Error('Officer VAANI direct-route briefing hook is missing.');
+  if(!eliteCharacter.includes("getDockPreferences")||!eliteCharacter.includes("function setDockPosition")||!eliteCharacter.includes("function setDockScale"))throw new Error('Officer VAANI move/resize preference controls are missing.');
+  if(!eliteCharacter.includes("veRestoreOfficer")||!eliteCharacter.includes("function setDockHidden"))throw new Error('Officer VAANI hide/restore controls are missing.');
+  if(!eliteCharacter.includes("window.addEventListener('pointermove',moveDockDrag"))throw new Error('Officer VAANI drag interaction is missing.');
  if(characterCss.includes('calc(var(--pose-col')||eliteCharacterCss.includes('calc(var(--pose-col'))throw new Error('Officer VAANI sprite still uses fragile computed pose offsets.');
  console.log('Officer VAANI audit: persistent asset states, reliable pose coordinates and non-dismissing launchers validated');
 }catch(error){console.error('Book Companion audit failed:',error.message);process.exitCode=1;}

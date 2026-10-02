@@ -98,6 +98,7 @@
     }
     ch.addEventListener('click',()=>speak(currentView(),true));
     ch.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();speak(currentView(),true)}});
+    if(typeof window.vaaniCharacterOnMount==='function')window.vaaniCharacterOnMount(el);
   }
 
   function show(){

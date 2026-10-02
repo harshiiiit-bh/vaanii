@@ -108,7 +108,7 @@
 
   function open(){
     const m=mentor();
-    if(!m||m.classList.contains('bad-result'))return;
+    if(!m||m.classList.contains('bad-result')||getDockPreferences().hidden)return;
     addMeta();
     intel();
     // Replace any pending base/elite hide so a fresh briefing cannot vanish early.
@@ -130,6 +130,7 @@
   }
 
   function brief(){
+    if(getDockPreferences().hidden)return;
     if(typeof window.vaaniCharacterEnsure==='function')window.vaaniCharacterEnsure();
     const v=active();
     const c=context[v]||['OFFICER VAANI','Choose a task, focus for a while, and finish what you started.','p10','focus'];
@@ -231,6 +232,347 @@
     if(span)span.textContent=(context[active()]||context.dashboard)[0]+' · '+new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
   }
 
+
+  const DOCK_PREF_KEY='vaani-officer-dock-v1';
+  let dockPreferences=null;
+  let dockMoveMode=false;
+  let dockDrag=null;
+  let suppressDockClickUntil=0;
+
+  function getDockPreferences(){
+    if(dockPreferences)return dockPreferences;
+    const defaults={size:100,position:null,hidden:false};
+    try{
+      const saved=JSON.parse(localStorage.getItem(DOCK_PREF_KEY)||'null');
+      if(saved&&typeof saved==='object'){
+        defaults.size=Math.max(60,Math.min(130,Math.round(Number(saved.size)||100)));
+        defaults.hidden=saved.hidden===true;
+        if(saved.position&&Number.isFinite(Number(saved.position.x))&&Number.isFinite(Number(saved.position.y))){
+          defaults.position={x:Number(saved.position.x),y:Number(saved.position.y)};
+        }
+      }
+    }catch(_){}
+    dockPreferences=defaults;
+    return dockPreferences;
+  }
+
+  function saveDockPreferences(){
+    try{localStorage.setItem(DOCK_PREF_KEY,JSON.stringify(getDockPreferences()));}catch(_){}
+  }
+
+  function safeDockBottom(){
+    let limit=window.innerHeight-8;
+    const nav=document.querySelector('#bottomNav');
+    if(nav){
+      const style=getComputedStyle(nav),rect=nav.getBoundingClientRect();
+      if(style.display!=='none'&&style.visibility!=='hidden'&&rect.height>0&&rect.top<window.innerHeight){
+        limit=Math.min(limit,rect.top-8);
+      }
+    }
+    return Math.max(8,limit);
+  }
+
+  function setDockPosition(x,y,save=true){
+    const m=mentor();
+    if(!m)return null;
+    m.classList.add('ve-positioned');
+    m.style.right='auto';
+    m.style.bottom='auto';
+    m.style.transformOrigin='top left';
+    const rect=m.getBoundingClientRect();
+    const maxX=Math.max(8,window.innerWidth-rect.width-8);
+    const maxY=Math.max(8,safeDockBottom()-rect.height);
+    const left=Math.round(Math.max(8,Math.min(Number(x)||0,maxX)));
+    const top=Math.round(Math.max(8,Math.min(Number(y)||0,maxY)));
+    m.style.left=left+'px';
+    m.style.top=top+'px';
+    if(save){
+      const p=getDockPreferences();
+      p.position={x:left,y:top};
+      saveDockPreferences();
+    }
+    return {x:left,y:top};
+  }
+
+  function clearDockPosition(){
+    const m=mentor();
+    if(!m)return;
+    m.classList.remove('ve-positioned');
+    m.style.left='';
+    m.style.top='';
+    m.style.right='';
+    m.style.bottom='';
+    m.style.transformOrigin='';
+  }
+
+  function setDockScale(value,save=true){
+    const m=mentor();
+    if(!m)return 100;
+    const p=getDockPreferences();
+    let size=Math.max(60,Math.min(130,Math.round(Number(value)||100)));
+    m.style.setProperty('--ve-dock-scale',(size/100).toFixed(2));
+    let rect=m.getBoundingClientRect();
+    const widthLimit=Math.max(140,window.innerWidth-16);
+    const heightLimit=Math.max(120,safeDockBottom()-8);
+    const fit=Math.min(1,widthLimit/Math.max(1,rect.width),heightLimit/Math.max(1,rect.height));
+    if(fit<.999){
+      size=Math.max(60,Math.floor((size*fit)/5)*5);
+      m.style.setProperty('--ve-dock-scale',(size/100).toFixed(2));
+      rect=m.getBoundingClientRect();
+    }
+    if(m.classList.contains('ve-positioned')){
+      setDockPosition(rect.left,rect.top,false);
+    }else if(rect.left<8){
+      setDockPosition(8,rect.top,false);
+    }
+    p.size=size;
+    const slider=m.querySelector('#veDockScale');
+    const output=m.querySelector('#veDockScaleValue');
+    if(slider)slider.value=String(size);
+    if(output)output.textContent=size+'%';
+    if(save){
+      if(m.classList.contains('ve-positioned')){
+        const current=m.getBoundingClientRect();
+        p.position={x:Math.round(current.left),y:Math.round(current.top)};
+      }
+      saveDockPreferences();
+    }
+    return size;
+  }
+
+  function setDockStatus(message){
+    const status=mentor()?.querySelector('#veDockStatus');
+    if(status)status.textContent=message;
+  }
+
+  function setDockMoveMode(enabled){
+    const m=mentor();
+    if(!m)return;
+    dockMoveMode=!!enabled;
+    m.classList.toggle('ve-move-mode',dockMoveMode);
+    const button=m.querySelector('#veMoveToggle');
+    if(button){
+      button.setAttribute('aria-pressed',String(dockMoveMode));
+      button.textContent=dockMoveMode?'Moving: ON':'Move';
+    }
+    const character=m.querySelector('#vcCharacter');
+    if(character)character.setAttribute('aria-grabbed',String(dockMoveMode));
+    setDockStatus(dockMoveMode?'Move enabled — drag the character or use arrow keys.':'Adjust position and size, or hide Officer VAANI.');
+  }
+
+  function updateDockVisibility(){
+    const p=getDockPreferences();
+    document.body.classList.toggle('ve-vaani-hidden',p.hidden);
+    const button=document.getElementById('veRestoreOfficer');
+    if(button)button.hidden=!p.hidden;
+  }
+
+  function setDockHidden(hidden,save=true){
+    const p=getDockPreferences();
+    p.hidden=!!hidden;
+    setDockMoveMode(false);
+    close();
+    const panel=mentor()?.querySelector('#veAdjustPanel');
+    if(panel)panel.hidden=true;
+    const toggle=mentor()?.querySelector('#veAdjustToggle');
+    if(toggle)toggle.setAttribute('aria-expanded','false');
+    updateDockVisibility();
+    if(save)saveDockPreferences();
+  }
+
+  function ensureRestoreOfficer(){
+    let button=document.getElementById('veRestoreOfficer');
+    if(button)return button;
+    button=document.createElement('button');
+    button.type='button';
+    button.id='veRestoreOfficer';
+    button.className='ve-restore-officer';
+    button.hidden=true;
+    button.setAttribute('aria-label','Show Officer VAANI');
+    button.title='Show Officer VAANI';
+    button.innerHTML='<span aria-hidden="true">✦</span><span>Officer VAANI</span><small>Show</small>';
+    button.addEventListener('click',()=>{
+      setDockHidden(false,true);
+      brief();
+    });
+    document.body.appendChild(button);
+    return button;
+  }
+
+  function toggleDockAdjust(panel,button){
+    if(!panel||!button)return;
+    panel.hidden=!panel.hidden;
+    button.setAttribute('aria-expanded',String(!panel.hidden));
+    if(!panel.hidden)setDockStatus('Move, resize, reset position, or hide Officer VAANI.');
+  }
+
+  function mountDockControls(target){
+    const m=target||mentor();
+    if(!m)return;
+    const bubble=m.querySelector('.vc-bubble');
+    const actions=bubble?.querySelector('.vc-actions');
+    if(!bubble||!actions)return;
+    let toggle=actions.querySelector('#veAdjustToggle');
+    if(!toggle){
+      toggle=document.createElement('button');
+      toggle.type='button';
+      toggle.id='veAdjustToggle';
+      toggle.textContent='Adjust';
+      toggle.setAttribute('aria-expanded','false');
+      toggle.setAttribute('aria-controls','veAdjustPanel');
+      toggle.title='Move, resize or hide Officer VAANI';
+      const next=actions.querySelector('#vcNext');
+      actions.insertBefore(toggle,next||null);
+    }
+    let panel=bubble.querySelector('#veAdjustPanel');
+    if(!panel){
+      panel=document.createElement('div');
+      panel.id='veAdjustPanel';
+      panel.className='ve-adjust-panel';
+      panel.hidden=true;
+      panel.innerHTML=
+        '<div class="ve-adjust-controls">'+
+          '<button type="button" id="veMoveToggle" aria-pressed="false">Move</button>'+
+          '<label for="veDockScale">Size</label>'+
+          '<input id="veDockScale" type="range" min="60" max="130" step="5" value="100" aria-label="Officer VAANI size">'+
+          '<output id="veDockScaleValue" for="veDockScale">100%</output>'+
+          '<button type="button" id="veDockReset" title="Return Officer VAANI to the bottom-right corner">Reset</button>'+
+          '<button type="button" id="veDockHide" class="ve-hide-officer">Hide</button>'+
+        '</div>'+
+        '<p id="veDockStatus" role="status" aria-live="polite">Adjust position and size, or hide Officer VAANI.</p>';
+      bubble.appendChild(panel);
+    }
+    if(!toggle.dataset.bound){
+      toggle.dataset.bound='1';
+      toggle.addEventListener('click',()=>toggleDockAdjust(panel,toggle));
+      panel.querySelector('#veMoveToggle')?.addEventListener('click',()=>setDockMoveMode(!dockMoveMode));
+      panel.querySelector('#veDockScale')?.addEventListener('input',e=>setDockScale(e.target.value,true));
+      panel.querySelector('#veDockReset')?.addEventListener('click',()=>{
+        clearDockPosition();
+        const current=m.getBoundingClientRect();
+        const p=getDockPreferences();
+        p.position=null;
+        saveDockPreferences();
+        setDockStatus('Position reset to the default corner.');
+        // Keep default bottom/right anchoring after the reset.
+        const scale=Number(p.size)||100;
+        m.style.setProperty('--ve-dock-scale',(scale/100).toFixed(2));
+      });
+      panel.querySelector('#veDockHide')?.addEventListener('click',()=>setDockHidden(true,true));
+    }
+    ensureRestoreOfficer();
+    updateDockVisibility();
+    const p=getDockPreferences();
+    if(p.position)setDockPosition(p.position.x,p.position.y,false);
+    setDockScale(p.size,false);
+    if(p.hidden)close();
+    else if(!p.position){
+      // The default corner stays responsive to the current viewport.
+      clearDockPosition();
+      m.style.setProperty('--ve-dock-scale',(p.size/100).toFixed(2));
+    }
+    setDockMoveMode(false);
+  }
+
+  function beginDockDrag(event,character){
+    if(!dockMoveMode||!character||event.button!==undefined&&event.button!==0)return;
+    const m=mentor();
+    if(!m)return;
+    event.preventDefault();
+    const rect=m.getBoundingClientRect();
+    dockDrag={pointerId:event.pointerId,startX:event.clientX,startY:event.clientY,left:rect.left,top:rect.top,moved:false};
+    m.classList.add('ve-dragging');
+    try{character.setPointerCapture(event.pointerId)}catch(_){}
+  }
+
+  function moveDockDrag(event){
+    if(!dockDrag||event.pointerId!==dockDrag.pointerId)return;
+    const dx=event.clientX-dockDrag.startX,dy=event.clientY-dockDrag.startY;
+    if(!dockDrag.moved&&Math.hypot(dx,dy)<4)return;
+    dockDrag.moved=true;
+    event.preventDefault();
+    setDockPosition(dockDrag.left+dx,dockDrag.top+dy,false);
+    setDockStatus('Position updated. Release to save.');
+  }
+
+  function finishDockDrag(event){
+    if(!dockDrag||event.pointerId!==dockDrag.pointerId)return;
+    const moved=dockDrag.moved;
+    dockDrag=null;
+    const m=mentor();
+    if(m)m.classList.remove('ve-dragging');
+    if(moved&&m){
+      const r=m.getBoundingClientRect(),p=getDockPreferences();
+      p.position={x:Math.round(r.left),y:Math.round(r.top)};
+      suppressDockClickUntil=Date.now()+450;
+      saveDockPreferences();
+      setDockStatus('New position saved.');
+    }
+  }
+
+  function moveDockBy(dx,dy){
+    const m=mentor();
+    if(!m||!dockMoveMode)return;
+    const r=m.getBoundingClientRect();
+    setDockPosition(r.left+dx,r.top+dy,true);
+    setDockStatus('Position saved. Use the arrow keys again or turn Move off.');
+  }
+
+  function initDockControls(){
+    window.vaaniCharacterOnMount=mountDockControls;
+    window.addEventListener('pointermove',moveDockDrag,{passive:false});
+    window.addEventListener('pointerup',finishDockDrag,{passive:true});
+    window.addEventListener('pointercancel',finishDockDrag,{passive:true});
+    window.addEventListener('resize',()=>{
+      const m=mentor(),p=getDockPreferences();
+      if(!m)return;
+      if(m.classList.contains('ve-positioned')){
+        const r=m.getBoundingClientRect();
+        const next=setDockPosition(r.left,r.top,false);
+        if(p.position) p.position=next;
+        saveDockPreferences();
+      }else{
+        setDockScale(p.size,false);
+      }
+    },{passive:true});
+    document.addEventListener('click',e=>{
+      const target=e.target instanceof Element?e.target:null;
+      if(dockMoveMode&&target?.closest('#vaaniMentor #vcCharacter')){
+        e.preventDefault();
+        e.stopImmediatePropagation();
+      }
+    },true);
+    document.addEventListener('keydown',e=>{
+      const target=e.target instanceof Element?e.target:null;
+      const character=target?.closest('#vaaniMentor #vcCharacter');
+      if(!character||!dockMoveMode)return;
+      const step=e.shiftKey?28:12;
+      const directions={ArrowLeft:[-step,0],ArrowRight:[step,0],ArrowUp:[0,-step],ArrowDown:[0,step]};
+      if(directions[e.key]){
+        e.preventDefault();
+        moveDockBy(...directions[e.key]);
+      }else if(e.key==='Enter'||e.key===' '){
+        e.preventDefault();
+        e.stopImmediatePropagation();
+      }
+    },true);
+    document.addEventListener('pointerdown',e=>{
+      const target=e.target instanceof Element?e.target:null;
+      const character=target?.closest('#vaaniMentor #vcCharacter');
+      if(!character)return;
+      if(dockMoveMode){beginDockDrag(e,character);return;}
+      pose(context[active()]?.[2]||'p0','focus');
+    },{passive:false});
+    const p=getDockPreferences();
+    if(mentor())mountDockControls(mentor());
+    const restore=ensureRestoreOfficer();
+    updateDockVisibility();
+    if(p.position&&mentor())setDockPosition(p.position.x,p.position.y,false);
+    if(mentor())setDockScale(p.size,false);
+  }
+
+  window.vaaniCharacterOnMount=mountDockControls;
+
   function mountOfficerStations(){
     // Compact contextual Officer VAANI rail: deep integration without
     // adding another large card to every screen.
@@ -287,6 +629,7 @@
 
   function boot(){
     if(typeof window.vaaniCharacterEnsure==='function')window.vaaniCharacterEnsure();
+    initDockControls();
     wrapNavigation();
     mountOfficerStations();
     wrapResult();
@@ -333,11 +676,6 @@
     document.addEventListener('visibilitychange',()=>{
       if(!document.hidden){intel();statusClock();resetIdle();}
     });
-
-    document.addEventListener('pointerdown',e=>{
-      const target=e.target instanceof Element?e.target:null;
-      if(target?.closest('#vaaniMentor #vcCharacter'))pose(context[active()]?.[2]||'p0','focus');
-    },{passive:true});
 
     setInterval(()=>{intel();statusClock()},15000);
   }
