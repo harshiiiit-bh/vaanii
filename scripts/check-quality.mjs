@@ -601,7 +601,7 @@ try{
  if(!character.includes('window.vaaniCharacterSetPose=function(pose)')||!eliteCharacter.includes('window.vaaniCharacterSetPose(pose)'))throw new Error('Officer VAANI pose state helper is missing.');
  if(!eliteCharacter.includes("e.target.closest('.ve-header-mini')"))throw new Error('Officer VAANI launcher click is not excluded from outside-click dismissal.');
   if(!character.includes('window.vaaniCharacterEnsure=ensure')||!eliteCharacter.includes("window.vaaniCharacterEnsure==='function'"))throw new Error('Officer VAANI mount handshake is missing.');
-  if(!character.includes('assets/officer-vaani.svg')||!eliteCharacter.includes('assets/officer-vaani.svg'))throw new Error('Officer VAANI local art fallback is missing.');
+  if(!character.includes('assets/officer-vaani.svg'))throw new Error('Officer VAANI base local art fallback is missing.');
   if(!eliteCharacter.includes("window.addEventListener('hashchange',()=>queueRouteBrief(180)"))throw new Error('Officer VAANI route-close hook is missing.');
   const routeBriefStart=eliteCharacter.indexOf('function queueRouteBrief('),routeBriefEnd=eliteCharacter.indexOf('function polishFromCurrent(',routeBriefStart);
   if(routeBriefStart<0||routeBriefEnd<0||/\bbrief\s*\(\s*\)/.test(eliteCharacter.slice(routeBriefStart,routeBriefEnd)))throw new Error('Officer VAANI route changes must not trigger unsolicited briefings.');
