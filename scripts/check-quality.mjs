@@ -578,6 +578,15 @@ try {
 
 
 
+/* Information Centre coverage guard. Keep shipped modules represented in the user guide. */
+try{
+ const infoGuide=readFileSync('js/vaani-info-center.js','utf8');
+ for(const feature of ['Wren &amp; Martin companion','Configurable Test Kit','Final report cards','Career &amp; Exam Desk','Shared match codes','Officer VAANI controls','learning milestones only']){
+   if(!infoGuide.includes(feature))throw new Error('Information Centre is missing an updated feature: '+feature);
+ }
+ console.log('Information Centre coverage audit: shipped learning, testing, career and VAANI controls are documented');
+}catch(error){console.error('Information Centre audit failed:',error.message);process.exitCode=1;}
+
 /* Wren & Martin Book Companion integrity audit. */
 try{
  const chapters=loadData('data/book-companion.js','VAANI_BOOK_CHAPTERS');
