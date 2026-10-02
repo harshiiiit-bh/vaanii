@@ -1273,6 +1273,10 @@
       addStat('Skipped', stats ? stats.skipped : '—', 'is-skipped');
       addStat('Time taken', esc(fmtClock(res.seconds)), 'is-time');
       w.appendChild(statsGrid);
+      if(typeof window.vaaniResultBriefingNode==='function'){
+        var officerBriefing=window.vaaniResultBriefingNode(accuracy,'Arena match');
+        if(officerBriefing)w.appendChild(officerBriefing);
+      }
     }
 
     w.appendChild(matchStrip(m));
