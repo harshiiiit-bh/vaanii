@@ -6,8 +6,10 @@ if(process.env.VAANI_BROWSER_EXECUTABLE)launchOptions.executablePath=process.env
 const browser=await chromium.launch(launchOptions);
 const context=await browser.newContext({viewport:{width:1440,height:1000},reducedMotion:'reduce'});
 const page=await context.newPage();
-const pageErrors=[];
+const pageErrors=[],consoleErrors=[],failedRequests=[];
 page.on('pageerror',error=>pageErrors.push(error.stack||error.message));
+page.on('console',message=>{if(message.type()==='error')consoleErrors.push(message.text());});
+page.on('requestfailed',request=>failedRequests.push({url:request.url(),error:request.failure()?.errorText||'failed'}));
 try{
  await page.goto(baseURL,{waitUntil:'domcontentloaded'});
  await page.waitForSelector('#gate-stage-start',{state:'visible',timeout:15000});
@@ -24,7 +26,10 @@ try{
  await page.waitForFunction(()=>document.getElementById('view-vocab')?.classList.contains('active'));
  await page.locator('#view-vocab .v90-entry-open').click();
  await page.waitForFunction(()=>document.getElementById('view-vocab90')?.classList.contains('active'));
- await page.locator('#v90DayContent .v90-section-card').first().waitFor({state:'visible',timeout:15000});
+ await page.waitForFunction(()=>Boolean(document.querySelector('#v90DayContent .v90-section-card'))||Boolean(document.getElementById('v90LoadError')&&!document.getElementById('v90LoadError').hidden),null,{timeout:15000}).catch(async error=>{const snapshot=await page.evaluate(()=>({active:document.getElementById('view-vocab90')?.className,day:document.getElementById('v90SelectedTitle')?.textContent,meta:document.getElementById('v90SelectedMeta')?.textContent,loadError:document.getElementById('v90LoadError')?.textContent,controller:typeof VAANI_VOCAB90,grid:document.getElementById('v90DayGrid')?.innerHTML.slice(0,500)}));console.error('Vocab90 load diagnostics:',JSON.stringify({snapshot,pageErrors,consoleErrors,failedRequests}));throw error;});
+ const loadError=await page.locator('#v90LoadError').textContent();
+ assert.equal(await page.locator('#v90LoadError').isHidden(),true,'Vocab90 reported a load error: '+loadError);
+ await page.locator('#v90DayContent .v90-section-card').first().waitFor({state:'visible',timeout:5000});
  assert.equal(await page.locator('#v90SelectedTitle').innerText(),'Day 01');
  assert.equal(await page.locator('#v90DayGrid [data-v90-select]').count(),30);
  assert.equal(await page.locator('#view-vocab90 iframe').count(),0);
