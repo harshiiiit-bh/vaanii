@@ -304,8 +304,8 @@ try {
     saveState();refreshDashboard();
     return result;
   });
-  assert.deepEqual(accuracy,{afterAccuracy:80,marksDeducted:8,afterMarks:72,reward:6,xp:78,earned:6},
-    'Accuracy and exam-marks deductions should be applied independently, while passing accuracy earns XP');
+  assert.deepEqual(accuracy,{afterAccuracy:80,marksDeducted:8,afterMarks:72,reward:0,xp:72,earned:0},
+    'Accuracy and net-marks deductions should apply independently; passing accuracy adds no separate bonus');
 
   const history=await page.evaluate(()=>{
     const original=State.xpLedger;
