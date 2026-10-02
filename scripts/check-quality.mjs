@@ -599,7 +599,8 @@ try{
  const character=readFileSync('js/vaani-character.js','utf8'),eliteCharacter=readFileSync('js/vaani-character-elite.js','utf8');
  const characterCss=readFileSync('vaani-character.css','utf8'),eliteCharacterCss=readFileSync('vaani-character-elite.css','utf8');
  if(!character.includes('window.vaaniCharacterSetPose=function(pose)')||!eliteCharacter.includes('window.vaaniCharacterSetPose(pose)'))throw new Error('Officer VAANI pose state helper is missing.');
- if(!eliteCharacter.includes("e.target.closest('.ve-header-mini')"))throw new Error('Officer VAANI launcher click is not excluded from outside-click dismissal.');
+ if(!eliteCharacter.includes("e.target.closest('.ve-header-mini,.ve-restore-officer')"))throw new Error('Officer VAANI launcher/restore clicks are not excluded from outside-click dismissal.');
+  if(!eliteCharacter.includes("restore.id='veRestoreOfficer'")||!eliteCharacter.includes("restore.addEventListener('click'")||!eliteCharacter.includes("p.hidden&&!routeHidden&&!taskHidden"))throw new Error('Officer VAANI hide/restore control is incomplete.');
   if(!character.includes('window.vaaniCharacterEnsure=ensure')||!eliteCharacter.includes("window.vaaniCharacterEnsure==='function'"))throw new Error('Officer VAANI mount handshake is missing.');
   if(!character.includes('assets/officer-vaani.svg'))throw new Error('Officer VAANI base local art fallback is missing.');
   if(!eliteCharacter.includes("window.addEventListener('hashchange',()=>queueRouteBrief(180)"))throw new Error('Officer VAANI route-close hook is missing.');
