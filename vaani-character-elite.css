@@ -631,3 +631,46 @@
   .ve-station-label em{display:none}
   .ve-officer-station{right:5px}
 }
+
+/* FINAL COMPACTMENT — Officer VAANI remains visible without becoming a layout block */
+#vaaniMentor:not(.bad-result){
+  right:10px;
+  bottom:calc(var(--bottomnav-h,64px) + 9px);
+  width:auto;
+  max-width:calc(100vw - 16px);
+}
+#vaaniMentor:not(.bad-result) .vc-bubble{
+  width:min(278px,calc(100vw - 98px));
+  max-height:min(250px,38vh);
+  border-radius:17px 17px 6px 17px;
+}
+#vaaniMentor:not(.bad-result) .vc-character{
+  width:68px;
+  height:78px;
+  flex-basis:68px;
+  border-radius:18px;
+}
+#vaaniMentor:not(.bad-result) .vc-intel{
+  gap:4px;
+  padding-top:7px;
+}
+#vaaniMentor:not(.bad-result) .vc-intel span{
+  padding:3px 6px;
+  font-size:.47rem;
+}
+#vaaniMentor:not(.bad-result) .vc-actions{
+  padding:9px 12px 11px;
+}
+#vaaniMentor:not(.bad-result) .vc-actions button{
+  min-height:29px;
+  padding:5px 9px;
+  font-size:.56rem;
+}
+@media(max-width:480px){
+  #vaaniMentor:not(.bad-result) .vc-character{
+    width:60px;height:70px;flex-basis:60px;border-radius:16px;
+  }
+  #vaaniMentor:not(.bad-result) .vc-bubble{
+    width:calc(100vw - 78px);
+  }
+}
