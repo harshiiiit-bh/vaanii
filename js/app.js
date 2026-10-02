@@ -588,7 +588,7 @@ function switchView(name, options={}){
   refreshAccountCodeControls();
   // Keep both navigation surfaces in sync and expose the current destination
   // to assistive technology. Detail views inherit their parent section's state.
-  const navView = ({journey:'grammar',topic:'grammar','compare-detail':'compare',worddetail:'vocab'})[name] || name;
+  const navView = ({journey:'grammar',topic:'grammar','compare-detail':'compare',worddetail:'vocab',vocab90:'vocab'})[name] || name;
   document.querySelectorAll('#vaaniMainNav button').forEach(b=>{
     const current=b.dataset.view===navView;
     b.classList.toggle('active',current);
