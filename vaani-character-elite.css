@@ -757,3 +757,14 @@ body.ve-vaani-hidden #vaaniMentor:not(.bad-result),body.ve-vaani-hidden .ve-head
 
 #vaaniMentor:not(.bad-result) .ve-position-controls #veDockApply{grid-column:1/-1;justify-self:end;min-height:27px;padding:4px 9px;border:1px solid rgba(21,38,47,.13);border-radius:999px;background:#172a33;color:#fff;font:800 .51rem var(--mono,monospace);cursor:pointer}
 #vaaniMentor:not(.bad-result) .ve-position-controls #veDockApply:focus-visible{outline:2px solid rgba(201,162,75,.48);outline-offset:1px}
+
+
+/* Shared, inline Officer VAANI after-action report — never a floating popup. */
+.vaani-result-briefing{box-sizing:border-box;display:grid;gap:5px;width:100%;min-width:0;margin:14px 0 2px;padding:11px 13px;border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;background:var(--panel2);color:var(--text);text-align:left;box-shadow:inset 0 1px 0 rgba(255,255,255,.35)}
+.vaani-result-briefing-kicker{color:var(--gold-d);font:800 .55rem/1.35 var(--mono,monospace);letter-spacing:.09em;text-transform:uppercase}
+.vaani-result-briefing-title{color:var(--text);font:700 .82rem/1.35 var(--serif,inherit);letter-spacing:.015em}
+.vaani-result-briefing p{margin:0;color:var(--muted);font-size:.72rem;line-height:1.55}
+.vaani-result-briefing blockquote{margin:2px 0 0;padding-left:9px;border-left:2px solid rgba(201,162,75,.42);color:var(--muted);font-size:.66rem;line-height:1.45;font-style:italic}
+.pv-summary-hero .vaani-result-briefing{grid-column:1/-1}
+.quiz-complete-card .vaani-result-briefing{max-width:640px;margin:14px auto 0}
+@media(max-width:480px){.vaani-result-briefing{padding:10px 11px;gap:4px}.vaani-result-briefing p{font-size:.69rem}}
