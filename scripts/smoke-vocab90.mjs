@@ -35,6 +35,13 @@ try{
  assert.equal(await page.locator('#v90LoadError').isHidden(),true,'Vocab90 reported a load error: '+loadError);
  await page.locator('#v90DayContent .v90-section-card').first().waitFor({state:'visible',timeout:5000});
  assert.equal(await page.locator('#v90SelectedTitle').innerText(),'Day 01');
+ assert.equal(await page.locator('#v90DayContent .v90-oneword-table tbody tr').count(),20,'Day 01 one-word entries should render as a 20-row table.');
+ const oneWordText=await page.locator('#v90DayContent .v90-oneword-table').innerText();
+ assert.match(oneWordText,/Claustrophobia/,'Broken line-wrap in a one-word answer should be rejoined.');
+ assert.ok(await page.locator('#v90DayContent .v90-idioms-grid .v90-entry-card').count()>=8,'Idioms should render as distinct cards.');
+ assert.ok(await page.locator('#v90DayContent .v90-series-grid .v90-entry-card').count()>=6,'Word-series items should render as distinct cards.');
+ assert.ok(await page.locator('#v90DayContent .v90-prep-grid .v90-entry-card').count()>=3,'Fixed prepositions should render as distinct cards.');
+ assert.ok(await page.locator('#v90DayContent .v90-cloze-grid .v90-entry-card').count()>=1,'Cloze vocabulary should render in numbered sets.');
  assert.equal(await page.locator('#v90DayGrid [data-v90-select]').count(),30);
  assert.equal(await page.locator('#view-vocab90 iframe').count(),0);
  const before=await page.evaluate(()=>Number(State.xp)||0);
