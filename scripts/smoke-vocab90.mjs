@@ -47,6 +47,7 @@ try{
  await page.locator('[data-v90-phase="1"]').click();
  await page.locator('[data-v90-select="31"]').click();
  await page.waitForFunction(()=>document.getElementById('v90SelectedTitle')?.textContent==='Day 31');
+ if(await page.locator('#viTour.open').count())await page.keyboard.press('Escape');
  await page.locator('#v90NextDay').click();
  await page.waitForFunction(()=>document.getElementById('v90SelectedTitle')?.textContent==='Day 32');
  await page.locator('#v90Search').fill('intrepid');
