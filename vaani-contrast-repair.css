@@ -93,3 +93,30 @@ body.mode-sepia{
 @media(prefers-reduced-motion:reduce){
   .view :is(.bc-entry,.bc-global-link,.gt-topic-card){transition:none!important}
 }
+
+
+/* The Grammar view owns a dedicated navy command surface. Keep its
+   textbook companion banner in that surface even when the global theme
+   is light; Book Reading retains the normal theme-aware treatment. */
+#view-grammar > .bc-global-link{
+  box-sizing:border-box;
+  opacity:1!important;
+  filter:none!important;
+  color:#f3f6f8!important;
+  background-color:#0b1722!important;
+  background-image:linear-gradient(125deg,#16313a 0%,#102331 58%,#0b1722 100%)!important;
+  border-color:rgba(123,240,224,.34)!important;
+  box-shadow:0 7px 18px rgba(0,0,0,.22);
+}
+#view-grammar > .bc-global-link strong{color:#f3f6f8!important;opacity:1!important}
+#view-grammar > .bc-global-link small{color:#c2cdd5!important;opacity:1!important}
+#view-grammar > .bc-global-link button{
+  background:#d9a941!important;
+  border-color:#f0c874!important;
+  color:#0b1722!important;
+}
+#view-grammar > .bc-global-link button:hover{
+  background:#f0c874!important;
+  border-color:#f0c874!important;
+  color:#0b1722!important;
+}

@@ -718,12 +718,39 @@ try {
     body.classList.toggle('mode-zen',saved.zen);
     body.classList.toggle('mode-sepia',saved.sepia);
     const grammarCopy=document.querySelector('#view-grammar .gt-browser-intro p');
-    return {results,grammarCopy:grammarCopy?{color:getComputedStyle(grammarCopy).color,opacity:getComputedStyle(grammarCopy).opacity}:null};
+    const grammarCompanion=document.querySelector('#view-grammar > .bc-global-link');
+    const companionTitle=grammarCompanion?.querySelector('strong');
+    const companionDetail=grammarCompanion?.querySelector('small');
+    const companionButton=grammarCompanion?.querySelector('button');
+    const companionBg='#16313a';
+    return {
+      results,
+      grammarCopy:grammarCopy?{color:getComputedStyle(grammarCopy).color,opacity:getComputedStyle(grammarCopy).opacity}:null,
+      grammarCompanion:grammarCompanion?{
+        opacity:getComputedStyle(grammarCompanion).opacity,
+        filter:getComputedStyle(grammarCompanion).filter,
+        backgroundColor:getComputedStyle(grammarCompanion).backgroundColor,
+        backgroundImage:getComputedStyle(grammarCompanion).backgroundImage,
+        titleColor:companionTitle?getComputedStyle(companionTitle).color:'',
+        detailColor:companionDetail?getComputedStyle(companionDetail).color:'',
+        buttonColor:companionButton?getComputedStyle(companionButton).color:'',
+        buttonBackground:companionButton?getComputedStyle(companionButton).backgroundColor:'',
+        titleRatio:companionTitle?ratio(getComputedStyle(companionTitle).color,companionBg):NaN,
+        detailRatio:companionDetail?ratio(getComputedStyle(companionDetail).color,companionBg):NaN,
+        buttonRatio:companionButton?ratio(getComputedStyle(companionButton).color,getComputedStyle(companionButton).backgroundColor):NaN
+      }:null
+    };
   });
   assert.ok(contrastAudit.results.every(x=>x.mutedRatio>=4.5&&x.muted2Ratio>=4.5),
     'Theme tokens must retain readable muted and secondary text contrast: '+JSON.stringify(contrastAudit.results));
   assert.ok(!contrastAudit.grammarCopy||Number(contrastAudit.grammarCopy.opacity)===1,
     'Grammar supporting copy must not be faded');
+  assert.ok(contrastAudit.grammarCompanion&&Number(contrastAudit.grammarCompanion.opacity)===1&&contrastAudit.grammarCompanion.filter==='none',
+    'Grammar companion banner must not be faded or filtered');
+  assert.ok(contrastAudit.grammarCompanion.backgroundImage.includes('rgb(22, 49, 58)')&&contrastAudit.grammarCompanion.backgroundColor==='rgb(11, 23, 34)',
+    'Grammar companion banner must use its dark command surface: '+JSON.stringify(contrastAudit.grammarCompanion));
+  assert.ok(contrastAudit.grammarCompanion.titleRatio>=4.5&&contrastAudit.grammarCompanion.detailRatio>=4.5&&contrastAudit.grammarCompanion.buttonRatio>=4.5,
+    'Grammar companion title, description and action must meet 4.5:1 contrast: '+JSON.stringify(contrastAudit.grammarCompanion));
   await page.waitForFunction(() => document.querySelectorAll('#grammarAcademyCatalog .ga-stage-card').length === 4);
   assert.ok(await page.locator('#grammarAcademyCatalog .ga-lesson-link').count() >= 40,
     'Academy lesson catalog did not expose the complete mapped curriculum');

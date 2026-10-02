@@ -610,9 +610,9 @@ try{
   if(eliteCharacter.includes('function wrapResult(){'))throw new Error('Officer VAANI result callback must not open a floating recovery briefing.');
   if(!eliteCharacterCss.includes('#vaaniMentor:not(.bad-result):not(.speaking):not(.open):not(.ve-move-mode){visibility:hidden!important;pointer-events:none!important}'))throw new Error('Collapsed Officer VAANI must not block page controls.');
   if(!html.includes('vaani-character-elite.css?v=20261002-result-report5')||!html.includes('js/vaani-character.js?v=20261002-passive-report1')||!html.includes('js/vaani-character-elite.js?v=20261002-passive-report4'))throw new Error('Officer VAANI asset cache keys are outdated.');
-  if(!html.includes('vaani-contrast-repair.css?v=20261002-contrast1'))throw new Error('Site-wide contrast repair must load after all visual layers.');
+  if(!html.includes('vaani-contrast-repair.css?v=20261002-contrast2'))throw new Error('Site-wide contrast repair must load after all visual layers.');
   const contrastRepair=readFileSync('vaani-contrast-repair.css','utf8');
-  if(!contrastRepair.includes('--muted:#b8c3ce')||!contrastRepair.includes('--muted2:#9aa8b5')||!contrastRepair.includes('#view-grammar .gt-topic-desc'))throw new Error('Site-wide contrast tokens or Grammar readability rules are missing.');
+  if(!contrastRepair.includes('--muted:#b8c3ce')||!contrastRepair.includes('--muted2:#9aa8b5')||!contrastRepair.includes('#view-grammar .gt-topic-desc')||!contrastRepair.includes('#view-grammar > .bc-global-link')||!contrastRepair.includes('background-color:#0b1722!important'))throw new Error('Site-wide contrast tokens, Grammar readability or companion banner rules are missing.');
   const appForReports=readFileSync('js/app.js','utf8'),dashboardCss=readFileSync('vaani-dashboard.css','utf8');
   if(!appForReports.includes('function vaaniResultBriefingNode(')||!appForReports.includes("PV.screen='summary';pvRender();")||!appForReports.includes("completedCard.appendChild(briefing)"))throw new Error('Inline end-of-attempt report and Officer VAANI briefing are incomplete.');
   if(!html.includes('assets/indian-flag-backdrop.svg')||!dashboardCss.includes('.vd-flag-backdrop'))throw new Error('Dashboard Indian flag backdrop is missing.');
