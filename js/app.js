@@ -1712,10 +1712,16 @@ function pvRender(){
   else if(PV.screen==='paper') root.innerHTML = pvPaperHTML();
   else if(PV.screen==='exampicker') root.innerHTML = pvExamPickerHTML();
   else if(PV.screen==='session') root.innerHTML = pvSessionHTML();
-  else if(PV.screen==='summary') root.innerHTML = pvSummaryHTML();
+  else if(PV.screen==='summary') {
+    root.innerHTML = pvSummaryHTML();
+    const session=PV.session;
+    const briefing=vaaniResultBriefingNode(session&&session.resultAccuracy,session&&session.title);
+    const report=root.querySelector('.pv-summary-hero');
+    if(report&&briefing)report.appendChild(briefing);
+  }
   document.body.classList.toggle('pv-session-active', PV.screen==='session');
   window.scrollTo({top:0,behavior:'smooth'});
-  if(typeof window.vaaniCharacterSpeak==='function')window.setTimeout(()=>window.vaaniCharacterSpeak(name),700);
+  if((PV.screen==='session'||PV.screen==='summary')&&typeof window.vaaniCharacterHide==='function')window.vaaniCharacterHide();
   setTimeout(()=>{ if(typeof initReveal==='function') initReveal(); },30);
 }
 function pvGoHome(){ pvStopTimer(); PV.screen='home'; PV.session=null; PV.paperReturn=null; pvRender(); }
@@ -2440,11 +2446,11 @@ function pvFinishSession(){
     s.xpAdjustments={accuracy:accuracyChange,marks:marksChange};
     if(typeof window.vaaniCharacterResult==='function')window.vaaniCharacterResult(accuracy!==null?accuracy:0,label);
   }
-  if(s.mode==='exam'){PV.screen='summary';pvRender();return;}
-  if(s.mode==='bookpractice'){
-    toast('Book practice complete · '+correct+'/'+total+' correct'+(accuracy===null?'':' · '+formatXPPercent(accuracy)+'% accuracy'));
-    PV.session=null;PV.screen=s.bookChapterId?'bookchapter':'bookcompanion';if(s.bookChapterId)PV.bookChapterId=s.bookChapterId;pvRender();
-  }else{toast('Session complete — nice work, Cadet!');pvGoHome();}
+  s.resultAccuracy=accuracy;
+  s.resultCorrect=correct;
+  s.resultWrong=attempted-correct;
+  s.resultSkipped=Math.max(0,total-attempted);
+  PV.screen='summary';pvRender();
 }
 
 function pvReportError(qid){
@@ -2593,66 +2599,124 @@ function pvConfirmExitExam(){
   if(confirm('Leave the exam simulation now? Your progress on this attempt will be lost.')){ pvStopTimer(); PV.session=null; pvClearContinue(); pvGoHome(); }
 }
 
+function vaaniResultBriefingNode(score,label){
+  const raw=score===null||score===undefined||score===''?NaN:Number(score);
+  const pct=Number.isFinite(raw)?Math.max(0,Math.min(100,raw)):null;
+  let heading,message,quote;
+  if(pct===null){
+    heading='Review the attempt';
+    message='This attempt is recorded. Check the answers and decide what to practise next.';
+    quote='“A clear review turns effort into direction.”';
+  }else if(pct<50){
+    heading='Rebuild from the missed questions';
+    message='Use the errors as a map: identify the rule behind each miss, revise it, and try a fresh set.';
+    quote='“A result is feedback on an attempt, not a verdict on your potential.”';
+  }else if(pct<70){
+    heading='Strengthen the fundamentals';
+    message='Review the repeated errors before increasing speed. Aim for consistent accuracy on the next attempt.';
+    quote='“Correct the method before chasing the clock.”';
+  }else if(pct<90){
+    heading='Protect your accuracy';
+    message='Your base is taking shape. Review the few mistakes and keep the same careful approach.';
+    quote='“Repeat the process that earned the result.”';
+  }else{
+    heading='Good execution';
+    message='Review any missed or skipped questions, retain what worked, and keep practising steadily.';
+    quote='“Consistency is built one deliberate attempt at a time.”';
+  }
+  const section=document.createElement('section');
+  section.className='vaani-result-briefing';
+  section.setAttribute('aria-label','Officer VAANI after-action briefing');
+  const kicker=document.createElement('span');
+  kicker.className='vaani-result-briefing-kicker';
+  kicker.textContent='OFFICER VAANI · AFTER-ACTION BRIEFING';
+  const title=document.createElement('strong');
+  title.className='vaani-result-briefing-title';
+  title.textContent=heading;
+  const copy=document.createElement('p');
+  copy.textContent=message;
+  const note=document.createElement('blockquote');
+  note.textContent=quote;
+  section.append(kicker,title,copy,note);
+  return section;
+}
+
 /* ============================================================
    EXAM SUMMARY
    ============================================================ */
 function pvSummaryHTML(){
-  const s = PV.session; if(!s) return '';
-  let correct=0, wrong=0, unattempted=0;
+  const s=PV.session;if(!s)return '';
+  const isExam=s.mode==='exam';
+  let correct=0,wrong=0,unattempted=0;
   s.questions.forEach(q=>{
-    const a = s.answers[q._id];
-    if(!a || a.choice===-1) unattempted++;
-    else if(a.correct) correct++;
+    const a=s.answers&&s.answers[q._id];
+    if(!a||a.choice===-1)unattempted++;
+    else if(a.correct)correct++;
     else wrong++;
   });
-  const rawScore = correct - (wrong/3);
-  const scoreLabel = (Math.round(rawScore*100)/100).toString();
-  const total = s.questions.length;
-  const acc = (correct+wrong) ? correct/(correct+wrong)*100 : null;
-  const accLabel = acc===null?'—':formatXPPercent(acc)+'%';
-  const marksPct = total ? Math.max(0,rawScore/total*100) : 0;
-  const accuracyPenalty = acc===null?0:getAccuracyPenalty(acc);
-  const marksPenalty = getTotalMarksPenalty(marksPct);
-  const marksPctLabel = formatXPPercent(marksPct);
+  const total=s.questions.length;
+  const attempted=correct+wrong;
+  const rawScore=isExam?correct-(wrong/3):correct;
+  const scoreLabel=isExam?(Math.round(rawScore*100)/100).toString():String(correct);
+  const accuracy=attempted?correct/attempted*100:null;
+  const accLabel=accuracy===null?'—':formatXPPercent(accuracy)+'%';
+  const marksPct=total?Math.max(0,rawScore/total*100):0;
+  const marksPctLabel=formatXPPercent(marksPct);
   const xpAdjustments=s.xpAdjustments||{};
-  const accuracyChange=Number.isFinite(Number(xpAdjustments.accuracy))?Number(xpAdjustments.accuracy):-accuracyPenalty;
-  const marksChange=Number.isFinite(Number(xpAdjustments.marks))?Number(xpAdjustments.marks):-marksPenalty;
+  const hasAccuracyChange=Number.isFinite(Number(xpAdjustments.accuracy));
+  const hasMarksChange=Number.isFinite(Number(xpAdjustments.marks));
+  const accuracyChange=hasAccuracyChange?Number(xpAdjustments.accuracy):0;
+  const marksChange=hasMarksChange?Number(xpAdjustments.marks):0;
   const showXPChange=value=>(value>0?'+':value<0?'−':'')+Math.abs(Math.trunc(value))+' XP';
-
-  const reviewHTML = s.questions.map((q,i)=>{
-    const a = s.answers[q._id];
-    const stat = (!a || a.choice===-1) ? '⬜' : (a.correct ? '✅' : '❌');
-    return `<div class="pv-review-item" onclick="pvReviewExamQ(${i})">
-      <span class="idx">Q${i+1}</span><span class="q">${pyqPromptHTML(q)}</span><span class="stat">${stat}</span>
-    </div>`;
+  const reviewHTML=s.questions.map((q,i)=>{
+    const a=s.answers&&s.answers[q._id];
+    const stat=(!a||a.choice===-1)?'⬜':(a.correct?'✅':'❌');
+    return '<div class="pv-review-item" onclick="pvReviewExamQ('+i+')">'+
+      '<span class="idx">Q'+(i+1)+'</span><span class="q">'+pyqPromptHTML(q)+'</span><span class="stat">'+stat+'</span>'+
+    '</div>';
   }).join('');
-
-  return `<div class="pv-screen">
-    <div class="pv-topbar">
-      <div class="pv-back" onclick="pvGoHome()">←</div>
-      <div class="pv-topbar-title">${s.title}<small>Exam Results</small></div>
-    </div>
-    <div class="pv-summary-hero">
-      <div class="pv-summary-score">${scoreLabel} / ${total}</div>
-      <div class="pv-summary-label">Net Score (−⅓ negative marking applied)</div>
-      <div class="pv-summary-grid">
-        <div class="pv-summary-stat"><div class="n" style="color:var(--green)">${correct}</div><div class="l">Correct</div></div>
-        <div class="pv-summary-stat"><div class="n" style="color:var(--red)">${wrong}</div><div class="l">Wrong</div></div>
-        <div class="pv-summary-stat"><div class="n" style="color:var(--muted)">${unattempted}</div><div class="l">Skipped</div></div>
-      </div>
-      <div class="pv-summary-grid" style="grid-template-columns:1fr 1fr">
-        <div class="pv-summary-stat"><div class="n">${accLabel}</div><div class="l">Accuracy on attempted questions</div></div>
-        <div class="pv-summary-stat"><div class="n">${marksPctLabel}%</div><div class="l">Net marks as % of total</div></div>
-      </div>
-      <div class="pv-summary-label pv-summary-xp-adjustments" role="status">XP changes applied: accuracy ${showXPChange(accuracyChange)} · net marks ${showXPChange(marksChange)}</div>
-    </div>
-    <div class="pv-section-title"><h3><span class="bar"></span>Review Every Question</h3></div>
-    ${reviewHTML}
-    <button class="btn" style="width:100%;justify-content:center;margin-top:12px" onclick="pvGoHome()">🏠 Back to Command Center</button>
-  </div>`;
+  const adjustmentLabel=isExam
+    ?'XP changes applied: accuracy '+showXPChange(accuracyChange)+' · net marks '+showXPChange(marksChange)
+    :'XP change applied: accuracy '+showXPChange(accuracyChange);
+  const returnLabel=s.mode==='bookpractice'?'Return to Book Reading':'Back to Command Center';
+  return '<div class="pv-screen">'+
+    '<div class="pv-topbar">'+
+      '<button type="button" class="pv-back" onclick="pvReturnFromSummary()" aria-label="'+returnLabel+'">←</button>'+
+      '<div class="pv-topbar-title">'+escapeHtmlVaani(String(s.title||'Practice'))+'<small>'+(isExam?'Exam Results':'Practice Report')+'</small></div>'+
+    '</div>'+
+    '<section class="pv-summary-hero" aria-label="Attempt report card">'+
+      '<div class="pv-summary-score">'+scoreLabel+' / '+total+'</div>'+
+      '<div class="pv-summary-label">'+(isExam?'Net Score (−⅓ negative marking applied)':'Correct answers out of total questions')+'</div>'+
+      '<div class="pv-summary-grid">'+
+        '<div class="pv-summary-stat"><div class="n" style="color:var(--green)">'+correct+'</div><div class="l">Correct</div></div>'+
+        '<div class="pv-summary-stat"><div class="n" style="color:var(--red)">'+wrong+'</div><div class="l">Wrong</div></div>'+
+        '<div class="pv-summary-stat"><div class="n" style="color:var(--muted)">'+unattempted+'</div><div class="l">Skipped</div></div>'+
+      '</div>'+
+      '<div class="pv-summary-grid" style="grid-template-columns:repeat(auto-fit,minmax(130px,1fr))">'+
+        '<div class="pv-summary-stat"><div class="n">'+accLabel+'</div><div class="l">Accuracy on attempted questions</div></div>'+
+        (isExam?'<div class="pv-summary-stat"><div class="n">'+marksPctLabel+'%</div><div class="l">Net marks as % of total</div></div>':'')+
+      '</div>'+
+      '<div class="pv-summary-label pv-summary-xp-adjustments" role="status">'+adjustmentLabel+'</div>'+
+    '</section>'+
+    '<div class="pv-section-title"><h3><span class="bar"></span>Review Every Question</h3></div>'+
+    reviewHTML+
+    '<button class="btn" style="width:100%;justify-content:center;margin-top:12px" onclick="pvReturnFromSummary()">🏠 '+returnLabel+'</button>'+
+  '</div>';
 }
+function pvReturnFromSummary(){
+  const s=PV.session;
+  if(s&&s.mode==='bookpractice'){
+    const chapter=s.bookChapterId;
+    pvStopTimer();PV.session=null;PV.screen=chapter?'bookchapter':'bookcompanion';
+    if(chapter)PV.bookChapterId=chapter;
+    pvRender();return;
+  }
+  pvGoHome();
+}
+
 function pvReviewExamQ(i){
   const s = PV.session; if(!s) return;
+  if(s.mode!=='revision-review')s.summaryReturnMode=s.mode;
   s.mode = 'revision-review'; // reveal answers freely without further scoring
   s.index = i;
   PV.screen = 'session';
@@ -2660,7 +2724,8 @@ function pvReviewExamQ(i){
 }
 function pvBackToSummary(){
   const s = PV.session; if(!s) return;
-  s.mode = 'exam';
+  s.mode = s.summaryReturnMode||'exam';
+  delete s.summaryReturnMode;
   PV.screen = 'summary';
   pvRender();
 }
@@ -3743,6 +3808,8 @@ function renderQuizPane(id, quiz){
     const pct=Math.round(exactPct);State.quizScores[id]=pct;State.topicLastAttempt=State.topicLastAttempt||{};State.topicLastAttempt[id]=Date.now();saveState();
     recordQuizCompletion(pct,started?(Date.now()-started)/1000:null,((GRAMMAR.find(g=>g.id===id)||{}).title)||id);
     pane.innerHTML='<div class="quiz-card quiz-complete-card" role="status"><span class="lesson-kicker">TOPIC CHECK COMPLETE</span><h3>Your result</h3><div class="quiz-result-score">'+pct+'%</div><p>'+correctCount+' of '+questions.length+' answers correct</p><div class="quiz-result-track"><div style="width:'+pct+'%"></div></div><div class="quiz-result-actions"><button class="btn" type="button" id="quizRetry">Try again</button><button class="btn ghost" type="button" id="quizBack">Review lesson</button></div></div>';
+    const briefing=vaaniResultBriefingNode(pct,((GRAMMAR.find(g=>g.id===id)||{}).title)||id);
+    const completedCard=pane.querySelector('.quiz-complete-card');if(completedCard&&briefing)completedCard.appendChild(briefing);
     pane.querySelector('#quizRetry').addEventListener('click',()=>renderQuizPane(id,questions));pane.querySelector('#quizBack').addEventListener('click',()=>{const b=document.querySelector('.tab-btn[data-tab="learn"]');if(b)b.click();});
     awardAccuracyXP(exactPct,'Topic quiz: '+(((GRAMMAR.find(g=>g.id===id)||{}).title)||'topic'));launchConfettiIf(pct>=70);
   }
@@ -4478,8 +4545,8 @@ function renderServiceRankProgress(){
   if(crest)crest.classList.toggle('is-preview',!progress.current);
   bar.style.width=progress.progress+'%';bar.setAttribute('aria-valuenow',String(progress.progress));
   if(progress.next){
-    hint.textContent=progress.earnedToNext.toLocaleString('en-IN')+' / '+progress.requiredToNext.toLocaleString('en-IN')+
-      ' XP toward '+progress.next.name+' ('+progress.next.xp.toLocaleString('en-IN')+' total XP)';
+    hint.textContent=progress.points.toLocaleString('en-IN')+' / '+progress.next.xp.toLocaleString('en-IN')+' total XP · '+progress.remainingXP.toLocaleString('en-IN')+' XP to '+progress.next.name;
+    if(paceHint)paceHint.textContent=progress.earnedToNext.toLocaleString('en-IN')+' / '+progress.requiredToNext.toLocaleString('en-IN')+' XP in the '+(progress.current?progress.current.name:'starting')+' → '+progress.next.name+' band · no daily XP cap.';
     const minimumDays=getMinimumXPDays(progress.remainingXP);
     if(paceHint)paceHint.textContent='Next milestone can be earned through continued practice — there is no daily XP cap.';
   }else{
