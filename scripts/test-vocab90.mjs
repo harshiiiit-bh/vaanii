@@ -21,6 +21,27 @@ for(const day of course){
 assert.equal(pages.length,324,'Expected 324 source-page references.');
 assert.equal(new Set(pages).size,324,'A PDF page is assigned more than once.');
 assert.deepEqual([...new Set(pages)].sort((a,b)=>a-b),Array.from({length:324},(_,i)=>i+1),'Expected exact source page coverage 1–324.');
+
+const day20=days[19];
+const day20Prep=day20.sections.find(section=>section.key==='prep');
+const day20Cloze=day20.sections.find(section=>section.key==='cloze');
+assert.ok(day20Prep,'Day 20 fixed-preposition table is missing.');
+assert.match(day20Prep.text,/Confident of-/);
+assert.match(day20Prep.text,/Count on-/);
+assert.match(day20Prep.text,/Charge of \(Noun\)/);
+assert.match(day20Prep.text,/Charge with \(Verb\)/);
+assert.match(day20Prep.text,/Cope with-/);
+assert.ok(!day20Cloze.text.includes('Confident of-'),'Day 20 prepositions must not be duplicated in cloze content.');
+const day33=days[32];
+const day33OneWord=day33.sections.find(section=>section.key==='oneword');
+const day33Idioms=day33.sections.find(section=>section.key==='idioms');
+assert.ok(day33OneWord,'Day 33 one-word substitutions are missing.');
+assert.match(day33OneWord.text,/Improvident/);
+assert.match(day33OneWord.text,/Malfunction/);
+assert.match(day33Idioms.text,/Eat anyone.s salt/);
+assert.match(day33Idioms.text,/In one.s kitty/);
+assert.ok(!day33Idioms.text.includes('Improvident'),'Day 33 one-word content is mixed into idioms.');
+
 const html=readFileSync(resolve(root,'index.html'),'utf8');
 const a=html.indexOf('<section class="view v90-view"'),b=html.indexOf('<!-- ============ WORD DETAIL PAGE ============ -->',a);
 assert.ok(a>=0&&b>a,'Native Vocab90 view missing.');
