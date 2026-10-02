@@ -768,3 +768,6 @@ body.ve-vaani-hidden #vaaniMentor:not(.bad-result),body.ve-vaani-hidden .ve-head
 .pv-summary-hero .vaani-result-briefing{grid-column:1/-1}
 .quiz-complete-card .vaani-result-briefing{max-width:640px;margin:14px auto 0}
 @media(max-width:480px){.vaani-result-briefing{padding:10px 11px;gap:4px}.vaani-result-briefing p{font-size:.69rem}}
+
+/* Profile owns the right-edge identity and rank controls; hide the dock immediately on that route. */
+body:has(#view-profile.active) #vaaniMentor:not(.bad-result){display:none!important}
