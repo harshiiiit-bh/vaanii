@@ -1294,9 +1294,16 @@ function lookupOffline(word){
 function isGoodWordResult(r){
   return !!(r && r.meaning && (r.synonyms.length || r.antonyms.length));
 }
+function optionalRequestTimeout(ms){
+  try{
+    return typeof AbortSignal!=='undefined' && typeof AbortSignal.timeout==='function'
+      ? AbortSignal.timeout(ms)
+      : undefined;
+  }catch(e){return undefined;}
+}
 async function lookupFreeDictionaryApi(word){
   try{
-    const res = await fetch('https://api.dictionaryapi.dev/api/v2/entries/en/' + encodeURIComponent(word.trim().toLowerCase()));
+    const res = await fetch('https://api.dictionaryapi.dev/api/v2/entries/en/' + encodeURIComponent(word.trim().toLowerCase()), { signal: optionalRequestTimeout(8000) });
     if(!res.ok) return null;
     const data = await res.json();
     const entry = Array.isArray(data) ? data[0] : null;
@@ -1319,8 +1326,8 @@ async function lookupDatamuse(word){
   const w = encodeURIComponent(word.trim().toLowerCase());
   try{
     const [synRes, antRes] = await Promise.all([
-      fetch('https://api.datamuse.com/words?rel_syn=' + w + '&max=5'),
-      fetch('https://api.datamuse.com/words?rel_ant=' + w + '&max=5')
+      fetch('https://api.datamuse.com/words?rel_syn=' + w + '&max=5', { signal: optionalRequestTimeout(8000) }),
+      fetch('https://api.datamuse.com/words?rel_ant=' + w + '&max=5', { signal: optionalRequestTimeout(8000) })
     ]);
     const synData = synRes.ok ? await synRes.json() : [];
     const antData = antRes.ok ? await antRes.json() : [];
@@ -1346,35 +1353,44 @@ async function callClaudeForWord(word){
   const prompt = buildWordPrompt(word);
   const body = JSON.stringify({ model: "claude-sonnet-4-6", max_tokens: 500, messages: [{ role: "user", content: prompt }] });
 
-  try{
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST", headers: { "Content-Type": "application/json" }, body
-    });
-    if(res.ok){
-      const claudeResult = parseWordResponse(await res.json());
-      if(isGoodWordResult(claudeResult)) return claudeResult;
-    }
-  }catch(e){ /* not inside Claude, or offline — try the free APIs next */ }
+  // The unauthenticated endpoint is only meaningful inside the host Claude environment.
+  if(INSIDE_CLAUDE){
+    try{
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body,
+        signal: optionalRequestTimeout(8000)
+      });
+      if(res.ok){
+        const claudeResult = parseWordResponse(await res.json());
+        if(isGoodWordResult(claudeResult)) return claudeResult;
+      }
+    }catch(e){ /* continue to the public dictionaries when unavailable */ }
+  }
 
   const freeResult = await lookupFreeApis(word);
   if(isGoodWordResult(freeResult)) return freeResult;
 
   const key = await getApiKey();
   if(key){
-    const res2 = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": key,
-        "anthropic-version": "2023-06-01",
-        "anthropic-dangerous-direct-browser-access": "true"
-      },
-      body
-    });
-    if(res2.ok){
-      const keyedResult = parseWordResponse(await res2.json());
-      if(isGoodWordResult(keyedResult)) return keyedResult;
-    }
+    try{
+      const res2 = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": key,
+          "anthropic-version": "2023-06-01",
+          "anthropic-dangerous-direct-browser-access": "true"
+        },
+        body,
+        signal: optionalRequestTimeout(8000)
+      });
+      if(res2.ok){
+        const keyedResult = parseWordResponse(await res2.json());
+        if(isGoodWordResult(keyedResult)) return keyedResult;
+      }
+    }catch(e){ /* continue with any usable free result or manual entry */ }
   }
 
   if(freeResult && (freeResult.meaning || freeResult.synonyms.length || freeResult.antonyms.length)) return freeResult;

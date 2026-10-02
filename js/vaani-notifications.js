@@ -24,8 +24,15 @@
   }
 
   function safeUrl(value) {
-    const url = String(value || '');
-    return /^https?:\/\//i.test(url) ? url : '';
+    const raw = String(value || '').trim();
+    try {
+      const url = new URL(raw);
+      return (url.protocol === 'https:' || url.protocol === 'http:') && !url.username && !url.password
+        ? url.href
+        : '';
+    } catch (error) {
+      return '';
+    }
   }
 
   function formatDate(value) {

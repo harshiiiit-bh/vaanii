@@ -4,6 +4,13 @@
   const app=document.getElementById('notificationHubApp');
   if(!app)return;
   const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const safeUrl=value=>{
+    const raw=String(value??'').trim();
+    try{
+      const url=new URL(raw);
+      return (url.protocol==='https:'||url.protocol==='http:')&&!url.username&&!url.password?url.href:'';
+    }catch(e){return '';}
+  };
   const exams=[
     {id:'nda1',name:'NDA & NA I 2027',short:'NDA I 2027',type:'UPSC Annual Calendar',status:'calendar',notification:'2 December 2026',last:'22 December 2026',exam:'11 April 2027',note:'Dates are scheduled in the UPSC Annual Calendar 2027. DOB, vacancies, eligibility and final application instructions must be taken from the individual notification when released.',url:'https://www.upsc.gov.in/content/annual-calendar-2027-0'},
     {id:'cds1',name:'CDS I 2027',short:'CDS I 2027',type:'UPSC Annual Calendar',status:'calendar',notification:'2 December 2026',last:'22 December 2026',exam:'11 April 2027',note:'Dates are scheduled in the UPSC Annual Calendar 2027. Age limits differ by academy and must be checked against the individual notification.',url:'https://www.upsc.gov.in/content/annual-calendar-2027-0'},
@@ -36,6 +43,7 @@
   let activeFilter='ALL';
 
   function feedCard(item){
+    const url=safeUrl(item&&item.url);
     const label=String(item.category||'DEFENCE').replace('_',' ');
     const status=String(item.status||item.type||'update').replace(/-/g,' ');
     const seen=item.lastSeen?new Date(item.lastSeen):null;
@@ -45,7 +53,7 @@
       '<h3>'+esc(item.title)+'</h3>'+
       '<p>'+esc(item.summary||'Open the official source for the complete notice and eligibility conditions.')+'</p>'+
       '<div class="nh-feed-meta"><span>'+esc(item.organization||'Official source')+'</span><span>Checked '+esc(seenText)+'</span></div>'+
-      '<a class="nh-card-link" href="'+esc(item.url)+'" target="_blank" rel="noopener noreferrer">Open official notice/source ↗</a>'+
+      (url?'<a class="nh-card-link" href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">Open official notice/source ↗</a>':'')+
       '</article>';
   }
 

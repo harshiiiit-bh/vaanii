@@ -48,6 +48,8 @@ jobs:
         run: node scripts/test-service-rank-xp.mjs
       - name: Test PYQ bank metadata and taxonomy
         run: node scripts/test-pyq-bank.mjs
+      - name: Test security boundaries
+        run: node scripts/test-security-boundaries.mjs
       - name: Set up Deno
         uses: denoland/setup-deno@v2
         with:
