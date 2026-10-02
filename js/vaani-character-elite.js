@@ -350,17 +350,17 @@
     const x=m.querySelector('#veDockX'),y=m.querySelector('#veDockY');
     const maxX=Math.max(8,Math.floor(window.innerWidth-rect.width-8));
     const maxY=Math.max(8,Math.floor(safeDockBottom()-rect.height));
-    if(x){x.min='8';x.max=String(maxX);x.value=String(Math.round(rect.left));}
-    if(y){y.min='8';y.max=String(maxY);y.value=String(Math.round(rect.top));}
+    if(x){x.min='8';x.max=String(maxX);if(document.activeElement!==x)x.value=String(Math.round(rect.left));}
+    if(y){y.min='8';y.max=String(maxY);if(document.activeElement!==y)y.value=String(Math.round(rect.top));}
   }
-  function applyDockPositionInputs(){
+  function applyDockPositionInputs(axis){
     const m=mentor();
     if(!m)return;
     const x=m.querySelector('#veDockX'),y=m.querySelector('#veDockY');
     if(!x||!y)return;
     const current=m.getBoundingClientRect();
-    const left=Number.isFinite(x.valueAsNumber)?x.valueAsNumber:current.left;
-    const top=Number.isFinite(y.valueAsNumber)?y.valueAsNumber:current.top;
+    const left=axis==='x'&&Number.isFinite(x.valueAsNumber)?x.valueAsNumber:current.left;
+    const top=axis==='y'&&Number.isFinite(y.valueAsNumber)?y.valueAsNumber:current.top;
     const pos=setDockPosition(left,top,true);
     if(pos)setDockStatus('Position saved at X '+pos.x+' px, Y '+pos.y+' px.');
   }
@@ -480,8 +480,8 @@
       panel.querySelector('#veMoveToggle')?.addEventListener('click',()=>setDockMoveMode(!dockMoveMode));
       panel.querySelector('#veDockScale')?.addEventListener('input',event=>setDockScale(event.target.value,true));
       panel.querySelector('#veDockScaleExact')?.addEventListener('change',event=>setDockScale(event.target.value,true));
-      panel.querySelector('#veDockX')?.addEventListener('change',applyDockPositionInputs);
-      panel.querySelector('#veDockY')?.addEventListener('change',applyDockPositionInputs);
+      panel.querySelector('#veDockX')?.addEventListener('change',()=>applyDockPositionInputs('x'));
+      panel.querySelector('#veDockY')?.addEventListener('change',()=>applyDockPositionInputs('y'));
       panel.querySelector('#veDockReset')?.addEventListener('click',()=>{
         clearDockPosition();
         const current=m.getBoundingClientRect();
