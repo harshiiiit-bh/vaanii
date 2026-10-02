@@ -125,6 +125,7 @@
           '<div class="vi-rule"><strong>Accuracy deductions</strong><span>60–69%: −10 · 50–59%: −20 · 40–49%: −45 · 33–39%: −60 · below 33%: −80. 70%+ has no accuracy deduction.</span></div>',
           '<div class="vi-rule"><strong>Paper net-marks deductions</strong><span>70%+: −5 · 50–69%: −8 · 33–49%: −12 · below 33%: −15 after the paper negative-marking calculation.</span></div>',
           '<div class="vi-rule"><strong>3+ day streak</strong><span>Once the streak reaches 3 days, an active day grants a fixed +22 XP streak reward.</span></div>',
+          '<div class="vi-rule"><strong>Streak reset</strong><span>Missing a login day resets the streak. Each missed day also deducts 15 XP, up to 75 XP.</span></div>',
           '<div class="vi-rule"><strong>Extra activities</strong><span>Grammar clears, Memory Match, vocabulary learning, Focus Sprint, combos, Lucky Spin and Mystery Box can award separate activity XP.</span></div>',
           '<div class="vi-rule"><strong>XP can fall</strong><span>Deductions are real. XP never goes below zero, and deductions do not create a new earning cap.</span></div>',
           '<div class="vi-rule"><strong>Why it matters</strong><span>VAANI rewards answering correctly while making careless, low-accuracy attempts costly.</span></div>',
