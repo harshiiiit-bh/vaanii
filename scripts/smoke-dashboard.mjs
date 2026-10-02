@@ -716,17 +716,13 @@ try {
       }
       await page.locator('#nextBtn').click();
       await page.waitForSelector('#pane-quiz .quiz-complete-card',{timeout:5000});
+      assert.equal(await page.locator('#pane-quiz .quiz-complete-card .vaani-result-briefing').count(),1,'Grammar completion must contain the Officer VAANI briefing inside its report card');
       const lessonScore=await page.evaluate(() => ({academy:State.quizScores['sequence-of-tenses'],legacy:State.quizScores.tenses}));
       assert.equal(typeof lessonScore.academy,'number','New Academy quiz score was not saved under its own stable ID');
       assert.equal(lessonScore.legacy,79,'New Academy quiz overwrote its legacy parent topic score');
       await page.evaluate(() => jumpFlow('summary',document.querySelector('.flow-step[data-step="summary"]')));
-      if (await page.locator('#vaaniMentor.bad-result.show').count()) {
-        assert.ok(await page.locator('#vcRecoveryClose').isVisible(),
-          'Low-score recovery briefing should offer a Back to training action');
-        await page.locator('#vcRecoveryClose').click();
-        await page.waitForFunction(() => !document.getElementById('vaaniMentor')?.classList.contains('bad-result'),
-          null, { timeout: 5000 });
-      }
+      assert.equal(await page.locator('#vaaniMentor.bad-result.show').count(),0,
+        'A low score must not open a floating Officer VAANI recovery overlay');
       await page.locator('#pane-summary .btn.glow-btn').click();
       const lessonCompletion=await page.evaluate(() => ({academy:State.completedTopics['sequence-of-tenses'],legacy:State.completedTopics.tenses}));
       assert.equal(lessonCompletion.academy,true,'New Academy completion was not saved under its own stable ID');
@@ -1128,6 +1124,10 @@ try {
   console.log('PASS navigation: all primary views opened; logout control is present');
 
   await clickMainView('profile');
+  assert.equal(await page.locator('#view-profile .ve-officer-station').count(),0,
+    'Profile must not receive a floating station badge over the rank and logout controls');
+  assert.equal(await page.locator('#vaaniMentor.open').count(),0,
+    'Opening Profile must not trigger an unsolicited Officer VAANI briefing');
   const profileState = await page.evaluate(() => ({
     name:String(State.name||'Cadet').trim(),
     initials:String(State.name||'Cadet').trim().split(/\s+/).filter(Boolean).slice(0,2).map(part=>part[0].toUpperCase()).join(''),
@@ -1404,6 +1404,13 @@ try {
   }),pyqInteractionFixture.id);
   assert.equal(pyqFeedback.correct,true,'Correct PYQ selection did not update the account attempt record');
   assert.equal(pyqFeedback.history,true,'PYQ answer was not added to recent activity');
+  assert.equal(await page.locator('#vaaniMentor.open').count(),0,'An answered PYQ must not open a floating briefing');
+  await page.evaluate(()=>pvNext());
+  await page.waitForFunction(()=>PV.screen==='summary',null,{timeout:5000});
+  assert.ok(await page.locator('#view-pyq .pv-summary-hero').count(),'Completed practice must show its report card');
+  assert.equal(await page.locator('#view-pyq .pv-summary-hero .vaani-result-briefing').count(),1,
+    'PYQ practice report must contain the Officer VAANI briefing');
+  assert.equal(await page.locator('#vaaniMentor.open').count(),0,'Finishing PYQ practice must not open a floating briefing');
   await page.evaluate(()=>pvGoHome());
   await page.locator('#pvApp .pv-mode-card').filter({hasText:'Bookmarks'}).click();
   await page.waitForSelector('.vx-scrim[role="dialog"]',{timeout:5000});
@@ -1419,7 +1426,16 @@ try {
   await page.evaluate(({id,hadExplanation,oldExplanation})=>{
     if(hadExplanation)PYQ_BY_ID[id].exp=oldExplanation;else delete PYQ_BY_ID[id].exp;
   },pyqInteractionFixture);
-  console.log('PASS PYQ interactions: save bookmark, answer with explanation, persist attempt and launch bookmarks');
+  await page.evaluate(({id})=>pvStartSession('rapidfire',[PYQ_BY_ID[id]],{title:'Rapid Fire regression',perQSeconds:20}),pyqInteractionFixture);
+  await page.waitForSelector('#view-pyq #pvTimerRingBox',{timeout:5000});
+  assert.equal(await page.locator('#vaaniMentor.open').count(),0,'Rapid Fire must remain free of floating briefings');
+  await page.locator('#view-pyq .pv-options .pv-option').nth(pyqInteractionFixture.answer).click();
+  await page.evaluate(()=>pvNext());
+  await page.waitForFunction(()=>PV.screen==='summary',null,{timeout:5000});
+  assert.equal(await page.locator('#view-pyq .pv-summary-hero .vaani-result-briefing').count(),1,
+    'Rapid Fire completion must show its Officer VAANI briefing inside the report card');
+  await page.evaluate(()=>pvGoHome());
+  console.log('PASS PYQ interactions: bookmark, answer review, bookmarks mode, practice report and rapid-fire report');
   await page.evaluate(()=>pvGoHome());
   await page.locator('#view-pyq .bc-open').click();
   await page.waitForSelector('#view-pyq .bc-companion',{timeout:5000});
