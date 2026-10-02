@@ -45,6 +45,7 @@ try{
  assert.equal(twice.xp,before+10,'Undo/re-completion must not duplicate XP.');
  assert.equal(twice.done,true);
  await page.locator('[data-v90-phase="1"]').click();
+ if(await page.locator('#viTour.open').count())await page.keyboard.press('Escape');
  await page.locator('[data-v90-select="31"]').click();
  await page.waitForFunction(()=>document.getElementById('v90SelectedTitle')?.textContent==='Day 31');
  if(await page.locator('#viTour.open').count())await page.keyboard.press('Escape');
