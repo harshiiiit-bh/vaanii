@@ -34,10 +34,11 @@ jobs:
             const res = await fetch(url, {headers:{'user-agent':'Mozilla/5.0'}});
             const html = await res.text();
             const $ = cheerio.load(html);
-            const entry = $('.entry-content, .td-post-content, article').filter((_,el)=>$(el).find(/h1|h2|p|li/.source).length).first();
+            const entry = $('.entry-content').first().length ? $('.entry-content').first() :
+              ($('.td-post-content').first().length ? $('.td-post-content').first() : $('article').first());
             console.log('SOURCE',url,'HTTP',res.status,'bytes',html.length,'entry',entry.length);
-            console.log('HTML',entry.html()?.slice(0,2200)?.replace(/\s+/g,' '));
-            const nums=entry.text().match(/\b\d{1,3}\s*[.)]/g)||[];
+            console.log('HTML',String(entry.html()||'').slice(0,2200).replace(/\\s+/g,' '));
+            const nums=entry.text().match(/\\b\\d{1,3}\\s*[.)]/g)||[];
             console.log('NUMBER_MARKERS',nums.length,'SAMPLE',nums.slice(0,8).join('|'));
           }
           NODE
