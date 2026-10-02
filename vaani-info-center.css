@@ -51,11 +51,10 @@
 
 .vi-officer-model{
   width:230px;height:250px;
-  background-image:url("https://cdn-ai-hs.picsart.com/ai-hot-storage/26983f1e-c8a3-4711-8463-852b639599c7.png");
-  background-size:400% 300%;
-  background-position:66.667% 50%;
-  background-repeat:no-repeat;
+  display:block;
+  object-fit:contain;
+  object-position:center bottom;
   filter:drop-shadow(0 20px 20px rgba(0,0,0,.3));
   animation:viOfficerBob 2.7s ease-in-out 1.4s infinite;
 }
-@media(max-width:640px){.vi-officer-model{width:120px;height:132px;background-position:66.667% 50%}}
+@media(max-width:640px){.vi-officer-model{width:120px;height:132px}}
