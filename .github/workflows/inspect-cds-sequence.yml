@@ -1,0 +1,36 @@
+name: Temporary CDS II 2011 sequence source inspection
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/inspect-cds-sequence.yml'
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm install --no-save --no-package-lock cheerio@1.0.0-rc.12
+      - run: |
+          node --input-type=module <<'NODE'
+          import * as cheerio from 'cheerio';
+          const url='https://examvictor.com/cds-2011-english-question-paper-2/';
+          const r=await fetch(url,{headers:{'user-agent':'Mozilla/5.0'}});
+          const $=cheerio.load(await r.text()),e=$('.entry-content').first(),top=e.children().toArray();
+          for(let ix=0;ix<top.length;ix++){
+            const x=top[ix];
+            if(x.tagName!=='ol')continue;
+            const n=Number(x.attribs.start||1);
+            if(![21,22,23,24,25,26,27,28].includes(n))continue;
+            console.log('===Q',n,'===');
+            console.log('LIST', $.html(x).slice(0,3500));
+            for(let j=ix+1;j<top.length&&j<ix+7&&top[j].tagName!=='ol';j++){
+              console.log('NEXT',j-ix,top[j].tagName,JSON.stringify($(top[j]).text().trim().replace(/\s+/g,' ')),$.html(top[j]).slice(0,2000));
+            }
+          }
+          NODE
