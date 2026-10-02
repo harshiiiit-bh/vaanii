@@ -4293,8 +4293,16 @@ function getServiceRankProgress(xp,force){
   const remainingXP=next?Math.max(0,next.xp-points):0;
   return {ranks,honorary,allRanks,points,unlocked,current,next,previousThreshold,requiredToNext,earnedToNext,remainingXP,progress,force};
 }
-function getMinimumXPDays(){
-  return 0;
+function getMinimumXPDays(targetXP,earnedToday=0,dailyRate=80){
+  const target=Math.max(0,Math.ceil(Number(targetXP)||0));
+  if(!target)return 0;
+  const rate=Math.max(0,Math.floor(Number(dailyRate)||0));
+  if(!rate)return Infinity;
+  const earned=Math.max(0,Math.floor(Number(earnedToday)||0));
+  const availableToday=Math.max(0,rate-earned);
+  if(!availableToday)return Math.ceil(target/rate);
+  if(target<=availableToday)return 1;
+  return 1+Math.ceil((target-availableToday)/rate);
 }
 function makeServiceInsignia(force,rank,className,alt){
   const wrap=document.createElement('span');
