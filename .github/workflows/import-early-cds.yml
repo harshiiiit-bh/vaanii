@@ -1,0 +1,43 @@
+name: Temporary early CDS parser inspection
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/import-early-cds.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm install --no-save --no-package-lock cheerio@1.0.0-rc.12
+      - name: Inspect source article structure
+        run: |
+          node --input-type=module <<'NODE'
+          import * as cheerio from 'cheerio';
+          const urls = [
+            'https://examvictor.com/cds-2009-english-question-paper-1/',
+            'https://examvictor.com/cds-2009-english-question-paper-2/',
+            'https://examvictor.com/cds-2010-english-question-paper-1/',
+            'https://examvictor.com/cds-2011-english-question-paper-1/',
+            'https://examvictor.com/cds-2011-english-question-paper-2/',
+            'https://examvictor.com/cds-2012-english-question-paper-2/'
+          ];
+          for (const url of urls) {
+            const res = await fetch(url, {headers:{'user-agent':'Mozilla/5.0'}});
+            const html = await res.text();
+            const $ = cheerio.load(html);
+            const entry = $('.entry-content, .td-post-content, article').filter((_,el)=>$(el).find(/h1|h2|p|li/.source).length).first();
+            console.log('SOURCE',url,'HTTP',res.status,'bytes',html.length,'entry',entry.length);
+            console.log('HTML',entry.html()?.slice(0,2200)?.replace(/\s+/g,' '));
+            const nums=entry.text().match(/\b\d{1,3}\s*[.)]/g)||[];
+            console.log('NUMBER_MARKERS',nums.length,'SAMPLE',nums.slice(0,8).join('|'));
+          }
+          NODE
