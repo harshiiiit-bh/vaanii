@@ -686,6 +686,41 @@ try {
   console.log('PASS Arena security: deterministic match, device-local submission, Edge Function historical read and no public writer');
 
   await clickMainView('grammar');
+  const contrastAudit=await page.evaluate(()=>{
+    const body=document.body;
+    const saved={theme:body.dataset.theme,zen:body.classList.contains('mode-zen'),sepia:body.classList.contains('mode-sepia')};
+    const rgb=value=>{
+      const v=String(value||'').trim();
+      if(/^#[\da-f]{3}$/i.test(v))return v.slice(1).split('').map(x=>parseInt(x+x,16));
+      if(/^#[\da-f]{6}$/i.test(v))return [parseInt(v.slice(1,3),16),parseInt(v.slice(3,5),16),parseInt(v.slice(5,7),16)];
+      const m=v.match(/[\d.]+/g);return m&&m.length>=3?m.slice(0,3).map(Number):null;
+    };
+    const lum=value=>{
+      const c=rgb(value);if(!c)return NaN;
+      const v=c.map(x=>x/255).map(x=>x<=.04045?x/12.92:Math.pow((x+.055)/1.055,2.4));
+      return .2126*v[0]+.7152*v[1]+.0722*v[2];
+    };
+    const ratio=(a,b)=>{const x=lum(a),y=lum(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05);};
+    const cases=[['light',null],['dark',null],['light','mode-zen'],['dark','mode-zen'],['light','mode-sepia']];
+    const results=[];
+    for(const [theme,mode] of cases){
+      body.dataset.theme=theme;
+      body.classList.toggle('mode-zen',mode==='mode-zen');
+      body.classList.toggle('mode-sepia',mode==='mode-sepia');
+      const cs=getComputedStyle(body),panel=cs.getPropertyValue('--panel').trim();
+      const muted=cs.getPropertyValue('--muted').trim(),muted2=cs.getPropertyValue('--muted2').trim();
+      results.push({theme,mode,muted,muted2,mutedRatio:ratio(muted,panel),muted2Ratio:ratio(muted2,panel)});
+    }
+    body.dataset.theme=saved.theme||'light';
+    body.classList.toggle('mode-zen',saved.zen);
+    body.classList.toggle('mode-sepia',saved.sepia);
+    const grammarCopy=document.querySelector('#view-grammar .gt-browser-intro p');
+    return {results,grammarCopy:grammarCopy?{color:getComputedStyle(grammarCopy).color,opacity:getComputedStyle(grammarCopy).opacity}:null};
+  });
+  assert.ok(contrastAudit.results.every(x=>x.mutedRatio>=4.5&&x.muted2Ratio>=4.5),
+    'Theme tokens must retain readable muted and secondary text contrast: '+JSON.stringify(contrastAudit.results));
+  assert.ok(!contrastAudit.grammarCopy||Number(contrastAudit.grammarCopy.opacity)===1,
+    'Grammar supporting copy must not be faded');
   await page.waitForFunction(() => document.querySelectorAll('#grammarAcademyCatalog .ga-stage-card').length === 4);
   assert.ok(await page.locator('#grammarAcademyCatalog .ga-lesson-link').count() >= 40,
     'Academy lesson catalog did not expose the complete mapped curriculum');
