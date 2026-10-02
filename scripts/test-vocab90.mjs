@@ -4,6 +4,7 @@ import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const course=JSON.parse(readFileSync(resolve(root,'data/vocab90/course.json'),'utf8'));
+const days=course;
 assert.equal(course.length,90,'Exactly 90 days are required.');
 assert.deepEqual(course.map(d=>d.day),Array.from({length:90},(_,i)=>i+1),'Days must be continuous and ordered.');
 const pages=[];
