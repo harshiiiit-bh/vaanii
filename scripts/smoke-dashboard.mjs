@@ -194,15 +194,18 @@ try {
     'Rank card should not expose insignia source links');
   assert.equal(await page.locator('#serviceRankList .vp-service-rank-insignia a').count(), 0,
     'Insignia images should not be clickable source links');
-  await page.locator('.vp-xp-rules summary').click();
-  const xpRulesText=await page.locator('.vp-xp-rules').innerText();
-  assert.match(xpRulesText,/60–69% −10 XP; 50–59% −20; 40–49% −45; 33–39% −60; below 33% −80/,
-    'Profile should disclose every accuracy deduction tier');
-  assert.match(xpRulesText,/70% or more −5 XP; 50–69% −8; 33–49% −12; below 33% −15/,
-    'Profile should disclose every net-marks deduction tier');
-  assert.match(await page.locator('.vp-xp-rules').innerText(), /missed login day resets the streak/,
-    'Profile should disclose missed-login penalty');
-  await page.locator('.vp-xp-rules summary').click();
+  await page.locator('#infoBtn').click();
+  await page.waitForFunction(() => document.getElementById('view-info')?.classList.contains('active'), null, { timeout: 10000 });
+  const xpRulesText=await page.locator('.vi-xp').innerText();
+  assert.match(xpRulesText,/60–69%: −10 · 50–59%: −20 · 40–49%: −45 · 33–39%: −60 · below 33%: −80/,
+    'VAANI Guide should disclose every accuracy deduction tier');
+  assert.match(xpRulesText,/70%\+: −5 · 50–69%: −8 · 33–49%: −12 · below 33%: −15/,
+    'VAANI Guide should disclose every net-marks deduction tier');
+  assert.match(xpRulesText,/there is no maximum amount of XP you can legitimately earn in one calendar day/i,
+    'VAANI Guide should disclose unlimited daily XP earning');
+  assert.match(xpRulesText,/missed login day resets the streak/i,
+    'VAANI Guide should disclose missed-login penalty');
+  await clickMainView('profile');
   await page.locator('#serviceRankLadder summary').click();
   const armyLadder = await page.locator('#serviceRankList .vp-service-rank-row').allInnerTexts();
   const armyRankNames = await page.locator('#serviceRankList .vp-service-rank-name').allTextContents();
