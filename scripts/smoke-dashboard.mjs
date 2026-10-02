@@ -1355,6 +1355,19 @@ try {
   await page.evaluate(()=>pvExitSession());
   console.log('PASS Wren & Martin Companion: printed references, checklists and isolated chapter drills');
 
+  // The reference companion must be reachable from the related learning wings.
+  await clickMainView('grammar');
+  await page.locator('#view-grammar .bc-global-link button').click();
+  await page.waitForSelector('#view-pyq .bc-companion',{timeout:5000});
+  assert.equal(await page.evaluate(()=>PV.screen),'bookcompanion','Grammar entry did not open the companion');
+  await clickMainView('books');
+  await page.locator('#view-books .bc-global-link button').click();
+  await page.waitForSelector('#view-pyq .bc-companion',{timeout:5000});
+  assert.equal(await page.evaluate(()=>PV.screen),'bookcompanion','Book Reading entry did not open the companion');
+  await clickMainView('pyq');
+  await page.evaluate(()=>pvGoHome());
+  console.log('PASS Wren & Martin entry points: Grammar, Book Reading and PYQ Center');
+
 
 
 
