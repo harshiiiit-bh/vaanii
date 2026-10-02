@@ -284,7 +284,7 @@ var PYQ_CDS_2009_II = [
     "s": "II",
     "n": 21,
     "sec": "Ordering of Sentences",
-    "q": "S1 : Long long ago there lived a king who was crude and very much like a savage. S6 : Or at least he tried to. P : He was a man of great fancies and even greater enthusiasm. Q : Because he had so much authority as a king, he was able to force some of these fancies into reality. S : He had learned some manners from his Latin neighbours, but mostly he was barbaric, loud and gruff. The proper sequence should be :",
+    "q": "S1 : Long long ago there lived a king who was crude and very much like a savage. S6 : Or at least he tried to. P : He was a man of great fancies and even greater enthusiasm. Q : Because he had so much authority as a king, he was able to force some of these fancies into reality. R : He had none of the grace and polish of his neighbours. S : He had learned some manners from his Latin neighbours, but mostly he was barbaric, loud and gruff. The proper sequence should be :",
     "o": [
       "R SPQ",
       "S QPR",
@@ -662,10 +662,11 @@ var PYQ_CDS_2009_II = [
     "s": "II",
     "n": 48,
     "sec": "Spotting Errors",
-    "q": "The Vice-Chancellor of our university urged to | the agitating students to shun violence",
+    "q": "The Vice-Chancellor of our university urged to | the agitating students to shun violence | and maintain peace on the campus",
     "o": [
       "The Vice-Chancellor of our university urged to",
       "the agitating students to shun violence",
+      "and maintain peace on the campus",
       "No error"
     ],
     "ans": 1
