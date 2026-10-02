@@ -735,3 +735,22 @@ body.ve-vaani-hidden #vaaniMentor:not(.bad-result),body.ve-vaani-hidden .ve-head
   .ve-restore-officer{left:8px;bottom:calc(var(--bottomnav-h,64px) + env(safe-area-inset-bottom,0px) + 9px)}
 }
 @media(prefers-reduced-motion:reduce){#vaaniMentor:not(.bad-result),.ve-restore-officer{transition:none!important;animation:none!important}}
+
+/* Fine-grained adjustment UI: exact percentage and viewport pixel coordinates. */
+#vaaniMentor:not(.bad-result) .ve-adjust-panel{display:grid;gap:8px;padding:9px 12px 11px;border-top:1px solid rgba(21,38,47,.08)}
+#vaaniMentor:not(.bad-result) .ve-adjust-panel[hidden]{display:none!important}
+#vaaniMentor:not(.bad-result) .ve-adjust-actions{display:flex;align-items:center;gap:6px}
+#vaaniMentor:not(.bad-result) .ve-adjust-actions button{min-height:28px;padding:4px 8px;border:1px solid rgba(21,38,47,.13);border-radius:999px;background:#fff;color:#45555e;font:800 .52rem var(--mono,monospace);cursor:pointer}
+#vaaniMentor:not(.bad-result) .ve-adjust-actions button[aria-pressed=true]{background:#e9dfc6;border-color:#c9a24b;color:#3f382b}
+#vaaniMentor:not(.bad-result) .ve-adjust-actions .ve-hide-officer{margin-left:auto;color:#9b4941;border-color:rgba(155,73,65,.24)}
+#vaaniMentor:not(.bad-result) .ve-size-control{display:grid;grid-template-columns:auto minmax(60px,1fr) 48px auto;align-items:center;gap:7px}
+#vaaniMentor:not(.bad-result) .ve-size-control label{font:800 .53rem var(--mono,monospace);letter-spacing:.06em;color:#66757d}
+#vaaniMentor:not(.bad-result) .ve-size-control input[type=range]{width:100%;min-width:60px;accent-color:#b58936;cursor:pointer}
+#vaaniMentor:not(.bad-result) .ve-size-control input[type=number]{box-sizing:border-box;width:48px;min-height:28px;padding:3px 4px;border:1px solid rgba(21,38,47,.15);border-radius:7px;background:#fff;color:#34464f;text-align:center;font:700 .57rem var(--mono,monospace)}
+#vaaniMentor:not(.bad-result) .ve-size-control>span{margin-left:-5px;color:#8b692c;font:700 .54rem var(--mono,monospace)}
+#vaaniMentor:not(.bad-result) .ve-position-controls{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+#vaaniMentor:not(.bad-result) .ve-position-controls label{display:grid;grid-template-columns:auto auto minmax(0,1fr);align-items:center;gap:4px;color:#66757d;font:800 .52rem var(--mono,monospace);letter-spacing:.04em}
+#vaaniMentor:not(.bad-result) .ve-position-controls label span{font-weight:600;opacity:.7}
+#vaaniMentor:not(.bad-result) .ve-position-controls input{box-sizing:border-box;width:100%;min-width:0;min-height:28px;padding:3px 5px;border:1px solid rgba(21,38,47,.15);border-radius:7px;background:#fff;color:#34464f;text-align:right;font:700 .56rem var(--mono,monospace)}
+#vaaniMentor:not(.bad-result) .ve-position-controls input:focus-visible,#vaaniMentor:not(.bad-result) .ve-size-control input:focus-visible{outline:2px solid rgba(201,162,75,.48);outline-offset:1px}
+@media(max-width:700px){#vaaniMentor:not(.bad-result) .ve-size-control{grid-template-columns:auto minmax(48px,1fr) 46px auto;gap:5px}#vaaniMentor:not(.bad-result) .ve-position-controls{gap:5px}}

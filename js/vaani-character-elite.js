@@ -245,7 +245,7 @@
     try{
       const saved=JSON.parse(localStorage.getItem(DOCK_PREF_KEY)||'null');
       if(saved&&typeof saved==='object'){
-        defaults.size=Math.max(60,Math.min(130,Math.round(Number(saved.size)||100)));
+        defaults.size=Math.max(60,Math.min(150,Math.round(Number(saved.size)||100)));
         defaults.hidden=saved.hidden===true;
         if(saved.position&&Number.isFinite(Number(saved.position.x))&&Number.isFinite(Number(saved.position.y))){
           defaults.position={x:Number(saved.position.x),y:Number(saved.position.y)};
@@ -286,6 +286,7 @@
     const top=Math.round(Math.max(8,Math.min(Number(y)||0,maxY)));
     m.style.left=left+'px';
     m.style.top=top+'px';
+    syncDockPositionControls();
     if(save){
       const p=getDockPreferences();
       p.position={x:left,y:top};
@@ -309,14 +310,14 @@
     const m=mentor();
     if(!m)return 100;
     const p=getDockPreferences();
-    let size=Math.max(60,Math.min(130,Math.round(Number(value)||100)));
+    let size=Math.max(60,Math.min(150,Math.round(Number(value)||100)));
     m.style.setProperty('--ve-dock-scale',(size/100).toFixed(2));
     let rect=m.getBoundingClientRect();
     const widthLimit=Math.max(140,window.innerWidth-16);
     const heightLimit=Math.max(120,safeDockBottom()-8);
     const fit=Math.min(1,widthLimit/Math.max(1,rect.width),heightLimit/Math.max(1,rect.height));
     if(fit<.999){
-      size=Math.max(60,Math.floor((size*fit)/5)*5);
+      size=Math.max(60,Math.floor(size*fit));
       m.style.setProperty('--ve-dock-scale',(size/100).toFixed(2));
       rect=m.getBoundingClientRect();
     }
@@ -327,8 +328,10 @@
     }
     p.size=size;
     const slider=m.querySelector('#veDockScale');
+    const exact=m.querySelector('#veDockScaleExact');
     const output=m.querySelector('#veDockScaleValue');
     if(slider)slider.value=String(size);
+    if(exact)exact.value=String(size);
     if(output)output.textContent=size+'%';
     if(save){
       if(m.classList.contains('ve-positioned')){
@@ -338,6 +341,28 @@
       saveDockPreferences();
     }
     return size;
+  }
+
+  function syncDockPositionControls(){
+    const m=mentor();
+    if(!m)return;
+    const rect=m.getBoundingClientRect();
+    const x=m.querySelector('#veDockX'),y=m.querySelector('#veDockY');
+    const maxX=Math.max(8,Math.floor(window.innerWidth-rect.width-8));
+    const maxY=Math.max(8,Math.floor(safeDockBottom()-rect.height));
+    if(x){x.min='8';x.max=String(maxX);x.value=String(Math.round(rect.left));}
+    if(y){y.min='8';y.max=String(maxY);y.value=String(Math.round(rect.top));}
+  }
+  function applyDockPositionInputs(){
+    const m=mentor();
+    if(!m)return;
+    const x=m.querySelector('#veDockX'),y=m.querySelector('#veDockY');
+    if(!x||!y)return;
+    const current=m.getBoundingClientRect();
+    const left=Number.isFinite(x.valueAsNumber)?x.valueAsNumber:current.left;
+    const top=Number.isFinite(y.valueAsNumber)?y.valueAsNumber:current.top;
+    const pos=setDockPosition(left,top,true);
+    if(pos)setDockStatus('Position saved at X '+pos.x+' px, Y '+pos.y+' px.');
   }
 
   function setDockStatus(message){
@@ -431,28 +456,39 @@
       panel.className='ve-adjust-panel';
       panel.hidden=true;
       panel.innerHTML=
-        '<div class="ve-adjust-controls">'+
+        '<div class="ve-adjust-actions">'+
           '<button type="button" id="veMoveToggle" aria-pressed="false">Move</button>'+
-          '<label for="veDockScale">Size</label>'+
-          '<input id="veDockScale" type="range" min="60" max="130" step="5" value="100" aria-label="Officer VAANI size">'+
-          '<output id="veDockScaleValue" for="veDockScale">100%</output>'+
           '<button type="button" id="veDockReset" title="Return Officer VAANI to the bottom-right corner">Reset</button>'+
           '<button type="button" id="veDockHide" class="ve-hide-officer">Hide</button>'+
         '</div>'+
-        '<p id="veDockStatus" role="status" aria-live="polite">Adjust position and size, or hide Officer VAANI.</p>';
+        '<div class="ve-size-control">'+
+          '<label for="veDockScale">Size</label>'+
+          '<input id="veDockScale" type="range" min="60" max="150" step="1" value="100" aria-label="Officer VAANI size">'+
+          '<input id="veDockScaleExact" type="number" min="60" max="150" step="1" value="100" aria-label="Exact Officer VAANI size in percent">'+
+          '<span aria-hidden="true">%</span>'+
+        '</div>'+
+        '<div class="ve-position-controls">'+
+          '<label for="veDockX">Left <span>(px)</span><input id="veDockX" type="number" min="8" step="1" inputmode="numeric" aria-label="Officer VAANI left position in pixels"></label>'+
+          '<label for="veDockY">Top <span>(px)</span><input id="veDockY" type="number" min="8" step="1" inputmode="numeric" aria-label="Officer VAANI top position in pixels"></label>'+
+        '</div>'+
+        '<p id="veDockStatus" role="status" aria-live="polite">Move, resize, or enter exact pixel coordinates.</p>';
       bubble.appendChild(panel);
     }
     if(!toggle.dataset.bound){
       toggle.dataset.bound='1';
       toggle.addEventListener('click',()=>toggleDockAdjust(panel,toggle));
       panel.querySelector('#veMoveToggle')?.addEventListener('click',()=>setDockMoveMode(!dockMoveMode));
-      panel.querySelector('#veDockScale')?.addEventListener('input',e=>setDockScale(e.target.value,true));
+      panel.querySelector('#veDockScale')?.addEventListener('input',event=>setDockScale(event.target.value,true));
+      panel.querySelector('#veDockScaleExact')?.addEventListener('change',event=>setDockScale(event.target.value,true));
+      panel.querySelector('#veDockX')?.addEventListener('change',applyDockPositionInputs);
+      panel.querySelector('#veDockY')?.addEventListener('change',applyDockPositionInputs);
       panel.querySelector('#veDockReset')?.addEventListener('click',()=>{
         clearDockPosition();
         const current=m.getBoundingClientRect();
         const p=getDockPreferences();
         p.position=null;
         saveDockPreferences();
+        syncDockPositionControls();
         setDockStatus('Position reset to the default corner.');
         // Keep default bottom/right anchoring after the reset.
         const scale=Number(p.size)||100;
@@ -472,6 +508,7 @@
       m.style.setProperty('--ve-dock-scale',(p.size/100).toFixed(2));
     }
     setDockMoveMode(false);
+    syncDockPositionControls();
   }
 
   function beginDockDrag(event,character){
@@ -506,7 +543,8 @@
       p.position={x:Math.round(r.left),y:Math.round(r.top)};
       suppressDockClickUntil=Date.now()+450;
       saveDockPreferences();
-      setDockStatus('New position saved.');
+      syncDockPositionControls();
+      setDockStatus('Position saved at X '+Math.round(r.left)+' px, Y '+Math.round(r.top)+' px.');
     }
   }
 
@@ -546,7 +584,7 @@
       const target=e.target instanceof Element?e.target:null;
       const character=target?.closest('#vaaniMentor #vcCharacter');
       if(!character||!dockMoveMode)return;
-      const step=e.shiftKey?28:12;
+      const step=e.shiftKey?10:1;
       const directions={ArrowLeft:[-step,0],ArrowRight:[step,0],ArrowUp:[0,-step],ArrowDown:[0,step]};
       if(directions[e.key]){
         e.preventDefault();
