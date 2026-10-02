@@ -247,3 +247,122 @@
   .vd-hero-stats{gap:14px 24px}
 }
 @media (prefers-reduced-motion:reduce){.vd-hero-artwork{scroll-behavior:auto}}
+
+/* ---------------------------------------------------------
+   OFFICER VAANI — full-body command presence
+   Uses the approved full-body cutout as the dashboard hero
+   character, while the compact mentor remains interactive.
+--------------------------------------------------------- */
+.vd-officer-stage{
+  position:absolute;
+  right:18px;
+  bottom:0;
+  width:clamp(220px,32vw,345px);
+  height:96%;
+  min-height:360px;
+  z-index:3;
+  pointer-events:none;
+  display:flex;
+  justify-content:flex-end;
+  align-items:flex-end;
+}
+.vd-officer-image{
+  position:relative;
+  z-index:2;
+  width:auto;
+  height:100%;
+  max-width:100%;
+  object-fit:contain;
+  object-position:center bottom;
+  filter:drop-shadow(0 24px 26px rgba(0,0,0,.32));
+  transform-origin:center bottom;
+  animation:vdOfficerFloat 5.5s ease-in-out infinite;
+}
+.vd-officer-halo{
+  position:absolute;
+  right:5%;
+  bottom:4%;
+  width:86%;
+  height:72%;
+  border-radius:50%;
+  background:
+    radial-gradient(circle,rgba(201,162,75,.18),rgba(201,162,75,.05) 42%,transparent 70%);
+  filter:blur(4px);
+  transform:rotate(-8deg);
+}
+.vd-officer-badge{
+  position:absolute;
+  z-index:4;
+  right:8%;
+  bottom:18px;
+  display:grid;
+  grid-template-columns:auto 1fr;
+  column-gap:7px;
+  align-items:center;
+  padding:8px 11px;
+  border:1px solid rgba(215,173,85,.36);
+  border-radius:14px;
+  background:rgba(10,19,25,.82);
+  box-shadow:0 14px 30px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.08);
+  backdrop-filter:blur(10px);
+  color:#f3ead4;
+}
+.vd-officer-badge span{grid-row:1 / span 2;font-size:1rem}
+.vd-officer-badge b{
+  font:800 .58rem var(--mono);
+  letter-spacing:.12em;
+  color:#f2d58f;
+}
+.vd-officer-badge small{
+  font:600 .46rem var(--mono);
+  letter-spacing:.1em;
+  color:rgba(243,239,230,.58);
+}
+.vd-hero-inner{max-width:min(650px,62%);}
+@keyframes vdOfficerFloat{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-5px)}
+}
+@media (max-width:900px){
+  .vd-officer-stage{
+    width:240px;
+    min-height:310px;
+    right:-6px;
+    opacity:.96;
+  }
+  .vd-officer-badge{right:5px;bottom:12px;}
+  .vd-hero-inner{max-width:68%;}
+}
+@media (max-width:640px){
+  .vd-officer-stage{
+    width:150px;
+    height:52%;
+    min-height:210px;
+    right:-8px;
+    bottom:-2px;
+    opacity:.9;
+  }
+  .vd-officer-image{height:100%;}
+  .vd-officer-halo{width:100%;height:78%;}
+  .vd-officer-badge{
+    right:4px;
+    bottom:8px;
+    padding:6px 8px;
+    grid-template-columns:auto 1fr;
+  }
+  .vd-officer-badge b{font-size:.46rem;}
+  .vd-officer-badge small{font-size:.38rem;}
+  .vd-hero-inner{
+    max-width:100%;
+    padding-right:126px;
+  }
+  .vd-hero-title{font-size:clamp(1.75rem,8.5vw,2.35rem);}
+}
+@media (max-width:390px){
+  .vd-officer-stage{width:126px;min-height:185px;}
+  .vd-hero-inner{padding-right:104px;}
+  .vd-officer-badge{transform:scale(.86);transform-origin:right bottom;}
+}
+@media (prefers-reduced-motion:reduce){
+  .vd-officer-image{animation:none;}
+}
