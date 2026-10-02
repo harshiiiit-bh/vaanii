@@ -186,8 +186,10 @@ try {
 
   await clickMainView('profile');
   await assertVisibleText('#vpProfileRank', 'Service-aware Profile rank');
-  assert.match(await page.locator('#rankDailyXPHint').textContent(), /0 \/ 80/,
-    'Profile should display the 80-XP daily earning cap');
+  assert.equal(await page.locator('#rankDailyXPHint').count(), 0,
+    'Profile should not render the retired daily-cap hint');
+  assert.match(await page.locator('#rankPaceHint').textContent(), /there is no daily XP cap/,
+    'Rank pacing should explain that XP earning is unlimited');
   assert.equal(await page.locator('#serviceRankBadgeSource').count(), 0,
     'Rank card should not expose insignia source links');
   assert.equal(await page.locator('#serviceRankList .vp-service-rank-insignia a').count(), 0,
@@ -233,10 +235,10 @@ try {
     canFinishToday:getMinimumXPDays(50,80,80),
     afterTop:getMinimumXPDays(0,80,80)
   }));
-  assert.deepEqual(paceMath,{first:2,next:7,partiallyAvailable:2,canFinishToday:0,afterTop:0},
-    'Milestone pace should respect today’s remaining cap and never estimate beyond the top rank');
-  assert.equal(await page.locator('#rankDailyXPTrack').getAttribute('role'),'progressbar',
-    'Daily XP allowance should expose an accessible progress meter');
+  assert.deepEqual(paceMath,{first:2,next:7,partiallyAvailable:1,canFinishToday:1,afterTop:0},
+    'Milestone pace should provide a daily-rate estimate without imposing a daily XP cap');
+  assert.equal(await page.locator('#rankDailyXPTrack').count(),0,
+    'Retired daily allowance meter should not be rendered');
   assert.equal(await page.locator('#rankPaceHint').count(),1,
     'Rank card should provide an explicit next-milestone pace guide');
   await page.evaluate(() => { State.xp=0; refreshDashboard(); });
@@ -245,37 +247,21 @@ try {
     const original={xp:State.xp,ledger:{...State.dailyXpEarned},activity:{...State.dailyActivity},xpLedger:[...(State.xpLedger||[])]};
     const today=new Date().toDateString();
     State.xp=0;State.dailyXpEarned={[today]:0};State.dailyActivity={[today]:0};
-    const first=addXP(200,'cap regression');
-    const overflow=addXP(50,'overflow regression');
-    const atCap=State.xp;
-    const penalty=deductXP(10,'cap regression');
+    const first=addXP(200,'unlimited earning regression');
+    const continued=addXP(50,'continued earning regression');
+    const afterEarning=State.xp;
+    const penalty=deductXP(10,'deduction regression');
     const afterPenalty=State.xp;
-    const afterLoss=addXP(50,'no cap reset regression');
+    const afterLoss=addXP(50,'earning after deduction regression');
     const earned=State.dailyXpEarned[today];
     State.xp=original.xp;State.dailyXpEarned=original.ledger;State.dailyActivity=original.activity;State.xpLedger=original.xpLedger;
     saveState();refreshDashboard();
-    return {first,overflow,atCap,penalty,afterPenalty,afterLoss,earned};
+    return {first,continued,afterEarning,penalty,afterPenalty,afterLoss,earned};
   });
-  assert.deepEqual(economy,{first:80,overflow:0,atCap:80,penalty:10,afterPenalty:70,afterLoss:0,earned:80},
-    'Daily XP cap must clamp earnings, survive deductions and never be reopened by XP loss');
-  const dailyMeter=await page.evaluate(()=>{
-    const original={xp:State.xp,ledger:{...State.dailyXpEarned},activity:{...State.dailyActivity},xpLedger:[...(State.xpLedger||[])]};
-    const today=new Date().toDateString();
-    State.dailyXpEarned={[today]:79};State.dailyActivity={[today]:79};
-    renderServiceRankProgress();
-    const result={
-      value:document.getElementById('rankDailyXPTrack')?.getAttribute('aria-valuenow'),
-      label:document.getElementById('rankDailyXPTrack')?.getAttribute('aria-valuetext'),
-      fill:document.getElementById('rankDailyXPFill')?.style.width,
-      remaining:document.getElementById('rankDailyXPRemaining')?.textContent
-    };
-    State.xp=original.xp;State.dailyXpEarned=original.ledger;State.dailyActivity=original.activity;State.xpLedger=original.xpLedger;
-    saveState();refreshDashboard();
-    return result;
-  });
-  assert.deepEqual(dailyMeter,{
-    value:'79',label:'79 of 80 XP earned; 1 XP remaining',fill:'99%',remaining:'1 XP remaining today'
-  },'Daily XP allowance meter should accurately show near-cap progress and remaining XP');
+  assert.deepEqual(economy,{first:200,continued:50,afterEarning:250,penalty:10,afterPenalty:240,afterLoss:50,earned:300},
+    'XP should remain uncapped, with deductions applied independently and earning available afterward');
+  assert.match(await page.locator('#rankPaceHint').textContent(), /there is no daily XP cap/,
+    'Profile should explain that continued earning is not daily-capped');
 
   const penaltyTiers=await page.evaluate(()=>({
     accuracy:[100,70,69,60,59,50,49,40,39,33,32,0].map(score=>({score,penalty:getAccuracyPenalty(score)})),
