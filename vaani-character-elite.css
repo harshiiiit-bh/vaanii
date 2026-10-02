@@ -521,3 +521,95 @@
 .ve-surface-mini{
   background-image:url("https://gcdn.picsart.com/editing-temp/2ca4be62-1e4a-4425-8b14-018c55a4d4b4.png")!important;
 }
+
+/* PROFESSIONAL OFFICER VAANI STATIONS */
+.ve-officer-station{
+  position:relative;
+  display:grid;
+  grid-template-columns:92px minmax(0,1fr) auto;
+  align-items:center;
+  gap:14px;
+  margin:0 0 16px;
+  padding:10px 12px;
+  border:1px solid rgba(201,162,75,.24);
+  border-radius:20px;
+  background:
+    radial-gradient(circle at 12% 20%,rgba(201,162,75,.09),transparent 34%),
+    linear-gradient(135deg,rgba(252,251,247,.98),rgba(244,243,237,.94));
+  box-shadow:0 12px 30px rgba(13,26,35,.08),inset 0 1px 0 rgba(255,255,255,.88);
+  overflow:hidden;
+}
+.ve-officer-station::before{
+  content:"";
+  position:absolute;
+  left:0;top:0;bottom:0;
+  width:3px;
+  background:linear-gradient(#bd8e3d,#e8cc8d,#bd8e3d);
+}
+.ve-station-art{
+  position:relative;
+  width:92px;height:94px;
+  border-radius:16px;
+  overflow:hidden;
+  background:linear-gradient(145deg,#eef1eb,#dfe5df);
+  border:1px solid rgba(201,162,75,.24);
+}
+.ve-station-art img{
+  position:absolute;
+  left:50%;
+  bottom:0;
+  width:88px;
+  height:94px;
+  object-fit:contain;
+  object-position:center bottom;
+  transform:translateX(-50%);
+  filter:drop-shadow(0 7px 8px rgba(8,18,24,.16));
+}
+.ve-station-copy{min-width:0}
+.ve-station-kicker{
+  font:800 .55rem var(--mono,monospace);
+  letter-spacing:.12em;
+  color:#98702b;
+  text-transform:uppercase;
+}
+.ve-station-copy p{
+  margin:4px 0 7px;
+  color:#52616a;
+  font-size:.73rem;
+  line-height:1.45;
+}
+.ve-station-btn{
+  min-height:29px;
+  padding:5px 10px;
+  border-radius:999px;
+  border:1px solid rgba(21,38,47,.12);
+  background:#172a33;
+  color:#fff;
+  font:800 .56rem var(--mono,monospace);
+  cursor:pointer;
+}
+.ve-station-btn:hover{transform:translateY(-1px)}
+.ve-header-mini{
+  background-image:url("https://cdn-ai-hs.picsart.com/ai-hot-storage/26983f1e-c8a3-4711-8463-852b639599c7.png")!important;
+  background-size:contain!important;
+  background-position:center bottom!important;
+  background-repeat:no-repeat!important;
+}
+@media(max-width:640px){
+  .ve-officer-station{
+    grid-template-columns:72px minmax(0,1fr);
+    gap:10px;
+    padding:9px 10px;
+    border-radius:17px;
+  }
+  .ve-station-art{width:72px;height:78px;border-radius:13px}
+  .ve-station-art img{width:72px;height:78px}
+  .ve-station-kicker{font-size:.5rem}
+  .ve-station-copy p{font-size:.69rem;margin:3px 0 6px}
+  .ve-station-btn{grid-column:2;justify-self:start;min-height:27px;font-size:.53rem}
+}
+@media(max-width:390px){
+  .ve-officer-station{grid-template-columns:60px minmax(0,1fr)}
+  .ve-station-art{width:60px;height:70px}
+  .ve-station-art img{width:62px;height:70px}
+}
