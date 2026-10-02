@@ -21,7 +21,11 @@ try{
  await page.waitForSelector('#serviceForcePicker[data-mode="onboarding"]',{state:'visible',timeout:15000});
  await page.locator('#serviceForcePicker .service-force-option[data-force="army"]').click();
  await page.waitForFunction(()=>document.getElementById('gate')?.classList.contains('hide'),null,{timeout:15000});
- if(await page.locator('#viTour.open').count())await page.keyboard.press('Escape');
+ await page.waitForTimeout(1100);
+ if(await page.locator('#viTour.open').count()){
+  await page.locator('#viTourSkip').click({timeout:5000});
+  await page.waitForFunction(()=>!document.getElementById('viTour')?.classList.contains('open'),null,{timeout:5000});
+ }
  await page.locator('#vaaniMainNav button[data-view="vocab"]').click();
  await page.waitForFunction(()=>document.getElementById('view-vocab')?.classList.contains('active'));
  await page.locator('#view-vocab .v90-entry-open').click();
