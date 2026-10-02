@@ -4558,7 +4558,7 @@ function renderServiceRankProgress(){
   if(crest)crest.classList.toggle('is-preview',!progress.current);
   bar.style.width=progress.progress+'%';bar.setAttribute('aria-valuenow',String(progress.progress));
   if(progress.next){
-    hint.textContent=progress.earnedToNext.toLocaleString('en-IN')+' / '+progress.requiredToNext.toLocaleString('en-IN')+' XP in the '+(progress.current?progress.current.name:'starting')+' → '+progress.next.name+' band';
+    hint.textContent=progress.earnedToNext.toLocaleString('en-IN')+' / '+progress.requiredToNext.toLocaleString('en-IN')+' XP in the '+(progress.current?progress.current.name:'starting')+' → '+progress.next.name+' band · next '+progress.next.name+' at '+progress.next.xp.toLocaleString('en-IN')+' total XP';
     if(paceHint)paceHint.textContent=progress.points.toLocaleString('en-IN')+' / '+progress.next.xp.toLocaleString('en-IN')+' total XP · '+progress.remainingXP.toLocaleString('en-IN')+' XP to '+progress.next.name+' · there is no daily XP cap.';
 
   }else{
