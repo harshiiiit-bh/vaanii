@@ -5968,6 +5968,7 @@ function showSheetMenu(){
     {icon:'🎖️',label:'Achievements',action:"sheetGo('games')"},
     {icon:'★',label:'Bookmarks',action:"showSheetBookmarks()"},
     {icon:'📊',label:'Statistics',action:"sheetGo('leaderboard')"},
+    {icon:'📖',label:'Book Reading',action:"sheetGo('books')"},
     {icon:'⚙️',label:'Settings',action:"closeMoreSheet();toggleFocusPanel()"},
     {icon:'✉️',label:'Feedback',soon:false, action:"showSheetFeedback()"},
     {icon:'ⓘ',label:'VAANI Guide',action:"openInfoCenter()"}
