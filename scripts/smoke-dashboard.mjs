@@ -92,8 +92,15 @@ async function clickMainView(name) {
   } else if (await bottomButton.count()) {
     await bottomButton.click();
   } else {
-    await page.locator('#hamburgerBtn').click();
-    await desktopButton.click();
+    const moreButton = page.locator('#bottomNav button').filter({ hasText: 'More' });
+    const moreLabels = { books:'Book Reading', profile:'Profile', leaderboard:'Statistics', games:'Achievements' };
+    const moreLabel = moreLabels[name];
+    if (moreLabel && await moreButton.isVisible()) {
+      await moreButton.click();
+      await page.locator('#sheetBody .sheet-menu-item').filter({ hasText: moreLabel }).click();
+    } else {
+      throw new Error('No mobile navigation entry is available for ' + name);
+    }
   }
   await page.waitForFunction(view => {
     const el = document.getElementById('view-' + view);
