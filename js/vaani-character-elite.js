@@ -141,14 +141,10 @@
 
   let routeBriefTimer=null;
   function queueRouteBrief(delay=260){
+    // Dismiss a user-opened brief when navigating; never interrupt a task.
     clearTimeout(routeBriefTimer);
-    routeBriefTimer=setTimeout(()=>{
-      routeBriefTimer=null;
-      const view=active();
-      if(['info','topic','compare-detail','worddetail'].includes(view)){close();return;}
-      brief();
-      resetIdle();
-    },delay);
+    routeBriefTimer=null;
+    close();
   }
 
   function polishFromCurrent(){
@@ -161,24 +157,11 @@
     addMeta();
   }
 
-  let idleTimer;
+  let idleTimer=null;
   function resetIdle(){
+    // Idle time is not a reason to open a floating briefing over the page.
     clearTimeout(idleTimer);
-    idleTimer=setTimeout(()=>{
-      if(document.hidden)return resetIdle();
-      const v=active();
-      if(['dashboard','grammar','vocab','pyq','games','books','compare'].includes(v)){
-        const lines=[
-          ['FOCUS CHECK','Still here? Choose the next useful action instead of switching tasks.','p6','focus'],
-          ['MOMENTUM','If the method is not working, change the method — not the mission.','p3','think'],
-          ['FIELD NOTE','One deliberate attempt is worth more than several distracted ones.','p8','write']
-        ];
-        const x=lines[Math.floor(Math.random()*lines.length)];
-        setText(x[0],x[1],quotes[Math.floor(Math.random()*quotes.length)],x[2],x[3],(context[v]||context.dashboard)[0]);
-        open();
-      }
-      resetIdle();
-    },120000);
+    idleTimer=null;
   }
 
   function wrapNavigation(){
@@ -193,36 +176,6 @@
     window.switchView=wrapped;
   }
 
-  function wrapResult(){
-    if(typeof window.vaaniCharacterResult!=='function'||window.vaaniCharacterResult.__vaaniElite)return;
-    const original=window.vaaniCharacterResult;
-    const wrapped=function(score,label){
-      const result=original.apply(this,arguments);
-      const n=Math.max(0,Math.min(100,Number(score)||0));
-
-      if(n<50){
-        const m=mentor();
-        if(m && !m.classList.contains('bad-result')){
-          setText('RECOVERY BRIEFING','The weak points are visible now. Convert each mistake into one concrete revision task.','“Review the miss. Repeat the method. Improve the result.”','p5','think','AFTER ACTION REVIEW');
-          open();
-        }
-        return result;
-      }
-
-      let kicker='EXCELLENT EXECUTION';
-      let text='Strong result. Save the method that produced it.';
-      let p='p4';
-      let g='celebrate';
-      if(n<70){kicker='AFTER ACTION REVIEW';text='A workable base is here. Remove the repeated errors before chasing more speed.';p='p6';g='think';}
-      else if(n<90){kicker='SOLID EXECUTION';text='Good work. Protect accuracy and identify the few remaining leaks.';p='p10';g='focus';}
-
-      setText(kicker,text,n>=90?'“Reproduce the preparation, not just the score.”':'“Fix the process, and the score follows.”',p,g,'RESULT DEBRIEF');
-      open();
-      return result;
-    };
-    wrapped.__vaaniElite=true;
-    window.vaaniCharacterResult=wrapped;
-  }
 
   function statusClock(){
     const m=mentor();
@@ -640,7 +593,7 @@
 
     Object.entries(stations).forEach(([viewId,data])=>{
       const view=document.getElementById('view-'+viewId);
-      if(!view || view.querySelector('.ve-officer-station'))return;
+      if(viewId==='profile'||!view || view.querySelector('.ve-officer-station'))return;
 
       const station=document.createElement('button');
       station.type='button';
@@ -659,7 +612,9 @@
       station.addEventListener('click',brief);
 
       const target=view.querySelector('.view-header,.section-head,.page-head,.grammar-head,.vocab-head,.pyq-head,.arena-head');
-      const host=target||view.firstElementChild;
+      // Only mount the rail beside a real section heading. Falling back to
+      // a page hero can place it on top of account, rank or action controls.
+      const host=target;
       if(!host) return;
       host.classList.add('ve-station-host');
       host.appendChild(station);
@@ -671,7 +626,6 @@
     initDockControls();
     wrapNavigation();
     mountOfficerStations();
-    wrapResult();
     addMeta();
     intel();
     statusClock();
