@@ -67,7 +67,7 @@
       '</div>'+
       '<div class="vc-character vc-p0" id="vcCharacter" role="button" tabindex="0" aria-label="OFFICER VAANI mentor">'+
         '<span class="vc-character-frame" aria-hidden="true">'+
-          '<img class="vc-character-sheet" src="https://gcdn.picsart.com/editing-temp/639f1c75-1e07-49c9-9e70-a8b1018c6eba.png" alt="" draggable="false" decoding="async" fetchpriority="low">'+
+          '<img class="vc-character-sheet" src="https://gcdn.picsart.com/editing-temp/2ca4be62-1e4a-4425-8b14-018c55a4d4b4.png" alt="" draggable="false" decoding="async" fetchpriority="low">'+
         '</span>'+
         '<span class="vc-character-fallback" aria-hidden="true">OV</span>'+
         '<span class="vc-character-nameplate" aria-hidden="true">OFFICER VAANI</span>'+
