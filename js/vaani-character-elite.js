@@ -154,6 +154,7 @@
     clearTimeout(routeBriefTimer);
     routeBriefTimer=null;
     close();
+    if(typeof window.VAANI_SET_ASSESSMENT_ACTIVE==='function')window.VAANI_SET_ASSESSMENT_ACTIVE(false);
     updateDockVisibility();
   }
 
