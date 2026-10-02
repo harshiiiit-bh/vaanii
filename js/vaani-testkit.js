@@ -406,7 +406,8 @@
     rapidfire: { title: 'Rapid fire',     subtitle: 'Fast questions against the clock. The set submits itself when time runs out.', timing: 'countdown', defaultMinutes: 10, defaultCount: 30 },
     revision:  { title: 'Revision',       subtitle: 'Questions you have already attempted, brought back round.', timing: null },
     bookmarks: { title: 'Bookmarks',      subtitle: 'Only the questions you starred.',                        timing: null },
-    mistakes:  { title: 'Mistakes only',  subtitle: 'Only the questions you got wrong.',                      timing: null }
+    mistakes:  { title: 'Mistakes only',  subtitle: 'Only the questions you got wrong.',                      timing: null },
+    bookpractice: { title: 'Book-based Grammar', subtitle: 'Original supplementary MCQs based on Wren & Martin topics. These are not official PYQs.', timing: null, defaultCount: 20, source: false }
   };
 
   function startConfigured(mode, cfg, baseList, extraOpts) {
@@ -445,10 +446,17 @@
           baseList = Object.keys(st.attempts).filter(function (id) { return st.attempts[id] === false; })
             .map(function (id) { return byId[id]; }).filter(Boolean);
           if (!baseList.length) { say('No mistakes logged yet. Nice work.'); return; }
+        } else if (mode === 'bookpractice') {
+          baseList = Array.isArray(global.VAANI_BOOK_PRACTICE) ? global.VAANI_BOOK_PRACTICE.slice() : [];
+          if (!baseList.length) { say('Supplementary grammar questions are unavailable right now.'); return; }
         } else if (mode === 'bookmarks') {
           var bm = typeof global.getBookmarks === 'function' ? global.getBookmarks() : [];
+          var bookById = global.VAANI_BOOK_PRACTICE_BY_ID || {};
           baseList = bm.filter(function (b) { return b.indexOf('pyq:') === 0; })
-            .map(function (b) { return byId[b.slice(4)]; }).filter(Boolean);
+            .map(function (b) { return byId[b.slice(4)]; })
+            .concat(bm.filter(function (b) { return b.indexOf('book:') === 0; })
+              .map(function (b) { return bookById[b.slice(5)]; }))
+            .filter(Boolean);
           if (!baseList.length) { say('No bookmarks yet. Star any question to save it here.'); return; }
         }
 
@@ -456,6 +464,7 @@
           title: meta.title,
           subtitle: meta.subtitle,
           baseList: baseList,
+          source: meta.source === false ? false : undefined,
           timing: meta.timing,
           defaultCount: meta.defaultCount || Math.min(20, (baseList || allQuestions()).length),
           defaultMinutes: meta.defaultMinutes || 15,

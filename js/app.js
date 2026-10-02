@@ -43,7 +43,7 @@ function createDefaultState(){
     completedTopics:{}, quizScores:{}, vocabLearned:{}, theme:'light', missions:{},
     dailyActivity:{}, dailyXpEarned:{}, focusSessions:{}, mysteryBoxesClaimed:0, reviewQueue:[],
     personalBests:{ bestCombo:0, longestStreak:0, highestQuizScore:0, fastestQuizSeconds:null, fastestQuizLabel:'', totalQuizzesTaken:0 },
-    pyqStats:{ attempts:{} }, topicProgress:{}, topicLastAttempt:{}, bookmarkedTopics:{}, topicNotes:{}, pyqBookmarks:[], grammarMastery:{},
+    pyqStats:{ attempts:{} }, bookPracticeStats:{ attempts:{}, history:[] }, topicProgress:{}, topicLastAttempt:{}, bookmarkedTopics:{}, topicNotes:{}, pyqBookmarks:[], grammarMastery:{},
     pyqContinue:null, lastSpinDate:null, activity:[], xpLedger:[]
   };
 }
@@ -100,6 +100,9 @@ function normalizeState(){
   });
   State.pyqStats=isRecord(State.pyqStats)?State.pyqStats:{attempts:{}};
   State.pyqStats.attempts=isRecord(State.pyqStats.attempts)?State.pyqStats.attempts:{};
+  State.bookPracticeStats=isRecord(State.bookPracticeStats)?State.bookPracticeStats:{attempts:{},history:[]};
+  State.bookPracticeStats.attempts=isRecord(State.bookPracticeStats.attempts)?State.bookPracticeStats.attempts:{};
+  State.bookPracticeStats.history=Array.isArray(State.bookPracticeStats.history)?State.bookPracticeStats.history.filter(entry=>entry&&typeof entry==='object'&&!Array.isArray(entry)).slice(0,40):[];
   State.personalBests=isRecord(State.personalBests)?State.personalBests:{};
   Object.assign(State.personalBests,{bestCombo:0,longestStreak:0,highestQuizScore:0,fastestQuizSeconds:null,fastestQuizLabel:'',totalQuizzesTaken:0},State.personalBests);
   State.mysteryBoxesClaimed=Number.isFinite(Number(State.mysteryBoxesClaimed))?Math.max(0,Math.floor(Number(State.mysteryBoxesClaimed))):0;
@@ -1323,6 +1326,26 @@ function ensurePyqStats(){
   State.pyqStats.history = State.pyqStats.history || [];
   return State.pyqStats;
 }
+function ensureBookPracticeStats(){
+  State.bookPracticeStats=State.bookPracticeStats&&typeof State.bookPracticeStats==='object'&&!Array.isArray(State.bookPracticeStats)?State.bookPracticeStats:{attempts:{},history:[]};
+  State.bookPracticeStats.attempts=State.bookPracticeStats.attempts&&typeof State.bookPracticeStats.attempts==='object'&&!Array.isArray(State.bookPracticeStats.attempts)?State.bookPracticeStats.attempts:{};
+  State.bookPracticeStats.history=Array.isArray(State.bookPracticeStats.history)?State.bookPracticeStats.history:[];
+  return State.bookPracticeStats;
+}
+function recordBookPracticeAttempt(qid,correct){
+  if(typeof qid!=='string'||!VAANI_BOOK_PRACTICE_BY_ID[qid])return;
+  const st=ensureBookPracticeStats();
+  st.attempts[qid]=!!correct;
+  st.history=st.history.filter(entry=>entry.qid!==qid);
+  st.history.unshift({qid,correct:!!correct,ts:Date.now()});
+  if(st.history.length>40)st.history.length=40;
+  saveState();
+}
+function bookPracticeAccuracy(){
+  const st=ensureBookPracticeStats(),ids=Object.keys(st.attempts).filter(id=>!!VAANI_BOOK_PRACTICE_BY_ID[id]);
+  if(!ids.length)return null;
+  return Math.round(ids.filter(id=>st.attempts[id]===true).length/ids.length*100);
+}
 function pyqAccuracyFor(list){
   const st = ensurePyqStats();
   const attempted = list.filter(q=>st.attempts[q._id]!==undefined);
@@ -1500,7 +1523,7 @@ function pvSaveContinue(){
 function pvClearContinue(){ State.pyqContinue = null; saveState(); }
 function pvResumeContinue(){
   const c = State.pyqContinue; if(!c) return;
-  const qs = c.qids.map(id=>PYQ_BY_ID[id]).filter(Boolean);
+  const qs = c.qids.map(id=>PYQ_BY_ID[id]||VAANI_BOOK_PRACTICE_BY_ID[id]).filter(Boolean);
   if(!qs.length){ pvClearContinue(); toast('That session is no longer available.'); return; }
   pvStartSession(c.mode, qs, {
     title:c.title, negativeMarking:c.negativeMarking, deferReveal:c.deferReveal,
@@ -1915,7 +1938,10 @@ function pvHomeHTML(){
   const solvedIds = Object.keys(st.attempts).filter(id=>!!PYQ_BY_ID[id]);
   const solved = solvedIds.length;
   const acc = pyqAccuracyFor(PYQ_ALL);
-  const bm = getBookmarks().filter(b=>b.startsWith('pyq:')&&!!PYQ_BY_ID[b.slice(4)]).length;
+  const bm = getBookmarks().filter(b=>(b.startsWith('pyq:')&&!!PYQ_BY_ID[b.slice(4)])||(b.startsWith('book:')&&!!VAANI_BOOK_PRACTICE_BY_ID[b.slice(5)])).length;
+  const bookStats=ensureBookPracticeStats();
+  const bookAttempted=Object.keys(bookStats.attempts).filter(id=>!!VAANI_BOOK_PRACTICE_BY_ID[id]).length;
+  const bookAccuracy=bookPracticeAccuracy();
   const mistakesCount = solvedIds.filter(id=>st.attempts[id]===false).length;
   const pct = totalQ ? Math.round(solved/totalQ*100) : 0;
   const streakDays = State.streak || 0;
@@ -1933,6 +1959,7 @@ function pvHomeHTML(){
 
   const modes = [
     {icon:'📘', title:'Practice Mode', sub:'Learn at your own pace', fn:"pvLaunchMode('practice')"},
+    {icon:'📗', title:'Book-based Grammar', sub:bookAttempted+' / '+VAANI_BOOK_PRACTICE.length+' attempted'+(bookAccuracy===null?'':' · '+bookAccuracy+'% accuracy'), fn:"pvLaunchMode('bookpractice')"},
     {icon:'🎲', title:'Quiz Mode', sub:'20 random questions', fn:"pvLaunchMode('quiz')"},
     {icon:'⚡', title:'Rapid Fire', sub:'30 Qs · 20 sec each', fn:"pvLaunchMode('rapidfire')"},
     {icon:'🎖️', title:'Exam Mode', sub:'Full paper · timed', fn:"pvLaunchMode('exam')"},
@@ -2137,6 +2164,10 @@ function pvLaunchMode(mode){
   } else if(mode==='rapidfire'){
     const pool = pvShuffle(PYQ_ALL).slice(0,30);
     pvStartSession('rapidfire', pool, {title:'Rapid Fire', perQSeconds:20});
+  } else if(mode==='bookpractice'){
+    const pool=Array.isArray(VAANI_BOOK_PRACTICE)?VAANI_BOOK_PRACTICE.slice():[];
+    if(!pool.length){toast('Supplementary grammar questions are unavailable right now.');return;}
+    pvStartSession('bookpractice',pvShuffle(pool),{title:'Book-based Grammar'});
   } else if(mode==='exam'){
     PV.screen='exampicker'; pvRender();
   } else if(mode==='revision'){
@@ -2324,7 +2355,8 @@ function pvAutoAdvanceOnTimeout(){
   if(!s.answers[q._id]){
     s.answers[q._id] = { choice:-1, correct:false, timeUp:true };
     s.streak = 0;
-    recordPyqAttempt(q._id, false);
+    if(q._sourceType==='book-supplementary')recordBookPracticeAttempt(q._id,false);
+    else recordPyqAttempt(q._id, false);
   }
   if(s.index < s.questions.length-1){ s.index++; s.remaining = s.perQSeconds; pvRender(); pvStartTimerIfNeeded(); }
   else { pvFinishSession(); }
@@ -2340,7 +2372,8 @@ function pvSelectOption(choiceIdx){
   s.answers[q._id] = { choice: choiceIdx, correct };
   if(correct){ s.streak++; s.bestStreak = Math.max(s.bestStreak, s.streak); addXP(VAANI_CORRECT_ANSWER_XP,'Correct answer'); }
   else { s.streak = 0; }
-  recordPyqAttempt(q._id, correct);
+  if(q._sourceType==='book-supplementary')recordBookPracticeAttempt(q._id,correct);
+  else recordPyqAttempt(q._id, correct);
   refreshDashboardPyqCard();
   pvSaveContinue();
   pvRender();
@@ -2383,7 +2416,7 @@ function pvFinishSession(){
   });
   const accuracy=attempted?correct/attempted*100:null;
   if(total>0){
-    const label='PYQ '+(s.mode==='exam'?'exam':'practice')+' session';
+    const label=(s.mode==='bookpractice'?'Supplementary grammar practice':'PYQ '+(s.mode==='exam'?'exam':'practice'))+' session';
     const accuracyBefore=State.xp;
     // A skipped-only practice session has no accuracy sample to penalize.
     if(accuracy!==null)awardAccuracyXP(accuracy,label);
@@ -2403,7 +2436,9 @@ function pvFinishSession(){
     if(typeof window.vaaniCharacterResult==='function')window.vaaniCharacterResult(accuracy!==null?accuracy:0,label);
   }
   if(s.mode==='exam'){PV.screen='summary';pvRender();return;}
-  toast('Session complete — nice work, Cadet!');
+  if(s.mode==='bookpractice'){
+    toast('Supplementary practice complete · '+correct+'/'+total+' correct'+(accuracy===null?'':' · '+formatXPPercent(accuracy)+'% accuracy'));
+  }else toast('Session complete — nice work, Cadet!');
   pvGoHome();
 }
 
@@ -2423,6 +2458,7 @@ function pvPaperIdentity(q){
 }
 
 function pvPaperChipHTML(q){
+  if(q&&q._sourceType==='book-supplementary')return '<span class="pyq-chip yr" data-exam="BOOK" title="Original supplementary practice informed by Wren & Martin grammar topics">Supplementary</span>';
   const p=pvPaperIdentity(q);
   const title=p.label?'Source paper · '+p.code+(p.year?' '+p.year:''):'Source paper';
   return '<span class="pyq-chip yr" data-exam="'+escapeHtmlVaani(p.code||'PYQ')+'" title="'+escapeHtmlVaani(title)+'">'+escapeHtmlVaani(p.label||'PYQ')+'</span>';
@@ -2432,7 +2468,7 @@ function pvSessionHTML(){
   const s = PV.session; if(!s) return '';
   const q = s.questions[s.index];
   const answer = s.answers[q._id];
-  const bmId = 'pyq:'+q._id;
+  const bmId = (q._sourceType==='book-supplementary'?'book:':'pyq:')+q._id;
   const bookmarked = isBookmarked(bmId);
   const isRevisionLike = (s.mode==='revision' || s.mode==='revision-review');
   const answered = !!answer || isRevisionLike;

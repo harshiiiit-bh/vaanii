@@ -113,7 +113,7 @@ if (!accountCodeCss.includes('@media(max-width:767px)') ||
   process.exitCode = 1;
 }
 if (!html.includes('vaani-profile.css?v=20261001-account-code1-service-rank-xp5') ||
-    !html.includes('js/app.js?v=20261002-service-rank-xp9')) {
+    !html.includes('js/app.js?v=20261002-bookpractice1')) {
   console.error('Account-code asset cache keys are outdated');
   process.exitCode = 1;
 }
@@ -575,6 +575,35 @@ try {
   console.log('PYQ presentation audit: '+total+' questions; '+spotting+' Spotting Errors, '+wordClass+' Parts-of-Speech/Word-Class, '+structured+' labeled-structure questions, '+reading+' Reading Comprehension checks passed');
 }catch(error){console.error('PYQ presentation audit failed:',error.message);process.exitCode=1;}
 
+
+
+/* Book-based supplementary practice integrity and integration audit. */
+try {
+  const bank=loadData('data/book-practice.js','VAANI_BOOK_PRACTICE');
+  const ids=new Set(),prompts=new Set(),topicCounts={};
+  if(!Array.isArray(bank)||bank.length!==72)throw new Error('Expected exactly 72 supplementary questions.');
+  for(const q of bank){
+    if(!q||typeof q!=='object'||q._sourceType!=='book-supplementary'||q._exam!=='BOOK')throw new Error('Every item must be marked as supplementary and isolated from PYQ exams.');
+    const expectedId='WM-ENGLISH-'+String(ids.size+1).padStart(3,'0');
+    if(q._id!==expectedId||ids.has(q._id))throw new Error('Invalid or duplicate supplementary question ID: '+q._id);
+    if(typeof q.q!=='string'||!q.q.trim()||prompts.has(q.q))throw new Error('Empty or duplicate supplementary prompt: '+q._id);
+    if(!Array.isArray(q.o)||q.o.length!==4||q.o.some(option=>typeof option!=='string'||!option.trim()))throw new Error('Invalid answer options: '+q._id);
+    if(!Number.isInteger(q.ans)||q.ans<0||q.ans>=q.o.length)throw new Error('Invalid answer index: '+q._id);
+    if(typeof q.exp!=='string'||!q.exp.trim()||typeof q.rule!=='string'||!q.rule.trim())throw new Error('Missing explanation or rule: '+q._id);
+    if(!Number.isInteger(q.diff)||q.diff<1||q.diff>3)throw new Error('Invalid difficulty: '+q._id);
+    ids.add(q._id);prompts.add(q.q);topicCounts[q.sec]=(topicCounts[q.sec]||0)+1;
+  }
+  if(Object.keys(topicCounts).length!==9||Object.values(topicCounts).some(count=>count!==8))throw new Error('Expected eight questions in each of nine book-aligned topics.');
+  const bookApp=readFileSync('js/app.js','utf8');
+  const bookTestkit=readFileSync('js/vaani-testkit.js','utf8');
+  if(!html.includes('data/book-practice.js?v=20261002-bookpractice1'))throw new Error('Supplementary data script is not loaded.');
+  for(const required of ['function ensureBookPracticeStats()','function recordBookPracticeAttempt(','pvLaunchMode(\'bookpractice\')','q._sourceType===\'book-supplementary\'']) {
+    if(!bookApp.includes(required))throw new Error('Supplementary practice integration missing: '+required);
+  }
+  if(!bookTestkit.includes('bookpractice:')||!bookTestkit.includes('global.VAANI_BOOK_PRACTICE'))throw new Error('Supplementary bank is not wired into the shared test setup.');
+  if(!bookApp.includes('VAANI_BOOK_PRACTICE_BY_ID[id]'))throw new Error('Supplementary attempts cannot be resumed.');
+  console.log('Book practice: '+bank.length+' original MCQs, nine topic groups, unique IDs, answer schemas, separate tracking and shared-session hooks passed');
+}catch(error){console.error('Book practice audit failed:',error.message);process.exitCode=1;}
 
 /* Cloudflare Worker Preview configuration and read-only safety guard. */
 try {
