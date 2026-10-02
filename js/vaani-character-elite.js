@@ -106,9 +106,18 @@
     intel();
   }
 
+  function assessmentActive(){return !!document.body&&(document.body.classList.contains('vaani-assessment-active')||document.body.classList.contains('pv-session-active'));}
+  window.VAANI_IS_ASSESSMENT_ACTIVE=assessmentActive;
+  window.VAANI_SET_ASSESSMENT_ACTIVE=function(active){
+    const enabled=!!active;
+    if(document.body){document.body.classList.toggle('vaani-assessment-active',enabled);document.querySelectorAll('.ve-header-mini').forEach(button=>button.setAttribute('aria-disabled',String(enabled)));}
+    if(enabled){clearTimeout(idleTimer);idleTimer=null;clearTimeout(routeBriefTimer);routeBriefTimer=null;close();}
+    return enabled;
+  };
+
   function open(){
     const m=mentor();
-    if(!m||m.classList.contains('bad-result')||getDockPreferences().hidden)return;
+    if(!m||m.classList.contains('bad-result')||getDockPreferences().hidden||assessmentActive())return;
     addMeta();
     intel();
     // Replace any pending base/elite hide so a fresh briefing cannot vanish early.
@@ -130,7 +139,7 @@
   }
 
   function brief(){
-    if(getDockPreferences().hidden)return;
+    if(getDockPreferences().hidden||assessmentActive())return;
     if(typeof window.vaaniCharacterEnsure==='function')window.vaaniCharacterEnsure();
     const v=active();
     const c=context[v]||['OFFICER VAANI','Choose a task, focus for a while, and finish what you started.','p10','focus'];
@@ -342,8 +351,7 @@
   function updateDockVisibility(){
     const p=getDockPreferences();
     document.body.classList.toggle('ve-vaani-hidden',p.hidden);
-    const button=document.getElementById('veRestoreOfficer');
-    if(button)button.hidden=!p.hidden;
+    document.getElementById('veRestoreOfficer')?.remove();
   }
 
   function setDockHidden(hidden,save=true){
@@ -357,25 +365,6 @@
     if(toggle)toggle.setAttribute('aria-expanded','false');
     updateDockVisibility();
     if(save)saveDockPreferences();
-  }
-
-  function ensureRestoreOfficer(){
-    let button=document.getElementById('veRestoreOfficer');
-    if(button)return button;
-    button=document.createElement('button');
-    button.type='button';
-    button.id='veRestoreOfficer';
-    button.className='ve-restore-officer';
-    button.hidden=true;
-    button.setAttribute('aria-label','Show Officer VAANI');
-    button.title='Show Officer VAANI';
-    button.innerHTML='<span aria-hidden="true">✦</span><span>Officer VAANI</span><small>Show</small>';
-    button.addEventListener('click',()=>{
-      setDockHidden(false,true);
-      brief();
-    });
-    document.body.appendChild(button);
-    return button;
   }
 
   function toggleDockAdjust(panel,button){
@@ -450,7 +439,6 @@
       });
       panel.querySelector('#veDockHide')?.addEventListener('click',()=>setDockHidden(true,true));
     }
-    ensureRestoreOfficer();
     updateDockVisibility();
     const p=getDockPreferences();
     if(p.position)setDockPosition(p.position.x,p.position.y,false);
@@ -557,7 +545,6 @@
     },{passive:false});
     const p=getDockPreferences();
     if(mentor())mountDockControls(mentor());
-    const restore=ensureRestoreOfficer();
     updateDockVisibility();
     if(p.position&&mentor())setDockPosition(p.position.x,p.position.y,false);
     if(mentor())setDockScale(p.size,false);
@@ -566,59 +553,27 @@
   window.vaaniCharacterOnMount=mountDockControls;
 
   function mountOfficerStations(){
-    // Compact contextual Officer VAANI rail: deep integration without
-    // adding another large card to every screen.
     const brand=document.querySelector('.brand');
-    if(brand && !brand.querySelector('.ve-header-mini')){
-      const mini=document.createElement('button');
+    if(!brand)return;
+    document.querySelectorAll('.ve-officer-station,.ve-restore-officer,.ve-surface-mini').forEach(button=>button.remove());
+    let mini=brand.querySelector('.ve-header-mini');
+    if(!mini){
+      mini=document.createElement('button');
       mini.type='button';
       mini.className='ve-header-mini';
-      mini.setAttribute('aria-label','Open Officer VAANI');
-      mini.title='Officer VAANI · open briefing';
-      mini.addEventListener('click',brief);
+      mini.setAttribute('aria-label','Open or restore Officer VAANI');
+      mini.title='Officer VAANI · briefing and controls';
       brand.appendChild(mini);
     }
-
-    const stations={
-      grammar:['GRAMMAR','Rule check','point'],
-      compare:['PRECISION','Read twice','think'],
-      vocab:['VOCAB','Word drill','focus'],
-      books:['READING','Meaning first','observe'],
-      pyq:['PYQ','Mission report','salute'],
-      games:['ARENA','Stay precise','celebrate'],
-      leaderboard:['BOARD','Use as feedback','observe'],
-      profile:['RECORD','Track the work','salute'],
-      notifications:['SIGNAL','Act on what matters','wave']
-    };
-
-    Object.entries(stations).forEach(([viewId,data])=>{
-      const view=document.getElementById('view-'+viewId);
-      if(viewId==='profile'||!view || view.querySelector('.ve-officer-station'))return;
-
-      const station=document.createElement('button');
-      station.type='button';
-      station.className='ve-officer-station';
-      station.innerHTML=
-        '<span class="ve-station-avatar">'+
-          '<img src="assets/officer-vaani.svg" alt="" loading="lazy" decoding="async">'+
-          '<i aria-hidden="true"></i>'+
-        '</span>'+
-        '<span class="ve-station-label">'+
-          '<b>OFFICER VAANI</b><em>'+data[0]+'</em>'+
-        '</span>'+
-        '<span class="ve-station-hint">'+data[1]+'</span>'+
-        '<span class="ve-station-arrow" aria-hidden="true">→</span>';
-      station.title='Officer VAANI · '+data[0];
-      station.addEventListener('click',brief);
-
-      const target=view.querySelector('.view-header,.section-head,.page-head,.grammar-head,.vocab-head,.pyq-head,.arena-head');
-      // Only mount the rail beside a real section heading. Falling back to
-      // a page hero can place it on top of account, rank or action controls.
-      const host=target;
-      if(!host) return;
-      host.classList.add('ve-station-host');
-      host.appendChild(station);
-    });
+    if(!mini.dataset.vaaniDockBound){
+      mini.dataset.vaaniDockBound='1';
+      mini.addEventListener('click',()=>{
+        if(assessmentActive())return;
+        if(getDockPreferences().hidden)setDockHidden(false,true);
+        if(mentor()?.classList.contains('speaking'))close();
+        else brief();
+      });
+    }
   }
 
   function boot(){
@@ -641,7 +596,7 @@
 
       // Launcher buttons open the briefing during this same bubbling click.
       // Do not interpret that click as an outside click and close it immediately.
-      if(e.target.closest('.ve-header-mini,.ve-officer-station'))return;
+      if(e.target.closest('.ve-header-mini'))return;
       if(m.contains(e.target)){
         if(e.target.closest('#vcNext')||e.target.closest('#vcCharacter')){
           setTimeout(()=>{

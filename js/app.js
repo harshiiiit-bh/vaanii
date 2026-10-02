@@ -1720,6 +1720,7 @@ function pvRender(){
     if(report&&briefing)report.appendChild(briefing);
   }
   document.body.classList.toggle('pv-session-active', PV.screen==='session');
+  if(typeof window.VAANI_SET_ASSESSMENT_ACTIVE==='function')window.VAANI_SET_ASSESSMENT_ACTIVE(PV.screen==='session');
   window.scrollTo({top:0,behavior:'smooth'});
   if((PV.screen==='session'||PV.screen==='summary')&&typeof window.vaaniCharacterHide==='function')window.vaaniCharacterHide();
   setTimeout(()=>{ if(typeof initReveal==='function') initReveal(); },30);
@@ -2626,6 +2627,14 @@ function vaaniResultBriefingNode(score,label){
   }
   const section=document.createElement('section');
   section.className='vaani-result-briefing';
+  const art=document.createElement('div');
+  art.className='vaani-result-briefing-art';
+  const portrait=document.createElement('img');
+  portrait.src='https://cdn-ai-hs.picsart.com/ai-hot-storage/2a136339-4163-42a0-b366-0541c84cc19a.png';
+  portrait.alt='Officer VAANI';
+  portrait.loading='lazy';
+  portrait.decoding='async';
+  art.appendChild(portrait);
   section.setAttribute('aria-label','Officer VAANI after-action briefing');
   const kicker=document.createElement('span');
   kicker.className='vaani-result-briefing-kicker';
@@ -2637,7 +2646,10 @@ function vaaniResultBriefingNode(score,label){
   copy.textContent=message;
   const note=document.createElement('blockquote');
   note.textContent=quote;
-  section.append(kicker,title,copy,note);
+  const content=document.createElement('div');
+  content.className='vaani-result-briefing-copy';
+  content.append(kicker,title,copy,note);
+  section.append(art,content);
   return section;
 }
 
@@ -3802,10 +3814,12 @@ function recordQuizCompletion(pct, elapsedSec, label){
 function renderQuizPane(id, quiz){
   const pane=document.getElementById('pane-quiz');if(!pane)return;
   const questions=Array.isArray(quiz)?quiz:[];let idx=0,correctCount=0,qTimer=null,started=null,finished=false;
+  if(typeof window.VAANI_SET_ASSESSMENT_ACTIVE==='function')window.VAANI_SET_ASSESSMENT_ACTIVE(questions.length>0);
   function finish(){
     if(finished)return;finished=true;if(qTimer){qTimer.stop();qTimer=null;}
     const exactPct=questions.length?correctCount/questions.length*100:0;
     const pct=Math.round(exactPct);State.quizScores[id]=pct;State.topicLastAttempt=State.topicLastAttempt||{};State.topicLastAttempt[id]=Date.now();saveState();
+    if(typeof window.VAANI_SET_ASSESSMENT_ACTIVE==='function')window.VAANI_SET_ASSESSMENT_ACTIVE(false);
     recordQuizCompletion(pct,started?(Date.now()-started)/1000:null,((GRAMMAR.find(g=>g.id===id)||{}).title)||id);
     pane.innerHTML='<div class="quiz-card quiz-complete-card" role="status"><span class="lesson-kicker">TOPIC CHECK COMPLETE</span><h3>Your result</h3><div class="quiz-result-score">'+pct+'%</div><p>'+correctCount+' of '+questions.length+' answers correct</p><div class="quiz-result-track"><div style="width:'+pct+'%"></div></div><div class="quiz-result-actions"><button class="btn" type="button" id="quizRetry">Try again</button><button class="btn ghost" type="button" id="quizBack">Review lesson</button></div></div>';
     const briefing=vaaniResultBriefingNode(pct,((GRAMMAR.find(g=>g.id===id)||{}).title)||id);
@@ -5552,6 +5566,7 @@ function openCompare(id){
 function renderComparePane(id, quiz){
   const pane = document.getElementById('cmpQuizWrap');
   let idx=0, correctCount=0, qTimer=null, quizStartTs=null;
+  if(typeof window.VAANI_SET_ASSESSMENT_ACTIVE==='function')window.VAANI_SET_ASSESSMENT_ACTIVE(Array.isArray(quiz)&&quiz.length>0);
   function render(){
     if(idx===0) comboCount=0;
     if(idx===0 && quizStartTs===null) quizStartTs = Date.now();
@@ -5560,11 +5575,15 @@ function renderComparePane(id, quiz){
       const pct = Math.round(exactPct);
       State.quizScores['cmp-'+id]=pct; saveState();
       recordQuizCompletion(pct, quizStartTs?(Date.now()-quizStartTs)/1000:null, (currentCompare?currentCompare.a+' vs '+currentCompare.b:'Comparison drill'));
-      pane.innerHTML = `<div class="quiz-card" style="text-align:center">
-        <h3 style="margin-bottom:10px">Drill Complete</h3>
+      if(typeof window.VAANI_SET_ASSESSMENT_ACTIVE==='function')window.VAANI_SET_ASSESSMENT_ACTIVE(false);
+      const compareLabel=currentCompare?currentCompare.a+' vs '+currentCompare.b:'Comparison drill';
+      pane.innerHTML = `<div class="quiz-card quiz-complete-card" role="region" aria-label="Comparison drill report">
+        <span class="lesson-kicker">DRILL COMPLETE</span><h3 style="margin-bottom:10px">Your result</h3>
         <div class="num serif" style="font-size:2.4rem;color:var(--gold)">${pct}%</div>
         <p style="color:var(--muted);margin:10px 0">${correctCount} of ${quiz.length} correct${comboBest>=3?` · Best combo ×${comboBest}`:''}</p>
         <button class="btn" onclick="renderComparePane('${id}', COMPARISONS.find(c=>c.id==='${id}').pyq)">Retry Drill</button></div>`;
+      const briefing=vaaniResultBriefingNode(exactPct,compareLabel);
+      const resultCard=pane.querySelector('.quiz-complete-card');if(resultCard&&briefing)resultCard.appendChild(briefing);
       awardAccuracyXP(exactPct,'Comparison drill: '+(currentCompare?currentCompare.a+' vs '+currentCompare.b:'pair'));
       launchConfettiIf(pct>=70);
       return;

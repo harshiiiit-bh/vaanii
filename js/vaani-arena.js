@@ -351,7 +351,11 @@
   }
   A.render = render;
 
-  function go(screen) { S.screen = screen; render(); }
+  function go(screen) {
+    S.screen=screen;
+    if(typeof global.VAANI_SET_ASSESSMENT_ACTIVE==='function')global.VAANI_SET_ASSESSMENT_ACTIVE(screen==='run');
+    render();
+  }
 
   function backBtn(parent, label, screen) {
     var b = el('button', 'vx-back', '&larr; ' + label);

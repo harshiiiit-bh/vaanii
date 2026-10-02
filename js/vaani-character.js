@@ -78,7 +78,7 @@
       '</div>'+
       '<div class="vc-character vc-p0" id="vcCharacter" role="button" tabindex="0" aria-label="OFFICER VAANI mentor">'+
         '<span class="vc-character-frame" aria-hidden="true">'+
-          '<img class="vc-character-sheet" src="https://gcdn.picsart.com/editing-temp/2ca4be62-1e4a-4425-8b14-018c55a4d4b4.png" alt="" draggable="false" decoding="async" fetchpriority="low">'+
+          '<img class="vc-character-sheet" src="https://cdn-ai-hs.picsart.com/ai-hot-storage/2a136339-4163-42a0-b366-0541c84cc19a.png" alt="" draggable="false" decoding="async" fetchpriority="low">'+
         '</span>'+
         '<span class="vc-character-fallback" aria-hidden="true"><img src="assets/officer-vaani.svg" alt="" draggable="false" decoding="async"></span>'+
         '<span class="vc-character-nameplate" aria-hidden="true">OFFICER VAANI</span>'+
@@ -101,10 +101,11 @@
     if(typeof window.vaaniCharacterOnMount==='function')window.vaaniCharacterOnMount(el);
   }
 
+  function assessmentActive(){return !!document.body&&(document.body.classList.contains('vaani-assessment-active')||document.body.classList.contains('pv-session-active'));}
   function show(){
     ensure();
     const el=document.getElementById('vaaniMentor');
-    if(!el)return;
+    if(!el||assessmentActive())return;
     el.classList.add('speaking');
   }
   function hide(){
@@ -116,6 +117,7 @@
 
   let messageIndex={};
   function speak(view,force){
+    if(assessmentActive())return;
     ensure();
     const pool=MESSAGES[view]||MESSAGES.default;
     const idx=(messageIndex[view]||0)+(force?1:0);
