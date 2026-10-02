@@ -71,6 +71,19 @@ async function assertVisibleText(selector, label) {
   const value = await textOf(selector);
   assert.ok(value && value !== '—' && !/^loading/i.test(value), label + ' was blank: ' + JSON.stringify(value));
 }
+async function dismissInfoTour() {
+  // Wait for the scheduled first-visit tour to either open or already be marked seen.
+  await page.waitForFunction(() => {
+    const tour = document.getElementById('viTour');
+    return Boolean(tour?.classList.contains('open')) ||
+      (typeof State !== 'undefined' && State.infoTourVersion === '20261002-info-center1');
+  }, null, { timeout: 5000 });
+  if (await page.locator('#viTour.open').count()) {
+    await page.keyboard.press('Escape');
+    await page.waitForFunction(() => !document.getElementById('viTour')?.classList.contains('open'),
+      null, { timeout: 5000 });
+  }
+}
 async function clickMainView(name) {
   const desktopButton = page.locator('#vaaniMainNav button[data-view="' + name + '"]');
   const bottomButton = page.locator('#bottomNav button[data-view="' + name + '"]');
@@ -163,10 +176,7 @@ try {
     'New account should be asked to select one of the three services');
   await page.locator('#serviceForcePicker .service-force-option[data-force="army"]').click();
   await page.waitForFunction(() => document.getElementById('gate')?.classList.contains('hide'), null, { timeout: 15000 });
-  await page.waitForTimeout(900);
-  // The first-visit field briefing is modal by design; close it before testing dashboard navigation.
-  if (await page.locator('#viTour.open').count()) await page.keyboard.press('Escape');
-  await page.waitForFunction(() => !document.getElementById('viTour')?.classList.contains('open'), null, { timeout: 5000 });
+  await dismissInfoTour();
   assert.equal(await page.evaluate(() => State.serviceForce), 'army', 'Selected service was not applied to the new account');
 
   assert.equal(await page.locator('#view-dashboard').evaluate(el => el.classList.contains('active')), true);
@@ -524,10 +534,7 @@ try {
   assert.deepEqual(switchedBack.completed, {}, 'Partial-account switching introduced cross-account progress');
   await page.evaluate(() => finishGateEntry());
   // finishGateEntry schedules a first-visit guide for the newly active account.
-  // Close that modal in the smoke browser before continuing with lesson clicks.
-  await page.waitForTimeout(1000);
-  if (await page.locator('#viTour.open').count()) await page.keyboard.press('Escape');
-  await page.waitForFunction(() => !document.getElementById('viTour')?.classList.contains('open'), null, { timeout: 5000 });
+  await dismissInfoTour();
   console.log('PASS account isolation: create, logout, restore, switch and reject malformed records');
 
   await clickMainView('grammar');
