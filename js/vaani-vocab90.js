@@ -176,6 +176,13 @@
     activePhase = Math.floor((selectedDay - 1) / 30);
     syncPhaseButtons();
     renderDayGrid();
+    var view = document.getElementById('view-vocab90');
+    if (view && global.MutationObserver) {
+      var viewObserver = new global.MutationObserver(function () {
+        if (view.classList.contains('active')) updateSelectedDay();
+      });
+      viewObserver.observe(view, { attributes: true, attributeFilter: ['class'] });
+    }
     updateSelectedDay();
     updateProgress();
 
