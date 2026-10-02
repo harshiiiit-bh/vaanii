@@ -619,6 +619,13 @@ try {
       assert.equal(typeof lessonScore.academy,'number','New Academy quiz score was not saved under its own stable ID');
       assert.equal(lessonScore.legacy,79,'New Academy quiz overwrote its legacy parent topic score');
       await page.evaluate(() => jumpFlow('summary',document.querySelector('.flow-step[data-step="summary"]')));
+      if (await page.locator('#vaaniMentor.bad-result.show').count()) {
+        assert.ok(await page.locator('#vcRecoveryClose').isVisible(),
+          'Low-score recovery briefing should offer a Back to training action');
+        await page.locator('#vcRecoveryClose').click();
+        await page.waitForFunction(() => !document.getElementById('vaaniMentor')?.classList.contains('bad-result'),
+          null, { timeout: 5000 });
+      }
       await page.locator('#pane-summary .btn.glow-btn').click();
       const lessonCompletion=await page.evaluate(() => ({academy:State.completedTopics['sequence-of-tenses'],legacy:State.completedTopics.tenses}));
       assert.equal(lessonCompletion.academy,true,'New Academy completion was not saved under its own stable ID');
