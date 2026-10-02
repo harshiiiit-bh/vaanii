@@ -101,6 +101,10 @@ jobs:
               const list=$(el);
               const lis=list.children('li').toArray();
               if(!lis.length)continue;
+              const listText=lis.map(li=>clean($(li).text())).join(' ');
+              // Some source pages wrap section directions in an unnumbered OL; those are not question records.
+              if(/in this section a number of sentences are given|you are to indicate only one response for each item/i.test(listText)
+                 && lis.every(li=>!$(li).find('ul').length)) continue;
               const hasExplicit=Number.isFinite(Number.parseInt(list.attr('start'),10));
               const start=hasExplicit?Number.parseInt(list.attr('start'),10):implicit;
               const records=[];
