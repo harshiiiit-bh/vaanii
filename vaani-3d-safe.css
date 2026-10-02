@@ -7,7 +7,7 @@
 .view{position:relative}
 
 .vaani-3d-model{
-  position:absolute;
+  position:absolute!important;
   top:clamp(18px,2.5vw,32px);
   right:clamp(14px,2.8vw,36px);
   width:clamp(84px,10vw,132px);
