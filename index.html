@@ -31,6 +31,7 @@
 <link rel="stylesheet" href="vaani-focus-sprint.css?v=20261002-recovery1">
 <link rel="stylesheet" href="vaani-grammar.css?v=20261002-recovery1">
 <link rel="stylesheet" href="vaani-vocab.css?v=20261002-v90">
+<link rel="stylesheet" href="vaani-vocab90.css?v=20261003-subpage1">
 <link rel="stylesheet" href="vaani-profile.css?v=20261001-account-code1-service-rank-xp5&v=20261002-recovery1">
 <link rel="stylesheet" href="vaani-bookreading.css?v=20261002-recovery1">
 <link rel="stylesheet" href="vaani-contrast.css?v=20261002-recovery1">
@@ -841,16 +842,14 @@
   <p class="section-desc">Start with a clear meaning and one useful example. Explore pronunciation, word families and NDA practice only when you need them.</p>
   <div class="vv-book-link"><span>Reading a book?</span><span>Keep your discoveries in the Book Reading register.</span><button class="btn ghost" onclick="switchView('books',{bookRoute:'vocab'})">Open Reading Vocab Register →</button></div>
 
-  <section class="v90-resource" aria-labelledby="v90Title">
-    <div class="v90-resource-mark" aria-hidden="true">90</div>
-    <div class="v90-resource-copy">
-      <span class="v90-kicker">ADDITIONAL STUDY RESOURCE · MYPATHSHALA</span>
-      <h3 id="v90Title">90-Day Vocabulary Target</h3>
-      <p>A 324-page study resource arranged by day, covering one-word substitutions, idioms and phrases, word series, verbal phrases, fixed prepositions and useful cloze-test words.</p>
-      <div class="v90-tags" aria-label="Included topics"><span>One-word substitutions</span><span>Idioms &amp; phrases</span><span>Synonyms &amp; antonyms</span><span>Cloze test</span></div>
+  <section class="v90-entry" aria-labelledby="v90EntryTitle">
+    <div class="v90-entry-mark" aria-hidden="true">90</div>
+    <div class="v90-entry-copy">
+      <span class="v90-kicker">STRUCTURED STUDY TRACK</span>
+      <h3 id="v90EntryTitle">90-Day Vocabulary Target</h3>
+      <p>Study one day at a time, keep track of your progress, and continue from where you left off.</p>
     </div>
-    <a class="v90-open" href="https://www.scribd.com/document/883515539/My-Pathshala-Vocabulary-90-Days-Target-by-SSC-Aspirant" target="_blank" rel="noopener noreferrer" aria-label="Open MyPathshala 90-Day Vocabulary Target on Scribd">Open resource <span aria-hidden="true">↗</span></a>
-    <p class="v90-source">Opens the source document in a new tab. Access and download options are controlled by the source platform.</p>
+    <button class="btn primary v90-entry-open" type="button" onclick="switchView('vocab90')">Open study track <span aria-hidden="true">→</span></button>
   </section>
 
   <div class="vv-bank-intro"><span class="eyebrow">Word finder</span><h3>Find a word. Understand it. Use it.</h3><p>Search first, then open a word for its plain meaning, Hindi translation, examples and practice.</p></div>
@@ -889,6 +888,78 @@
   <div class="cw-grid" id="confuseTableBody"></div>
 
 
+</section>
+
+<!-- ============ MYPATHSHALA 90-DAY VOCABULARY SUBPAGE ============ -->
+<section class="view v90-view" id="view-vocab90" aria-labelledby="v90PageTitle">
+  <div class="v90-shell">
+    <div class="v90-topline">
+      <button class="v90-back" type="button" onclick="switchView('vocab')"><span aria-hidden="true">←</span> Vocabulary Hub</button>
+      <span class="v90-topline-label">VAANI · STUDY TRACK</span>
+    </div>
+
+    <header class="v90-hero">
+      <div class="v90-hero-copy">
+        <span class="v90-eyebrow">MYPATHSHALA · 90-DAY TARGET</span>
+        <h2 id="v90PageTitle">Vocabulary, one day at a time.</h2>
+        <p>A focused companion for the 324-page source. Choose a day, study its material in the reader, and mark your progress when you're done.</p>
+      </div>
+      <div class="v90-progress-card" aria-live="polite">
+        <div class="v90-progress-top"><span>YOUR PROGRESS</span><strong id="v90ProgressCount">0 / 90</strong></div>
+        <div class="v90-progress-track" role="progressbar" aria-label="90-day target completion" aria-valuemin="0" aria-valuemax="90" aria-valuenow="0" id="v90ProgressBar"><span id="v90ProgressFill"></span></div>
+        <div class="v90-progress-bottom"><span id="v90ProgressPercent">0% complete</span><span id="v90Remaining">90 days left</span></div>
+      </div>
+    </header>
+
+    <div class="v90-workspace">
+      <aside class="v90-day-panel" aria-label="Choose a study day">
+        <div class="v90-panel-heading">
+          <div><span class="v90-kicker">YOUR PLAN</span><h3>Choose a day</h3></div>
+          <button type="button" class="v90-reset" id="v90ResetProgress" title="Clear saved day progress">Reset</button>
+        </div>
+        <label class="v90-search-label" for="v90DaySearch">Find a day</label>
+        <input id="v90DaySearch" class="v90-day-search" type="search" inputmode="numeric" placeholder="Search 1–90" autocomplete="off">
+        <div class="v90-phase-tabs" role="group" aria-label="Study phase">
+          <button type="button" data-v90-phase="0" aria-pressed="true">01–30</button>
+          <button type="button" data-v90-phase="1" aria-pressed="false">31–60</button>
+          <button type="button" data-v90-phase="2" aria-pressed="false">61–90</button>
+        </div>
+        <div class="v90-day-grid" id="v90DayGrid" role="group" aria-label="Study days"></div>
+        <div class="v90-legend"><span><i class="v90-dot current"></i> Selected</span><span><i class="v90-dot done"></i> Completed</span></div>
+      </aside>
+
+      <div class="v90-study-panel">
+        <section class="v90-selected-day" aria-labelledby="v90SelectedTitle">
+          <div class="v90-selected-top">
+            <div>
+              <span class="v90-kicker" id="v90SelectedKicker">DAY 01 · START HERE</span>
+              <h3 id="v90SelectedTitle">Day 01</h3>
+              <p id="v90SelectedMeta">Source PDF · page 1</p>
+            </div>
+            <span class="v90-status" id="v90SelectedStatus">NOT STARTED</span>
+          </div>
+          <div class="v90-selected-actions">
+            <button type="button" class="btn primary" id="v90MarkDone">Mark day complete</button>
+            <div class="v90-day-nav">
+              <button type="button" class="v90-nav-btn" id="v90PrevDay" aria-label="Previous day">←</button>
+              <button type="button" class="v90-nav-btn" id="v90NextDay">Next day <span aria-hidden="true">→</span></button>
+            </div>
+          </div>
+        </section>
+
+        <section class="v90-reader-card" aria-labelledby="v90ReaderTitle">
+          <div class="v90-reader-head">
+            <div><span class="v90-kicker">SOURCE READER</span><h3 id="v90ReaderTitle">MyPathshala vocabulary notes</h3></div>
+            <a class="v90-source-link" id="v90OpenSource" href="https://www.scribd.com/document/883515539/My-Pathshala-Vocabulary-90-Days-Target-by-SSC-Aspirant?start_page=1" target="_blank" rel="noopener noreferrer">Open in new tab <span aria-hidden="true">↗</span></a>
+          </div>
+          <div class="v90-reader-frame-wrap">
+            <iframe id="v90ReaderFrame" title="MyPathshala 90-Day Vocabulary source reader" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.scribd.com/embeds/883515539/content?start_page=1&amp;view_mode=scroll"></iframe>
+          </div>
+          <p class="v90-reader-note">The reader is provided by Scribd. Its sign-in, viewing and download requirements are controlled by the source platform. Use “Open in new tab” if the embedded reader does not load.</p>
+        </section>
+      </div>
+    </div>
+  </div>
 </section>
 
 <!-- ============ WORD DETAIL PAGE ============ -->
@@ -1749,6 +1820,7 @@
 <script src="js/vaani-book-companion.js?v=20261002-bookcompanion3&v=20261002-recovery1"></script>
 <script src="js/vaani-arena.js?v=20261002-recovery1"></script>
 <script src="js/vaani-vocab-bridge.js?v=20261002-recovery1"></script>
+<script src="js/vaani-vocab90.js?v=20261003-subpage1"></script>
 <script src="js/vaani-dictionary.js?v=20261002-recovery1"></script>
 <script src="js/vaani-writing-coach.js?v=20261002-recovery1"></script>
 <script>window.VAANI_NOTIFICATIONS_API = "https://vaani-notifications-api.harshitchaubey127.workers.dev";</script>
