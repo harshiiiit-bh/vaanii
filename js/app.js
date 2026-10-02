@@ -43,7 +43,7 @@ function createDefaultState(){
     completedTopics:{}, quizScores:{}, vocabLearned:{}, theme:'light', missions:{},
     dailyActivity:{}, dailyXpEarned:{}, focusSessions:{}, mysteryBoxesClaimed:0, reviewQueue:[],
     personalBests:{ bestCombo:0, longestStreak:0, highestQuizScore:0, fastestQuizSeconds:null, fastestQuizLabel:'', totalQuizzesTaken:0 },
-    pyqStats:{ attempts:{} }, bookPracticeStats:{ attempts:{}, history:[] }, topicProgress:{}, topicLastAttempt:{}, bookmarkedTopics:{}, topicNotes:{}, pyqBookmarks:[], grammarMastery:{},
+    pyqStats:{ attempts:{} }, bookPracticeStats:{ attempts:{}, history:[] }, bookStudy:{completedChapterIds:[],completedExerciseIds:[],lastChapterId:null}, topicProgress:{}, topicLastAttempt:{}, bookmarkedTopics:{}, topicNotes:{}, pyqBookmarks:[], grammarMastery:{},
     pyqContinue:null, lastSpinDate:null, activity:[], xpLedger:[]
   };
 }
@@ -103,6 +103,11 @@ function normalizeState(){
   State.bookPracticeStats=isRecord(State.bookPracticeStats)?State.bookPracticeStats:{attempts:{},history:[]};
   State.bookPracticeStats.attempts=isRecord(State.bookPracticeStats.attempts)?State.bookPracticeStats.attempts:{};
   State.bookPracticeStats.history=Array.isArray(State.bookPracticeStats.history)?State.bookPracticeStats.history.filter(entry=>entry&&typeof entry==='object'&&!Array.isArray(entry)).slice(0,40):[];
+  State.bookStudy=isRecord(State.bookStudy)?State.bookStudy:{completedChapterIds:[],completedExerciseIds:[],lastChapterId:null};
+  const validBookIds=new Set(typeof VAANI_BOOK_CHAPTERS!=='undefined'&&Array.isArray(VAANI_BOOK_CHAPTERS)?VAANI_BOOK_CHAPTERS.map(ch=>ch.id):[]);
+  State.bookStudy.completedChapterIds=Array.isArray(State.bookStudy.completedChapterIds)?Array.from(new Set(State.bookStudy.completedChapterIds.filter(id=>typeof id==='string'&&validBookIds.has(id)))):[];
+  State.bookStudy.completedExerciseIds=Array.isArray(State.bookStudy.completedExerciseIds)?Array.from(new Set(State.bookStudy.completedExerciseIds.filter(id=>typeof id==='string'&&validBookIds.has(id)))):[];
+  State.bookStudy.lastChapterId=typeof State.bookStudy.lastChapterId==='string'&&validBookIds.has(State.bookStudy.lastChapterId)?State.bookStudy.lastChapterId:null;
   State.personalBests=isRecord(State.personalBests)?State.personalBests:{};
   Object.assign(State.personalBests,{bestCombo:0,longestStreak:0,highestQuizScore:0,fastestQuizSeconds:null,fastestQuizLabel:'',totalQuizzesTaken:0},State.personalBests);
   State.mysteryBoxesClaimed=Number.isFinite(Number(State.mysteryBoxesClaimed))?Math.max(0,Math.floor(Number(State.mysteryBoxesClaimed))):0;
@@ -1514,7 +1519,7 @@ function pvAccBadgeClass(acc){ if(acc===null) return 'mid'; return acc>=70?'stro
 function pvSaveContinue(){
   const s = PV.session; if(!s || s.finished){ return; }
   State.pyqContinue = {
-    mode:s.mode, title:s.title, qids:s.questions.map(q=>q._id), index:s.index, answers:s.answers,
+    mode:s.mode, title:s.title, qids:s.questions.map(q=>q._id), index:s.index, answers:s.answers, bookChapterId:s.bookChapterId||null,
     negativeMarking:!!s.negativeMarking, deferReveal:!!s.deferReveal, perQSeconds:s.perQSeconds||null,
     timeLimitSec:s.timeLimitSec||null, savedAt:Date.now()
   };
@@ -1527,7 +1532,7 @@ function pvResumeContinue(){
   if(!qs.length){ pvClearContinue(); toast('That session is no longer available.'); return; }
   pvStartSession(c.mode, qs, {
     title:c.title, negativeMarking:c.negativeMarking, deferReveal:c.deferReveal,
-    perQSeconds:c.perQSeconds, timeLimitSec:c.timeLimitSec, resumeIndex:c.index, resumeAnswers:c.answers
+    perQSeconds:c.perQSeconds, timeLimitSec:c.timeLimitSec, resumeIndex:c.index, resumeAnswers:c.answers, bookChapterId:c.bookChapterId||null
   });
 }
 
@@ -2296,7 +2301,7 @@ function pvStartSession(mode, questions, opts){
   if(!questions || !questions.length){ toast('No questions available for this mode yet.'); return; }
   pvStopTimer();
   const s = {
-    mode, title: opts.title || mode,
+    mode, title: opts.title || mode, bookChapterId:typeof opts.bookChapterId==='string'?opts.bookChapterId:null,
     questions: questions.slice(),
     index: opts.resumeIndex || 0,
     answers: opts.resumeAnswers || {},
@@ -2437,9 +2442,9 @@ function pvFinishSession(){
   }
   if(s.mode==='exam'){PV.screen='summary';pvRender();return;}
   if(s.mode==='bookpractice'){
-    toast('Supplementary practice complete · '+correct+'/'+total+' correct'+(accuracy===null?'':' · '+formatXPPercent(accuracy)+'% accuracy'));
-  }else toast('Session complete — nice work, Cadet!');
-  pvGoHome();
+    toast('Book practice complete · '+correct+'/'+total+' correct'+(accuracy===null?'':' · '+formatXPPercent(accuracy)+'% accuracy'));
+    PV.session=null;PV.screen=s.bookChapterId?'bookchapter':'bookcompanion';if(s.bookChapterId)PV.bookChapterId=s.bookChapterId;pvRender();
+  }else{toast('Session complete — nice work, Cadet!');pvGoHome();}
 }
 
 function pvReportError(qid){
@@ -6005,6 +6010,7 @@ function showSheetMenu(){
     {icon:'★',label:'Bookmarks',action:"showSheetBookmarks()"},
     {icon:'📊',label:'Statistics',action:"sheetGo('leaderboard')"},
     {icon:'📖',label:'Book Reading',action:"sheetGo('books')"},
+    {icon:'📐',label:'Comparisons',action:"sheetGo('compare')"},
     {icon:'⚙️',label:'Settings',action:"closeMoreSheet();toggleFocusPanel()"},
     {icon:'✉️',label:'Feedback',soon:false, action:"showSheetFeedback()"},
     {icon:'ⓘ',label:'VAANI Guide',action:"openInfoCenter()"}

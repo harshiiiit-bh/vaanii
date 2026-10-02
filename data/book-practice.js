@@ -1,5 +1,4 @@
-/* Original supplementary MCQs informed by topics in Wren & Martin, High School English Grammar and Composition.
-   Newly authored practice items; not reproduced textbook exercises or official NDA/CDS/AFCAT PYQs. */
+/* Original supplementary MCQs mapped to related Wren & Martin chapters where appropriate. Not copied textbook exercises or official exam PYQs. */
 var VAANI_BOOK_PRACTICE = [
   {
     "_id": "WM-ENGLISH-001",
@@ -16,7 +15,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Sentences, Phrases & Clauses",
     "diff": 1,
     "exp": "It gives a command or instruction, so it is imperative.",
-    "rule": "Identify the finite verb and its subject, then decide whether the unit is a phrase, an independent clause, a dependent clause, or a complete sentence."
+    "rule": "Identify the finite verb and its subject, then decide whether the unit is a phrase, an independent clause, a dependent clause, or a complete sentence.",
+    "bookChapterIds": [
+      "grammar-1"
+    ]
   },
   {
     "_id": "WM-ENGLISH-002",
@@ -33,7 +35,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Sentences, Phrases & Clauses",
     "diff": 1,
     "exp": "The group has no finite verb and does not express a complete clause.",
-    "rule": "Identify the finite verb and its subject, then decide whether the unit is a phrase, an independent clause, a dependent clause, or a complete sentence."
+    "rule": "Identify the finite verb and its subject, then decide whether the unit is a phrase, an independent clause, a dependent clause, or a complete sentence.",
+    "bookChapterIds": [
+      "grammar-3"
+    ]
   },
   {
     "_id": "WM-ENGLISH-003",
@@ -50,7 +55,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Sentences, Phrases & Clauses",
     "diff": 2,
     "exp": "It has a subject and verb, but although makes it dependent on a main clause.",
-    "rule": "Identify the finite verb and its subject, then decide whether the unit is a phrase, an independent clause, a dependent clause, or a complete sentence."
+    "rule": "Identify the finite verb and its subject, then decide whether the unit is a phrase, an independent clause, a dependent clause, or a complete sentence.",
+    "bookChapterIds": [
+      "grammar-3"
+    ]
   },
   {
     "_id": "WM-ENGLISH-004",
@@ -67,7 +75,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Sentences, Phrases & Clauses",
     "diff": 1,
     "exp": "The predicate tells what the subject did: inspected the radios before dawn.",
-    "rule": "Identify the finite verb and its subject, then decide whether the unit is a phrase, an independent clause, a dependent clause, or a complete sentence."
+    "rule": "Identify the finite verb and its subject, then decide whether the unit is a phrase, an independent clause, a dependent clause, or a complete sentence.",
+    "bookChapterIds": [
+      "grammar-2"
+    ]
   },
   {
     "_id": "WM-ENGLISH-005",
@@ -84,7 +95,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Sentences, Phrases & Clauses",
     "diff": 2,
     "exp": "The sentence has inverted word order; a watchtower is the subject.",
-    "rule": "Identify the finite verb and its subject, then decide whether the unit is a phrase, an independent clause, a dependent clause, or a complete sentence."
+    "rule": "Identify the finite verb and its subject, then decide whether the unit is a phrase, an independent clause, a dependent clause, or a complete sentence.",
+    "bookChapterIds": [
+      "grammar-2"
+    ]
   },
   {
     "_id": "WM-ENGLISH-006",
@@ -101,7 +115,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Sentences, Phrases & Clauses",
     "diff": 1,
     "exp": "It joins two independent clauses with and.",
-    "rule": "Identify the finite verb and its subject, then decide whether the unit is a phrase, an independent clause, a dependent clause, or a complete sentence."
+    "rule": "Identify the finite verb and its subject, then decide whether the unit is a phrase, an independent clause, a dependent clause, or a complete sentence.",
+    "bookChapterIds": [
+      "grammar-1"
+    ]
   },
   {
     "_id": "WM-ENGLISH-007",
@@ -118,7 +135,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Sentences, Phrases & Clauses",
     "diff": 1,
     "exp": "The construction expresses strong feeling and ends with an exclamation mark.",
-    "rule": "Identify the finite verb and its subject, then decide whether the unit is a phrase, an independent clause, a dependent clause, or a complete sentence."
+    "rule": "Identify the finite verb and its subject, then decide whether the unit is a phrase, an independent clause, a dependent clause, or a complete sentence.",
+    "bookChapterIds": [
+      "grammar-1"
+    ]
   },
   {
     "_id": "WM-ENGLISH-008",
@@ -135,7 +155,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Sentences, Phrases & Clauses",
     "diff": 2,
     "exp": "To complete is an infinitive; the group has no finite predicate.",
-    "rule": "Identify the finite verb and its subject, then decide whether the unit is a phrase, an independent clause, a dependent clause, or a complete sentence."
+    "rule": "Identify the finite verb and its subject, then decide whether the unit is a phrase, an independent clause, a dependent clause, or a complete sentence.",
+    "bookChapterIds": [
+      "grammar-28"
+    ]
   },
   {
     "_id": "WM-ENGLISH-009",
@@ -152,7 +175,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Parts of Speech",
     "diff": 1,
     "exp": "Hard modifies worked by describing how the cadet worked; it is an adverb here.",
-    "rule": "Classify each word by the job it performs in this sentence; a word can change its part of speech with context."
+    "rule": "Classify each word by the job it performs in this sentence; a word can change its part of speech with context.",
+    "bookChapterIds": [
+      "grammar-34"
+    ]
   },
   {
     "_id": "WM-ENGLISH-010",
@@ -169,7 +195,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Parts of Speech",
     "diff": 1,
     "exp": "Fast describes the noun vehicle, so it functions as an adjective.",
-    "rule": "Classify each word by the job it performs in this sentence; a word can change its part of speech with context."
+    "rule": "Classify each word by the job it performs in this sentence; a word can change its part of speech with context.",
+    "bookChapterIds": [
+      "grammar-9"
+    ]
   },
   {
     "_id": "WM-ENGLISH-011",
@@ -186,7 +215,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Parts of Speech",
     "diff": 2,
     "exp": "Reading names an activity and is the subject of the sentence.",
-    "rule": "Classify each word by the job it performs in this sentence; a word can change its part of speech with context."
+    "rule": "Classify each word by the job it performs in this sentence; a word can change its part of speech with context.",
+    "bookChapterIds": [
+      "grammar-30"
+    ]
   },
   {
     "_id": "WM-ENGLISH-012",
@@ -203,7 +235,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Parts of Speech",
     "diff": 2,
     "exp": "Wounded describes the noun pilot.",
-    "rule": "Classify each word by the job it performs in this sentence; a word can change its part of speech with context."
+    "rule": "Classify each word by the job it performs in this sentence; a word can change its part of speech with context.",
+    "bookChapterIds": [
+      "grammar-29"
+    ]
   },
   {
     "_id": "WM-ENGLISH-013",
@@ -220,7 +255,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Parts of Speech",
     "diff": 1,
     "exp": "Light names the action performed on the lamps.",
-    "rule": "Classify each word by the job it performs in this sentence; a word can change its part of speech with context."
+    "rule": "Classify each word by the job it performs in this sentence; a word can change its part of speech with context.",
+    "bookChapterIds": [
+      "grammar-43"
+    ]
   },
   {
     "_id": "WM-ENGLISH-014",
@@ -237,7 +275,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Parts of Speech",
     "diff": 1,
     "exp": "Light describes the pack, indicating its weight.",
-    "rule": "Classify each word by the job it performs in this sentence; a word can change its part of speech with context."
+    "rule": "Classify each word by the job it performs in this sentence; a word can change its part of speech with context.",
+    "bookChapterIds": [
+      "grammar-43"
+    ]
   },
   {
     "_id": "WM-ENGLISH-015",
@@ -254,7 +295,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Parts of Speech",
     "diff": 1,
     "exp": "Direct modifies the noun answer.",
-    "rule": "Classify each word by the job it performs in this sentence; a word can change its part of speech with context."
+    "rule": "Classify each word by the job it performs in this sentence; a word can change its part of speech with context.",
+    "bookChapterIds": [
+      "grammar-9"
+    ]
   },
   {
     "_id": "WM-ENGLISH-016",
@@ -271,7 +315,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Parts of Speech",
     "diff": 1,
     "exp": "Directly modifies the verb replied by indicating how the officer replied.",
-    "rule": "Classify each word by the job it performs in this sentence; a word can change its part of speech with context."
+    "rule": "Classify each word by the job it performs in this sentence; a word can change its part of speech with context.",
+    "bookChapterIds": [
+      "grammar-34"
+    ]
   },
   {
     "_id": "WM-ENGLISH-017",
@@ -288,7 +335,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Nouns: Number & Case",
     "diff": 1,
     "exp": "Advice is normally uncountable in this meaning; some advice is grammatical.",
-    "rule": "Check countability, singular or plural form, and the grammatical role or possession expressed by the noun."
+    "rule": "Check countability, singular or plural form, and the grammatical role or possession expressed by the noun.",
+    "bookChapterIds": [
+      "grammar-5"
+    ]
   },
   {
     "_id": "WM-ENGLISH-018",
@@ -305,7 +355,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Nouns: Number & Case",
     "diff": 1,
     "exp": "Analysis changes to analyses in the plural.",
-    "rule": "Check countability, singular or plural form, and the grammatical role or possession expressed by the noun."
+    "rule": "Check countability, singular or plural form, and the grammatical role or possession expressed by the noun.",
+    "bookChapterIds": [
+      "grammar-7"
+    ]
   },
   {
     "_id": "WM-ENGLISH-019",
@@ -322,7 +375,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Nouns: Number & Case",
     "diff": 2,
     "exp": "The principal word commander takes the plural; chief remains unchanged.",
-    "rule": "Check countability, singular or plural form, and the grammatical role or possession expressed by the noun."
+    "rule": "Check countability, singular or plural form, and the grammatical role or possession expressed by the noun.",
+    "bookChapterIds": [
+      "grammar-7"
+    ]
   },
   {
     "_id": "WM-ENGLISH-020",
@@ -339,7 +395,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Nouns: Number & Case",
     "diff": 1,
     "exp": "News is singular in grammatical agreement, despite ending in -s.",
-    "rule": "Check countability, singular or plural form, and the grammatical role or possession expressed by the noun."
+    "rule": "Check countability, singular or plural form, and the grammatical role or possession expressed by the noun.",
+    "bookChapterIds": [
+      "grammar-7"
+    ]
   },
   {
     "_id": "WM-ENGLISH-021",
@@ -356,24 +415,30 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Nouns: Number & Case",
     "diff": 1,
     "exp": "Fleet names a group of ships considered together.",
-    "rule": "Check countability, singular or plural form, and the grammatical role or possession expressed by the noun."
+    "rule": "Check countability, singular or plural form, and the grammatical role or possession expressed by the noun.",
+    "bookChapterIds": [
+      "grammar-5"
+    ]
   },
   {
     "_id": "WM-ENGLISH-022",
     "_exam": "BOOK",
     "_sourceType": "book-supplementary",
-    "q": "Which is the abstract noun related to “courageous”?",
+    "q": "Which noun is formed from the adjective “brave”?",
     "o": [
-      "courageously",
-      "courage",
-      "encourage",
-      "courageousnesses"
+      "bravery",
+      "bravely",
+      "brave",
+      "braveful"
     ],
-    "ans": 1,
+    "ans": 0,
     "sec": "Nouns: Number & Case",
     "diff": 1,
-    "exp": "Courage names the quality of being courageous.",
-    "rule": "Check countability, singular or plural form, and the grammatical role or possession expressed by the noun."
+    "exp": "Bravery is the noun naming the quality of being brave.",
+    "rule": "A suffix such as -ery can form a noun naming a quality.",
+    "bookChapterIds": [
+      "grammar-5"
+    ]
   },
   {
     "_id": "WM-ENGLISH-023",
@@ -390,7 +455,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Nouns: Number & Case",
     "diff": 1,
     "exp": "The plural cadets ends in -s, so the possessive is formed with an apostrophe after the s.",
-    "rule": "Check countability, singular or plural form, and the grammatical role or possession expressed by the noun."
+    "rule": "Check countability, singular or plural form, and the grammatical role or possession expressed by the noun.",
+    "bookChapterIds": [
+      "grammar-8"
+    ]
   },
   {
     "_id": "WM-ENGLISH-024",
@@ -407,7 +475,11 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Nouns: Number & Case",
     "diff": 1,
     "exp": "Police is treated as a plural noun when it means the members of the force.",
-    "rule": "Check countability, singular or plural form, and the grammatical role or possession expressed by the noun."
+    "rule": "Check countability, singular or plural form, and the grammatical role or possession expressed by the noun.",
+    "bookChapterIds": [
+      "grammar-27",
+      "usage-17"
+    ]
   },
   {
     "_id": "WM-ENGLISH-025",
@@ -424,7 +496,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Pronouns & Determiners",
     "diff": 1,
     "exp": "The pronoun is the object of the preposition between; use me.",
-    "rule": "Choose pronoun case and reference carefully; match possessive determiners and verb agreement to the construction."
+    "rule": "Choose pronoun case and reference carefully; match possessive determiners and verb agreement to the construction.",
+    "bookChapterIds": [
+      "grammar-15"
+    ]
   },
   {
     "_id": "WM-ENGLISH-026",
@@ -441,7 +516,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Pronouns & Determiners",
     "diff": 1,
     "exp": "He is part of the compound subject, so the subject form is required.",
-    "rule": "Choose pronoun case and reference carefully; match possessive determiners and verb agreement to the construction."
+    "rule": "Choose pronoun case and reference carefully; match possessive determiners and verb agreement to the construction.",
+    "bookChapterIds": [
+      "grammar-15"
+    ]
   },
   {
     "_id": "WM-ENGLISH-027",
@@ -458,7 +536,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Pronouns & Determiners",
     "diff": 1,
     "exp": "Their is the possessive determiner modifying identity cards and agrees with plural applicants.",
-    "rule": "Choose pronoun case and reference carefully; match possessive determiners and verb agreement to the construction."
+    "rule": "Choose pronoun case and reference carefully; match possessive determiners and verb agreement to the construction.",
+    "bookChapterIds": [
+      "grammar-15"
+    ]
   },
   {
     "_id": "WM-ENGLISH-028",
@@ -475,7 +556,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Pronouns & Determiners",
     "diff": 1,
     "exp": "Who refers to the officer and is the subject of briefed.",
-    "rule": "Choose pronoun case and reference carefully; match possessive determiners and verb agreement to the construction."
+    "rule": "Choose pronoun case and reference carefully; match possessive determiners and verb agreement to the construction.",
+    "bookChapterIds": [
+      "grammar-18"
+    ]
   },
   {
     "_id": "WM-ENGLISH-029",
@@ -492,7 +576,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Pronouns & Determiners",
     "diff": 1,
     "exp": "Whose expresses possession: the equipment belongs to the cadet.",
-    "rule": "Choose pronoun case and reference carefully; match possessive determiners and verb agreement to the construction."
+    "rule": "Choose pronoun case and reference carefully; match possessive determiners and verb agreement to the construction.",
+    "bookChapterIds": [
+      "grammar-18"
+    ]
   },
   {
     "_id": "WM-ENGLISH-030",
@@ -509,7 +596,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Pronouns & Determiners",
     "diff": 2,
     "exp": "Neither is singular in this construction and takes was.",
-    "rule": "Choose pronoun case and reference carefully; match possessive determiners and verb agreement to the construction."
+    "rule": "Choose pronoun case and reference carefully; match possessive determiners and verb agreement to the construction.",
+    "bookChapterIds": [
+      "grammar-17"
+    ]
   },
   {
     "_id": "WM-ENGLISH-031",
@@ -526,7 +616,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Pronouns & Determiners",
     "diff": 1,
     "exp": "The subject and object refer to the same person, so the reflexive herself is needed.",
-    "rule": "Choose pronoun case and reference carefully; match possessive determiners and verb agreement to the construction."
+    "rule": "Choose pronoun case and reference carefully; match possessive determiners and verb agreement to the construction.",
+    "bookChapterIds": [
+      "grammar-16"
+    ]
   },
   {
     "_id": "WM-ENGLISH-032",
@@ -543,7 +636,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Pronouns & Determiners",
     "diff": 1,
     "exp": "Himself adds emphasis to the subject commander.",
-    "rule": "Choose pronoun case and reference carefully; match possessive determiners and verb agreement to the construction."
+    "rule": "Choose pronoun case and reference carefully; match possessive determiners and verb agreement to the construction.",
+    "bookChapterIds": [
+      "grammar-16"
+    ]
   },
   {
     "_id": "WM-ENGLISH-033",
@@ -560,7 +656,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Adjectives & Comparison",
     "diff": 1,
     "exp": "Safer is the comparative form of safe.",
-    "rule": "Choose the degree and form that matches the comparison; account for irregular forms and adjective–preposition patterns."
+    "rule": "Choose the degree and form that matches the comparison; account for irregular forms and adjective–preposition patterns.",
+    "bookChapterIds": [
+      "grammar-10"
+    ]
   },
   {
     "_id": "WM-ENGLISH-034",
@@ -577,7 +676,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Adjectives & Comparison",
     "diff": 1,
     "exp": "Efficient normally forms its comparative with more.",
-    "rule": "Choose the degree and form that matches the comparison; account for irregular forms and adjective–preposition patterns."
+    "rule": "Choose the degree and form that matches the comparison; account for irregular forms and adjective–preposition patterns.",
+    "bookChapterIds": [
+      "grammar-10"
+    ]
   },
   {
     "_id": "WM-ENGLISH-035",
@@ -594,7 +696,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Adjectives & Comparison",
     "diff": 1,
     "exp": "One of the is followed by a superlative and a plural noun: the coldest regions.",
-    "rule": "Choose the degree and form that matches the comparison; account for irregular forms and adjective–preposition patterns."
+    "rule": "Choose the degree and form that matches the comparison; account for irregular forms and adjective–preposition patterns.",
+    "bookChapterIds": [
+      "grammar-10"
+    ]
   },
   {
     "_id": "WM-ENGLISH-036",
@@ -611,7 +716,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Adjectives & Comparison",
     "diff": 1,
     "exp": "Superior is traditionally followed by to, not than.",
-    "rule": "Choose the degree and form that matches the comparison; account for irregular forms and adjective–preposition patterns."
+    "rule": "Choose the degree and form that matches the comparison; account for irregular forms and adjective–preposition patterns.",
+    "bookChapterIds": [
+      "grammar-10"
+    ]
   },
   {
     "_id": "WM-ENGLISH-037",
@@ -628,7 +736,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Adjectives & Comparison",
     "diff": 2,
     "exp": "Farther is traditionally used for physical distance; further often means additional, though usage can overlap.",
-    "rule": "Choose the degree and form that matches the comparison; account for irregular forms and adjective–preposition patterns."
+    "rule": "Choose the degree and form that matches the comparison; account for irregular forms and adjective–preposition patterns.",
+    "bookChapterIds": [
+      "grammar-13"
+    ]
   },
   {
     "_id": "WM-ENGLISH-038",
@@ -645,24 +756,30 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Adjectives & Comparison",
     "diff": 1,
     "exp": "Further means additional in this context.",
-    "rule": "Choose the degree and form that matches the comparison; account for irregular forms and adjective–preposition patterns."
+    "rule": "Choose the degree and form that matches the comparison; account for irregular forms and adjective–preposition patterns.",
+    "bookChapterIds": [
+      "grammar-13"
+    ]
   },
   {
     "_id": "WM-ENGLISH-039",
     "_exam": "BOOK",
     "_sourceType": "book-supplementary",
-    "q": "Choose the sentence equivalent in meaning to “No other metal is as useful as copper.”",
+    "q": "Choose the correct comparative transformation of “Copper is the most useful metal.”",
     "o": [
-      "Copper is less useful than every metal.",
       "Copper is more useful than any other metal.",
-      "Copper is the least useful metal.",
-      "Every metal is more useful than copper."
+      "Copper is as useful as every metal.",
+      "Copper is less useful than every other metal.",
+      "Copper is useful than any other metal."
     ],
-    "ans": 1,
+    "ans": 0,
     "sec": "Adjectives & Comparison",
     "diff": 2,
-    "exp": "The sentence states that copper has the greatest degree of usefulness among the metals considered.",
-    "rule": "Choose the degree and form that matches the comparison; account for irregular forms and adjective–preposition patterns."
+    "exp": "The superlative most useful can be expressed with the comparative more useful than any other metal.",
+    "rule": "A superlative sentence can often be rewritten with a comparative and “any other” while retaining the comparison set.",
+    "bookChapterIds": [
+      "analysis-10"
+    ]
   },
   {
     "_id": "WM-ENGLISH-040",
@@ -679,7 +796,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Adjectives & Comparison",
     "diff": 1,
     "exp": "Worse is the irregular comparative form of bad.",
-    "rule": "Choose the degree and form that matches the comparison; account for irregular forms and adjective–preposition patterns."
+    "rule": "Choose the degree and form that matches the comparison; account for irregular forms and adjective–preposition patterns.",
+    "bookChapterIds": [
+      "grammar-10"
+    ]
   },
   {
     "_id": "WM-ENGLISH-041",
@@ -696,7 +816,11 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Verbs, Tenses & Agreement",
     "diff": 1,
     "exp": "Each is singular and therefore takes has.",
-    "rule": "Identify the subject head and the time relationship before selecting the verb form."
+    "rule": "Identify the subject head and the time relationship before selecting the verb form.",
+    "bookChapterIds": [
+      "grammar-27",
+      "usage-17"
+    ]
   },
   {
     "_id": "WM-ENGLISH-042",
@@ -713,7 +837,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Verbs, Tenses & Agreement",
     "diff": 2,
     "exp": "The head subject captain is singular; the along-with phrase does not change its number.",
-    "rule": "Identify the subject head and the time relationship before selecting the verb form."
+    "rule": "Identify the subject head and the time relationship before selecting the verb form.",
+    "bookChapterIds": [
+      "usage-17"
+    ]
   },
   {
     "_id": "WM-ENGLISH-043",
@@ -730,7 +857,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Verbs, Tenses & Agreement",
     "diff": 2,
     "exp": "With either…or, the verb commonly agrees with the nearer subject, cadets.",
-    "rule": "Identify the subject head and the time relationship before selecting the verb form."
+    "rule": "Identify the subject head and the time relationship before selecting the verb form.",
+    "bookChapterIds": [
+      "usage-17"
+    ]
   },
   {
     "_id": "WM-ENGLISH-044",
@@ -747,7 +877,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Verbs, Tenses & Agreement",
     "diff": 2,
     "exp": "The advance team left before another past event, so past perfect is appropriate.",
-    "rule": "Identify the subject head and the time relationship before selecting the verb form."
+    "rule": "Identify the subject head and the time relationship before selecting the verb form.",
+    "bookChapterIds": [
+      "grammar-25"
+    ]
   },
   {
     "_id": "WM-ENGLISH-045",
@@ -764,7 +897,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Verbs, Tenses & Agreement",
     "diff": 1,
     "exp": "Since 2021 connects a past starting point with the present; has served expresses this duration.",
-    "rule": "Identify the subject head and the time relationship before selecting the verb form."
+    "rule": "Identify the subject head and the time relationship before selecting the verb form.",
+    "bookChapterIds": [
+      "grammar-25"
+    ]
   },
   {
     "_id": "WM-ENGLISH-046",
@@ -781,7 +917,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Verbs, Tenses & Agreement",
     "diff": 1,
     "exp": "Right now and Listen! signal an action in progress; use the present progressive.",
-    "rule": "Identify the subject head and the time relationship before selecting the verb form."
+    "rule": "Identify the subject head and the time relationship before selecting the verb form.",
+    "bookChapterIds": [
+      "grammar-25"
+    ]
   },
   {
     "_id": "WM-ENGLISH-047",
@@ -798,7 +937,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Verbs, Tenses & Agreement",
     "diff": 2,
     "exp": "This is a third conditional: a hypothetical past condition with a hypothetical past result.",
-    "rule": "Identify the subject head and the time relationship before selecting the verb form."
+    "rule": "Identify the subject head and the time relationship before selecting the verb form.",
+    "bookChapterIds": [
+      "grammar-23"
+    ]
   },
   {
     "_id": "WM-ENGLISH-048",
@@ -815,7 +957,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Verbs, Tenses & Agreement",
     "diff": 2,
     "exp": "The longer action was in progress when the shorter event occurred.",
-    "rule": "Identify the subject head and the time relationship before selecting the verb form."
+    "rule": "Identify the subject head and the time relationship before selecting the verb form.",
+    "bookChapterIds": [
+      "grammar-25"
+    ]
   },
   {
     "_id": "WM-ENGLISH-049",
@@ -832,7 +977,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Adverbs, Prepositions & Conjunctions",
     "diff": 1,
     "exp": "Hard is the adverb meaning with great effort; hardly means scarcely.",
-    "rule": "Use the word form and fixed grammatical combination that fit the relationship expressed."
+    "rule": "Use the word form and fixed grammatical combination that fit the relationship expressed.",
+    "bookChapterIds": [
+      "grammar-34"
+    ]
   },
   {
     "_id": "WM-ENGLISH-050",
@@ -849,7 +997,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Adverbs, Prepositions & Conjunctions",
     "diff": 2,
     "exp": "The established correlative construction is hardly…when.",
-    "rule": "Use the word form and fixed grammatical combination that fit the relationship expressed."
+    "rule": "Use the word form and fixed grammatical combination that fit the relationship expressed.",
+    "bookChapterIds": [
+      "grammar-41"
+    ]
   },
   {
     "_id": "WM-ENGLISH-051",
@@ -866,7 +1017,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Adverbs, Prepositions & Conjunctions",
     "diff": 1,
     "exp": "The standard collocation is interested in.",
-    "rule": "Use the word form and fixed grammatical combination that fit the relationship expressed."
+    "rule": "Use the word form and fixed grammatical combination that fit the relationship expressed.",
+    "bookChapterIds": [
+      "grammar-39"
+    ]
   },
   {
     "_id": "WM-ENGLISH-052",
@@ -883,7 +1037,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Adverbs, Prepositions & Conjunctions",
     "diff": 1,
     "exp": "Adept is commonly followed by at when describing skill.",
-    "rule": "Use the word form and fixed grammatical combination that fit the relationship expressed."
+    "rule": "Use the word form and fixed grammatical combination that fit the relationship expressed.",
+    "bookChapterIds": [
+      "grammar-39"
+    ]
   },
   {
     "_id": "WM-ENGLISH-053",
@@ -900,7 +1057,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Adverbs, Prepositions & Conjunctions",
     "diff": 1,
     "exp": "Although introduces a clause containing a subject and verb.",
-    "rule": "Use the word form and fixed grammatical combination that fit the relationship expressed."
+    "rule": "Use the word form and fixed grammatical combination that fit the relationship expressed.",
+    "bookChapterIds": [
+      "grammar-40"
+    ]
   },
   {
     "_id": "WM-ENGLISH-054",
@@ -917,7 +1077,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Adverbs, Prepositions & Conjunctions",
     "diff": 1,
     "exp": "Despite is followed here by the noun phrase the heavy rain.",
-    "rule": "Use the word form and fixed grammatical combination that fit the relationship expressed."
+    "rule": "Use the word form and fixed grammatical combination that fit the relationship expressed.",
+    "bookChapterIds": [
+      "grammar-38"
+    ]
   },
   {
     "_id": "WM-ENGLISH-055",
@@ -934,7 +1097,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Adverbs, Prepositions & Conjunctions",
     "diff": 1,
     "exp": "Both is paired with and.",
-    "rule": "Use the word form and fixed grammatical combination that fit the relationship expressed."
+    "rule": "Use the word form and fixed grammatical combination that fit the relationship expressed.",
+    "bookChapterIds": [
+      "grammar-41"
+    ]
   },
   {
     "_id": "WM-ENGLISH-056",
@@ -951,7 +1117,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Adverbs, Prepositions & Conjunctions",
     "diff": 1,
     "exp": "Until marks the time up to which the instruction applies.",
-    "rule": "Use the word form and fixed grammatical combination that fit the relationship expressed."
+    "rule": "Use the word form and fixed grammatical combination that fit the relationship expressed.",
+    "bookChapterIds": [
+      "grammar-41"
+    ]
   },
   {
     "_id": "WM-ENGLISH-057",
@@ -968,7 +1137,11 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Sentence Transformation & Voice",
     "diff": 1,
     "exp": "The simple-past active verb repaired becomes was repaired; the object becomes the passive subject.",
-    "rule": "Preserve the original meaning while changing voice, reporting structure, or sentence construction."
+    "rule": "Preserve the original meaning while changing voice, reporting structure, or sentence construction.",
+    "bookChapterIds": [
+      "grammar-22",
+      "analysis-10"
+    ]
   },
   {
     "_id": "WM-ENGLISH-058",
@@ -985,7 +1158,11 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Sentence Transformation & Voice",
     "diff": 1,
     "exp": "The agent officer becomes the active subject, and prepared remains in the simple past.",
-    "rule": "Preserve the original meaning while changing voice, reporting structure, or sentence construction."
+    "rule": "Preserve the original meaning while changing voice, reporting structure, or sentence construction.",
+    "bookChapterIds": [
+      "grammar-22",
+      "analysis-10"
+    ]
   },
   {
     "_id": "WM-ENGLISH-059",
@@ -1002,13 +1179,17 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Sentence Transformation & Voice",
     "diff": 2,
     "exp": "Present continuous passive is is being + past participle.",
-    "rule": "Preserve the original meaning while changing voice, reporting structure, or sentence construction."
+    "rule": "Preserve the original meaning while changing voice, reporting structure, or sentence construction.",
+    "bookChapterIds": [
+      "grammar-22",
+      "analysis-10"
+    ]
   },
   {
     "_id": "WM-ENGLISH-060",
     "_exam": "BOOK",
     "_sourceType": "book-supplementary",
-    "q": "Mira said, “I am ready.” Choose the correct reported statement.",
+    "q": "In a past-tense narrative, Mira said, “I am ready.” Choose the standard reported statement.",
     "o": [
       "Mira said that I am ready.",
       "Mira said that she was ready.",
@@ -1018,8 +1199,11 @@ var VAANI_BOOK_PRACTICE = [
     "ans": 1,
     "sec": "Sentence Transformation & Voice",
     "diff": 2,
-    "exp": "The first-person pronoun changes to she, and am commonly backshifts to was after said.",
-    "rule": "Preserve the original meaning while changing voice, reporting structure, or sentence construction."
+    "exp": "In a past-tense narrative, the pronoun changes from I to she and am commonly backshifts to was after said.",
+    "rule": "In reported speech, adjust pronouns and tense to the reporting context; backshift is standard in a past narrative.",
+    "bookChapterIds": [
+      "analysis-16"
+    ]
   },
   {
     "_id": "WM-ENGLISH-061",
@@ -1036,7 +1220,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Sentence Transformation & Voice",
     "diff": 2,
     "exp": "A reported yes/no question uses if or whether and statement word order; the simple past may backshift to past perfect.",
-    "rule": "Preserve the original meaning while changing voice, reporting structure, or sentence construction."
+    "rule": "Preserve the original meaning while changing voice, reporting structure, or sentence construction.",
+    "bookChapterIds": [
+      "analysis-16"
+    ]
   },
   {
     "_id": "WM-ENGLISH-062",
@@ -1053,7 +1240,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Sentence Transformation & Voice",
     "diff": 2,
     "exp": "A command is commonly reported with a reporting verb + object + to-infinitive.",
-    "rule": "Preserve the original meaning while changing voice, reporting structure, or sentence construction."
+    "rule": "Preserve the original meaning while changing voice, reporting structure, or sentence construction.",
+    "bookChapterIds": [
+      "analysis-16"
+    ]
   },
   {
     "_id": "WM-ENGLISH-063",
@@ -1070,7 +1260,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Sentence Transformation & Voice",
     "diff": 2,
     "exp": "Too heavy…to lift expresses that the weight prevents one cadet from lifting it.",
-    "rule": "Preserve the original meaning while changing voice, reporting structure, or sentence construction."
+    "rule": "Preserve the original meaning while changing voice, reporting structure, or sentence construction.",
+    "bookChapterIds": [
+      "analysis-10"
+    ]
   },
   {
     "_id": "WM-ENGLISH-064",
@@ -1087,7 +1280,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Sentence Transformation & Voice",
     "diff": 2,
     "exp": "Although introduces the finite clause Mira had little time and preserves the contrast.",
-    "rule": "Preserve the original meaning while changing voice, reporting structure, or sentence construction."
+    "rule": "Preserve the original meaning while changing voice, reporting structure, or sentence construction.",
+    "bookChapterIds": [
+      "analysis-10"
+    ]
   },
   {
     "_id": "WM-ENGLISH-065",
@@ -1104,7 +1300,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Vocabulary, Idioms & Word Formation",
     "diff": 1,
     "exp": "Lion’s share means the largest or principal part of something.",
-    "rule": "Use context, fixed expressions, word class, and spelling patterns to select the precise form."
+    "rule": "Use context, fixed expressions, word class, and spelling patterns to select the precise form.",
+    "bookChapterIds": [
+      "usage-24"
+    ]
   },
   {
     "_id": "WM-ENGLISH-066",
@@ -1121,7 +1320,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Vocabulary, Idioms & Word Formation",
     "diff": 1,
     "exp": "Once in a blue moon means very rarely.",
-    "rule": "Use context, fixed expressions, word class, and spelling patterns to select the precise form."
+    "rule": "Use context, fixed expressions, word class, and spelling patterns to select the precise form.",
+    "bookChapterIds": [
+      "usage-24"
+    ]
   },
   {
     "_id": "WM-ENGLISH-067",
@@ -1138,7 +1340,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Vocabulary, Idioms & Word Formation",
     "diff": 1,
     "exp": "At sixes and sevens means in a state of confusion or disorder.",
-    "rule": "Use context, fixed expressions, word class, and spelling patterns to select the precise form."
+    "rule": "Use context, fixed expressions, word class, and spelling patterns to select the precise form.",
+    "bookChapterIds": [
+      "usage-25"
+    ]
   },
   {
     "_id": "WM-ENGLISH-068",
@@ -1155,7 +1360,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Vocabulary, Idioms & Word Formation",
     "diff": 1,
     "exp": "Success is the noun form of succeed.",
-    "rule": "Use context, fixed expressions, word class, and spelling patterns to select the precise form."
+    "rule": "Use context, fixed expressions, word class, and spelling patterns to select the precise form.",
+    "bookChapterIds": [
+      "usage-28"
+    ]
   },
   {
     "_id": "WM-ENGLISH-069",
@@ -1172,7 +1380,8 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Vocabulary, Idioms & Word Formation",
     "diff": 1,
     "exp": "Meticulous means extremely careful and precise about details.",
-    "rule": "Use context, fixed expressions, word class, and spelling patterns to select the precise form."
+    "rule": "Use context, fixed expressions, word class, and spelling patterns to select the precise form.",
+    "bookChapterIds": []
   },
   {
     "_id": "WM-ENGLISH-070",
@@ -1189,7 +1398,8 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Vocabulary, Idioms & Word Formation",
     "diff": 1,
     "exp": "Abundant means plentiful, the opposite of scarce.",
-    "rule": "Use context, fixed expressions, word class, and spelling patterns to select the precise form."
+    "rule": "Use context, fixed expressions, word class, and spelling patterns to select the precise form.",
+    "bookChapterIds": []
   },
   {
     "_id": "WM-ENGLISH-071",
@@ -1206,7 +1416,8 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Vocabulary, Idioms & Word Formation",
     "diff": 2,
     "exp": "Except means excluding; accepted is the past form of accept.",
-    "rule": "Use context, fixed expressions, word class, and spelling patterns to select the precise form."
+    "rule": "Use context, fixed expressions, word class, and spelling patterns to select the precise form.",
+    "bookChapterIds": []
   },
   {
     "_id": "WM-ENGLISH-072",
@@ -1223,8 +1434,10 @@ var VAANI_BOOK_PRACTICE = [
     "sec": "Vocabulary, Idioms & Word Formation",
     "diff": 1,
     "exp": "Accommodation is spelt with double c and double m.",
-    "rule": "Use context, fixed expressions, word class, and spelling patterns to select the precise form."
+    "rule": "Use context, fixed expressions, word class, and spelling patterns to select the precise form.",
+    "bookChapterIds": [
+      "usage-27"
+    ]
   }
 ];
-var VAANI_BOOK_PRACTICE_BY_ID = Object.create(null);
-VAANI_BOOK_PRACTICE.forEach(function(question){ VAANI_BOOK_PRACTICE_BY_ID[question._id] = question; });
+var VAANI_BOOK_PRACTICE_BY_ID=Object.create(null);VAANI_BOOK_PRACTICE.forEach(function(q){VAANI_BOOK_PRACTICE_BY_ID[q._id]=q;});

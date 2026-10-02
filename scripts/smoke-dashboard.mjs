@@ -93,7 +93,7 @@ async function clickMainView(name) {
     await bottomButton.click();
   } else {
     const moreButton = page.locator('#bottomNav button').filter({ hasText: 'More' });
-    const moreLabels = { books:'Book Reading', profile:'Profile', leaderboard:'Statistics', games:'Achievements' };
+    const moreLabels = { books:'Book Reading', profile:'Profile', leaderboard:'Statistics', games:'Achievements', compare:'Comparisons' };
     const moreLabel = moreLabels[name];
     if (moreLabel && await moreButton.isVisible()) {
       await moreButton.click();
@@ -1333,6 +1333,28 @@ try {
     if(hadExplanation)PYQ_BY_ID[id].exp=oldExplanation;else delete PYQ_BY_ID[id].exp;
   },pyqInteractionFixture);
   console.log('PASS PYQ interactions: save bookmark, answer with explanation, persist attempt and launch bookmarks');
+  await page.evaluate(()=>pvGoHome());
+  await page.locator('#view-pyq .bc-open').click();
+  await page.waitForSelector('#view-pyq .bc-companion',{timeout:5000});
+  assert.match(await page.locator('#view-pyq .bc-stats').textContent(),/89/,'Book TOC count absent');
+  await page.locator('#view-pyq [data-book-filter="grammar"]').click();
+  await page.locator('#view-pyq .bc-row[data-book-chapter="grammar-10"] .bc-row-open').click();
+  await page.waitForSelector('#view-pyq .bc-chapter',{timeout:5000});
+  assert.match(await page.locator('#view-pyq .bc-reference').textContent(),/24/,'Printed page not shown');
+  await page.locator('#view-pyq .bc-mark-read').click();
+  assert.equal(await page.evaluate(()=>State.bookStudy.completedChapterIds.includes('grammar-10')),true,'Read marker did not persist');
+  await page.locator('#view-pyq .bc-mark-exercise').click();
+  await page.locator('#view-pyq .bc-chapter-practice').click();
+  await page.waitForSelector('.vx-scrim[role="dialog"]',{timeout:5000});
+  await page.locator('.vx-sheet .vx-btn.primary').click();
+  await page.waitForFunction(()=>PV.screen==='session'&&PV.session?.mode==='bookpractice'&&PV.session?.bookChapterId==='grammar-10');
+  const q=await page.evaluate(()=>({id:PV.session.questions[0]._id,ans:PV.session.questions[0].ans}));
+  await page.locator('#view-pyq .pv-options .pv-option').nth(q.ans).click();
+  assert.equal(await page.evaluate(id=>State.bookPracticeStats.attempts[id],q.id),true,'Book answer not stored');
+  assert.equal(await page.evaluate(id=>State.pyqStats.attempts[id],q.id),undefined,'Book answer polluted PYQ tracking');
+  await page.evaluate(()=>pvExitSession());
+  console.log('PASS Wren & Martin Companion: printed references, checklists and isolated chapter drills');
+
 
 
 
