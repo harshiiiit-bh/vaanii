@@ -3750,6 +3750,10 @@ function jumpFlow(step,btn){
   const tabName=tabMap[step];
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tabName));
   document.querySelectorAll('.tab-pane').forEach(p=>p.classList.toggle('active',p.id==='pane-'+tabName));
+  if(typeof window.VAANI_SET_ASSESSMENT_ACTIVE==='function'){
+    const liveQuiz=step==='practice'&&!!document.querySelector('#pane-quiz .quiz-live-card');
+    window.VAANI_SET_ASSESSMENT_ACTIVE(liveQuiz);
+  }
   setTimeout(()=>{const el=document.getElementById('fs-'+step); if(el) el.scrollIntoView({behavior:'smooth',block:'start'});},80);
 }
 function jumpRelated(title){
