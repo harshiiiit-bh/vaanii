@@ -140,46 +140,10 @@
   }
 
   function result(pct,label){
-    const score=Number(pct);
-    if(!Number.isFinite(score))return;
-    ensure();
+    // Result feedback belongs in the attempt's report card, never in a
+    // floating recovery overlay that can cover the learning interface.
+    if(!Number.isFinite(Number(pct)))return;
     hide();
-    if(score<50){
-      const wrap=document.getElementById('vaaniMentor');
-      if(!wrap)return;
-      wrap.classList.add('bad-result','show');
-      wrap.innerHTML=
-        '<button class="vc-close" type="button" aria-label="Close motivation">✕</button>'+
-        '<div class="vc-recovery-card">'+
-          '<div class="vc-recovery-art"></div>'+
-          '<div class="vc-recovery-copy">'+
-            '<div class="vc-kicker">RECOVERY BRIEFING · '+escapeHtml(String(label||'Practice Result').toUpperCase().slice(0,44))+'</div>'+
-            '<h3>Not your result. Just your feedback.</h3>'+
-            '<p>You missed more than you wanted today. That is useful information. Review the wrong answers, find the pattern, and run the mission again with a better method.</p>'+
-            '<blockquote>“A poor score is a report on today’s preparation — not a verdict on tomorrow’s performance.”</blockquote>'+
-            '<div class="vc-recovery-actions"><button class="btn" type="button" id="vcRecoveryClose">Back to training</button><button class="btn ghost" type="button" id="vcRecoveryGuide">Open OFFICER VAANI Guide</button></div>'+
-          '</div>'+
-        '</div>';
-      wrap.querySelector('.vc-close').onclick=closeRecovery;
-      wrap.querySelector('#vcRecoveryClose').onclick=closeRecovery;
-      wrap.querySelector('#vcRecoveryGuide').onclick=()=>{closeRecovery();if(typeof openInfoCenter==='function')openInfoCenter()};
-    }else if(score<70){
-      speak(currentView(),false);
-      const text=document.getElementById('vcText');
-      const quote=document.getElementById('vcQuote');
-      const kick=document.getElementById('vcKicker');
-      if(kick)kick.textContent='AFTER ACTION REVIEW';
-      if(text)text.textContent='You are not where you want to be yet. Review the mistakes before the next attempt.';
-      if(quote)quote.textContent='“Fix the process, and the score follows.”';
-    }else{
-      speak(currentView(),false);
-      const kick=document.getElementById('vcKicker');
-      const text=document.getElementById('vcText');
-      const quote=document.getElementById('vcQuote');
-      if(kick)kick.textContent='RESULT RECORDED';
-      if(text)text.textContent='Good work. Save the lesson from this attempt and keep moving.';
-      if(quote)quote.textContent='“Earn the next improvement.”';
-    }
   }
 
   function closeRecovery(){
@@ -196,16 +160,8 @@
   window.vaaniCharacterSetPose=function(pose){return setCharacterPose(document.getElementById('vcCharacter'),pose);};
 
   function onRoute(){
-    // Elite owns route briefings when loaded; don't run two competing timers.
-    if(window.__VAANI_OFFICER_ELITE__)return;
-    if(['info','topic','compare-detail','worddetail'].includes(currentView())){hide();return;}
-    const key='vaani-character-'+currentView();
-    const now=Date.now();
-    const last=Number(sessionStorage.getItem(key)||0);
-    if(now-last>12000){
-      sessionStorage.setItem(key,String(now));
-      window.setTimeout(()=>speak(currentView(),false),450);
-    }
+    // Route changes never trigger unsolicited Officer VAANI pop-ups.
+    hide();
   }
 
   window.addEventListener('hashchange',()=>window.setTimeout(onRoute,300));
