@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" role="img" aria-labelledby="title desc">
+<title id="title">Officer VAANI</title><desc id="desc">Illustrated officer in an olive uniform and beret.</desc>
+<defs><linearGradient id="uniform" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#82955b"/><stop offset="1" stop-color="#354a31"/></linearGradient><linearGradient id="skin" x2=".8" y2="1"><stop stop-color="#dca17a"/><stop offset="1" stop-color="#b87550"/></linearGradient></defs>
+<ellipse cx="120" cy="236" rx="83" ry="8" fill="#14251d" opacity=".12"/>
+<path d="M24 238c5-48 29-82 76-91h40c47 9 71 43 76 91z" fill="url(#uniform)" stroke="#34472f" stroke-width="4"/>
+<path d="M82 149l-15 16 26 22 27-11 27 11 26-22-15-16c-12-6-26-9-38-9s-26 3-38 9z" fill="#e8dfc9"/>
+<path d="M99 141h42v34l-21 20-21-20z" fill="#b97954"/>
+<path d="M78 68c0-31 17-48 42-48s42 17 42 48v35c0 27-18 47-42 47s-42-20-42-47z" fill="url(#skin)" stroke="#854e37" stroke-width="3"/>
+<path d="M78 86c-8-7-11 0-9 10 1 9 6 14 13 15M162 86c8-7 11 0 9 10-1 9-6 14-13 15" fill="#c9865e" stroke="#854e37" stroke-width="3"/>
+<path d="M79 68c3-24 20-39 44-39 19 0 34 10 41 30-17-3-25-12-31-18-12 12-29 19-54 22z" fill="#252d24"/>
+<path d="M69 62c4-28 29-46 58-43 23 2 37 13 43 29-20 1-33-5-46-13-13 13-30 22-55 27z" fill="#52683c" stroke="#2d402d" stroke-width="4"/>
+<path d="M119 34l4 7 8 1-6 6 1 8-7-4-7 4 1-8-6-6 8-1z" fill="#d8b65e" stroke="#a27b2e" stroke-width="1.4"/>
+<path d="M96 91c5-4 11-4 16-1M129 90c5-3 11-3 16 1" fill="none" stroke="#3b3029" stroke-width="3.5" stroke-linecap="round"/>
+<ellipse cx="105" cy="101" rx="3.8" ry="4.3" fill="#292923"/><ellipse cx="136" cy="101" rx="3.8" ry="4.3" fill="#292923"/>
+<path d="M120 103l-4 16 7 1M105 130c9 7 21 7 30 0" fill="none" stroke="#854e37" stroke-width="2.7" stroke-linecap="round"/>
+<path d="M50 166l18-9 22 18-14 23-29-10zM190 166l-18-9-22 18 14 23 29-10z" fill="url(#uniform)" stroke="#354a31" stroke-width="3"/>
+<path d="M102 175l18 16 18-16 14 12-8 51H96l-8-51z" fill="url(#uniform)" stroke="#354a31" stroke-width="3"/>
+<path d="M96 197l18 7 6-12 6 12 18-7 7 10-5 31H92l-3-31z" fill="#637b47" stroke="#354a31" stroke-width="2.5"/>
+<path d="M120 195v43" stroke="#2e422c" stroke-width="2"/><circle cx="120" cy="209" r="2.2" fill="#d7bd78"/><circle cx="120" cy="224" r="2.2" fill="#d7bd78"/>
+<path d="M34 190l-3 23c-1 7 5 12 12 10l10-4-1-28-10-5zM206 190l3 23c1 7-5 12-12 10l-10-4 1-28 10-5z" fill="#b97954" stroke="#854e37" stroke-width="2.5"/>
+</svg>

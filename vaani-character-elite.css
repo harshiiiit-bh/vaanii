@@ -675,3 +675,29 @@
     width:calc(100vw - 78px);
   }
 }
+
+/* Stable compact dock override: one visible model, unobtrusive briefing. */
+#vaaniMentor:not(.bad-result){right:10px;bottom:18px;width:auto;max-width:calc(100vw - 16px);flex-direction:row;align-items:flex-end;gap:8px;pointer-events:none}
+#vaaniMentor:not(.bad-result) .vc-bubble{flex:1 1 278px;width:min(278px,calc(100vw - 98px));min-width:0;max-height:min(250px,38vh);overflow:auto;visibility:hidden;pointer-events:none}
+#vaaniMentor:not(.bad-result).speaking .vc-bubble{visibility:visible;pointer-events:auto}
+#vaaniMentor:not(.bad-result) .vc-character{width:68px;height:78px;flex:0 0 68px;overflow:hidden}
+#vaaniMentor:not(.bad-result) .vc-character-frame{position:absolute;inset:0;overflow:hidden;border-radius:inherit}
+#vaaniMentor:not(.bad-result) .vc-character-sheet{width:400%;height:300%;max-width:none!important;object-fit:fill;pointer-events:none}
+#vaaniMentor:not(.bad-result) .vc-character-fallback{position:absolute;inset:0;z-index:1;display:grid;place-items:center;overflow:hidden}
+#vaaniMentor:not(.bad-result) .vc-character-fallback img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 26%;pointer-events:none}
+#vaaniMentor:not(.bad-result) .vc-character.asset-ready .vc-character-fallback{display:none}
+#vaaniMentor:not(.bad-result) .vc-character.asset-error .vc-character-sheet{display:none!important}
+#vaaniMentor:not(.bad-result) .vc-p0 .vc-character-sheet{left:0;top:0}
+#vaaniMentor:not(.bad-result) .vc-p1 .vc-character-sheet{left:-100%;top:0}
+#vaaniMentor:not(.bad-result) .vc-p2 .vc-character-sheet{left:-200%;top:0}
+#vaaniMentor:not(.bad-result) .vc-p3 .vc-character-sheet{left:-300%;top:0}
+#vaaniMentor:not(.bad-result) .vc-p4 .vc-character-sheet{left:0;top:-100%}
+#vaaniMentor:not(.bad-result) .vc-p5 .vc-character-sheet{left:-100%;top:-100%}
+#vaaniMentor:not(.bad-result) .vc-p6 .vc-character-sheet{left:-200%;top:-100%}
+#vaaniMentor:not(.bad-result) .vc-p7 .vc-character-sheet{left:-300%;top:-100%}
+#vaaniMentor:not(.bad-result) .vc-p8 .vc-character-sheet{left:0;top:-200%}
+#vaaniMentor:not(.bad-result) .vc-p9 .vc-character-sheet{left:-100%;top:-200%}
+#vaaniMentor:not(.bad-result) .vc-p10 .vc-character-sheet{left:-200%;top:-200%}
+#vaaniMentor:not(.bad-result) .vc-p11 .vc-character-sheet{left:-300%;top:-200%}
+@media(max-width:700px){#vaaniMentor:not(.bad-result){right:8px;bottom:calc(var(--bottomnav-h,64px) + env(safe-area-inset-bottom,0px) + 9px);gap:6px;max-width:calc(100vw - 12px)}#vaaniMentor:not(.bad-result) .vc-character{width:62px;height:72px;flex-basis:62px}#vaaniMentor:not(.bad-result) .vc-bubble{width:min(260px,calc(100vw - 84px));max-height:38vh}}
+@media(max-width:390px){#vaaniMentor:not(.bad-result) .vc-character{width:56px;height:66px;flex-basis:56px}#vaaniMentor:not(.bad-result) .vc-bubble{width:calc(100vw - 74px)}}

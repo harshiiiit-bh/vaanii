@@ -233,7 +233,7 @@ try {
     };
     img.dispatchEvent(new Event('load'));
     window.vaaniCharacterHide();
-    return {afterBase,afterElite,afterError};
+    return {afterBase,afterElite,afterError,fallbackAsset:fallback.querySelector('img')?.getAttribute('src')||''};
   });
   assert.equal(characterState.afterBase.ready,true,'Base pose change erased loaded-image state');
   assert.equal(characterState.afterBase.fallbackDisplay,'none','Loaded sprite did not hide its fallback');
@@ -241,10 +241,17 @@ try {
   assert.equal(characterState.afterElite.speaking,true,'Officer launcher briefing was closed by its own click');
   assert.equal(characterState.afterElite.open,true,'Officer launcher did not keep its briefing open');
   assert.equal(characterState.afterElite.poseCount,1,'Officer pose state became duplicated or invalid');
+  assert.match(characterState.fallbackAsset,/assets\/officer-vaani\.svg(?:\?.*)?$/,'Officer VAANI needs a same-origin SVG fallback');
   assert.equal(characterState.afterError.error,true,'Image error state was erased by a later pose');
   assert.equal(characterState.afterError.ready,false,'Errored image remained marked as ready');
   assert.notEqual(characterState.afterError.fallbackDisplay,'none','Fallback disappeared after image failure');
-  console.log('PASS Officer VAANI: pose state, image fallback, launch click and briefing visibility');
+  console.log('PASS Officer VAANI: pose state, local SVG fallback, launch click and briefing visibility');
+  await page.evaluate(() => { window.__vaaniBriefingRoutes=[]; document.addEventListener('vaani:briefing',e=>window.__vaaniBriefingRoutes.push(e.detail?.view||'')); });
+  await clickMainView('grammar');
+  await page.waitForTimeout(650);
+  const grammarBriefings=await page.evaluate(()=>window.__vaaniBriefingRoutes.filter(view=>view==='grammar').length);
+  assert.equal(grammarBriefings,1,'A route change should produce exactly one Officer VAANI briefing');
+  console.log('PASS Officer VAANI routing: one contextual briefing per navigation');
 
 
   await clickMainView('profile');

@@ -130,10 +130,24 @@
   }
 
   function brief(){
+    if(typeof window.vaaniCharacterEnsure==='function')window.vaaniCharacterEnsure();
     const v=active();
     const c=context[v]||['OFFICER VAANI','Choose a task, focus for a while, and finish what you started.','p10','focus'];
     setText(c[0],c[1],quotes[Math.floor(Date.now()/86400000)%quotes.length],c[2],c[3],c[0]);
     open();
+    window.dispatchEvent(new CustomEvent('vaani:briefing',{detail:{view:v}}));
+  }
+
+  let routeBriefTimer=null;
+  function queueRouteBrief(delay=260){
+    clearTimeout(routeBriefTimer);
+    routeBriefTimer=setTimeout(()=>{
+      routeBriefTimer=null;
+      const view=active();
+      if(['info','topic','compare-detail','worddetail'].includes(view)){close();return;}
+      brief();
+      resetIdle();
+    },delay);
   }
 
   function polishFromCurrent(){
@@ -171,7 +185,7 @@
     const original=window.switchView;
     const wrapped=function(){
       const result=original.apply(this,arguments);
-      setTimeout(()=>{brief();resetIdle()},350);
+      queueRouteBrief(260);
       return result;
     };
     wrapped.__vaaniElite=true;
@@ -252,7 +266,7 @@
       station.className='ve-officer-station';
       station.innerHTML=
         '<span class="ve-station-avatar">'+
-          '<img src="https://cdn-ai-hs.picsart.com/ai-hot-storage/26983f1e-c8a3-4711-8463-852b639599c7.png" alt="" loading="lazy" decoding="async">'+
+          '<img src="assets/officer-vaani.svg" alt="" loading="lazy" decoding="async">'+
           '<i aria-hidden="true"></i>'+
         '</span>'+
         '<span class="ve-station-label">'+
@@ -272,6 +286,7 @@
   }
 
   function boot(){
+    if(typeof window.vaaniCharacterEnsure==='function')window.vaaniCharacterEnsure();
     wrapNavigation();
     mountOfficerStations();
     wrapResult();
@@ -280,7 +295,8 @@
     statusClock();
     resetIdle();
 
-    setTimeout(brief,4500);
+    queueRouteBrief(900);
+    window.addEventListener('hashchange',()=>queueRouteBrief(180));
 
     document.addEventListener('click',e=>{
       resetIdle();
@@ -318,14 +334,10 @@
       if(!document.hidden){intel();statusClock();resetIdle();}
     });
 
-    const m=mentor();
-    if(m){
-      const c=m.querySelector('#vcCharacter');
-      if(c){
-        c.title='OFFICER VAANI · click for another line';
-        c.addEventListener('pointerdown',()=>pose(context[active()]?.[2]||'p0','focus'),{passive:true});
-      }
-    }
+    document.addEventListener('pointerdown',e=>{
+      const target=e.target instanceof Element?e.target:null;
+      if(target?.closest('#vaaniMentor #vcCharacter'))pose(context[active()]?.[2]||'p0','focus');
+    },{passive:true});
 
     setInterval(()=>{intel();statusClock()},15000);
   }

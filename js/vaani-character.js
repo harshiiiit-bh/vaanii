@@ -80,7 +80,7 @@
         '<span class="vc-character-frame" aria-hidden="true">'+
           '<img class="vc-character-sheet" src="https://gcdn.picsart.com/editing-temp/2ca4be62-1e4a-4425-8b14-018c55a4d4b4.png" alt="" draggable="false" decoding="async" fetchpriority="low">'+
         '</span>'+
-        '<span class="vc-character-fallback" aria-hidden="true">OV</span>'+
+        '<span class="vc-character-fallback" aria-hidden="true"><img src="assets/officer-vaani.svg" alt="" draggable="false" decoding="async"></span>'+
         '<span class="vc-character-nameplate" aria-hidden="true">OFFICER VAANI</span>'+
       '</div>';
     document.body.appendChild(el);
@@ -134,6 +134,10 @@
     window.__vaaniMentorTimer=window.setTimeout(hide,9000);
   }
 
+  function escapeHtml(value){
+    return String(value).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  }
+
   function result(pct,label){
     const score=Number(pct);
     if(!Number.isFinite(score))return;
@@ -148,7 +152,7 @@
         '<div class="vc-recovery-card">'+
           '<div class="vc-recovery-art"></div>'+
           '<div class="vc-recovery-copy">'+
-            '<div class="vc-kicker">RECOVERY BRIEFING · '+String(label||'Practice Result').toUpperCase().slice(0,44)+'</div>'+
+            '<div class="vc-kicker">RECOVERY BRIEFING · '+escapeHtml(String(label||'Practice Result').toUpperCase().slice(0,44))+'</div>'+
             '<h3>Not your result. Just your feedback.</h3>'+
             '<p>You missed more than you wanted today. That is useful information. Review the wrong answers, find the pattern, and run the mission again with a better method.</p>'+
             '<blockquote>“A poor score is a report on today’s preparation — not a verdict on tomorrow’s performance.”</blockquote>'+
@@ -184,12 +188,15 @@
     ensure();
   }
 
+  window.vaaniCharacterEnsure=ensure;
   window.vaaniCharacterResult=result;
   window.vaaniCharacterSpeak=(view)=>speak(view||currentView(),true);
   window.vaaniCharacterHide=hide;
   window.vaaniCharacterSetPose=function(pose){return setCharacterPose(document.getElementById('vcCharacter'),pose);};
 
   function onRoute(){
+    // Elite owns route briefings when loaded; don't run two competing timers.
+    if(window.__VAANI_OFFICER_ELITE__)return;
     if(['info','topic','compare-detail','worddetail'].includes(currentView())){hide();return;}
     const key='vaani-character-'+currentView();
     const now=Date.now();
