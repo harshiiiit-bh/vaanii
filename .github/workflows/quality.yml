@@ -85,12 +85,12 @@ jobs:
           done
           cat /tmp/vaani-http.log
           exit 1
+      - name: Exercise Vocab90 course
+        run: node scripts/smoke-vocab90.mjs
       - name: Exercise Government Exam Desk
         run: node scripts/smoke-government-exam-desk.mjs
       - name: Exercise dashboard and learning flows
         run: node scripts/smoke-dashboard.mjs
-      - name: Exercise Vocab90 course
-        run: node scripts/smoke-vocab90.mjs
       - name: Exercise account isolation
         run: node scripts/smoke-account-isolation.mjs
       - name: Exercise legacy account migration
