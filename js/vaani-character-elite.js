@@ -202,60 +202,61 @@
     if(span)span.textContent=(context[active()]||context.dashboard)[0]+' · '+new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
   }
 
-  function mountMiniIntegrations(){
-    // Persistent miniature officer in the brand header.
+  function mountOfficerStations(){
     const brand=document.querySelector('.brand');
     if(brand && !brand.querySelector('.ve-header-mini')){
       const mini=document.createElement('button');
       mini.type='button';
       mini.className='ve-header-mini';
-      mini.setAttribute('aria-label','Open VAANI mentor');
-      mini.title='Open VAANI mentor';
+      mini.setAttribute('aria-label','Open Officer VAANI');
+      mini.title='Officer VAANI · open briefing';
       mini.addEventListener('click',brief);
       brand.appendChild(mini);
     }
 
-    // Small contextual officer on the main mission/working surfaces.
-    const surfaces=[
-      ['dashboard','.vd-hero','p0'],
-      ['grammar','.grammar-header, .ga-header, .section-head, .page-head','p2'],
-      ['compare','.compare-header, .section-head, .page-head','p3'],
-      ['vocab','.vocab-header, .section-head, .page-head','p7'],
-      ['books','.book-header, .section-head, .page-head','p2'],
-      ['pyq','.pyq-header, .section-head, .page-head','p9'],
-      ['games','.arena-header, .section-head, .page-head','p4'],
-      ['leaderboard','.leaderboard-header, .section-head, .page-head','p6'],
-      ['profile','.profile-header, .section-head, .page-head','p1'],
-      ['notifications','.notifications-header, .section-head, .page-head','p0']
-    ];
+    const stations={
+      grammar:['GRAMMAR BATTALION','Find the rule behind the mistake, then apply it.','point'],
+      compare:['PRECISION POST','Read the distinction twice before you decide.','think'],
+      vocab:['WORD ARSENAL','Learn it. Use it. Retrieve it.','focus'],
+      books:['READING DESK','Read for meaning first; details follow.','observe'],
+      pyq:['PYQ COMMAND','Every previous-year question is a training report.','salute'],
+      games:['ARENA CONTROL','Keep your method stable when the pressure rises.','celebrate'],
+      leaderboard:['SITUATION BOARD','Use the board as feedback, not distraction.','observe'],
+      profile:['SERVICE RECORD','Track the work. Let the record speak.','salute'],
+      notifications:['SIGNAL ROOM','Act on important updates, then return to training.','wave']
+    };
 
-    surfaces.forEach(([viewId,selector,poseName])=>{
+    Object.entries(stations).forEach(([viewId,data])=>{
       const view=document.getElementById('view-'+viewId);
-      if(!view || view.querySelector('.ve-surface-mini'))return;
-      const target=view.querySelector(selector);
-      const host=target || view.firstElementChild;
-      if(!host || host===document.body)return;
-      const style=window.getComputedStyle(host);
-      if(style.position==='static')host.style.position='relative';
+      if(!view || view.querySelector('.ve-officer-station'))return;
 
-      const mini=document.createElement('button');
-      mini.type='button';
-      mini.className='ve-surface-mini vc-'+poseName;
-      mini.style.backgroundPosition = ({
-        p0:'0 0',p1:'33.333% 0',p2:'66.667% 0',p3:'100% 0',
-        p4:'0 50%',p5:'33.333% 50%',p6:'66.667% 50%',p7:'100% 50%',
-        p8:'0 100%',p9:'33.333% 100%',p10:'66.667% 100%',p11:'100% 100%'
-      })[poseName]||'0 0';
-      mini.setAttribute('aria-label','VAANI officer · contextual guide');
-      mini.title='OFFICER OFFICER VAANI · contextual guide';
-      mini.addEventListener('click',brief);
-      host.appendChild(mini);
+      const card=document.createElement('aside');
+      card.className='ve-officer-station';
+      card.innerHTML=
+        '<div class="ve-station-art">'+
+          '<img src="https://cdn-ai-hs.picsart.com/ai-hot-storage/26983f1e-c8a3-4711-8463-852b639599c7.png" alt="" loading="lazy" decoding="async">'+
+        '</div>'+
+        '<div class="ve-station-copy">'+
+          '<div class="ve-station-kicker">OFFICER VAANI · '+data[0]+'</div>'+
+          '<p>'+data[1]+'</p>'+
+          '<button type="button" class="ve-station-btn">Brief me →</button>'+
+        '</div>';
+      const btn=card.querySelector('.ve-station-btn');
+      if(btn)btn.addEventListener('click',brief);
+
+      const target=view.querySelector('.view-header,.section-head,.page-head,.grammar-head,.vocab-head,.pyq-head,.arena-head');
+      const host=target||view.firstElementChild;
+      if(host){
+        host.parentNode.insertBefore(card,host);
+      }else{
+        view.prepend(card);
+      }
     });
   }
 
   function boot(){
     wrapNavigation();
-    mountMiniIntegrations();
+    mountOfficerStations();
     wrapResult();
     addMeta();
     intel();
