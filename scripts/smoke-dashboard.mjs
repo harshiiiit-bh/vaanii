@@ -200,7 +200,7 @@ try {
   assert.ok(await page.locator('#dashBadgeGrid .badge').count() > 0, 'Dashboard achievements did not render');
   assert.ok(await page.locator('#focusSprintWidget .vd-focus-body').count() > 0, 'Focus Sprint did not render');
   assert.equal(await page.locator('.vd-flag-backdrop').count(),1,'Dashboard must include the Indian flag backdrop');
-  assert.equal(await page.locator('.vd-officer-image').getAttribute('src'),'https://cdn-ai-hs.picsart.com/ai-hot-storage/80aa0fd9-5ef3-4c29-bd79-533fc4ecb0dd.png','Dashboard must use the AI-cleaned Officer VAANI cutout');
+  assert.equal(await page.locator('.vd-officer-image').getAttribute('src'),'https://cdn-ai-hs.picsart.com/ai-hot-storage/2a136339-4163-42a0-b366-0541c84cc19a.png','Dashboard must use the AI-cleaned Officer VAANI cutout');
   console.log('PASS dashboard: flag hero, clean officer, roadmap, missions, word, heatmap, badges and focus sprint');
 
   // Officer VAANI must retain image state while either renderer changes poses.
@@ -210,6 +210,7 @@ try {
     const mentor = document.getElementById('vaaniMentor');
     const model = mentor.querySelector('.vc-character');
     const img = model.querySelector('.vc-character-sheet');
+    const spriteSrc=img.getAttribute('src');
     const fallback = model.querySelector('.vc-character-fallback');
     img.dispatchEvent(new Event('load'));
     window.vaaniCharacterSpeak('grammar');
@@ -242,8 +243,9 @@ try {
     };
     img.dispatchEvent(new Event('load'));
     window.vaaniCharacterHide();
-    return {afterBase,afterElite,afterError,fallbackAsset:fallback.querySelector('img')?.getAttribute('src')||''};
+    return {afterBase,afterElite,afterError,fallbackAsset:fallback.querySelector('img')?.getAttribute('src')||'',spriteSrc};
   });
+  assert.equal(characterState.spriteSrc,'https://cdn-ai-hs.picsart.com/ai-hot-storage/acfec6d8-2627-4b42-bd67-1923ba9898f4.png','Dock should use the AI-cleaned four-by-three pose sheet');
   assert.equal(characterState.afterBase.ready,true,'Base pose change erased loaded-image state');
   assert.equal(characterState.afterBase.fallbackDisplay,'none','Loaded sprite did not hide its fallback');
   assert.equal(characterState.afterElite.ready,true,'Elite pose change erased loaded-image state');
