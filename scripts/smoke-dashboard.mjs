@@ -217,6 +217,13 @@ try {
     };
     const launcher = document.querySelector('.ve-header-mini');
     if (!launcher) throw new Error('Officer VAANI header launcher missing');
+    const launcherBefore = {
+      activeView:document.querySelector('.view.active')?.id||'',
+      assessmentActive:typeof window.VAANI_IS_ASSESSMENT_ACTIVE==='function'?window.VAANI_IS_ASSESSMENT_ACTIVE():null,
+      bodyClasses:document.body.className,
+      dockPrefs:localStorage.getItem('vaani-officer-dock-v1')
+    };
+    console.log('DIAG Officer VAANI launcher:',JSON.stringify(launcherBefore));
     launcher.click();
     const afterElite = {
       ready: model.classList.contains('asset-ready'),
