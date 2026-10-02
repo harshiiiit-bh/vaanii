@@ -406,3 +406,7 @@
   .vd-officer-stage{width:108px;min-height:154px}
   .vd-hero-inner{padding-right:92px}
 }
+.vd-flag-backdrop{position:absolute;right:0;top:0;width:74%;height:100%;object-fit:cover;object-position:right center;z-index:0;opacity:.27;mix-blend-mode:screen;pointer-events:none;mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.16) 24%,#000 58%);-webkit-mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.16) 24%,#000 58%)}
+.vd-hero-compass{z-index:1}.vd-hero-inner{z-index:2}.vd-officer-stage{z-index:3}
+.vd-officer-image{object-fit:contain;object-position:center bottom;filter:drop-shadow(0 20px 24px rgba(0,0,0,.38))}
+@media(max-width:640px){.vd-flag-backdrop{width:82%;opacity:.24}.vd-hero-photo{display:none}}

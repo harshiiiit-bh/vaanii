@@ -48,7 +48,7 @@
 .vc-actions button.primary{background:var(--vc-navy);border-color:var(--vc-navy);color:#fff}
 .vc-character{
   width:120px;height:108px;flex:0 0 120px;
-  background-image:url("https://gcdn.picsart.com/editing-temp/2ca4be62-1e4a-4425-8b14-018c55a4d4b4.png");
+  background-image:url("https://cdn-ai-hs.picsart.com/ai-hot-storage/acfec6d8-2627-4b42-bd67-1923ba9898f4.png");
   background-size:400% 300%;
   background-position:0 0;
   background-repeat:no-repeat;
@@ -90,7 +90,7 @@
 }
 .vc-recovery-art{
   width:150px;height:140px;
-  background-image:url("https://cdn-ai-hs.picsart.com/ai-hot-storage/26983f1e-c8a3-4711-8463-852b639599c7.png");
+  background-image:url("https://cdn-ai-hs.picsart.com/ai-hot-storage/2a136339-4163-42a0-b366-0541c84cc19a.png");
   background-size:contain;
   background-position:center bottom;
   background-repeat:no-repeat;
@@ -194,7 +194,7 @@
 
 .ve-header-mini,
 .ve-surface-mini{
-  background-image:url("https://gcdn.picsart.com/editing-temp/2ca4be62-1e4a-4425-8b14-018c55a4d4b4.png")!important;
+  background-image:url("https://cdn-ai-hs.picsart.com/ai-hot-storage/acfec6d8-2627-4b42-bd67-1923ba9898f4.png")!important;
 }
 
 /* Officer VAANI master/pose asset split */
