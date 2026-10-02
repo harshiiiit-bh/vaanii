@@ -40,7 +40,7 @@ document.addEventListener('mousemove',(e)=>{
 function createDefaultState(){
   return {
     name:'Cadet', xp:0, streak:0, lastActive:null, lastStreakRewardDate:null, infoTourVersion:null, infoTourSeenAt:null, serviceForce:null,
-    completedTopics:{}, quizScores:{}, vocabLearned:{}, theme:'light', missions:{},
+    completedTopics:{}, quizScores:{}, vocabLearned:{}, vocab90Completed:{}, vocab90XpAwarded:{}, theme:'light', missions:{},
     dailyActivity:{}, dailyXpEarned:{}, focusSessions:{}, mysteryBoxesClaimed:0, reviewQueue:[],
     personalBests:{ bestCombo:0, longestStreak:0, highestQuizScore:0, fastestQuizSeconds:null, fastestQuizLabel:'', totalQuizzesTaken:0 },
     pyqStats:{ attempts:{} }, bookPracticeStats:{ attempts:{}, history:[] }, bookStudy:{completedChapterIds:[],completedExerciseIds:[],lastChapterId:null}, topicProgress:{}, topicLastAttempt:{}, bookmarkedTopics:{}, topicNotes:{}, pyqBookmarks:[], grammarMastery:{},
@@ -63,6 +63,14 @@ function normalizeState(){
   State.completedTopics=isRecord(State.completedTopics)?State.completedTopics:{};
   State.quizScores=isRecord(State.quizScores)?State.quizScores:{};
   State.vocabLearned=isRecord(State.vocabLearned)?State.vocabLearned:{};
+  State.vocab90Completed=isRecord(State.vocab90Completed)?State.vocab90Completed:{};
+  State.vocab90XpAwarded=isRecord(State.vocab90XpAwarded)?State.vocab90XpAwarded:{};
+  [State.vocab90Completed,State.vocab90XpAwarded].forEach(record=>{
+    Object.keys(record).forEach(day=>{
+      const n=Number(day);
+      if(!Number.isInteger(n)||n<1||n>90||String(n)!==day||record[day]!==true)delete record[day];
+    });
+  });
   State.missions=isRecord(State.missions)?State.missions:{};
   State.dailyActivity=isRecord(State.dailyActivity)?State.dailyActivity:{};
   State.dailyXpEarned=isRecord(State.dailyXpEarned)?State.dailyXpEarned:{};
@@ -614,6 +622,7 @@ function switchView(name, options={}){
     safeCall(renderDailySingles,'renderDailySingles(switchView)');
     safeCall(renderConfuseTable,'renderConfuseTable(switchView)');
   }
+  if(name==='vocab90'&&window.VAANI_VOCAB90) safeCall(()=>window.VAANI_VOCAB90.open(),'V90Study(open)');
   if(name==='grammar'){
     // Defer to the next animation frame: the 'active' class change above must be committed
     // to layout first, so the container (aspect-ratio box) has a real, measurable size

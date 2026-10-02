@@ -48,6 +48,8 @@ jobs:
         run: node scripts/test-service-rank-xp.mjs
       - name: Test PYQ bank metadata and taxonomy
         run: node scripts/test-pyq-bank.mjs
+      - name: Test Vocab90 content and integration
+        run: node scripts/test-vocab90.mjs
       - name: Test security boundaries
         run: node scripts/test-security-boundaries.mjs
       - name: Set up Deno
@@ -87,6 +89,8 @@ jobs:
         run: node scripts/smoke-government-exam-desk.mjs
       - name: Exercise dashboard and learning flows
         run: node scripts/smoke-dashboard.mjs
+      - name: Exercise Vocab90 course
+        run: node scripts/smoke-vocab90.mjs
       - name: Exercise account isolation
         run: node scripts/smoke-account-isolation.mjs
       - name: Exercise legacy account migration

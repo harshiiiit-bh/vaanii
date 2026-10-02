@@ -31,7 +31,7 @@
 <link rel="stylesheet" href="vaani-focus-sprint.css?v=20261002-recovery1">
 <link rel="stylesheet" href="vaani-grammar.css?v=20261002-recovery1">
 <link rel="stylesheet" href="vaani-vocab.css?v=20261003-subpage2">
-<link rel="stylesheet" href="vaani-vocab90.css?v=20261003-subpage2">
+<link rel="stylesheet" href="vaani-vocab90.css?v=20261003-native8">
 <link rel="stylesheet" href="vaani-profile.css?v=20261001-account-code1-service-rank-xp5&v=20261002-recovery1">
 <link rel="stylesheet" href="vaani-bookreading.css?v=20261002-recovery1">
 <link rel="stylesheet" href="vaani-contrast.css?v=20261002-recovery1">
@@ -893,72 +893,33 @@
 <!-- ============ MYPATHSHALA 90-DAY VOCABULARY SUBPAGE ============ -->
 <section class="view v90-view" id="view-vocab90" aria-labelledby="v90PageTitle">
   <div class="v90-shell">
-    <div class="v90-topline">
-      <button class="v90-back" type="button" onclick="switchView('vocab')"><span aria-hidden="true">←</span> Vocabulary Hub</button>
-      <span class="v90-topline-label">VAANI · STUDY TRACK</span>
-    </div>
-
+    <div class="v90-topline"><button class="v90-back" type="button" onclick="switchView('vocab')"><span aria-hidden="true">←</span> Vocabulary Hub</button><span class="v90-topline-label">VAANI · LEARNING PLAN</span></div>
     <div class="v90-hero">
-      <div class="v90-hero-copy">
-        <span class="v90-eyebrow">MYPATHSHALA · 90-DAY TARGET</span>
-        <h2 id="v90PageTitle">Vocabulary, one day at a time.</h2>
-        <p>A focused companion for the 324-page source. Choose a day, study its material in the reader, and mark your progress when you're done.</p>
-      </div>
-      <div class="v90-progress-card" aria-live="polite">
-        <div class="v90-progress-top"><span>YOUR PROGRESS</span><strong id="v90ProgressCount">0 / 90</strong></div>
-        <div class="v90-progress-track" role="progressbar" aria-label="90-day target completion" aria-valuemin="0" aria-valuemax="90" aria-valuenow="0" id="v90ProgressBar"><span id="v90ProgressFill"></span></div>
-        <div class="v90-progress-bottom"><span id="v90ProgressPercent">0% complete</span><span id="v90Remaining">90 days left</span></div>
-      </div>
+      <div class="v90-hero-copy"><span class="v90-eyebrow">90-DAY VOCABULARY TARGET</span><h2 id="v90PageTitle">Build vocabulary, one day at a time.</h2><p>Study daily lessons in a focused view, or read the complete course in one continuous flow.</p><div class="v90-reward-note"><span aria-hidden="true">✦</span> Complete a day to earn <strong>10 XP</strong>. Each day’s reward is available once per account.</div></div>
+      <div class="v90-progress-card" aria-live="polite"><div class="v90-progress-top"><span>YOUR PROGRESS</span><strong id="v90ProgressCount">0 / 90</strong></div><div class="v90-progress-track" id="v90ProgressBar" role="progressbar" aria-label="90-day vocabulary progress" aria-valuemin="0" aria-valuemax="90" aria-valuenow="0"><span id="v90ProgressFill"></span></div><div class="v90-progress-bottom"><span id="v90ProgressPercent">0% complete</span><span id="v90Remaining">90 days remaining</span></div></div>
     </div>
-
-    <div class="v90-workspace">
+    <div class="v90-toolbar">
+      <div class="v90-mode-tabs" role="group" aria-label="Reading mode"><button type="button" data-v90-mode="day" aria-pressed="true">Day by day</button><button type="button" data-v90-mode="all" aria-pressed="false">Read all at once</button></div>
+      <label class="v90-search-wrap" for="v90Search"><span aria-hidden="true">⌕</span><input id="v90Search" type="search" placeholder="Search words or phrases..." autocomplete="off"></label>
+    </div>
+    <div id="v90DaywiseView" class="v90-daywise-view">
       <aside class="v90-day-panel" aria-label="Choose a study day">
-        <div class="v90-panel-heading">
-          <div><span class="v90-kicker">YOUR PLAN</span><h3>Choose a day</h3></div>
-          <button type="button" class="v90-reset" id="v90ResetProgress" title="Clear saved day progress">Reset</button>
-        </div>
-        <label class="v90-search-label" for="v90DaySearch">Find a day</label>
-        <input id="v90DaySearch" class="v90-day-search" type="search" inputmode="numeric" placeholder="Search 1–90" autocomplete="off">
-        <div class="v90-phase-tabs" role="group" aria-label="Study phase">
-          <button type="button" data-v90-phase="0" aria-pressed="true">01–30</button>
-          <button type="button" data-v90-phase="1" aria-pressed="false">31–60</button>
-          <button type="button" data-v90-phase="2" aria-pressed="false">61–90</button>
-        </div>
+        <div class="v90-panel-heading"><div><span class="v90-kicker">YOUR PLAN</span><h3>Choose a day</h3></div><button type="button" class="v90-reset" id="v90ResetProgress" title="Clear completion status; previously earned XP remains claimed">Reset</button></div>
+        <div class="v90-phase-tabs" role="group" aria-label="Study phase"><button type="button" data-v90-phase="0" aria-pressed="true">01–30</button><button type="button" data-v90-phase="1" aria-pressed="false">31–60</button><button type="button" data-v90-phase="2" aria-pressed="false">61–90</button></div>
         <div class="v90-day-grid" id="v90DayGrid" role="group" aria-label="Study days"></div>
         <div class="v90-legend"><span><i class="v90-dot current"></i> Selected</span><span><i class="v90-dot done"></i> Completed</span></div>
       </aside>
-
-      <div class="v90-study-panel">
-        <section class="v90-selected-day" aria-labelledby="v90SelectedTitle">
-          <div class="v90-selected-top">
-            <div>
-              <span class="v90-kicker" id="v90SelectedKicker">DAY 01 · START HERE</span>
-              <h3 id="v90SelectedTitle">Day 01</h3>
-              <p id="v90SelectedMeta">Source PDF · page 1</p>
-            </div>
-            <span class="v90-status" id="v90SelectedStatus">NOT STARTED</span>
-          </div>
-          <div class="v90-selected-actions">
-            <button type="button" class="btn primary" id="v90MarkDone">Mark day complete</button>
-            <div class="v90-day-nav">
-              <button type="button" class="v90-nav-btn" id="v90PrevDay" aria-label="Previous day">←</button>
-              <button type="button" class="v90-nav-btn" id="v90NextDay">Next day <span aria-hidden="true">→</span></button>
-            </div>
-          </div>
-        </section>
-
-        <section class="v90-reader-card" aria-labelledby="v90ReaderTitle">
-          <div class="v90-reader-head">
-            <div><span class="v90-kicker">SOURCE READER</span><h3 id="v90ReaderTitle">MyPathshala vocabulary notes</h3></div>
-            <a class="v90-source-link" id="v90OpenSource" href="https://www.scribd.com/document/883515539/My-Pathshala-Vocabulary-90-Days-Target-by-SSC-Aspirant?start_page=1" target="_blank" rel="noopener noreferrer">Open in new tab <span aria-hidden="true">↗</span></a>
-          </div>
-          <div class="v90-reader-frame-wrap">
-            <iframe id="v90ReaderFrame" title="MyPathshala 90-Day Vocabulary source reader" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-          </div>
-          <p class="v90-reader-note">The reader is provided by Scribd. Its sign-in, viewing and download requirements are controlled by the source platform. Use “Open in new tab” if the embedded reader does not load.</p>
-        </section>
-      </div>
+      <section class="v90-study-panel" aria-labelledby="v90SelectedTitle">
+        <div class="v90-selected-day">
+          <div class="v90-selected-top"><div><span class="v90-kicker" id="v90SelectedKicker">DAY 01 · START HERE</span><h3 id="v90SelectedTitle">Day 01</h3><p id="v90SelectedMeta">Preparing study material…</p></div><span class="v90-status" id="v90SelectedStatus">NOT COMPLETED</span></div>
+          <div class="v90-selected-actions"><button type="button" class="btn primary" id="v90MarkDone" data-v90-complete="1">Mark day complete · +10 XP</button><div class="v90-day-nav"><button type="button" class="v90-nav-btn" id="v90PrevDay" aria-label="Previous day">←</button><button type="button" class="v90-nav-btn" id="v90NextDay">Next day <span aria-hidden="true">→</span></button></div></div>
+        </div>
+        <div id="v90DayContent" class="v90-content-list" aria-live="polite"><div class="v90-loading">Preparing your study material…</div></div>
+      </section>
     </div>
+    <section id="v90AllView" class="v90-all-view" hidden aria-label="All 90 days"><div class="v90-all-heading"><div><span class="v90-kicker">CONTINUOUS READING</span><h3>All 90 days</h3><p>Read the course in day order. Mark lessons complete as you go.</p></div><span class="v90-all-count" id="v90AllCount">90 lessons</span></div><div id="v90AllContent" class="v90-all-content"><div class="v90-loading">Loading the complete course…</div></div></section>
+    <section id="v90SearchResults" class="v90-search-results" hidden aria-label="Vocabulary search results"></section>
+    <div id="v90LoadError" class="v90-load-error" role="alert" hidden></div>
   </div>
 </section>
 
@@ -1814,13 +1775,13 @@
 <script src="js/vaani-pyq-taxonomy.js?v=20261001-pyq-audit3&v=20261002-recovery1"></script>
 <script src="js/vaani-grammar-academy.js?v=20261002-recovery1"></script>
 <script src="js/vaani-info-center.js?v=20261002-info6&v=20261002-recovery1"></script>
-<script src="js/app.js?v=20261002-result-report7&v=20261003-vocab90-parentnav"></script>
+<script src="js/app.js?v=20261002-result-report7&v=20261003-vocab90-native8"></script>
 
 <script src="js/vaani-testkit.js?v=20261002-setup1&v=20261002-recovery1"></script>
 <script src="js/vaani-book-companion.js?v=20261002-bookcompanion3&v=20261002-recovery1"></script>
 <script src="js/vaani-arena.js?v=20261002-recovery1"></script>
 <script src="js/vaani-vocab-bridge.js?v=20261002-recovery1"></script>
-<script src="js/vaani-vocab90.js?v=20261003-subpage1"></script>
+<script src="js/vaani-vocab90.js?v=20261003-native8"></script>
 <script src="js/vaani-dictionary.js?v=20261002-recovery1"></script>
 <script src="js/vaani-writing-coach.js?v=20261002-recovery1"></script>
 <script>window.VAANI_NOTIFICATIONS_API = "https://vaani-notifications-api.harshitchaubey127.workers.dev";</script>

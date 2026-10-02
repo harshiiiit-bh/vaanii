@@ -1,6 +1,6 @@
 /* VAANI's service-worker cache is namespaced to this app. */
 const CACHE_PREFIX = 'vaani-shell-';
-const CACHE = 'vaani-shell-v6';
+const CACHE = 'vaani-shell-v7';
 
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll([
@@ -8,8 +8,8 @@ self.addEventListener('install', event => {
     './index.html',
     './vaani-upgrade-core.css',
     './js/vaani-upgrade-core.js',
-    './vaani-vocab90.css?v=20261003-subpage2',
-    './js/vaani-vocab90.js?v=20261003-subpage1'
+    './vaani-vocab90.css?v=20261003-native8',
+    './js/vaani-vocab90.js?v=20261003-native8'
   ])));
   self.skipWaiting();
 });
@@ -51,7 +51,7 @@ self.addEventListener('fetch', event => {
   }
 
   const staticDestination = ['script', 'style', 'image', 'font'].includes(request.destination);
-  const staticPath = /\.(?:css|js|mjs|svg|png|jpe?g|webp|ico|woff2?)$/i.test(url.pathname);
+  const staticPath = /\.(?:css|js|mjs|json|svg|png|jpe?g|webp|ico|woff2?)$/i.test(url.pathname);
   if (!staticDestination && !staticPath) return;
 
   event.respondWith((async () => {

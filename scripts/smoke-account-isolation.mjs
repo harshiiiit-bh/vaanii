@@ -22,7 +22,7 @@ try{
   await page.waitForFunction(()=>document.getElementById('gate')?.classList.contains('hide'));
   const accountA=await page.evaluate(async()=>{
     const code=getSessionCode();
-    State.xp=321;State.completedTopics={noun:true};State.quizScores={sva:87};
+    State.xp=321;State.completedTopics={noun:true};State.quizScores={sva:87};State.vocab90Completed={'1':true};State.vocab90XpAwarded={'1':true};
     State.topicProgress={tenses:true};State.bookmarkedTopics={clauses:true};State.topicNotes={clauses:'Account A only'};
     State.grammarMastery={sva:{attempts:4,correct:3,lastAttempt:123}};toggleBookmark('a-pyq',null);
     localStorage.setItem('vaani_bookmarks',JSON.stringify(['legacy-a-pyq']));
@@ -40,11 +40,11 @@ try{
   const accountB=await page.evaluate(async()=>{generateCode=()=> '222222';const code=await createNewAccount();State.serviceForce='navy';await persistCombinedAccount();return code;});
   assert.equal(accountB,'222222');
   const cleanB=await page.evaluate(()=>({
-    xp:State.xp,completed:State.completedTopics,scores:State.quizScores,progress:State.topicProgress,
+    xp:State.xp,completed:State.completedTopics,scores:State.quizScores,vocab90Completed:State.vocab90Completed,vocab90XpAwarded:State.vocab90XpAwarded,progress:State.topicProgress,
     bookmarks:State.bookmarkedTopics,notes:State.topicNotes,grammarMastery:State.grammarMastery,pyqBookmarks:State.pyqBookmarks,pyqBookmarksApi:getBookmarks(),
     books:Object.fromEntries(['completed','ongoing','upcoming','vocab','achievements','quizHistory'].map(key=>[key,DATA[key]]))
   }));
-  assert.equal(cleanB.xp,0);assert.deepEqual(cleanB.completed,{});assert.deepEqual(cleanB.scores,{});
+  assert.equal(cleanB.xp,0);assert.deepEqual(cleanB.completed,{});assert.deepEqual(cleanB.scores,{});assert.deepEqual(cleanB.vocab90Completed,{});assert.deepEqual(cleanB.vocab90XpAwarded,{});
   assert.deepEqual(cleanB.progress,{});assert.deepEqual(cleanB.bookmarks,{});assert.deepEqual(cleanB.notes,{});
   assert.deepEqual(cleanB.grammarMastery,{});
   assert.deepEqual(cleanB.pyqBookmarks,[]);assert.deepEqual(cleanB.pyqBookmarksApi,[],'New account inherited browser-wide PYQ bookmarks');
@@ -54,7 +54,7 @@ try{
   const restoredA=await page.evaluate(async code=>{const result=await loginWithCode(code);return {result,state:State,books:DATA,pyqBookmarks:getBookmarks()};},accountA);
   assert.equal(restoredA.result.ok,true);assert.equal(restoredA.state.xp,321);
   assert.equal(restoredA.state.serviceForce,'army','Account A service preference was not restored');
-  assert.equal(restoredA.state.completedTopics.noun,true);assert.equal(restoredA.state.quizScores.sva,87);
+  assert.equal(restoredA.state.completedTopics.noun,true);assert.equal(restoredA.state.quizScores.sva,87);assert.equal(restoredA.state.vocab90Completed['1'],true);assert.equal(restoredA.state.vocab90XpAwarded['1'],true);
   assert.equal(restoredA.state.topicProgress.tenses,true);assert.equal(restoredA.state.bookmarkedTopics.clauses,true);
   assert.deepEqual(restoredA.state.grammarMastery.sva,{attempts:4,correct:3,lastAttempt:123});
   assert.deepEqual(restoredA.state.pyqBookmarks,['a-pyq']);assert.deepEqual(restoredA.pyqBookmarks,['a-pyq']);
@@ -63,7 +63,7 @@ try{
 
   const restoredB=await page.evaluate(async code=>{const result=await loginWithCode(code);return {result,state:State,books:DATA,pyqBookmarks:getBookmarks()};},accountB);
   assert.equal(restoredB.result.ok,true);assert.equal(restoredB.state.xp,12);
-  assert.deepEqual(restoredB.state.pyqBookmarks,['b-pyq']);assert.deepEqual(restoredB.pyqBookmarks,['b-pyq'],'Account B PYQ bookmarks were not restored');
+  assert.deepEqual(restoredB.state.pyqBookmarks,['b-pyq']);assert.deepEqual(restoredB.pyqBookmarks,['b-pyq'],'Account B PYQ bookmarks were not restored');assert.deepEqual(restoredB.state.vocab90Completed,{});assert.deepEqual(restoredB.state.vocab90XpAwarded,{});
   for(const key of ['completedTopics','quizScores','topicProgress','bookmarkedTopics','topicNotes','grammarMastery'])assert.deepEqual(restoredB.state[key],{},'Account switch leaked '+key);
   assert.equal(restoredB.state.vocabLearned['b-word'],true);
   for(const [collection,id] of Object.entries({completed:'a-completed',ongoing:'a-ongoing',vocab:'a-word'})){
