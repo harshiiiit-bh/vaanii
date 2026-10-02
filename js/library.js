@@ -1395,7 +1395,7 @@ async function callClaudeForWord(word){
 
   if(freeResult && (freeResult.meaning || freeResult.synonyms.length || freeResult.antonyms.length)) return freeResult;
   const noKeyErr = new Error('NO_KEY'); noKeyErr.noKey = true; throw noKeyErr;
-
+}
 
 function findVocabByWord(word){
   const w = word.trim().toLowerCase();
