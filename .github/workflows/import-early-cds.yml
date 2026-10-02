@@ -172,7 +172,9 @@ jobs:
                 if(ans<0)throw new Error(p.id+': invalid key letter at Q'+num+': '+p.key[num-1]);
                 if(!options.length)throw new Error(p.id+': missing options at Q'+num+'; raw='+q.slice(0,160));
                 if(options.length<2||ans>=options.length)throw new Error(p.id+': invalid options/key at Q'+num+' options='+options.length+' answer='+p.key[num-1]);
-                const sec=classify(q,options,section,passage,kind);
+                let sec=classify(q,options,section,passage,kind);
+                if(p.year===2009&&p.session==='I'&&num<=23)sec='Synonyms';
+                if(p.year===2009&&p.session==='II'&&num<=20)sec='Synonyms';
                 const item={y:p.year,s:p.session,n:num,sec,q,o:options,ans};
                 if(passage && (sec==='Reading Comprehension'||kind==='cloze'))item.passage=passage;
                 records.push(item);
@@ -184,6 +186,7 @@ jobs:
             for(const q of records){if(ids.has(q.n))dups.push(q.n);ids.add(q.n);}
             const missing=Array.from({length:120},(_,i)=>i+1).filter(n=>!ids.has(n));
             if(dups.length||missing.length||records.length!==120){
+              if(dups.length)console.log('DUPLICATE_RECORDS '+p.id+' '+JSON.stringify(records.filter(q=>dups.includes(q.n)).map(q=>({n:q.n,sec:q.sec,q:q.q.slice(0,220),o:q.o}))));
               throw new Error(p.id+': parsed '+records.length+'/120; duplicates '+dups.join(',')+'; missing '+missing.slice(0,50).join(','));
             }
             const sections={};for(const q of records)sections[q.sec]=(sections[q.sec]||0)+1;
