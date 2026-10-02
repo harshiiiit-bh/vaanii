@@ -771,3 +771,6 @@ body.ve-vaani-hidden #vaaniMentor:not(.bad-result),body.ve-vaani-hidden .ve-head
 
 /* Profile owns the right-edge identity and rank controls; hide the dock immediately on that route. */
 body:has(#view-profile.active) #vaaniMentor:not(.bad-result){display:none!important}
+
+/* Keep the floating character out of active assessments and their report cards. */
+body.vaani-assessment-active #vaaniMentor:not(.bad-result),body.pv-session-active #vaaniMentor:not(.bad-result){display:none!important}
