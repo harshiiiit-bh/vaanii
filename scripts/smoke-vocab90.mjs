@@ -56,6 +56,7 @@ try{
  await page.locator('#v90SearchResults [data-v90-open-day="1"]').first().click();
  await page.waitForFunction(()=>document.getElementById('v90SelectedTitle')?.textContent==='Day 01');
  assert.equal(await page.locator('#v90SearchResults').isHidden(),true);
+ if(await page.locator('#viTour.open').count())await page.keyboard.press('Escape');
  await page.locator('[data-v90-mode="all"]').click();
  await page.locator('#v90AllContent [data-v90-article="90"]').waitFor({state:'attached',timeout:15000});
  assert.equal(await page.locator('#v90AllContent [data-v90-article]').count(),90);
