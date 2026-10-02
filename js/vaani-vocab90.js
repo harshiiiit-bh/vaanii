@@ -148,7 +148,12 @@
     var source = document.getElementById('v90OpenSource');
     if (source) source.href = href;
     var frame = document.getElementById('v90ReaderFrame');
-    if (frame) frame.src = 'https://www.scribd.com/embeds/883515539/content?start_page=' + range.start + '&view_mode=scroll';
+    var view = document.getElementById('view-vocab90');
+    var frameUrl = 'https://www.scribd.com/embeds/883515539/content?start_page=' + range.start + '&view_mode=scroll';
+    // Defer the third-party reader until the dedicated page is actually opened.
+    if (frame && view && view.classList.contains('active') && frame.getAttribute('src') !== frameUrl) {
+      frame.setAttribute('src', frameUrl);
+    }
   }
 
   function selectDay(day) {
