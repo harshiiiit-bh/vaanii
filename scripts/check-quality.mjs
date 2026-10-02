@@ -596,6 +596,12 @@ try{
  for(const marker of ['bookStudy:{completedChapterIds:[],completedExerciseIds:[],lastChapterId:null}','bookChapterId:s.bookChapterId||null'])if(!app.includes(marker))throw new Error('Book progress/resume integration missing.');
  for(const marker of ['pvOpenBookCompanion','pvOpenBookChapter','pvToggleBookChapterRead','pvToggleBookExercise','pvLaunchBookChapterPractice'])if(!ui.includes(marker))throw new Error('Book companion action missing: '+marker);
  console.log('Book Companion audit: 89 TOC entries, 72 original mapped MCQs, study checklist and session integration passed');
+ const character=readFileSync('js/vaani-character.js','utf8'),eliteCharacter=readFileSync('js/vaani-character-elite.js','utf8');
+ const characterCss=readFileSync('vaani-character.css','utf8'),eliteCharacterCss=readFileSync('vaani-character-elite.css','utf8');
+ if(!character.includes('window.vaaniCharacterSetPose=function(pose)')||!eliteCharacter.includes('window.vaaniCharacterSetPose(pose)'))throw new Error('Officer VAANI pose state helper is missing.');
+ if(!eliteCharacter.includes("e.target.closest('.ve-header-mini,.ve-officer-station')"))throw new Error('Officer VAANI launcher click is not excluded from outside-click dismissal.');
+ if(characterCss.includes('calc(var(--pose-col')||eliteCharacterCss.includes('calc(var(--pose-col'))throw new Error('Officer VAANI sprite still uses fragile computed pose offsets.');
+ console.log('Officer VAANI audit: persistent asset states, reliable pose coordinates and non-dismissing launchers validated');
 }catch(error){console.error('Book Companion audit failed:',error.message);process.exitCode=1;}
 
 /* Cloudflare Worker Preview configuration and read-only safety guard. */

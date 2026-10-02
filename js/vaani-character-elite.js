@@ -77,7 +77,14 @@
     if(!m)return;
     const c=m.querySelector('#vcCharacter');
     if(!c)return;
-    if(pose)c.className='vc-character '+pose;
+    if(pose){
+      if(typeof window.vaaniCharacterSetPose==='function')window.vaaniCharacterSetPose(pose);
+      else{
+        Array.from(c.classList).forEach(name=>{if(/^vc-p(?:[0-9]|1[01])$/.test(name))c.classList.remove(name);});
+        const cls=String(pose).startsWith('vc-')?String(pose):'vc-'+String(pose);
+        if(/^vc-p(?:[0-9]|1[01])$/.test(cls))c.classList.add(cls);
+      }
+    }
     gesturesOff();
     if(gesture){
       void c.offsetWidth;
@@ -104,14 +111,22 @@
     if(!m||m.classList.contains('bad-result'))return;
     addMeta();
     intel();
+    // Replace any pending base/elite hide so a fresh briefing cannot vanish early.
+    clearTimeout(window.__vaaniMentorTimer);
     m.classList.add('open','speaking','noted');
+    window.__vaaniMentorTimer=window.setTimeout(close,9000);
     clearTimeout(m.__vaaniNoteTimer);
     m.__vaaniNoteTimer=setTimeout(()=>m.classList.remove('noted'),420);
   }
 
   function close(){
     const m=mentor();
-    if(m)m.classList.remove('open','speaking');
+    clearTimeout(window.__vaaniMentorTimer);
+    window.__vaaniMentorTimer=null;
+    if(m){
+      m.classList.remove('open','speaking');
+      gesturesOff();
+    }
   }
 
   function brief(){
@@ -272,6 +287,9 @@
       const m=mentor();
       if(!m)return;
 
+      // Launcher buttons open the briefing during this same bubbling click.
+      // Do not interpret that click as an outside click and close it immediately.
+      if(e.target.closest('.ve-header-mini,.ve-officer-station'))return;
       if(m.contains(e.target)){
         if(e.target.closest('#vcNext')||e.target.closest('#vcCharacter')){
           setTimeout(()=>{

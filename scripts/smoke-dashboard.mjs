@@ -201,6 +201,52 @@ try {
   assert.ok(await page.locator('#focusSprintWidget .vd-focus-body').count() > 0, 'Focus Sprint did not render');
   console.log('PASS dashboard: hero, briefing, roadmap, missions, word, heatmap, badges and focus sprint');
 
+  // Officer VAANI must retain image state while either renderer changes poses.
+  await page.evaluate(() => window.vaaniCharacterSpeak('dashboard'));
+  await page.waitForSelector('#vaaniMentor .vc-character', { timeout: 5000 });
+  const characterState = await page.evaluate(() => {
+    const mentor = document.getElementById('vaaniMentor');
+    const model = mentor.querySelector('.vc-character');
+    const img = model.querySelector('.vc-character-sheet');
+    const fallback = model.querySelector('.vc-character-fallback');
+    img.dispatchEvent(new Event('load'));
+    window.vaaniCharacterSpeak('grammar');
+    const afterBase = {
+      ready: model.classList.contains('asset-ready'),
+      fallbackDisplay: getComputedStyle(fallback).display
+    };
+    const launcher = document.querySelector('.ve-header-mini');
+    if (!launcher) throw new Error('Officer VAANI header launcher missing');
+    launcher.click();
+    const afterElite = {
+      ready: model.classList.contains('asset-ready'),
+      speaking: mentor.classList.contains('speaking'),
+      open: mentor.classList.contains('open'),
+      poseCount: Array.from(model.classList).filter(c => /^vc-p(?:[0-9]|1[01])$/.test(c)).length
+    };
+    img.dispatchEvent(new Event('error'));
+    window.vaaniCharacterSpeak('vocab');
+    const afterError = {
+      error: model.classList.contains('asset-error'),
+      ready: model.classList.contains('asset-ready'),
+      fallbackDisplay: getComputedStyle(fallback).display
+    };
+    img.dispatchEvent(new Event('load'));
+    window.vaaniCharacterHide();
+    return {afterBase,afterElite,afterError};
+  });
+  assert.equal(characterState.afterBase.ready,true,'Base pose change erased loaded-image state');
+  assert.equal(characterState.afterBase.fallbackDisplay,'none','Loaded sprite did not hide its fallback');
+  assert.equal(characterState.afterElite.ready,true,'Elite pose change erased loaded-image state');
+  assert.equal(characterState.afterElite.speaking,true,'Officer launcher briefing was closed by its own click');
+  assert.equal(characterState.afterElite.open,true,'Officer launcher did not keep its briefing open');
+  assert.equal(characterState.afterElite.poseCount,1,'Officer pose state became duplicated or invalid');
+  assert.equal(characterState.afterError.error,true,'Image error state was erased by a later pose');
+  assert.equal(characterState.afterError.ready,false,'Errored image remained marked as ready');
+  assert.notEqual(characterState.afterError.fallbackDisplay,'none','Fallback disappeared after image failure');
+  console.log('PASS Officer VAANI: pose state, image fallback, launch click and briefing visibility');
+
+
   await clickMainView('profile');
   await assertVisibleText('#vpProfileRank', 'Service-aware Profile rank');
   assert.equal(await page.locator('#rankDailyXPHint').count(), 0,

@@ -48,6 +48,17 @@
     ]
   };
 
+  const POSE_CLASS = /^vc-p(?:[0-9]|1[01])$/;
+  function setCharacterPose(ch, pose){
+    if(!ch)return false;
+    Array.from(ch.classList).forEach(name=>{if(POSE_CLASS.test(name))ch.classList.remove(name);});
+    const value=String(pose||'');
+    const cls=value.startsWith('vc-')?value:'vc-'+value;
+    if(!POSE_CLASS.test(cls))return false;
+    ch.classList.add(cls);
+    return true;
+  }
+
   function currentView(){
     const v=document.querySelector('.view.active');
     return v ? v.id.replace('view-','') : 'dashboard';
@@ -78,8 +89,12 @@
     const ch=document.getElementById('vcCharacter');
     const img=ch.querySelector('.vc-character-sheet');
     if(img){
-      img.addEventListener('load',()=>ch.classList.add('asset-ready'),{once:true});
-      img.addEventListener('error',()=>ch.classList.add('asset-error'),{once:true});
+      const markReady=()=>{ch.classList.remove('asset-error');ch.classList.add('asset-ready');};
+      const markError=()=>{ch.classList.remove('asset-ready');ch.classList.add('asset-error');};
+      img.addEventListener('load',markReady);
+      img.addEventListener('error',markError);
+      // The cached image can finish before listeners are attached.
+      if(img.complete){if(img.naturalWidth>0)markReady();else markError();}
     }
     ch.addEventListener('click',()=>speak(currentView(),true));
     ch.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();speak(currentView(),true)}});
@@ -92,8 +107,10 @@
     el.classList.add('speaking');
   }
   function hide(){
+    window.clearTimeout(window.__vaaniMentorTimer);
+    window.__vaaniMentorTimer=null;
     const el=document.getElementById('vaaniMentor');
-    if(el)el.classList.remove('speaking');
+    if(el)el.classList.remove('speaking','open');
   }
 
   let messageIndex={};
@@ -108,7 +125,7 @@
     const text=document.getElementById('vcText');
     const quote=document.getElementById('vcQuote');
     if(!ch||!kicker||!text||!quote)return;
-    ch.className='vc-character '+item[0];
+    setCharacterPose(ch,item[0]);
     kicker.textContent=item[1];
     text.textContent=item[2];
     quote.textContent='“'+item[3]+'”';
@@ -170,6 +187,7 @@
   window.vaaniCharacterResult=result;
   window.vaaniCharacterSpeak=(view)=>speak(view||currentView(),true);
   window.vaaniCharacterHide=hide;
+  window.vaaniCharacterSetPose=function(pose){return setCharacterPose(document.getElementById('vcCharacter'),pose);};
 
   function onRoute(){
     if(['info','topic','compare-detail','worddetail'].includes(currentView())){hide();return;}

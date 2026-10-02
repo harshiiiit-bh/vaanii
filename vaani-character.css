@@ -136,8 +136,8 @@
 }
 #vaaniMentor:not(.bad-result) .vc-character-sheet{
   position:absolute;
-  left:calc(var(--pose-col,0) * -100%);
-  top:calc(var(--pose-row,0) * -100%);
+  left:0;
+  top:0;
   width:400%;
   height:300%;
   max-width:none;
@@ -146,6 +146,7 @@
   user-select:none;
   -webkit-user-drag:none;
   pointer-events:none;
+  transition:none;
 }
 #vaaniMentor:not(.bad-result) .vc-character-fallback{
   position:absolute;
@@ -178,18 +179,18 @@
   white-space:nowrap;
   pointer-events:none;
 }
-#vaaniMentor:not(.bad-result) .vc-p0{--pose-col:0;--pose-row:0}
-#vaaniMentor:not(.bad-result) .vc-p1{--pose-col:1;--pose-row:0}
-#vaaniMentor:not(.bad-result) .vc-p2{--pose-col:2;--pose-row:0}
-#vaaniMentor:not(.bad-result) .vc-p3{--pose-col:3;--pose-row:0}
-#vaaniMentor:not(.bad-result) .vc-p4{--pose-col:0;--pose-row:1}
-#vaaniMentor:not(.bad-result) .vc-p5{--pose-col:1;--pose-row:1}
-#vaaniMentor:not(.bad-result) .vc-p6{--pose-col:2;--pose-row:1}
-#vaaniMentor:not(.bad-result) .vc-p7{--pose-col:3;--pose-row:1}
-#vaaniMentor:not(.bad-result) .vc-p8{--pose-col:0;--pose-row:2}
-#vaaniMentor:not(.bad-result) .vc-p9{--pose-col:1;--pose-row:2}
-#vaaniMentor:not(.bad-result) .vc-p10{--pose-col:2;--pose-row:2}
-#vaaniMentor:not(.bad-result) .vc-p11{--pose-col:3;--pose-row:2}
+#vaaniMentor:not(.bad-result) .vc-p0 .vc-character-sheet{left:0;top:0}
+#vaaniMentor:not(.bad-result) .vc-p1 .vc-character-sheet{left:-100%;top:0}
+#vaaniMentor:not(.bad-result) .vc-p2 .vc-character-sheet{left:-200%;top:0}
+#vaaniMentor:not(.bad-result) .vc-p3 .vc-character-sheet{left:-300%;top:0}
+#vaaniMentor:not(.bad-result) .vc-p4 .vc-character-sheet{left:0;top:-100%}
+#vaaniMentor:not(.bad-result) .vc-p5 .vc-character-sheet{left:-100%;top:-100%}
+#vaaniMentor:not(.bad-result) .vc-p6 .vc-character-sheet{left:-200%;top:-100%}
+#vaaniMentor:not(.bad-result) .vc-p7 .vc-character-sheet{left:-300%;top:-100%}
+#vaaniMentor:not(.bad-result) .vc-p8 .vc-character-sheet{left:0;top:-200%}
+#vaaniMentor:not(.bad-result) .vc-p9 .vc-character-sheet{left:-100%;top:-200%}
+#vaaniMentor:not(.bad-result) .vc-p10 .vc-character-sheet{left:-200%;top:-200%}
+#vaaniMentor:not(.bad-result) .vc-p11 .vc-character-sheet{left:-300%;top:-200%}
 
 .ve-header-mini,
 .ve-surface-mini{
