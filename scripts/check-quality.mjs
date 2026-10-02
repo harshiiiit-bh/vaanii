@@ -610,6 +610,9 @@ try{
   if(eliteCharacter.includes('function wrapResult(){'))throw new Error('Officer VAANI result callback must not open a floating recovery briefing.');
   if(!eliteCharacterCss.includes('#vaaniMentor:not(.bad-result):not(.speaking):not(.open):not(.ve-move-mode){visibility:hidden!important;pointer-events:none!important}'))throw new Error('Collapsed Officer VAANI must not block page controls.');
   if(!html.includes('vaani-character-elite.css?v=20261002-result-report4')||!html.includes('js/vaani-character.js?v=20261002-passive-report1')||!html.includes('js/vaani-character-elite.js?v=20261002-passive-report3'))throw new Error('Officer VAANI asset cache keys are outdated.');
+  if(!html.includes('vaani-contrast-repair.css?v=20261002-contrast1'))throw new Error('Site-wide contrast repair must load after all visual layers.');
+  const contrastRepair=readFileSync('vaani-contrast-repair.css','utf8');
+  if(!contrastRepair.includes('--muted:#b8c3ce')||!contrastRepair.includes('--muted2:#9aa8b5')||!contrastRepair.includes('#view-grammar .gt-topic-desc'))throw new Error('Site-wide contrast tokens or Grammar readability rules are missing.');
   const appForReports=readFileSync('js/app.js','utf8');
   if(!appForReports.includes('function vaaniResultBriefingNode(')||!appForReports.includes("PV.screen='summary';pvRender();")||!appForReports.includes("completedCard.appendChild(briefing)"))throw new Error('Inline end-of-attempt report and Officer VAANI briefing are incomplete.');
   if(appForReports.includes('vaaniCharacterSpeak(name),700'))throw new Error('PYQ page rendering must not open a briefing during an attempt.');
