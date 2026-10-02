@@ -164,6 +164,9 @@ try {
   await page.locator('#serviceForcePicker .service-force-option[data-force="army"]').click();
   await page.waitForFunction(() => document.getElementById('gate')?.classList.contains('hide'), null, { timeout: 15000 });
   await page.waitForTimeout(900);
+  // The first-visit field briefing is modal by design; close it before testing dashboard navigation.
+  if (await page.locator('#viTour.open').count()) await page.keyboard.press('Escape');
+  await page.waitForFunction(() => !document.getElementById('viTour')?.classList.contains('open'), null, { timeout: 5000 });
   assert.equal(await page.evaluate(() => State.serviceForce), 'army', 'Selected service was not applied to the new account');
 
   assert.equal(await page.locator('#view-dashboard').evaluate(el => el.classList.contains('active')), true);
