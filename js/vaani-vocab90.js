@@ -155,7 +155,7 @@
        if(typeof toast==='function')toast('Day '+pad(n)+' completed. XP was already claimed.');
      }
    }
-   updateProgress();syncCompletion(n);
+   progress();syncCompletion(n);
  }
  function switchMode(next){
    mode=next==='all'?'all':'day';
@@ -177,7 +177,7 @@
      if(!completedCount())return;
      if(!global.confirm('Reset completed days? Earned XP will remain, and each day can reward XP only once.'))return;
      var map=stateMap('vocab90Completed');Object.keys(map).forEach(function(key){delete map[key];});
-     if(typeof saveState==='function')saveState();updateProgress();renderGrid();syncCompletion(selectedDay);
+     if(typeof saveState==='function')saveState();progress();renderGrid();syncCompletion(selectedDay);
      if(typeof toast==='function')toast('90-day completion progress has been reset.');
    });
    document.addEventListener('click',function(event){
@@ -193,9 +193,9 @@
      }
    });
    selectedDay=90;for(var n=1;n<=90;n++){if(!isComplete(n)){selectedDay=n;break;}}
-   phase=Math.floor((selectedDay-1)/30);renderPhases();renderGrid();updateProgress();
+   phase=Math.floor((selectedDay-1)/30);renderPhases();renderGrid();progress();
  }
- function open(){bind();updateProgress();if(mode==='all')loadAll();else selectDay(selectedDay);}
+ function open(){bind();progress();if(mode==='all')loadAll();else selectDay(selectedDay);}
  global.VAANI_VOCAB90={open:open,render:open};
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);else bind();
 })(window);
