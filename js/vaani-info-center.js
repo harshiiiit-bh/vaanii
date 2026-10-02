@@ -6,7 +6,7 @@
   const INFO_TOUR_VERSION='20261002-info-center1';
   const TOUR_TEXT='Welcome to VAANI, aspirant. I have moved the how-to information into one clean guide. Tap the new info button anytime to understand every feature, every XP rule and every part of your learning system.';
 
-  const officerSVG = '<div class="vi-officer-model" aria-hidden="true"></div>';
+  const officerSVG = '<img class="vi-officer-model" src="https://cdn-ai-hs.picsart.com/ai-hot-storage/26983f1e-c8a3-4711-8463-852b639599c7.png" alt="Officer VAANI" loading="lazy" decoding="async">';
 
   function positionTourSpot(){
     const btn=document.getElementById('infoBtn');
