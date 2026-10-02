@@ -80,7 +80,7 @@ jobs:
             if(!entry.length)throw new Error(p.id+': article body missing');
             const top=entry.children().toArray();
             let section='English', passage='', passageActive=false, implicit=1;
-            const out=[];
+            const records=[];
             for(let ix=0;ix<top.length;ix++){
               const el=top[ix],tag=el.tagName?.toLowerCase();
               if(tag==='p'){
@@ -107,7 +107,6 @@ jobs:
                  && lis.every(li=>!$(li).find('ul').length)) continue;
               const hasExplicit=Number.isFinite(Number.parseInt(list.attr('start'),10));
               const start=hasExplicit?Number.parseInt(list.attr('start'),10):implicit;
-              const records=[];
               for(let i=0;i<lis.length;i++){
                 const li=lis[i];
                 const num=Number.parseInt($(li).attr('value')||String(start+i),10);
