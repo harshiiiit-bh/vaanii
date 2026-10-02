@@ -605,9 +605,9 @@ try{
   if(!eliteCharacter.includes("window.addEventListener('hashchange',()=>queueRouteBrief(180)"))throw new Error('Officer VAANI route-close hook is missing.');
   const routeBriefStart=eliteCharacter.indexOf('function queueRouteBrief('),routeBriefEnd=eliteCharacter.indexOf('function polishFromCurrent(',routeBriefStart);
   if(routeBriefStart<0||routeBriefEnd<0||/\bbrief\s*\(\s*\)/.test(eliteCharacter.slice(routeBriefStart,routeBriefEnd)))throw new Error('Officer VAANI route changes must not trigger unsolicited briefings.');
-  if(eliteCharacter.includes('const host=target||view.firstElementChild')||!eliteCharacter.includes("if(viewId==='profile'||!view"))throw new Error('Officer VAANI station must not overlap the Profile hero or fall back to arbitrary page content.');
+  if(eliteCharacter.includes('const host=target||view.firstElementChild')||!eliteCharacter.includes("const routeHidden=active()==='profile'")||!eliteCharacterCss.includes("body:has(#view-profile.active) #vaaniMentor:not(.bad-result){display:none!important}"))throw new Error('Officer VAANI dock must not overlap the Profile hero.');
   if(eliteCharacter.includes('function wrapResult(){'))throw new Error('Officer VAANI result callback must not open a floating recovery briefing.');
-  if(!html.includes('vaani-character-elite.css?v=20261002-result-report2')||!html.includes('js/vaani-character.js?v=20261002-passive-report1')||!html.includes('js/vaani-character-elite.js?v=20261002-passive-report1'))throw new Error('Officer VAANI asset cache keys are outdated.');
+  if(!html.includes('vaani-character-elite.css?v=20261002-result-report3')||!html.includes('js/vaani-character.js?v=20261002-passive-report1')||!html.includes('js/vaani-character-elite.js?v=20261002-passive-report1'))throw new Error('Officer VAANI asset cache keys are outdated.');
   const appForReports=readFileSync('js/app.js','utf8');
   if(!appForReports.includes('function vaaniResultBriefingNode(')||!appForReports.includes("PV.screen='summary';pvRender();")||!appForReports.includes("completedCard.appendChild(briefing)"))throw new Error('Inline end-of-attempt report and Officer VAANI briefing are incomplete.');
   if(appForReports.includes('vaaniCharacterSpeak(name),700'))throw new Error('PYQ page rendering must not open a briefing during an attempt.');
