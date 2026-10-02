@@ -140,7 +140,7 @@ header::before{background:rgba(17,29,39,.97);backdrop-filter:blur(18px)}
 .brand{color:#f4f3ec;font-size:1.18rem;letter-spacing:.11em}
 .brand .dot{background:#d9b46e;box-shadow:0 0 0 4px rgba(217,180,110,.12)}
 nav.mainnav{
-  flex:1 1 auto;justify-content:center;flex-wrap:nowrap;overflow-x:auto;overscroll-behavior-inline:contain;
+  flex:1 1 auto;justify-content:flex-start;flex-wrap:nowrap;overflow-x:auto;overscroll-behavior-inline:contain;
   scrollbar-width:none;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.09);
   border-radius:13px;padding:4px;max-width:100%;
 }
