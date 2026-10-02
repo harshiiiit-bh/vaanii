@@ -850,10 +850,11 @@ var PYQ_CDS_2011_I = [
     "s": "I",
     "n": 60,
     "sec": "Spotting Errors",
-    "q": "Raju doesn’t come to our house because our dog barks at him | and licks him",
+    "q": "Raju doesn’t come to our house because our dog barks at him | and licks him | although I have often told him not to afraid of it",
     "o": [
       "Raju doesn’t come to our house because our dog barks at him",
       "and licks him",
+      "although I have often told him not to afraid of it",
       "No error"
     ],
     "ans": 2
@@ -863,10 +864,11 @@ var PYQ_CDS_2011_I = [
     "s": "I",
     "n": 61,
     "sec": "Spotting Errors",
-    "q": "Running across the playground, my pen fell in the mud; | fortunately, I noticed it",
+    "q": "Running across the playground, my pen fell in the mud; | fortunately, I noticed it | and picked it up",
     "o": [
       "Running across the playground, my pen fell in the mud;",
       "fortunately, I noticed it",
+      "and picked it up",
       "No error"
     ],
     "ans": 0
