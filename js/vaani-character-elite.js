@@ -203,6 +203,8 @@
   }
 
   function mountOfficerStations(){
+    // Compact contextual Officer VAANI rail: deep integration without
+    // adding another large card to every screen.
     const brand=document.querySelector('.brand');
     if(brand && !brand.querySelector('.ve-header-mini')){
       const mini=document.createElement('button');
@@ -215,42 +217,42 @@
     }
 
     const stations={
-      grammar:['GRAMMAR BATTALION','Find the rule behind the mistake, then apply it.','point'],
-      compare:['PRECISION POST','Read the distinction twice before you decide.','think'],
-      vocab:['WORD ARSENAL','Learn it. Use it. Retrieve it.','focus'],
-      books:['READING DESK','Read for meaning first; details follow.','observe'],
-      pyq:['PYQ COMMAND','Every previous-year question is a training report.','salute'],
-      games:['ARENA CONTROL','Keep your method stable when the pressure rises.','celebrate'],
-      leaderboard:['SITUATION BOARD','Use the board as feedback, not distraction.','observe'],
-      profile:['SERVICE RECORD','Track the work. Let the record speak.','salute'],
-      notifications:['SIGNAL ROOM','Act on important updates, then return to training.','wave']
+      grammar:['GRAMMAR','Rule check','point'],
+      compare:['PRECISION','Read twice','think'],
+      vocab:['VOCAB','Word drill','focus'],
+      books:['READING','Meaning first','observe'],
+      pyq:['PYQ','Mission report','salute'],
+      games:['ARENA','Stay precise','celebrate'],
+      leaderboard:['BOARD','Use as feedback','observe'],
+      profile:['RECORD','Track the work','salute'],
+      notifications:['SIGNAL','Act on what matters','wave']
     };
 
     Object.entries(stations).forEach(([viewId,data])=>{
       const view=document.getElementById('view-'+viewId);
       if(!view || view.querySelector('.ve-officer-station'))return;
 
-      const card=document.createElement('aside');
-      card.className='ve-officer-station';
-      card.innerHTML=
-        '<div class="ve-station-art">'+
+      const station=document.createElement('button');
+      station.type='button';
+      station.className='ve-officer-station';
+      station.innerHTML=
+        '<span class="ve-station-avatar">'+
           '<img src="https://cdn-ai-hs.picsart.com/ai-hot-storage/26983f1e-c8a3-4711-8463-852b639599c7.png" alt="" loading="lazy" decoding="async">'+
-        '</div>'+
-        '<div class="ve-station-copy">'+
-          '<div class="ve-station-kicker">OFFICER VAANI · '+data[0]+'</div>'+
-          '<p>'+data[1]+'</p>'+
-          '<button type="button" class="ve-station-btn">Brief me →</button>'+
-        '</div>';
-      const btn=card.querySelector('.ve-station-btn');
-      if(btn)btn.addEventListener('click',brief);
+          '<i aria-hidden="true"></i>'+
+        '</span>'+
+        '<span class="ve-station-label">'+
+          '<b>OFFICER VAANI</b><em>'+data[0]+'</em>'+
+        '</span>'+
+        '<span class="ve-station-hint">'+data[1]+'</span>'+
+        '<span class="ve-station-arrow" aria-hidden="true">→</span>';
+      station.title='Officer VAANI · '+data[0];
+      station.addEventListener('click',brief);
 
       const target=view.querySelector('.view-header,.section-head,.page-head,.grammar-head,.vocab-head,.pyq-head,.arena-head');
       const host=target||view.firstElementChild;
-      if(host){
-        host.parentNode.insertBefore(card,host);
-      }else{
-        view.prepend(card);
-      }
+      if(!host) return;
+      host.classList.add('ve-station-host');
+      host.appendChild(station);
     });
   }
 
