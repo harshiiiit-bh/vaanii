@@ -619,7 +619,8 @@ try{
   if(!eliteCharacter.includes("getDockPreferences")||!eliteCharacter.includes("function setDockPosition")||!eliteCharacter.includes("function setDockScale"))throw new Error('Officer VAANI move/resize preference controls are missing.');
   if(!eliteCharacter.includes('id="veDockScaleExact"')||!eliteCharacter.includes('step="1"'))throw new Error('Officer VAANI exact one-percent size control is missing.');
   if(!eliteCharacter.includes('id="veDockX"')||!eliteCharacter.includes('id="veDockY"')||!eliteCharacter.includes('function applyDockPositionInputs')||!eliteCharacter.includes('id="veDockApply"'))throw new Error('Officer VAANI exact pixel-position controls are missing.');
-  if(!eliteCharacter.includes("veRestoreOfficer")||!eliteCharacter.includes("function setDockHidden"))throw new Error('Officer VAANI hide/restore controls are missing.');
+  if(!eliteCharacter.includes("function setDockHidden")||!eliteCharacter.includes("if(getDockPreferences().hidden)setDockHidden(false,true)"))throw new Error('Officer VAANI header hide/restore flow is missing.');
+  if(eliteCharacter.includes("restore=document.createElement('button')")||eliteCharacter.includes("restore.id='veRestoreOfficer'"))throw new Error('Officer VAANI must not create a redundant bottom restore button.');
   if(!eliteCharacter.includes("window.addEventListener('pointermove',moveDockDrag"))throw new Error('Officer VAANI drag interaction is missing.');
  if(characterCss.includes('calc(var(--pose-col')||eliteCharacterCss.includes('calc(var(--pose-col'))throw new Error('Officer VAANI sprite still uses fragile computed pose offsets.');
  console.log('Officer VAANI audit: persistent asset states, reliable pose coordinates and non-dismissing launchers validated');
