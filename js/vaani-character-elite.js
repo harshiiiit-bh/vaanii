@@ -154,6 +154,7 @@
     clearTimeout(routeBriefTimer);
     routeBriefTimer=null;
     close();
+    updateDockVisibility();
   }
 
   function polishFromCurrent(){
@@ -350,7 +351,11 @@
 
   function updateDockVisibility(){
     const p=getDockPreferences();
-    document.body.classList.toggle('ve-vaani-hidden',p.hidden);
+    // Profile already owns the right edge with identity, rank and logout
+    // controls. Hide the floating dock on this route without saving a user
+    // preference; it returns automatically on the next route.
+    const routeHidden=active()==='profile';
+    document.body.classList.toggle('ve-vaani-hidden',p.hidden||routeHidden);
     document.getElementById('veRestoreOfficer')?.remove();
   }
 
