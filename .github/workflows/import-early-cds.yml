@@ -50,7 +50,7 @@ jobs:
           const heading=s=>headings.get(normal(s))||'';
           const getText=($,node)=>clean($(node).clone().find('ul,ol').remove().end().text());
           const optionText=($,node)=>$(node).children('li').toArray().map(li=>clean($(li).text())).filter(Boolean);
-          const marker=/^(?:S[1-6]|[P Q R S])\s*:/i;
+          const sequenceMarker=/^(?:S[1-6]|[P Q R S])\s*:/i;
           const seqOption=/^(?:[PQRS]{4})$/i;
 
           function classify(q,opts,section,passage,kind){
@@ -131,7 +131,7 @@ jobs:
                   for(let k=ix+1;k<top.length&&top[k].tagName?.toLowerCase()!=='ol';k++){
                     if(top[k].tagName?.toLowerCase()!=='p')continue;
                     const t=clean($(top[k]).text());
-                    if(marker.test(t)||/^(?:the )?(?:proper|correct) sequence should be/i.test(t))add.push(t);
+                    if(sequenceMarker.test(t)||/^(?:the )?(?:proper|correct) sequence should be/i.test(t))add.push(t);
                   }
                   if(add.length)q=clean(q+' '+add.join(' '));
                 }
