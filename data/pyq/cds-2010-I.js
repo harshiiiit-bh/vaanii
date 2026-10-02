@@ -1599,7 +1599,7 @@ var PYQ_CDS_2010_I = [
     "s": "I",
     "n": 113,
     "sec": "Ordering of Sentences",
-    "q": "S1 : Even in his earliest days, man had government. S6 : As the number of men multiplied, hunting bands grew larger, divided and formed independent groups. P: When he grew old and dull, another leader took his place. Q : As he stepped outside, he joined with other men to form a hunting tribe that learned to work together. S : Probably the hunter with the right combination of strength and cleverness became the leader of the tribe. The proper sequence should be :",
+    "q": "S1 : Even in his earliest days, man had government. S6 : As the number of men multiplied, hunting bands grew larger, divided and formed independent groups. P: When he grew old and dull, another leader took his place. Q : As he stepped outside, he joined with other men to form a hunting tribe that learned to work together. R : Its simplest form was the family, where man had authority over his wife and children. S : Probably the hunter with the right combination of strength and cleverness became the leader of the tribe. The proper sequence should be :",
     "o": [
       "QRPS",
       "RQSP",
