@@ -1720,7 +1720,7 @@ function pvRender(){
     if(report&&briefing)report.appendChild(briefing);
   }
   document.body.classList.toggle('pv-session-active', PV.screen==='session');
-  if(typeof window.VAANI_SET_ASSESSMENT_ACTIVE==='function')window.VAANI_SET_ASSESSMENT_ACTIVE(PV.screen==='session');
+  if(typeof window.VAANI_SET_ASSESSMENT_ACTIVE==='function')window.VAANI_SET_ASSESSMENT_ACTIVE(PV.screen==='session'||PV.screen==='summary');
   window.scrollTo({top:0,behavior:'smooth'});
   if((PV.screen==='session'||PV.screen==='summary')&&typeof window.vaaniCharacterHide==='function')window.vaaniCharacterHide();
   setTimeout(()=>{ if(typeof initReveal==='function') initReveal(); },30);
@@ -3819,12 +3819,11 @@ function renderQuizPane(id, quiz){
     if(finished)return;finished=true;if(qTimer){qTimer.stop();qTimer=null;}
     const exactPct=questions.length?correctCount/questions.length*100:0;
     const pct=Math.round(exactPct);State.quizScores[id]=pct;State.topicLastAttempt=State.topicLastAttempt||{};State.topicLastAttempt[id]=Date.now();saveState();
-    if(typeof window.VAANI_SET_ASSESSMENT_ACTIVE==='function')window.VAANI_SET_ASSESSMENT_ACTIVE(false);
     recordQuizCompletion(pct,started?(Date.now()-started)/1000:null,((GRAMMAR.find(g=>g.id===id)||{}).title)||id);
     pane.innerHTML='<div class="quiz-card quiz-complete-card" role="status"><span class="lesson-kicker">TOPIC CHECK COMPLETE</span><h3>Your result</h3><div class="quiz-result-score">'+pct+'%</div><p>'+correctCount+' of '+questions.length+' answers correct</p><div class="quiz-result-track"><div style="width:'+pct+'%"></div></div><div class="quiz-result-actions"><button class="btn" type="button" id="quizRetry">Try again</button><button class="btn ghost" type="button" id="quizBack">Review lesson</button></div></div>';
     const briefing=vaaniResultBriefingNode(pct,((GRAMMAR.find(g=>g.id===id)||{}).title)||id);
     const completedCard=pane.querySelector('.quiz-complete-card');if(completedCard&&briefing)completedCard.appendChild(briefing);
-    pane.querySelector('#quizRetry').addEventListener('click',()=>renderQuizPane(id,questions));pane.querySelector('#quizBack').addEventListener('click',()=>{const b=document.querySelector('.tab-btn[data-tab="learn"]');if(b)b.click();});
+    pane.querySelector('#quizRetry').addEventListener('click',()=>renderQuizPane(id,questions));pane.querySelector('#quizBack').addEventListener('click',()=>{if(typeof window.VAANI_SET_ASSESSMENT_ACTIVE==='function')window.VAANI_SET_ASSESSMENT_ACTIVE(false);const b=document.querySelector('.tab-btn[data-tab="learn"]');if(b)b.click();});
     awardAccuracyXP(exactPct,'Topic quiz: '+(((GRAMMAR.find(g=>g.id===id)||{}).title)||'topic'));launchConfettiIf(pct>=70);
   }
   function draw(){
