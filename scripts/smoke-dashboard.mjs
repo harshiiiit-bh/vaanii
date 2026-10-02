@@ -285,6 +285,7 @@ try {
   await page.locator('#veDockHide').click();
   assert.equal(await page.locator('#vaaniMentor').isVisible(),false,'Hide did not remove Officer VAANI from view');
   assert.equal(await page.locator('#veRestoreOfficer').isVisible(),true,'Restore control was not shown after hiding Officer VAANI');
+  assert.match(await page.locator('#veRestoreOfficer').getAttribute('aria-label')||'',/restore Officer VAANI/i,'Restore control should have an accessible name');
   assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('vaani-officer-dock-v1')||'{}').hidden),true,'Hidden preference was not persisted');
   await page.reload();
   await page.waitForSelector('#veRestoreOfficer:not([hidden])',{timeout:10000});
