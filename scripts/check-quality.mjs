@@ -113,7 +113,7 @@ if (!accountCodeCss.includes('@media(max-width:767px)') ||
   process.exitCode = 1;
 }
 if (!html.includes('vaani-profile.css?v=20261001-account-code1-service-rank-xp5') ||
-    !html.includes('js/app.js?v=20261002-bookcompanion2')) {
+    !html.includes('js/app.js?v=20261002-result-report1')) {
   console.error('Account-code asset cache keys are outdated');
   process.exitCode = 1;
 }
@@ -602,7 +602,15 @@ try{
  if(!eliteCharacter.includes("e.target.closest('.ve-header-mini,.ve-officer-station')"))throw new Error('Officer VAANI launcher click is not excluded from outside-click dismissal.');
   if(!character.includes('window.vaaniCharacterEnsure=ensure')||!eliteCharacter.includes("window.vaaniCharacterEnsure==='function'"))throw new Error('Officer VAANI mount handshake is missing.');
   if(!character.includes('assets/officer-vaani.svg')||!eliteCharacter.includes('assets/officer-vaani.svg'))throw new Error('Officer VAANI local art fallback is missing.');
-  if(!eliteCharacter.includes("window.addEventListener('hashchange',()=>queueRouteBrief(180))"))throw new Error('Officer VAANI direct-route briefing hook is missing.');
+  if(!eliteCharacter.includes("window.addEventListener('hashchange',()=>queueRouteBrief(180)"))throw new Error('Officer VAANI route-close hook is missing.');
+  const routeBriefStart=eliteCharacter.indexOf('function queueRouteBrief('),routeBriefEnd=eliteCharacter.indexOf('function polishFromCurrent(',routeBriefStart);
+  if(routeBriefStart<0||routeBriefEnd<0||/\bbrief\s*\(\s*\)/.test(eliteCharacter.slice(routeBriefStart,routeBriefEnd)))throw new Error('Officer VAANI route changes must not trigger unsolicited briefings.');
+  if(eliteCharacter.includes('const host=target||view.firstElementChild')||!eliteCharacter.includes("if(viewId==='profile'||!view"))throw new Error('Officer VAANI station must not overlap the Profile hero or fall back to arbitrary page content.');
+  if(eliteCharacter.includes('function wrapResult(){'))throw new Error('Officer VAANI result callback must not open a floating recovery briefing.');
+  if(!html.includes('vaani-character-elite.css?v=20261002-result-report1')||!html.includes('js/vaani-character.js?v=20261002-passive-report1')||!html.includes('js/vaani-character-elite.js?v=20261002-passive-report1'))throw new Error('Officer VAANI asset cache keys are outdated.');
+  const appForReports=readFileSync('js/app.js','utf8');
+  if(!appForReports.includes('function vaaniResultBriefingNode(')||!appForReports.includes("PV.screen='summary';pvRender();")||!appForReports.includes("completedCard.appendChild(briefing)"))throw new Error('Inline end-of-attempt report and Officer VAANI briefing are incomplete.');
+  if(appForReports.includes('vaaniCharacterSpeak(name),700'))throw new Error('PYQ page rendering must not open a briefing during an attempt.');
   if(!eliteCharacter.includes("getDockPreferences")||!eliteCharacter.includes("function setDockPosition")||!eliteCharacter.includes("function setDockScale"))throw new Error('Officer VAANI move/resize preference controls are missing.');
   if(!eliteCharacter.includes('id="veDockScaleExact"')||!eliteCharacter.includes('step="1"'))throw new Error('Officer VAANI exact one-percent size control is missing.');
   if(!eliteCharacter.includes('id="veDockX"')||!eliteCharacter.includes('id="veDockY"')||!eliteCharacter.includes('function applyDockPositionInputs')||!eliteCharacter.includes('id="veDockApply"'))throw new Error('Officer VAANI exact pixel-position controls are missing.');
