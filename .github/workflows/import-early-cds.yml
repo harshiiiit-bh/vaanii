@@ -1,222 +1,33 @@
-name: Import six early CDS papers into standard PYQ bank
+name: Temporary CDS final passage numbering inspection
 
 on:
   push:
     branches: [main]
     paths:
       - '.github/workflows/import-early-cds.yml'
-
 permissions:
-  contents: write
-
+  contents: read
 jobs:
-  integrate:
+  inspect:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: 24
       - run: npm install --no-save --no-package-lock cheerio@1.0.0-rc.12
-      - name: Build and validate six standard CDS banks
-        run: |
+      - run: |
           node --input-type=module <<'NODE'
-          import * as fs from 'node:fs';
-          import { execFileSync } from 'node:child_process';
           import * as cheerio from 'cheerio';
-
-          const history = '74449fce4a871ce914c216bed90e10ac2d50c410';
-          const legacy = execFileSync('git', ['show', history + ':js/vaani-cds-legacy.js'], {encoding:'utf8'});
-          const papers = [...legacy.matchAll(/\{id:'(cds-[^']+)',year:(\d+),session:'([^']+)',title:'([^']+)',source:'([^']+)',key:\x60([^\x60]*)\x60\}/g)]
-            .map(m => ({id:m[1],year:Number(m[2]),session:m[3],title:m[4],source:m[5],key:m[6].trim().split(/\s+/).map(x=>x.toUpperCase())}));
-          if (papers.length !== 6) throw new Error('Expected six answer-key records; found ' + papers.length);
-
-          const headings = new Map([
-            ['SYNONYMS','Synonyms'],['ANTONYMS','Antonyms'],['SPOTTING ERRORS','Spotting Errors'],
-            ['ERROR SPOTTING','Spotting Errors'],['SENTENCE IMPROVEMENT','Sentence Improvement'],
-            ['FILL IN THE BLANKS','Fill in the Blanks'],['FILLERS','Fill in the Blanks'],
-            ['SELECTING WORDS','Selecting Words'],['ORDERING OF SENTENCES','Ordering of Sentences'],
-            ['ORDERING OF WORDS IN A SENTENCE','Ordering of Words in a Sentence'],
-            ['ORDERING OF WORDS','Ordering of Words in a Sentence'],['COMPREHENSION','Reading Comprehension'],
-            ['READING COMPREHENSION','Reading Comprehension'],['RECONSTRUCTING PASSAGE','Reconstructing Passage'],
-            ['IDIOMS AND PHRASES','Idioms and Phrases'],['MEANING FOR IDIOMS/PHRASES','Idioms and Phrases'],
-            ['SENTENCE COMPLETION','Sentence Completion'],['WORD USAGE','Word Usage'],['SPELLING','Spellings']
-          ]);
-          const clean=s=>String(s||'').replace(/\u00a0/g,' ').replace(/\s+/g,' ').trim();
-          const normal=s=>clean(s).toUpperCase().replace(/[.:;]+$/,'').trim();
-          const heading=s=>headings.get(normal(s))||'';
-          const getText=($,node)=>clean($(node).clone().find('ul,ol').remove().end().text());
-          const optionText=($,node)=>$(node).children('li').toArray().map(li=>clean($(li).text())).filter(Boolean);
-          const sequenceMarker=/^(?:S[1-6]|[P Q R S])\s*:/i;
-          const seqOption=/^(?:[PQRS]{4})$/i;
-
-          function classify(q,opts,section,passage,kind){
-            const t=(q+' '+opts.join(' ')).toLowerCase();
-            if(kind==='error')return 'Spotting Errors';
-            if(kind==='sequence')return section==='Ordering of Words in a Sentence'?'Ordering of Words in a Sentence':'Ordering of Sentences';
-            if(kind==='cloze')return 'Fill in the Blanks';
-            if(opts.some(x=>/^no improvement[.! ]*$/i.test(x)))return 'Sentence Improvement';
-            if(/similar in meaning|same in meaning/.test(t))return 'Synonyms';
-            if(/opposite in meaning|furthest in meaning|most opposite/.test(t))return 'Antonyms';
-            if(/_{2,}|\(\s*\d{1,3}\s*\)/.test(q)&&passage)return 'Fill in the Blanks';
-            if(passage && /which|what|why|how|author|passage|statement|tone|means|implies|suggests/i.test(q))return 'Reading Comprehension';
-            if(section&&section!=='English'&&section!=='Grammar')return section;
-            if(/proper sequence|correct sequence|s1\s*:|s6\s*:/i.test(q))return 'Ordering of Sentences';
-            if(/spell|spelt|misspell/i.test(q))return 'Spellings';
-            if(/idiom|phrase/i.test(q))return 'Idioms and Phrases';
-            if(/blank/.test(q))return 'Fill in the Blanks';
-            return 'Grammar (Mixed)';
+          const url='https://examvictor.com/cds-2011-english-question-paper-2/';
+          const r=await fetch(url,{headers:{'user-agent':'Mozilla/5.0'}});
+          const $=cheerio.load(await r.text()),e=$('.entry-content').first(),top=e.children().toArray();
+          for(let i=0;i<top.length;i++){
+            const node=top[i];
+            if(node.tagName!=='ol')continue;
+            const n=Number.parseInt(node.attribs.start||'1',10);
+            if(n<90||n>120)continue;
+            const li=$(node).children('li').toArray();
+            console.log('OL',n,'len',li.length,'items',JSON.stringify(li.map(x=>$(x).text().trim().replace(/\s+/g,' ').slice(0,220))));
           }
-
-          async function parsePaper(p){
-            if(p.key.length!==120)throw new Error(p.id+': key length '+p.key.length);
-            const response=await fetch(p.source,{headers:{'user-agent':'Mozilla/5.0 (compatible; VAANI-PYQ-Importer/1.0)'}});
-            if(!response.ok)throw new Error(p.id+': source HTTP '+response.status);
-            const $=cheerio.load(await response.text());
-            const entry=$('.entry-content').first().length?$('.entry-content').first():$('.td-post-content').first();
-            if(!entry.length)throw new Error(p.id+': article body missing');
-            const top=entry.children().toArray();
-            let section='English', passage='', passageActive=false, implicit=1;
-            const records=[];
-            for(let ix=0;ix<top.length;ix++){
-              const el=top[ix],tag=el.tagName?.toLowerCase();
-              if(tag==='p'){
-                const txt=clean($(el).text());
-                const h=heading(txt);
-                if(h){section=h;passageActive=false;passage='';continue;}
-                if(/^PASSAGE(?:\s*[-—]?\s*[IVXLCDM0-9]+)?$/i.test(normal(txt))||/^PASSAGE\s*[-—]\s*[IVXLCDM0-9]+$/i.test(normal(txt))){
-                  passage='';passageActive=true;
-                  if(section==='English')section='Reading Comprehension';
-                  continue;
-                }
-                if(/^DIRECTIONS?\b/i.test(txt))continue;
-                if(passageActive && txt)passage=clean(passage+' '+txt);
-                if(/^(?:ORDERING OF SENTENCES|ORDERING OF WORDS IN A SENTENCE)$/i.test(normal(txt))) section=heading(txt);
-                continue;
-              }
-              if(tag!=='ol')continue;
-              const list=$(el);
-              const lis=list.children('li').toArray();
-              if(!lis.length)continue;
-              const listText=lis.map(li=>clean($(li).text())).join(' ');
-              // Some source pages wrap section directions in an unnumbered OL; those are not question records.
-              if(/in this section a number of sentences are given|you are to indicate only one response for each item/i.test(listText)
-                 && lis.every(li=>!$(li).find('ul').length)) continue;
-              const hasExplicit=Number.isFinite(Number.parseInt(list.attr('start'),10));
-              const start=hasExplicit?Number.parseInt(list.attr('start'),10):implicit;
-              const nextOl=top.slice(ix+1).find(node=>node.tagName?.toLowerCase()==='ol');
-              const nextStart=nextOl&&Number.isFinite(Number.parseInt($(nextOl).attr('start'),10))?Number.parseInt($(nextOl).attr('start'),10):null;
-              const embeddedChoices=hasExplicit&&lis.length>=3&&nextStart===start+1&&
-                lis.slice(1).every(li=>!$(li).find('ul').length)&&!$(lis[0]).find('ul').length;
-              const itemsToProcess=embeddedChoices?lis.slice(0,1):lis;
-              for(let i=0;i<itemsToProcess.length;i++){
-                const li=itemsToProcess[i];
-                const num=Number.parseInt($(li).attr('value')||String(start+i),10);
-                if(!Number.isInteger(num)||num<1||num>120)continue;
-                const nested=$(li).find('ul').toArray();
-                const nestedOptions=nested.map(u=>optionText($,u)).find(a=>a.length>=2)||[];
-                let q=getText($,li);
-                const under=$(li).find('u').toArray().map(u=>clean($(u).text())).filter(Boolean);
-                const hasError=(section==='Spotting Errors'||(under.length>=3&&under.some(x=>/no error/i.test(x))||under.length>=3&&/\([abcd]\)/i.test(q)));
-                let kind='';
-                let options=nestedOptions;
-                if(embeddedChoices&&i===0)options=lis.slice(1).map(option=>clean($(option).text())).filter(Boolean);
-                if(hasError){
-                  kind='error';
-                  const parts=under.filter(x=>!/^\(?[abcd]\)?$/i.test(x));
-                  const sentenceParts=parts.filter(x=>!/^\s*no error\.?\s*$/i.test(x));
-                  if(sentenceParts.length>=2){
-                    q=sentenceParts.slice(0,3).join(' | ');
-                    options=[...sentenceParts.slice(0,3),'No error'];
-                  }
-                }
-                const isSeq=/\bS[1-6]\s*:/i.test(q)||/\bproper sequence should be\b|\bcorrect sequence should be\b/i.test(q);
-                if(isSeq&&!kind){
-                  kind='sequence';
-                  const add=[];
-                  for(let k=ix+1;k<top.length&&top[k].tagName?.toLowerCase()!=='ol';k++){
-                    if(top[k].tagName?.toLowerCase()!=='p')continue;
-                    const t=clean($(top[k]).text());
-                    if(sequenceMarker.test(t)||/^(?:the )?(?:proper|correct) sequence should be/i.test(t))add.push(t);
-                  }
-                  if(add.length)q=clean(q+' '+add.join(' '));
-                }
-                if(!options.length && kind==='sequence'){
-                  const siblings=[];
-                  for(let k=ix+1;k<top.length&&top[k].tagName?.toLowerCase()!=='ol';k++)siblings.push(top[k]);
-                  const promptIndex=siblings.findIndex(node=>node.tagName?.toLowerCase()==='p'&&/^(?:the )?(?:proper|correct) sequence should be/i.test(clean($(node).text())));
-                  if(promptIndex>=0){
-                    const choices=siblings.slice(promptIndex+1);
-                    const choiceList=choices.find(node=>node.tagName?.toLowerCase()==='ul');
-                    if(choiceList) options=optionText($,choiceList).map(x=>x.replace(/\\s+/g,'').toUpperCase());
-                    else options=choices.filter(node=>node.tagName?.toLowerCase()==='p').map(node=>clean($(node).text()).replace(/[^PQRS]/gi,'').toUpperCase()).filter(x=>/^[PQRS]{4}$/.test(x));
-                  }
-                }
-                if(!options.length && !hasError){
-                  // Choices are often sibling lists immediately after a question list.
-                  const following=top.slice(ix+1);
-                  const stop=following.findIndex(x=>x.tagName?.toLowerCase()==='ol');
-                  const beforeNext=stop<0?following:following.slice(0,stop);
-                  const ul=beforeNext.find(x=>x.tagName?.toLowerCase()==='ul');
-                  if(ul) options=optionText($,ul);
-                }
-                if(!q && passage && /\(\s*\d{1,3}\s*\)/.test(passage)){
-                  kind='cloze';
-                  q='Choose the correct word for blank ('+num+').';
-                }
-                if(!q && !options.length)continue;
-                const ans=['A','B','C','D'].indexOf(p.key[num-1]);
-                if(ans<0)throw new Error(p.id+': invalid key letter at Q'+num+': '+p.key[num-1]);
-                if(!options.length)throw new Error(p.id+': missing options at Q'+num+'; raw='+q.slice(0,160));
-                if(options.length<2||ans>=options.length)throw new Error(p.id+': invalid options/key at Q'+num+' options='+options.length+' answer='+p.key[num-1]);
-                let sec=classify(q,options,section,passage,kind);
-                if(p.year===2009&&p.session==='I'&&num<=23)sec='Synonyms';
-                if(p.year===2009&&p.session==='II'&&num<=20)sec='Synonyms';
-                const item={y:p.year,s:p.session,n:num,sec,q,o:options,ans};
-                if(passage && (sec==='Reading Comprehension'||kind==='cloze'))item.passage=passage;
-                records.push(item);
-              }
-              if(itemsToProcess.length)implicit=Math.max(implicit,start+itemsToProcess.length);
-            }
-            records.sort((a,b)=>a.n-b.n);
-            const ids=new Set(),dups=[];
-            for(const q of records){if(ids.has(q.n))dups.push(q.n);ids.add(q.n);}
-            const missing=Array.from({length:120},(_,i)=>i+1).filter(n=>!ids.has(n));
-            if(dups.length||missing.length||records.length!==120){
-              if(dups.length)console.log('DUPLICATE_RECORDS '+p.id+' '+JSON.stringify(records.filter(q=>dups.includes(q.n)).map(q=>({n:q.n,sec:q.sec,q:q.q.slice(0,220),o:q.o}))));
-              throw new Error(p.id+': parsed '+records.length+'/120; duplicates '+dups.join(',')+'; missing '+missing.slice(0,50).join(','));
-            }
-            const sections={};for(const q of records)sections[q.sec]=(sections[q.sec]||0)+1;
-            console.log(p.id+': '+records.length+' questions; '+JSON.stringify(sections));
-            return records;
-          }
-
-          const results=[];
-          for(const p of papers)results.push([p,await parsePaper(p)]);
-          for(const [p,data] of results){
-            const varName='PYQ_CDS_'+p.year+'_'+p.session;
-            const path='data/pyq/'+p.id+'.js';
-            if(fs.existsSync(path))throw new Error('Refusing to overwrite existing file '+path);
-            fs.writeFileSync(path,'var '+varName+' = '+JSON.stringify(data,null,2)+';\n');
-          }
-          const manifestPath='data/pyq/manifest.js';
-          let manifest=fs.readFileSync(manifestPath,'utf8');
-          const marker='  // Only CDS/AFCAT papers whose source files are present in this repository.\n';
-          if(!manifest.includes(marker))throw new Error('Standard CDS manifest marker missing');
-          const names=papers.map(p=>'  "'+p.id+'",').join('\n')+'\n';
-          manifest=manifest.replace(marker,marker+names);
-          fs.writeFileSync(manifestPath,manifest);
           NODE
-      - name: Run PYQ bank contract tests
-        run: node scripts/test-pyq-bank.mjs
-      - name: Commit standard files and remove temporary importer
-        run: |
-          rm .github/workflows/import-early-cds.yml
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add data/pyq/cds-2009-I.js data/pyq/cds-2009-II.js data/pyq/cds-2010-I.js data/pyq/cds-2011-I.js data/pyq/cds-2011-II.js data/pyq/cds-2012-II.js data/pyq/manifest.js .github/workflows/import-early-cds.yml
-          git commit -m 'Add six early CDS papers to standard PYQ bank'
-          git push origin HEAD:main
