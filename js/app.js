@@ -4545,8 +4545,8 @@ function renderServiceRankProgress(){
   if(crest)crest.classList.toggle('is-preview',!progress.current);
   bar.style.width=progress.progress+'%';bar.setAttribute('aria-valuenow',String(progress.progress));
   if(progress.next){
-    hint.textContent=progress.points.toLocaleString('en-IN')+' / '+progress.next.xp.toLocaleString('en-IN')+' total XP · '+progress.remainingXP.toLocaleString('en-IN')+' XP to '+progress.next.name;
-    if(paceHint)paceHint.textContent=progress.earnedToNext.toLocaleString('en-IN')+' / '+progress.requiredToNext.toLocaleString('en-IN')+' XP in the '+(progress.current?progress.current.name:'starting')+' → '+progress.next.name+' band · no daily XP cap.';
+    hint.textContent=progress.earnedToNext.toLocaleString('en-IN')+' / '+progress.requiredToNext.toLocaleString('en-IN')+' XP in the '+(progress.current?progress.current.name:'starting')+' → '+progress.next.name+' band';
+    if(paceHint)paceHint.textContent=progress.points.toLocaleString('en-IN')+' / '+progress.next.xp.toLocaleString('en-IN')+' total XP · '+progress.remainingXP.toLocaleString('en-IN')+' XP to '+progress.next.name+' · no daily XP cap.';
 
   }else{
     hint.textContent='Top VAANI milestone reached · XP keeps accumulating with no daily cap.';
