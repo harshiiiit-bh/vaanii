@@ -1,0 +1,95 @@
+/* VAANI site-wide contrast repair
+   Loaded last so each view inherits the same readable theme tokens.
+   Keep the visual hierarchy; remove only accidental low-contrast treatment. */
+
+:root{
+  --muted:#4d5b69;
+  --muted2:#657483;
+  --line:rgba(22,33,46,.18);
+  --glass-bg:rgba(255,255,255,.88);
+  --glass-border:rgba(22,33,46,.16);
+  color-scheme:light;
+}
+[data-theme="dark"]{
+  --muted:#b8c3ce;
+  --muted2:#9aa8b5;
+  --line:rgba(201,162,75,.28);
+  --glass-bg:rgba(18,24,34,.90);
+  --glass-border:rgba(201,162,75,.25);
+  color-scheme:dark;
+}
+
+/* Zen is calm, not low-contrast. Sepia stays warm while retaining readable ink. */
+body.mode-zen{
+  --muted:#4d5b69;
+  --muted2:#657483;
+  --line:rgba(60,60,55,.18);
+}
+[data-theme="dark"] body.mode-zen{
+  --muted:#bac5cf;
+  --muted2:#9eacb8;
+  --line:rgba(220,228,236,.17);
+}
+body.mode-sepia{
+  --muted:#55472f;
+  --muted2:#6d5c3b;
+  --line:rgba(58,47,29,.22);
+}
+
+/* Shared secondary copy: preserve its hierarchy, but keep it readable. */
+.view :is(.muted,.subtle,.helper-text,.empty-state,.empty-note,.section-desc,.card-desc,.card-subtitle,.panel-subtitle,.field-hint,.form-hint,.caption,.meta-copy,.result-note){
+  opacity:1;
+  color:var(--muted);
+}
+.view :is(p,small,label,li)::selection{background:rgba(201,162,75,.32);color:var(--text)}
+.view :is(input,textarea,select)::placeholder{opacity:1;color:var(--muted2)}
+
+/* Surfaces should use the active theme instead of a washed-out white fallback. */
+.view :is(.bc-entry,.bc-global-link,.bc-detail,.bc-row,.bc-section,.gt-topic-group,.gt-topic-card,.gt-browser-intro,.gt-progress-card,.vp-overview-card,.vp-profile-hero){
+  opacity:1;
+  filter:none;
+}
+.view :is(.bc-entry,.bc-global-link){
+  color:var(--text);
+  background:linear-gradient(120deg,color-mix(in srgb,var(--gold) 9%,var(--panel)),var(--panel))!important;
+  border-color:var(--line);
+}
+.view :is(.bc-entry,.bc-global-link) :is(strong,b){color:var(--text)!important;opacity:1}
+.view :is(.bc-entry,.bc-global-link) :is(small,p){color:var(--muted)!important;opacity:1}
+
+/* Grammar uses a dedicated navy palette; strengthen its supporting copy and
+   card edges without flattening its teal/gold emphasis. */
+#view-grammar .gt-browser-intro p,
+#view-grammar .gt-topic-desc,
+#view-grammar .gt-tier-subtitle,
+#view-grammar .gt-progress-sub,
+#view-grammar .gt-power-sub,
+#view-grammar .gt-stat-line,
+#view-grammar .gt-donut-legend,
+#view-grammar .gt-fruit-pct{
+  color:#c2cdd5;
+  opacity:1;
+}
+#view-grammar .gt-topic-group,
+#view-grammar .gt-topic-card,
+#view-grammar .gt-browser-intro{
+  border-color:rgba(174,198,211,.30);
+}
+#view-grammar .gt-topic-card{background:rgba(11,21,31,.96)}
+#view-grammar .gt-topic-card:hover{background:#142634}
+#view-grammar .gt-browser-filter{color:#d5dee4}
+#view-grammar .gt-browser-filter[aria-pressed="true"]{color:#a8fff2}
+
+/* Do not lower whole disabled controls to the point that their labels vanish. */
+.view :is(button,a,[role="button"]):disabled,
+.view :is(button,a,[role="button"])[aria-disabled="true"]{
+  opacity:.88;
+}
+.view :is(button,a,[role="button"]):focus-visible,
+.view :is(input,textarea,select):focus-visible{
+  outline:2px solid var(--gold);
+  outline-offset:2px;
+}
+@media(prefers-reduced-motion:reduce){
+  .view :is(.bc-entry,.bc-global-link,.gt-topic-card){transition:none!important}
+}
