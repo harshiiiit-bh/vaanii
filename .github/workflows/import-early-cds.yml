@@ -1,4 +1,4 @@
-name: Temporary CDS final passage numbering inspection
+name: Temporary CDS statement question inspection
 
 on:
   push:
@@ -19,15 +19,9 @@ jobs:
       - run: |
           node --input-type=module <<'NODE'
           import * as cheerio from 'cheerio';
-          const url='https://examvictor.com/cds-2011-english-question-paper-2/';
-          const r=await fetch(url,{headers:{'user-agent':'Mozilla/5.0'}});
-          const $=cheerio.load(await r.text()),e=$('.entry-content').first(),top=e.children().toArray();
-          for(let i=0;i<top.length;i++){
-            const node=top[i];
-            if(node.tagName!=='ol')continue;
-            const n=Number.parseInt(node.attribs.start||'1',10);
-            if(n<90||n>120)continue;
-            const li=$(node).children('li').toArray();
-            console.log('OL',n,'len',li.length,'items',JSON.stringify(li.map(x=>$(x).text().trim().replace(/\s+/g,' ').slice(0,220))));
+          const r=await fetch('https://examvictor.com/cds-2011-english-question-paper-2/',{headers:{'user-agent':'Mozilla/5.0'}});
+          const $=cheerio.load(await r.text()),e=$('.entry-content').first();
+          for(const el of e.find('ol').toArray().filter(x=>!$(x).parents('ol').length&&x.attribs.start==='102')){
+            console.log('OL102', $.html(el));
           }
           NODE
