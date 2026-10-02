@@ -605,7 +605,7 @@ try{
   if(!eliteCharacter.includes("window.addEventListener('hashchange',()=>queueRouteBrief(180))"))throw new Error('Officer VAANI direct-route briefing hook is missing.');
   if(!eliteCharacter.includes("getDockPreferences")||!eliteCharacter.includes("function setDockPosition")||!eliteCharacter.includes("function setDockScale"))throw new Error('Officer VAANI move/resize preference controls are missing.');
   if(!eliteCharacter.includes('id="veDockScaleExact"')||!eliteCharacter.includes('step="1"'))throw new Error('Officer VAANI exact one-percent size control is missing.');
-  if(!eliteCharacter.includes('id="veDockX"')||!eliteCharacter.includes('id="veDockY"')||!eliteCharacter.includes('function applyDockPositionInputs'))throw new Error('Officer VAANI exact pixel-position controls are missing.');
+  if(!eliteCharacter.includes('id="veDockX"')||!eliteCharacter.includes('id="veDockY"')||!eliteCharacter.includes('function applyDockPositionInputs')||!eliteCharacter.includes('id="veDockApply"'))throw new Error('Officer VAANI exact pixel-position controls are missing.');
   if(!eliteCharacter.includes("veRestoreOfficer")||!eliteCharacter.includes("function setDockHidden"))throw new Error('Officer VAANI hide/restore controls are missing.');
   if(!eliteCharacter.includes("window.addEventListener('pointermove',moveDockDrag"))throw new Error('Officer VAANI drag interaction is missing.');
  if(characterCss.includes('calc(var(--pose-col')||eliteCharacterCss.includes('calc(var(--pose-col'))throw new Error('Officer VAANI sprite still uses fragile computed pose offsets.');

@@ -259,7 +259,7 @@ try {
   assert.equal(await page.locator('#veDockScale').inputValue(),'123','Exact size input did not synchronize with the slider');
   await page.locator('#veDockX').fill('120');
   await page.locator('#veDockY').fill('104');
-  await page.locator('#veDockY').dispatchEvent('change');
+  await page.locator('#veDockApply').click();
   const precisePosition=await page.evaluate(()=>{const r=document.getElementById('vaaniMentor').getBoundingClientRect();return {left:Math.round(r.left),top:Math.round(r.top),x:Number(document.getElementById('veDockX').value),y:Number(document.getElementById('veDockY').value)};});
   assert.deepEqual(precisePosition,{left:120,top:104,x:120,y:104},'Exact pixel positioning did not apply consistently: '+JSON.stringify(precisePosition));
   await page.locator('#veMoveToggle').click();

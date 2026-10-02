@@ -754,3 +754,6 @@ body.ve-vaani-hidden #vaaniMentor:not(.bad-result),body.ve-vaani-hidden .ve-head
 #vaaniMentor:not(.bad-result) .ve-position-controls input{box-sizing:border-box;width:100%;min-width:0;min-height:28px;padding:3px 5px;border:1px solid rgba(21,38,47,.15);border-radius:7px;background:#fff;color:#34464f;text-align:right;font:700 .56rem var(--mono,monospace)}
 #vaaniMentor:not(.bad-result) .ve-position-controls input:focus-visible,#vaaniMentor:not(.bad-result) .ve-size-control input:focus-visible{outline:2px solid rgba(201,162,75,.48);outline-offset:1px}
 @media(max-width:700px){#vaaniMentor:not(.bad-result) .ve-size-control{grid-template-columns:auto minmax(48px,1fr) 46px auto;gap:5px}#vaaniMentor:not(.bad-result) .ve-position-controls{gap:5px}}
+
+#vaaniMentor:not(.bad-result) .ve-position-controls #veDockApply{grid-column:1/-1;justify-self:end;min-height:27px;padding:4px 9px;border:1px solid rgba(21,38,47,.13);border-radius:999px;background:#172a33;color:#fff;font:800 .51rem var(--mono,monospace);cursor:pointer}
+#vaaniMentor:not(.bad-result) .ve-position-controls #veDockApply:focus-visible{outline:2px solid rgba(201,162,75,.48);outline-offset:1px}

@@ -353,15 +353,16 @@
     if(x){x.min='8';x.max=String(maxX);if(document.activeElement!==x)x.value=String(Math.round(rect.left));}
     if(y){y.min='8';y.max=String(maxY);if(document.activeElement!==y)y.value=String(Math.round(rect.top));}
   }
-  function applyDockPositionInputs(axis){
+  function applyDockPositionInputs(){
     const m=mentor();
     if(!m)return;
     const x=m.querySelector('#veDockX'),y=m.querySelector('#veDockY');
     if(!x||!y)return;
-    const current=m.getBoundingClientRect();
-    const left=axis==='x'&&Number.isFinite(x.valueAsNumber)?x.valueAsNumber:current.left;
-    const top=axis==='y'&&Number.isFinite(y.valueAsNumber)?y.valueAsNumber:current.top;
-    const pos=setDockPosition(left,top,true);
+    if(!Number.isFinite(x.valueAsNumber)||!Number.isFinite(y.valueAsNumber)){
+      setDockStatus('Enter valid pixel coordinates, then apply the position.');
+      return;
+    }
+    const pos=setDockPosition(x.valueAsNumber,y.valueAsNumber,true);
     if(pos)setDockStatus('Position saved at X '+pos.x+' px, Y '+pos.y+' px.');
   }
 
@@ -469,7 +470,8 @@
         '</div>'+
         '<div class="ve-position-controls">'+
           '<label for="veDockX">Left <span>(px)</span><input id="veDockX" type="number" min="8" step="1" inputmode="numeric" aria-label="Officer VAANI left position in pixels"></label>'+
-          '<label for="veDockY">Top <span>(px)</span><input id="veDockY" type="number" min="8" step="1" inputmode="numeric" aria-label="Officer VAANI top position in pixels"></label>'+
+          '<label for="veDockY">Top <span>(px)</span><input id="veDockY" type="number" min="8" step="1" inputmode="numeric" aria-label="Officer VAANI top position in pixels"></label>'+\
+          '<button type="button" id="veDockApply">Apply position</button>'+
         '</div>'+
         '<p id="veDockStatus" role="status" aria-live="polite">Move, resize, or enter exact pixel coordinates.</p>';
       bubble.appendChild(panel);
@@ -480,8 +482,7 @@
       panel.querySelector('#veMoveToggle')?.addEventListener('click',()=>setDockMoveMode(!dockMoveMode));
       panel.querySelector('#veDockScale')?.addEventListener('input',event=>setDockScale(event.target.value,true));
       panel.querySelector('#veDockScaleExact')?.addEventListener('change',event=>setDockScale(event.target.value,true));
-      panel.querySelector('#veDockX')?.addEventListener('change',()=>applyDockPositionInputs('x'));
-      panel.querySelector('#veDockY')?.addEventListener('change',()=>applyDockPositionInputs('y'));
+      panel.querySelector('#veDockApply')?.addEventListener('click',applyDockPositionInputs);
       panel.querySelector('#veDockReset')?.addEventListener('click',()=>{
         clearDockPosition();
         const current=m.getBoundingClientRect();
