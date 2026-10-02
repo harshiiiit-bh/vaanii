@@ -522,94 +522,112 @@
   background-image:url("https://gcdn.picsart.com/editing-temp/2ca4be62-1e4a-4425-8b14-018c55a4d4b4.png")!important;
 }
 
-/* PROFESSIONAL OFFICER VAANI STATIONS */
+/* COMPACT OFFICER VAANI CONTEXT RAIL */
+.ve-station-host{
+  position:relative;
+}
 .ve-officer-station{
-  position:relative;
-  display:grid;
-  grid-template-columns:92px minmax(0,1fr) auto;
-  align-items:center;
-  gap:14px;
-  margin:0 0 16px;
-  padding:10px 12px;
-  border:1px solid rgba(201,162,75,.24);
-  border-radius:20px;
-  background:
-    radial-gradient(circle at 12% 20%,rgba(201,162,75,.09),transparent 34%),
-    linear-gradient(135deg,rgba(252,251,247,.98),rgba(244,243,237,.94));
-  box-shadow:0 12px 30px rgba(13,26,35,.08),inset 0 1px 0 rgba(255,255,255,.88);
-  overflow:hidden;
-}
-.ve-officer-station::before{
-  content:"";
   position:absolute;
-  left:0;top:0;bottom:0;
-  width:3px;
-  background:linear-gradient(#bd8e3d,#e8cc8d,#bd8e3d);
+  right:0;
+  top:50%;
+  transform:translateY(-50%);
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  min-height:34px;
+  padding:4px 8px 4px 5px;
+  border:1px solid rgba(201,162,75,.22);
+  border-radius:999px;
+  background:rgba(252,251,247,.86);
+  color:#53636c;
+  box-shadow:0 6px 18px rgba(13,26,35,.07),inset 0 1px 0 rgba(255,255,255,.8);
+  backdrop-filter:blur(10px);
+  cursor:pointer;
+  z-index:6;
+  transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;
 }
-.ve-station-art{
+.ve-officer-station:hover{
+  transform:translateY(-50%) translateY(-1px);
+  border-color:rgba(201,162,75,.46);
+  box-shadow:0 9px 22px rgba(13,26,35,.11);
+}
+.ve-station-avatar{
   position:relative;
-  width:92px;height:94px;
-  border-radius:16px;
+  width:25px;height:25px;
+  flex:0 0 25px;
+  border-radius:50%;
   overflow:hidden;
-  background:linear-gradient(145deg,#eef1eb,#dfe5df);
-  border:1px solid rgba(201,162,75,.24);
+  background:#e9eee8;
+  border:1px solid rgba(201,162,75,.28);
 }
-.ve-station-art img{
+.ve-station-avatar img{
   position:absolute;
   left:50%;
   bottom:0;
-  width:88px;
-  height:94px;
+  width:29px;
+  height:31px;
   object-fit:contain;
   object-position:center bottom;
   transform:translateX(-50%);
-  filter:drop-shadow(0 7px 8px rgba(8,18,24,.16));
 }
-.ve-station-copy{min-width:0}
-.ve-station-kicker{
-  font:800 .55rem var(--mono,monospace);
-  letter-spacing:.12em;
-  color:#98702b;
+.ve-station-avatar i{
+  position:absolute;
+  right:1px;top:1px;
+  width:5px;height:5px;
+  border-radius:50%;
+  background:#5b8b69;
+  box-shadow:0 0 0 2px rgba(91,139,105,.12);
+}
+.ve-station-label{
+  display:flex;
+  align-items:baseline;
+  gap:5px;
+  white-space:nowrap;
+}
+.ve-station-label b{
+  font:800 .48rem var(--mono,monospace);
+  letter-spacing:.09em;
+  color:#31454e;
+}
+.ve-station-label em{
+  font:700 .44rem var(--mono,monospace);
+  letter-spacing:.08em;
+  font-style:normal;
+  color:#a37a31;
   text-transform:uppercase;
 }
-.ve-station-copy p{
-  margin:4px 0 7px;
-  color:#52616a;
-  font-size:.73rem;
-  line-height:1.45;
+.ve-station-hint{
+  display:none;
+  color:#7b888e;
+  font:600 .44rem var(--mono,monospace);
+  letter-spacing:.03em;
 }
-.ve-station-btn{
-  min-height:29px;
-  padding:5px 10px;
-  border-radius:999px;
-  border:1px solid rgba(21,38,47,.12);
-  background:#172a33;
-  color:#fff;
-  font:800 .56rem var(--mono,monospace);
-  cursor:pointer;
+.ve-station-arrow{
+  color:#a67d33;
+  font:800 .72rem var(--mono,monospace);
+  line-height:1;
 }
-.ve-station-btn:hover{transform:translateY(-1px)}
 .ve-header-mini{
   background-image:url("https://cdn-ai-hs.picsart.com/ai-hot-storage/26983f1e-c8a3-4711-8463-852b639599c7.png")!important;
   background-size:contain!important;
   background-position:center bottom!important;
   background-repeat:no-repeat!important;
 }
-@media(max-width:640px){
+@media(max-width:700px){
   .ve-officer-station{
-    grid-template-columns:72px minmax(0,1fr);
-    gap:10px;
-    padding:9px 10px;
-    border-radius:17px;
+    right:7px;
+    min-height:31px;
+    padding:3px 7px 3px 4px;
+    gap:5px;
   }
-  .ve-station-art{width:72px;height:78px;border-radius:13px}
-  .ve-station-art img{width:72px;height:78px}
-  .ve-station-kicker{font-size:.5rem}
-  .ve-station-copy p{font-size:.69rem;margin:3px 0 6px}
-  .ve-station-btn{grid-column:2;justify-self:start;min-height:27px;font-size:.53rem}
+  .ve-station-avatar{width:23px;height:23px;flex-basis:23px}
+  .ve-station-avatar img{width:27px;height:29px}
+  .ve-station-label b{font-size:.43rem}
+  .ve-station-label em{font-size:.39rem}
+  .ve-station-arrow{font-size:.64rem}
 }
-@media(max-width:390px){
-  .ve-officer-station{grid-template-columns:60px minmax(0,1fr)}
-  .ve-station-art{width:60px;height:70px}
-  .ve-station-art img{width:62px;height:70px}
+@media(max-width:480px){
+  .ve-station-hint{display:none}
+  .ve-station-label em{display:none}
+  .ve-officer-station{right:5px}
 }
