@@ -576,7 +576,7 @@
       mini.addEventListener('click',()=>{
         if(assessmentActive())return;
         if(getDockPreferences().hidden)setDockHidden(false,true);
-        if(mentor()?.classList.contains('speaking'))close();
+        if(mentor()?.classList.contains('open'))close();
         else brief();
       });
     }
