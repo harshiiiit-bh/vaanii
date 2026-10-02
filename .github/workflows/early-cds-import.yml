@@ -1,0 +1,233 @@
+name: One-time early CDS import
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/early-cds-import.yml"
+permissions:
+  contents: write
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build standard paper files
+        run: |
+          python -m pip install --disable-pip-version-check requests beautifulsoup4
+          python - <<'PY'
+          from bs4 import BeautifulSoup
+          from copy import copy
+          from pathlib import Path
+          import html, json, re, subprocess, sys, time
+          import requests
+
+          PAPERS = [
+            ("cds-2009-I", 2009, "I", "https://examvictor.com/cds-2009-english-question-paper-1/",
+             "DDADCDDACBBDDABCACAADBABDABABCCACCBDDABACCBCAAAABBDACBADCDBBBCCADDBBAACCBCBBCDBCCCDCDCDADCACBDDCDBDBDCBDBDBCBBBBDACCBDBA"),
+            ("cds-2009-II", 2009, "II", "https://examvictor.com/cds-2009-english-question-paper-2/",
+             "DBCBCCABCABDDBBDDDABACBCDDCDDBBDDCDBBCDBAABCBBABCBBDCCDCCBCBBAACCDBDBACBCBDBBDDCBBBCBBCBDDADBCACCCCDCDDDBBCDADABCABDDDCA"),
+            ("cds-2010-I", 2010, "I", "https://examvictor.com/cds-2010-english-question-paper-1/",
+             "ABDDCBDADCDDDADACDCDDDBDABDCBCACBCCBCBCCAAACCABBCCBACBCCCACAABBBDCCBBBDCCDBCCCBDCBDBBDDDCDCCACDDDCADDACACCCABACABDBDBCAA"),
+            ("cds-2011-I", 2011, "I", "https://examvictor.com/cds-2011-english-question-paper-1/",
+             "DBDCCDCBCBDBACBCDBAACACDCCBABACCABADDDDCBACBBBCDCCCDCBBABBBCACABCACABCABBACBABBACABABDCBADCACBDBACBBBBDBADBDBDDCDADACBDC"),
+            ("cds-2011-II", 2011, "II", "https://examvictor.com/cds-2011-english-question-paper-2/",
+             "BDACADBBADCDCDCADBCCBACBBADDADCBDADBCCADBDADBCCADBCDCADACDBCDCABCCCBCBBBBABBCBDCCBADCAAAADDABBCADACACDACABDDBDCCAAADBBCB"),
+            ("cds-2012-II", 2012, "II", "https://examvictor.com/cds-2012-english-question-paper-2/",
+             "BBDCBABCADCCBCCBDACCACACDBBCADABCBCAAACDAABDCBACBABBADCABDCBCCBBBBBCDDACACBCAACAACBABBABBCADCABBADCACABDAABDBADBCBAABACC"),
+          ]
+          SECTIONS = {
+            "spotting errors": "Spotting Errors",
+            "sentence improvement": "Sentence Improvement",
+            "ordering of sentences": "Ordering of Sentences",
+            "ordering of words in a sentence": "Ordering of Words in a Sentence",
+            "selecting words": "Selecting Words",
+            "fill in the blanks": "Fill in the Blanks",
+            "fill in the blank": "Fill in the Blanks",
+            "synonyms": "Synonyms",
+            "antonyms": "Antonyms",
+            "comprehension": "Reading Comprehension",
+            "reading comprehension": "Reading Comprehension",
+            "idioms and phrases": "Idioms and Phrases",
+          }
+          QRE = re.compile(r"^\s*(\d{1,3})\s*[.)]\s*(.*?)\s*$")
+          OPTRE = re.compile(r"^\s*(?:\(([a-d])\)|([a-d])\s*[.)])\s*(.*?)\s*$", re.I)
+          INSTRUCTION = re.compile(r"^(directions?\b|in this section\b|each of the following\b|you are required\b|you are to indicate\b|the following items consist\b|choose the correct response\b)", re.I)
+
+          def clean(s):
+            return re.sub(r"\s+", " ", html.unescape(s or "")).strip()
+
+          def own_text(node):
+            node = copy(node)
+            for nested in node.find_all(["ul", "ol"]):
+              nested.decompose()
+            for br in node.find_all("br"):
+              br.replace_with("\n")
+            # BeautifulSoup's text join retains question content across inline tags.
+            return node.get_text(" ", strip=True).replace("\n ", "\n").replace(" \n", "\n")
+
+          def section_for(text, current):
+            low = text.lower()
+            # Directions are more reliable than some legacy page headings.
+            if "most similar in meaning" in low or "similar in meaning to" in low:
+              return "Synonyms"
+            if "furthest in meaning" in low or "opposite in meaning" in low or "most opposite" in low:
+              return "Antonyms"
+            if "error in any" in low or "spotting errors" in low:
+              return "Spotting Errors"
+            if "sentence improvement" in low or "improve the sentence" in low:
+              return "Sentence Improvement"
+            if "words in a sentence" in low and ("ordering" in low or "re-arrange" in low or "rearrange" in low):
+              return "Ordering of Words in a Sentence"
+            if "ordering of sentences" in low or ("proper sequence" in low and ("s1" in low or "sentences" in low)):
+              return "Ordering of Sentences"
+            if "fill in the blanks" in low or "fill in the blank" in low:
+              return "Fill in the Blanks"
+            if "selecting words" in low or "choose the most appropriate word" in low:
+              return "Selecting Words"
+            if "comprehension" in low or re.search(r"^passage(?:\s+[ivx0-9]+)?$", low.strip()):
+              return "Reading Comprehension"
+            for key, value in SECTIONS.items():
+              if low.strip() == key:
+                return value
+            return current
+
+          def parse_page(url, year, session, key):
+            if len(key) != 120 or not set(key) <= set("ABCD"):
+              raise RuntimeError(f"bad 120-letter key for {year}-{session}: {len(key)}")
+            response = requests.get(url, timeout=45, headers={"User-Agent":"Mozilla/5.0 (compatible; VAANI-paper-import/1.0)"})
+            response.raise_for_status()
+            soup = BeautifulSoup(response.text, "html.parser")
+            root = soup.select_one(".entry-content") or soup.select_one("article") or soup.body
+            if root is None:
+              raise RuntimeError(f"no article body at {url}")
+
+            items, current = [], None
+            next_number = 1
+            section = "General English"
+            passage_lines, in_passage = [], False
+            errors = []
+
+            def finish():
+              nonlocal current, next_number
+              if current is None:
+                return
+              current["q"] = clean(current["q"])
+              current["o"] = [clean(x) for x in current["o"] if clean(x)]
+              if not current["q"]:
+                errors.append(f"Q{current['n']} has empty stem")
+              if len(current["o"]) != 4:
+                errors.append(f"Q{current['n']} has {len(current['o'])} options")
+              items.append(current)
+              next_number = current["n"] + 1
+              current = None
+
+            nodes = root.find_all(["h1", "h2", "h3", "h4", "p", "li"])
+            for node in nodes:
+              # Do not duplicate paragraphs nested inside another paragraph/list item.
+              if node.name in ("p", "h1", "h2", "h3", "h4") and node.find_parent(["p", "li"]):
+                continue
+              if node.name == "li":
+                # Keep nested option rows as separate nodes, not part of a parent question.
+                txt = own_text(node)
+              else:
+                txt = own_text(node)
+              for raw_line in re.split(r"\n+", txt):
+                line = clean(raw_line)
+                if not line:
+                  continue
+                if line.upper().startswith("PASSAGE") and len(line) < 30:
+                  if current and len(current["o"]) == 4:
+                    finish()
+                  section = "Reading Comprehension"
+                  in_passage = True
+                  passage_lines = []
+                  continue
+                new_section = section_for(line, section)
+                if new_section != section:
+                  if current and len(current["o"]) == 4:
+                    finish()
+                  section = new_section
+
+                qm = QRE.match(line)
+                if qm:
+                  n, stem = int(qm.group(1)), clean(qm.group(2))
+                  if INSTRUCTION.match(stem):
+                    continue
+                  if n == next_number:
+                    finish()
+                    current = {"y":year, "s":session, "n":n, "sec":section, "q":stem, "o":[], "ans":ord(key[n-1])-ord("A")}
+                    if section == "Reading Comprehension" and in_passage and passage_lines:
+                      current["passage"] = clean(" ".join(passage_lines))
+                    continue
+                  # Numbered instructions and list numerals are not new question records.
+                  if current and n == current["n"] and not current["o"] and INSTRUCTION.match(current["q"]):
+                    current = {"y":year, "s":session, "n":n, "sec":section, "q":stem, "o":[], "ans":ord(key[n-1])-ord("A")}
+                    continue
+
+                om = OPTRE.match(line)
+                if om and current is not None and len(current["o"]) < 4:
+                  current["o"].append(clean(om.group(3)))
+                  continue
+                if node.name == "li" and current is not None and len(current["o"]) < 4:
+                  current["o"].append(line)
+                  continue
+                if current is not None and len(current["o"]) < 4:
+                  # A wrapped stem may continue in another paragraph before the choices.
+                  if not line.lower().startswith(("the correct sequence should", "the proper sequence should", "the proper sequence is")):
+                    current["q"] += " " + line
+                elif in_passage and section == "Reading Comprehension":
+                  if not line.lower().startswith(("directions", "read a passage", "in this section")):
+                    passage_lines.append(line)
+
+            finish()
+            # Keep the first object for each exact number; fail rather than silently shifting answers.
+            nums = [q["n"] for q in items]
+            if nums != list(range(1, 121)):
+              raise RuntimeError(f"{year}-{session}: found {len(items)} question blocks; numbers={nums[:12]}...{nums[-12:] if nums else []}")
+            if errors:
+              raise RuntimeError(f"{year}-{session}: " + "; ".join(errors[:20]))
+            if any(not q["o"] or len(q["o"]) != 4 for q in items):
+              raise RuntimeError(f"{year}-{session}: option validation failed")
+            return items
+
+          root = Path("data/pyq")
+          generated = []
+          for pid, year, session, url, key in PAPERS:
+            path = root / (pid + ".js")
+            if path.exists():
+              raise RuntimeError(f"refusing to overwrite existing {path}")
+            data = parse_page(url, year, session, key)
+            name = f"PYQ_CDS_{year}_{session.replace('-', '_')}"
+            # Exact existing paper convention: one global array variable per paper.
+            text = "var " + name + " = " + json.dumps(data, ensure_ascii=False, separators=(",", ":")) + ";\n"
+            path.write_text(text, encoding="utf-8")
+            generated.append(path.as_posix())
+            print(f"VALIDATED {pid}: {len(data)} questions, 4 options each, sections={sorted(set(q['sec'] for q in data))}")
+
+          manifest = root / "manifest.js"
+          source = manifest.read_text(encoding="utf-8")
+          marker = '  "cds-2013-I",'
+          additions = '  "cds-2009-I","cds-2009-II","cds-2010-I","cds-2011-I","cds-2011-II","cds-2012-II",\n'
+          if marker not in source:
+            raise RuntimeError("manifest insertion marker not found")
+          if "cds-2009-I" not in source:
+            source = source.replace(marker, additions + marker, 1)
+            manifest.write_text(source, encoding="utf-8")
+
+          # This importer is intentionally one-time; the shipped paper architecture stays unchanged.
+          Path(".github/workflows/early-cds-import.yml").unlink(missing_ok=True)
+          subprocess.run(["git","config","user.name","github-actions[bot]"],check=True)
+          subprocess.run(["git","config","user.email","41898282+github-actions[bot]@users.noreply.github.com"],check=True)
+          subprocess.run(["git","add","-A"],check=True)
+          subprocess.run(["git","diff","--cached","--check"],check=True)
+          for path in generated:
+            subprocess.run(["node","--check",path],check=True)
+          subprocess.run(["git","commit","-m","Add six early CDS papers using standard PYQ files"],check=True)
+          subprocess.run(["git","push","origin","HEAD:main"],check=True)
+          PY
