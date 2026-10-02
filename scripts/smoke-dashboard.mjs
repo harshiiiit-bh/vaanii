@@ -706,6 +706,7 @@ try {
     if (id === 'sequence-of-tenses') {
       await page.evaluate(() => { State.quizScores.tenses=79; saveState(); });
       await page.evaluate(() => jumpFlow('practice',document.querySelector('.flow-step[data-step="practice"]')));
+      assert.equal(await page.locator('#vaaniMentor').isVisible(),false,'Officer VAANI dock must stay out of live grammar quizzes');
       for (let question=0;question<assessmentCount;question++) {
         await page.locator('#optsWrap .quiz-option').first().click();
         if (question<assessmentCount-1) {
