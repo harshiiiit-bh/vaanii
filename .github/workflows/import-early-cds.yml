@@ -1,4 +1,4 @@
-name: Temporary early CDS parser inspection
+name: Temporary early CDS bank integration
 
 on:
   push:
@@ -7,38 +7,176 @@ on:
       - '.github/workflows/import-early-cds.yml'
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  inspect:
+  integrate:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: 24
       - run: npm install --no-save --no-package-lock cheerio@1.0.0-rc.12
-      - name: Inspect source article structure
+      - name: Build and validate six standard CDS banks
         run: |
           node --input-type=module <<'NODE'
+          import * as fs from 'node:fs';
+          import { execFileSync } from 'node:child_process';
           import * as cheerio from 'cheerio';
-          const urls = [
-            'https://examvictor.com/cds-2009-english-question-paper-1/',
-            'https://examvictor.com/cds-2009-english-question-paper-2/',
-            'https://examvictor.com/cds-2010-english-question-paper-1/',
-            'https://examvictor.com/cds-2011-english-question-paper-1/',
-            'https://examvictor.com/cds-2011-english-question-paper-2/',
-            'https://examvictor.com/cds-2012-english-question-paper-2/'
+
+          const history = '74449fce4a871ce914c216bed90e10ac2d50c410';
+          const legacy = execFileSync('git', ['show', history + ':js/vaani-cds-legacy.js'], {encoding:'utf8'});
+          const papers = [...legacy.matchAll(/\{id:'(cds-[^']+)',year:(\d+),session:'([^']+)',title:'([^']+)',source:'([^']+)',key:\x60([^\x60]*)\x60\}/g)]
+            .map(m => ({id:m[1],year:Number(m[2]),session:m[3],source:m[5],key:m[6].trim().split(/\s+/).map(x=>x.toUpperCase())}));
+          if (papers.length !== 6) throw new Error('Expected six historical answer keys; found ' + papers.length);
+
+          const headingMap = [
+            ['SYNONYMS','Synonyms'], ['ANTONYMS','Antonyms'],
+            ['SPOTTING ERRORS','Spotting Errors'], ['ERROR SPOTTING','Spotting Errors'],
+            ['SENTENCE IMPROVEMENT','Sentence Improvement'], ['FILL IN THE BLANKS','Fill in the Blanks'],
+            ['SELECTING WORDS','Selecting Words'], ['ORDERING OF SENTENCES','Ordering of Sentences'],
+            ['ORDERING OF WORDS IN A SENTENCE','Ordering of Words in a Sentence'],
+            ['ORDERING OF WORDS','Ordering of Words in a Sentence'],
+            ['COMPREHENSION','Reading Comprehension'], ['READING COMPREHENSION','Reading Comprehension'],
+            ['RECONSTRUCTING PASSAGE','Reconstructing Passage'], ['IDIOMS AND PHRASES','Idioms and Phrases'],
+            ['IDIOMS','Idioms and Phrases'], ['SENTENCE COMPLETION','Sentence Completion'],
+            ['WORD USAGE','Word Usage'], ['SPELLING','Spellings']
           ];
-          for (const url of urls) {
-            const res = await fetch(url, {headers:{'user-agent':'Mozilla/5.0'}});
-            const html = await res.text();
-            const $ = cheerio.load(html);
-            const entry = $('.entry-content').first().length ? $('.entry-content').first() :
-              ($('.td-post-content').first().length ? $('.td-post-content').first() : $('article').first());
-            console.log('SOURCE',url,'HTTP',res.status,'bytes',html.length,'entry',entry.length);
-            console.log('HTML',String(entry.html()||'').slice(0,2200).replace(/\\s+/g,' '));
-            const nums=entry.text().match(/\\b\\d{1,3}\\s*[.)]/g)||[];
-            console.log('NUMBER_MARKERS',nums.length,'SAMPLE',nums.slice(0,8).join('|'));
+          function clean(s){return String(s||'').replace(/\u00a0/g,' ').replace(/\s+/g,' ').trim();}
+          function heading(s){
+            const u=clean(s).toUpperCase().replace(/[.:;]+$/,'').trim();
+            for(const [h,c] of headingMap) if(u===h) return c;
+            return '';
           }
+          function direction(s){
+            const t=clean(s).toLowerCase();
+            if(/similar in meaning|same in meaning/.test(t))return 'Synonyms';
+            if(/furthest in meaning|opposite in meaning|most opposite/.test(t))return 'Antonyms';
+            if(/spotting errors|error in any|no error response/.test(t))return 'Spotting Errors';
+            if(/sentence improvement|improve the underlined|improve the sentence/.test(t))return 'Sentence Improvement';
+            if(/fill in the blanks|fill the blanks/.test(t))return 'Fill in the Blanks';
+            if(/select the word|selecting words|most appropriate word/.test(t))return 'Selecting Words';
+            if(/ordering of words|re-arrange.*parts of the sentence|rearrange.*parts of the sentence/.test(t))return 'Ordering of Words in a Sentence';
+            if(/proper sequence|correct sequence|six sentences/.test(t))return 'Ordering of Sentences';
+            if(/comprehension|passages/.test(t))return 'Reading Comprehension';
+            return '';
+          }
+          function classify(q,opts,section,passage){
+            const t=(q+' '+opts.join(' ')).toLowerCase();
+            if(opts.some(x=>/^no error[.! ]*$/i.test(x)) && (q.includes('|') || /error/.test(section)))return 'Spotting Errors';
+            if(opts.some(x=>/^no improvement[.! ]*$/i.test(x)))return 'Sentence Improvement';
+            if(/proper sequence should be|correct sequence should be|s1\s*:|s6\s*:|s₁|s₆/i.test(q))return 'Ordering of Sentences';
+            if(passage && (section==='Reading Comprehension'||section==='Comprehension'))return 'Reading Comprehension';
+            if(section && section!=='English')return section;
+            if(/_{2,}|\[\s*blank\s*\]/.test(q))return 'Fill in the Blanks';
+            if(/similar in meaning/.test(t))return 'Synonyms';
+            if(/opposite in meaning|furthest in meaning/.test(t))return 'Antonyms';
+            return 'Grammar (Mixed)';
+          }
+          function getTextWithoutLists($, li){
+            const clone=$(li).clone();
+            clone.find('ul,ol').remove();
+            return clean(clone.text());
+          }
+          function directOptions($,ul){
+            return $(ul).children('li').toArray().map(li=>clean($(li).text())).filter(Boolean);
+          }
+          async function parsePaper(p){
+            if(p.key.length!==120)throw new Error(p.id+': answer key has '+p.key.length+' items');
+            const response=await fetch(p.source,{headers:{'user-agent':'Mozilla/5.0 (compatible; VAANI-PYQ-Importer/1.0)'}});
+            if(!response.ok)throw new Error(p.id+': source returned HTTP '+response.status);
+            const $=cheerio.load(await response.text());
+            const entry=$('.entry-content').first().length?$('.entry-content').first():$('.td-post-content').first();
+            if(!entry.length)throw new Error(p.id+': article body not found');
+
+            let section='English', passage='', collectingPassage=false;
+            const records=[];
+            const blocks=entry.find('p,ol').toArray().filter(el=>{
+              if(el.name==='p')return $(el).parents('li').length===0;
+              return $(el).parents('ol').length===0;
+            });
+            for(const block of blocks){
+              if(block.name==='p'){
+                const t=clean($(block).text());
+                const h=heading(t);
+                if(h){section=h;if(h!=='Reading Comprehension')collectingPassage=false;continue;}
+                const d=direction(t);
+                if(d){section=d;if(d!=='Reading Comprehension')collectingPassage=false;else if(!passage)collectingPassage=true;continue;}
+                if(/^PASSAGE\s*(?:[IVXLCDM]+|\d+)/i.test(t)){
+                  section='Reading Comprehension';passage='';collectingPassage=true;continue;
+                }
+                if(collectingPassage && t && !/^directions?\b/i.test(t))passage=clean(passage+' '+t);
+                continue;
+              }
+              const list=$(block);
+              const items=list.children('li').toArray();
+              const start=Number.parseInt(list.attr('start')||'1',10);
+              for(let i=0;i<items.length;i++){
+                const li=items[i];
+                let q=getTextWithoutLists($,li);
+                const number=q.match(/^(?:question\s*)?(\d{1,3})\s*[.)]\s*(.*)$/i);
+                const n=number?Number(number[1]):Number.parseInt($(li).attr('value')||String(start+i),10);
+                if(number)q=clean(number[2]);
+                let optionLists=$(li).find('ul').toArray();
+                let options=optionLists.map(ul=>directOptions($,ul)).find(a=>a.length>=2) || [];
+                if(options.length===0 && i===items.length-1){
+                  const next=list.next();
+                  if(next.is('ul'))options=directOptions($,next[0]);
+                }
+                if(!Number.isInteger(n)||n<1||n>120||!q||options.length<2)continue;
+                const key=p.key[n-1];
+                const ans=['A','B','C','D'].indexOf(key);
+                if(ans<0)throw new Error(p.id+': invalid answer letter '+key+' for Q'+n);
+                const sec=classify(q,options,section,passage);
+                const item={y:p.year,s:p.session,n,sec,q,o:options,ans};
+                if(sec==='Reading Comprehension' && passage)item.passage=passage;
+                records.push(item);
+              }
+              collectingPassage=false;
+            }
+            records.sort((a,b)=>a.n-b.n);
+            const byN=new Map();
+            for(const q of records){
+              if(byN.has(q.n))throw new Error(p.id+': duplicate Q'+q.n);
+              byN.set(q.n,q);
+            }
+            const missing=Array.from({length:120},(_,i)=>i+1).filter(n=>!byN.has(n));
+            const bad=records.filter(q=>q.o.length!==4);
+            if(missing.length||records.length!==120||bad.length){
+              const details=records.filter(q=>q.o.length!==4).map(q=>'Q'+q.n+' options='+q.o.length).join(', ');
+              throw new Error(p.id+': parsed '+records.length+'/120; missing '+missing.slice(0,30).join(',')+'; invalid options: '+details.slice(0,1000));
+            }
+            const sections={};for(const q of records)sections[q.sec]=(sections[q.sec]||0)+1;
+            console.log(p.id+': '+records.length+' questions; sections '+JSON.stringify(sections));
+            return records;
+          }
+
+          for(const p of papers){
+            const data=await parsePaper(p);
+            const varName='PYQ_CDS_'+p.year+'_'+p.session;
+            const path='data/pyq/'+p.id+'.js';
+            if(fs.existsSync(path))throw new Error('Refusing to overwrite existing file: '+path);
+            fs.writeFileSync(path,'var '+varName+' = '+JSON.stringify(data,null,2)+';\n');
+          }
+          const manifestPath='data/pyq/manifest.js';
+          let manifest=fs.readFileSync(manifestPath,'utf8');
+          const marker='  // Only CDS/AFCAT papers whose source files are present in this repository.\n';
+          if(!manifest.includes(marker))throw new Error('Could not find standard CDS manifest insertion point');
+          const names=papers.map(p=>'  "'+p.id+'",').join('\n')+'\n';
+          manifest=manifest.replace(marker,marker+names);
+          fs.writeFileSync(manifestPath,manifest);
           NODE
+      - name: Run PYQ bank contract tests
+        run: node scripts/test-pyq-bank.mjs
+      - name: Commit standard files and remove temporary importer
+        run: |
+          rm .github/workflows/import-early-cds.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/pyq/cds-2009-I.js data/pyq/cds-2009-II.js data/pyq/cds-2010-I.js data/pyq/cds-2011-I.js data/pyq/cds-2011-II.js data/pyq/cds-2012-II.js data/pyq/manifest.js .github/workflows/import-early-cds.yml
+          git commit -m 'Add six early CDS papers to standard PYQ bank'
+          git push origin HEAD:main
