@@ -200,6 +200,8 @@ try {
   assert.ok(await page.locator('#dashBadgeGrid .badge').count() > 0, 'Dashboard achievements did not render');
   assert.ok(await page.locator('#focusSprintWidget .vd-focus-body').count() > 0, 'Focus Sprint did not render');
   console.log('PASS dashboard: hero, briefing, roadmap, missions, word, heatmap, badges and focus sprint');
+  assert.equal(await page.locator('.vd-flag-backdrop').getAttribute('src'),'assets/indian-flag-backdrop.svg','Dashboard should render the Indian flag backdrop');
+  assert.equal(await page.locator('.vd-officer-image').getAttribute('src'),'https://cdn-ai-hs.picsart.com/ai-hot-storage/2a136339-4163-42a0-b366-0541c84cc19a.png','Dashboard should use the AI-cleaned Officer VAANI portrait');
 
   // Officer VAANI must retain image state while either renderer changes poses.
   await page.evaluate(() => window.vaaniCharacterSpeak('dashboard'));
@@ -209,6 +211,7 @@ try {
     const model = mentor.querySelector('.vc-character');
     const img = model.querySelector('.vc-character-sheet');
     const fallback = model.querySelector('.vc-character-fallback');
+    const spriteSrc=img.getAttribute('src');
     img.dispatchEvent(new Event('load'));
     window.vaaniCharacterSpeak('grammar');
     const afterBase = {
@@ -234,8 +237,9 @@ try {
     };
     img.dispatchEvent(new Event('load'));
     window.vaaniCharacterHide();
-    return {afterBase,afterElite,afterError,fallbackAsset:fallback.querySelector('img')?.getAttribute('src')||''};
+    return {afterBase,afterElite,afterError,fallbackAsset:fallback.querySelector('img')?.getAttribute('src')||'',spriteSrc};
   });
+  assert.equal(characterState.spriteSrc,'https://cdn-ai-hs.picsart.com/ai-hot-storage/acfec6d8-2627-4b42-bd67-1923ba9898f4.png','Dock should use the AI-cleaned four-by-three pose sheet');
   assert.equal(characterState.afterBase.ready,true,'Base pose change erased loaded-image state');
   assert.equal(characterState.afterBase.fallbackDisplay,'none','Loaded sprite did not hide its fallback');
   assert.equal(characterState.afterElite.ready,true,'Elite pose change erased loaded-image state');

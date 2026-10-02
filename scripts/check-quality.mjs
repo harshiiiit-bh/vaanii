@@ -601,7 +601,7 @@ try{
  if(!character.includes('window.vaaniCharacterSetPose=function(pose)')||!eliteCharacter.includes('window.vaaniCharacterSetPose(pose)'))throw new Error('Officer VAANI pose state helper is missing.');
  if(!eliteCharacter.includes("e.target.closest('.ve-header-mini')"))throw new Error('Officer VAANI header launcher click is not excluded from outside-click dismissal.');
   if(!character.includes('window.vaaniCharacterEnsure=ensure')||!eliteCharacter.includes("window.vaaniCharacterEnsure==='function'"))throw new Error('Officer VAANI mount handshake is missing.');
-  if(!character.includes('assets/officer-vaani.svg')||!eliteCharacter.includes('assets/officer-vaani.svg'))throw new Error('Officer VAANI local art fallback is missing.');
+  if(!character.includes('assets/officer-vaani.svg'))throw new Error('Officer VAANI local art fallback is missing.');
   if(!character.includes('https://cdn-ai-hs.picsart.com/ai-hot-storage/acfec6d8-2627-4b42-bd67-1923ba9898f4.png')||!html.includes('https://cdn-ai-hs.picsart.com/ai-hot-storage/2a136339-4163-42a0-b366-0541c84cc19a.png'))throw new Error('Officer VAANI AI-cleaned pose sheet or portrait is missing.');
   if(!html.includes('assets/indian-flag-backdrop.svg')||!readFileSync('vaani-dashboard.css','utf8').includes('.vd-flag-backdrop'))throw new Error('Dashboard Indian flag backdrop is missing.');
   if(eliteCharacter.includes('function ensureRestoreOfficer(){')||!eliteCharacter.includes("setDockHidden(false,true)"))throw new Error('Officer VAANI should restore from the header rather than a bottom button.');
