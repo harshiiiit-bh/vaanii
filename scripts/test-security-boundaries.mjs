@@ -17,7 +17,7 @@ assert.match(sw, /scopePath/);
 assert.match(legacyNotifications, /const safeUrl\s*=\s*value\s*=>/);
 assert.match(legacyNotifications, /const url=safeUrl\(item&&item\.url\)/);
 assert.match(legacyNotifications, /url\?'<a class="nh-card-link" href="'\+esc\(url\)/);
-assert.doesNotMatch(legacyNotifications, /href="\+'esc\(item\.url\)/);
+assert.doesNotMatch(legacyNotifications, /href="'\s*\+\s*esc\(item\.url\)/);
 
 assert.match(notifications, /const url = new URL\(raw\)/);
 assert.match(notifications, /!url\.username && !url\.password/);
