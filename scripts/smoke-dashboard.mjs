@@ -1126,6 +1126,8 @@ try {
   await clickMainView('profile');
   assert.equal(await page.locator('#view-profile .ve-officer-station').count(),0,
     'Profile must not receive a floating station badge over the rank and logout controls');
+  assert.equal(await page.locator('#vaaniMentor').isVisible(),false,
+    'Floating Officer VAANI dock must be hidden while Profile is active');
   assert.equal(await page.locator('#vaaniMentor.open').count(),0,
     'Opening Profile must not trigger an unsolicited Officer VAANI briefing');
   const profileState = await page.evaluate(() => ({
