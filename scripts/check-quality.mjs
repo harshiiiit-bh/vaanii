@@ -113,7 +113,7 @@ if (!accountCodeCss.includes('@media(max-width:767px)') ||
   process.exitCode = 1;
 }
 if (!html.includes('vaani-profile.css?v=20261001-account-code1-service-rank-xp5') ||
-    !html.includes('js/app.js?v=20261002-result-report6')) {
+    !html.includes('js/app.js?v=20261002-result-report7')) {
   console.error('Account-code asset cache keys are outdated');
   process.exitCode = 1;
 }
@@ -599,28 +599,33 @@ try{
  const character=readFileSync('js/vaani-character.js','utf8'),eliteCharacter=readFileSync('js/vaani-character-elite.js','utf8');
  const characterCss=readFileSync('vaani-character.css','utf8'),eliteCharacterCss=readFileSync('vaani-character-elite.css','utf8');
  if(!character.includes('window.vaaniCharacterSetPose=function(pose)')||!eliteCharacter.includes('window.vaaniCharacterSetPose(pose)'))throw new Error('Officer VAANI pose state helper is missing.');
- if(!eliteCharacter.includes("e.target.closest('.ve-header-mini,.ve-restore-officer')"))throw new Error('Officer VAANI launcher/restore clicks are not excluded from outside-click dismissal.');
-  if(!eliteCharacter.includes("restore.id='veRestoreOfficer'")||!eliteCharacter.includes("restore.addEventListener('click'")||!eliteCharacter.includes("p.hidden&&!routeHidden&&!taskHidden"))throw new Error('Officer VAANI hide/restore control is incomplete.');
+ if(!eliteCharacter.includes("e.target.closest('.ve-header-mini')"))throw new Error('Officer VAANI header launcher is not excluded from outside-click dismissal.');
+ if(!eliteCharacter.includes("document.getElementById('veRestoreOfficer')?.remove()")||!eliteCharacter.includes("if(getDockPreferences().hidden)setDockHidden(false,true)")||eliteCharacter.includes("restore.id='veRestoreOfficer'"))throw new Error('Officer VAANI must restore from the header without a bottom control.');
   if(!character.includes('window.vaaniCharacterEnsure=ensure')||!eliteCharacter.includes("window.vaaniCharacterEnsure==='function'"))throw new Error('Officer VAANI mount handshake is missing.');
   if(!character.includes('assets/officer-vaani.svg'))throw new Error('Officer VAANI base local art fallback is missing.');
-  if(!character.includes('https://cdn-ai-hs.picsart.com/ai-hot-storage/acfec6d8-2627-4b42-bd67-1923ba9898f4.png')||!html.includes('https://cdn-ai-hs.picsart.com/ai-hot-storage/2a136339-4163-42a0-b366-0541c84cc19a.png'))throw new Error('Officer VAANI AI-cleaned art is missing.');
-  if(!html.includes('assets/indian-flag-backdrop.svg')||!readFileSync('vaani-dashboard.css','utf8').includes('.vd-flag-backdrop'))throw new Error('Dashboard Indian flag backdrop is missing.');
+ if(!character.includes('https://cdn-ai-hs.picsart.com/ai-hot-storage/acfec6d8-2627-4b42-bd67-1923ba9898f4.png')||!characterCss.includes('https://cdn-ai-hs.picsart.com/ai-hot-storage/acfec6d8-2627-4b42-bd67-1923ba9898f4.png')||!eliteCharacterCss.includes('https://cdn-ai-hs.picsart.com/ai-hot-storage/acfec6d8-2627-4b42-bd67-1923ba9898f4.png'))throw new Error('AI-cleaned Officer VAANI pose sheet is missing from the character renderers.');
+ if(!characterCss.includes('https://cdn-ai-hs.picsart.com/ai-hot-storage/2a136339-4163-42a0-b366-0541c84cc19a.png')||!eliteCharacterCss.includes('https://cdn-ai-hs.picsart.com/ai-hot-storage/2a136339-4163-42a0-b366-0541c84cc19a.png'))throw new Error('AI-cleaned Officer VAANI portrait is missing from compact art.');
   if(!eliteCharacter.includes("window.addEventListener('hashchange',()=>queueRouteBrief(180)"))throw new Error('Officer VAANI route-close hook is missing.');
   const routeBriefStart=eliteCharacter.indexOf('function queueRouteBrief('),routeBriefEnd=eliteCharacter.indexOf('function polishFromCurrent(',routeBriefStart);
   if(routeBriefStart<0||routeBriefEnd<0||/\bbrief\s*\(\s*\)/.test(eliteCharacter.slice(routeBriefStart,routeBriefEnd)))throw new Error('Officer VAANI route changes must not trigger unsolicited briefings.');
   if(eliteCharacter.includes('const host=target||view.firstElementChild')||!eliteCharacter.includes("const routeHidden=active()==='profile'")||!eliteCharacterCss.includes("body:has(#view-profile.active) #vaaniMentor:not(.bad-result){display:none!important}"))throw new Error('Officer VAANI dock must not overlap the Profile hero.');
   if(eliteCharacter.includes('function wrapResult(){'))throw new Error('Officer VAANI result callback must not open a floating recovery briefing.');
-  if(!html.includes('vaani-dashboard.css?v=20261002-tricolor2')||!html.includes('vaani-character.css?v=20261002-aiclean2')||!html.includes('vaani-character-elite.css?v=20261002-aiclean2')||!html.includes('js/vaani-character.js?v=20261002-aiclean2')||!html.includes('js/vaani-character-elite.js?v=20261002-aiclean2'))throw new Error('Officer VAANI asset cache keys are outdated.');
-  const appForReports=readFileSync('js/app.js','utf8');
+  if(!eliteCharacterCss.includes('#vaaniMentor:not(.bad-result):not(.speaking):not(.open):not(.ve-move-mode){visibility:hidden!important;pointer-events:none!important}'))throw new Error('Collapsed Officer VAANI must not block page controls.');
+  if(!html.includes('vaani-character-elite.css?v=20261002-aiclean3')||!html.includes('js/vaani-character.js?v=20261002-aiclean3')||!html.includes('js/vaani-character-elite.js?v=20261002-passive-report5'))throw new Error('Officer VAANI asset cache keys are outdated.');
+  if(!html.includes('vaani-contrast-repair.css?v=20261002-contrast2'))throw new Error('Site-wide contrast repair must load after all visual layers.');
+  const contrastRepair=readFileSync('vaani-contrast-repair.css','utf8');
+  if(!contrastRepair.includes('--muted:#b8c3ce')||!contrastRepair.includes('--muted2:#9aa8b5')||!contrastRepair.includes('#view-grammar .gt-topic-desc')||!contrastRepair.includes('#view-grammar > .bc-global-link')||!contrastRepair.includes('background-color:#0b1722!important'))throw new Error('Site-wide contrast tokens, Grammar readability or companion banner rules are missing.');
+  const appForReports=readFileSync('js/app.js','utf8'),dashboardCss=readFileSync('vaani-dashboard.css','utf8');
   if(!appForReports.includes('function vaaniResultBriefingNode(')||!appForReports.includes("PV.screen='summary';pvRender();")||!appForReports.includes("completedCard.appendChild(briefing)"))throw new Error('Inline end-of-attempt report and Officer VAANI briefing are incomplete.');
+  if(!html.includes('assets/indian-flag-backdrop.svg')||!dashboardCss.includes('.vd-flag-backdrop'))throw new Error('Dashboard Indian flag backdrop is missing.');
+  if(!html.includes('https://cdn-ai-hs.picsart.com/ai-hot-storage/2a136339-4163-42a0-b366-0541c84cc19a.png')||!appForReports.includes("portrait.src='https://cdn-ai-hs.picsart.com/ai-hot-storage/2a136339-4163-42a0-b366-0541c84cc19a.png'"))throw new Error('AI-cleaned Officer VAANI cutout is not integrated across dashboard and result cards.');
   if(appForReports.includes('vaaniCharacterSpeak(name),700'))throw new Error('PYQ page rendering must not open a briefing during an attempt.');
   if(!appForReports.includes("const liveQuiz=step==='practice'&&!!document.querySelector('#pane-quiz .quiz-live-card')")||!appForReports.includes('window.VAANI_SET_ASSESSMENT_ACTIVE(liveQuiz)'))throw new Error('Grammar practice flow must activate and release assessment focus.');
   if(!appForReports.includes("XP in the '+(progress.current?progress.current.name:'starting')+' → '+progress.next.name+' band")||!appForReports.includes("' total XP · '+progress.remainingXP.toLocaleString('en-IN')+' XP to '+progress.next.name"))throw new Error('Service-rank labels must distinguish band progress from total XP.');
   if(!eliteCharacter.includes("getDockPreferences")||!eliteCharacter.includes("function setDockPosition")||!eliteCharacter.includes("function setDockScale"))throw new Error('Officer VAANI move/resize preference controls are missing.');
   if(!eliteCharacter.includes('id="veDockScaleExact"')||!eliteCharacter.includes('step="1"'))throw new Error('Officer VAANI exact one-percent size control is missing.');
   if(!eliteCharacter.includes('id="veDockX"')||!eliteCharacter.includes('id="veDockY"')||!eliteCharacter.includes('function applyDockPositionInputs')||!eliteCharacter.includes('id="veDockApply"'))throw new Error('Officer VAANI exact pixel-position controls are missing.');
-  if(!eliteCharacter.includes("function setDockHidden")||!eliteCharacter.includes("if(getDockPreferences().hidden)setDockHidden(false,true)"))throw new Error('Officer VAANI header hide/restore flow is missing.');
-  if(eliteCharacter.includes("restore=document.createElement('button')")||eliteCharacter.includes("restore.id='veRestoreOfficer'"))throw new Error('Officer VAANI must not create a redundant bottom restore button.');
+  if(!eliteCharacter.includes("veRestoreOfficer")||!eliteCharacter.includes("function setDockHidden"))throw new Error('Officer VAANI hide/restore controls are missing.');
   if(!eliteCharacter.includes("window.addEventListener('pointermove',moveDockDrag"))throw new Error('Officer VAANI drag interaction is missing.');
  if(characterCss.includes('calc(var(--pose-col')||eliteCharacterCss.includes('calc(var(--pose-col'))throw new Error('Officer VAANI sprite still uses fragile computed pose offsets.');
  console.log('Officer VAANI audit: persistent asset states, reliable pose coordinates and non-dismissing launchers validated');

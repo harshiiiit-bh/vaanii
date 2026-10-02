@@ -775,15 +775,16 @@ body:has(#view-profile.active) #vaaniMentor:not(.bad-result){display:none!import
 /* Keep the floating character out of active assessments and their report cards. */
 body.vaani-assessment-active #vaaniMentor:not(.bad-result),body.pv-session-active #vaaniMentor:not(.bad-result){display:none!important}
 
-/* Show the floating Officer VAANI panel only during an explicit briefing. */
-#vaaniMentor:not(.bad-result):not(.speaking){display:none!important}
-body.ve-vaani-hidden #vaaniMentor:not(.bad-result),body.ve-vaani-hidden .ve-officer-station,body.ve-vaani-hidden .ve-surface-mini{display:none!important}
-body.ve-vaani-hidden .ve-header-mini{display:inline-flex!important}
+/* A collapsed idle character must not intercept page navigation; the header launcher opens it. */
+#vaaniMentor:not(.bad-result):not(.speaking):not(.open):not(.ve-move-mode){visibility:hidden!important;pointer-events:none!important}
+/* Clean portrait + single header restore; remove redundant bottom control. */
+.ve-header-mini{background-image:url("https://cdn-ai-hs.picsart.com/ai-hot-storage/2a136339-4163-42a0-b366-0541c84cc19a.png")!important;background-size:78% auto!important;background-position:center bottom!important;background-repeat:no-repeat!important;background-color:#edf0e9!important}
+body.ve-vaani-user-hidden:not(.ve-vaani-route-hidden):not(.ve-vaani-task-hidden) .ve-header-mini{display:inline-flex!important}
 .ve-restore-officer{display:none!important}
-.ve-header-mini{background-image:url("https://cdn-ai-hs.picsart.com/ai-hot-storage/2a136339-4163-42a0-b366-0541c84cc19a.png")!important;background-size:contain!important;background-position:center bottom!important;background-repeat:no-repeat!important}
-.ve-surface-mini{background-image:url("https://cdn-ai-hs.picsart.com/ai-hot-storage/2a136339-4163-42a0-b366-0541c84cc19a.png")!important;background-size:contain!important;background-position:center bottom!important;background-repeat:no-repeat!important}
-.vaani-result-briefing{grid-template-columns:74px minmax(0,1fr);align-items:center;gap:11px;padding:12px 14px;border-radius:12px}
-.vaani-result-briefing-art{position:relative;display:flex;align-items:flex-end;justify-content:center;min-height:96px;overflow:hidden;border-radius:9px;background:radial-gradient(ellipse at 50% 78%,rgba(201,162,75,.18),transparent 68%),linear-gradient(150deg,#eef0ea,#e4e9e3)}
-.vaani-result-briefing-art img{display:block;width:100%;height:96px;object-fit:contain;object-position:center bottom;filter:drop-shadow(0 4px 6px rgba(0,0,0,.18))}
-.vaani-result-briefing-copy{display:grid;gap:5px;min-width:0}
-@media(max-width:480px){.vaani-result-briefing{grid-template-columns:60px minmax(0,1fr);gap:9px;padding:10px}.vaani-result-briefing-art,.vaani-result-briefing-art img{min-height:84px;height:84px}}
+.vaani-result-briefing{grid-template-columns:76px minmax(0,1fr);align-items:center;gap:11px}
+.vaani-result-briefing-art{width:76px;height:86px;min-width:0;align-self:stretch;display:flex;align-items:flex-end;justify-content:center;overflow:hidden;border:1px solid rgba(201,162,75,.2);border-radius:9px;background:linear-gradient(145deg,rgba(201,162,75,.11),rgba(120,150,137,.08))}
+.vaani-result-briefing-art img{display:block;width:100%;height:100%;max-width:100%;max-height:100%;object-fit:contain;object-position:center bottom;filter:drop-shadow(0 4px 5px rgba(0,0,0,.16))}
+@media(max-width:480px){.vaani-result-briefing{grid-template-columns:60px minmax(0,1fr)}.vaani-result-briefing-art{width:60px;height:76px}}
+
+/* Keep both compact officer entry points on the same AI-cleaned full portrait. */
+.ve-header-mini,.ve-surface-mini{background-image:url("https://cdn-ai-hs.picsart.com/ai-hot-storage/2a136339-4163-42a0-b366-0541c84cc19a.png")!important;background-size:contain!important;background-position:center bottom!important;background-repeat:no-repeat!important}

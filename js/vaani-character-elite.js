@@ -353,11 +353,15 @@
 
   function updateDockVisibility(){
     const p=getDockPreferences();
-    // The header avatar owns the restore action. Never create a duplicate
-    // floating restore button in the page corner.
+    // Hide the floating dock on Profile and during assessments. The header
+    // avatar remains the single accessible restore/briefing control.
     const routeHidden=active()==='profile';
     const taskHidden=assessmentActive();
+    document.body.classList.toggle('ve-vaani-user-hidden',p.hidden);
+    document.body.classList.toggle('ve-vaani-route-hidden',routeHidden);
+    document.body.classList.toggle('ve-vaani-task-hidden',taskHidden);
     document.body.classList.toggle('ve-vaani-hidden',p.hidden||routeHidden||taskHidden);
+    // Remove legacy restore buttons left by older cached builds.
     document.getElementById('veRestoreOfficer')?.remove();
   }
 
@@ -603,7 +607,7 @@
 
       // Launcher buttons open the briefing during this same bubbling click.
       // Do not interpret that click as an outside click and close it immediately.
-      if(e.target.closest('.ve-header-mini,.ve-restore-officer'))return;
+      if(e.target.closest('.ve-header-mini'))return;
       if(m.contains(e.target)){
         if(e.target.closest('#vcNext')||e.target.closest('#vcCharacter')){
           setTimeout(()=>{

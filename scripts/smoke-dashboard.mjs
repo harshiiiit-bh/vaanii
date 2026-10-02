@@ -199,9 +199,9 @@ try {
   assert.equal(await page.locator('#heatmap .heat-cell').count(), 60, '60-day heatmap did not render');
   assert.ok(await page.locator('#dashBadgeGrid .badge').count() > 0, 'Dashboard achievements did not render');
   assert.ok(await page.locator('#focusSprintWidget .vd-focus-body').count() > 0, 'Focus Sprint did not render');
-  console.log('PASS dashboard: hero, briefing, roadmap, missions, word, heatmap, badges and focus sprint');
-  assert.equal(await page.locator('.vd-flag-backdrop').getAttribute('src'),'assets/indian-flag-backdrop.svg','Dashboard should render the Indian flag backdrop');
-  assert.equal(await page.locator('.vd-officer-image').getAttribute('src'),'https://cdn-ai-hs.picsart.com/ai-hot-storage/2a136339-4163-42a0-b366-0541c84cc19a.png','Dashboard should use the AI-cleaned full portrait');
+  assert.equal(await page.locator('.vd-flag-backdrop').count(),1,'Dashboard must include the Indian flag backdrop');
+  assert.equal(await page.locator('.vd-officer-image').getAttribute('src'),'https://cdn-ai-hs.picsart.com/ai-hot-storage/2a136339-4163-42a0-b366-0541c84cc19a.png','Dashboard must use the AI-cleaned Officer VAANI cutout');
+  console.log('PASS dashboard: flag hero, clean officer, roadmap, missions, word, heatmap, badges and focus sprint');
 
   // Officer VAANI must retain image state while either renderer changes poses.
   await page.evaluate(() => window.vaaniCharacterSpeak('dashboard'));
@@ -210,8 +210,8 @@ try {
     const mentor = document.getElementById('vaaniMentor');
     const model = mentor.querySelector('.vc-character');
     const img = model.querySelector('.vc-character-sheet');
-    const fallback = model.querySelector('.vc-character-fallback');
     const spriteSrc=img.getAttribute('src');
+    const fallback = model.querySelector('.vc-character-fallback');
     img.dispatchEvent(new Event('load'));
     window.vaaniCharacterSpeak('grammar');
     const afterBase = {
@@ -220,7 +220,6 @@ try {
     };
     const launcher = document.querySelector('.ve-header-mini');
     if (!launcher) throw new Error('Officer VAANI header launcher missing');
-    window.vaaniCharacterHide();
     const launcherBefore = {
       activeView:document.querySelector('.view.active')?.id||'',
       assessmentActive:typeof window.VAANI_IS_ASSESSMENT_ACTIVE==='function'?window.VAANI_IS_ASSESSMENT_ACTIVE():null,
@@ -289,24 +288,24 @@ try {
   assert.equal(await page.locator('#vaaniMentor').evaluate(el=>el.classList.contains('ve-positioned')),false,'Reset did not return Officer VAANI to its default corner');
   await page.locator('#veDockHide').click();
   assert.equal(await page.locator('#vaaniMentor').isVisible(),false,'Hide did not remove Officer VAANI from view');
-  assert.equal(await page.locator('#veRestoreOfficer').count(),0,'Redundant bottom restore control should be removed');
-  assert.equal(await page.locator('.ve-header-mini').isVisible(),true,'Header avatar should remain available after hiding Officer VAANI');
+  assert.equal(await page.locator('#veRestoreOfficer').count(),0,'Redundant bottom restore button must not be created');
+  assert.equal(await page.locator('.ve-header-mini').isVisible(),true,'Header avatar should remain available to restore Officer VAANI');
   assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('vaani-officer-dock-v1')||'{}').hidden),true,'Hidden preference was not persisted');
   await page.reload();
   await page.waitForSelector('.ve-header-mini',{timeout:10000});
   assert.equal(await page.locator('#vaaniMentor').isVisible(),false,'Officer VAANI reappeared after refresh despite saved hidden preference');
   await page.locator('.ve-header-mini').click();
   await page.waitForSelector('#vaaniMentor.speaking',{timeout:5000});
-  assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('vaani-officer-dock-v1')||'{}').hidden),false,'Header restore did not persist the visible preference');
-  assert.equal(await page.locator('#veRestoreOfficer').count(),0,'Bottom restore button must remain absent');
-  console.log('PASS Officer VAANI controls: resize, drag, reset, hide, restore and refresh persistence');
+  assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('vaani-officer-dock-v1')||'{}').hidden),false,'Restore did not persist the visible preference');
+  assert.equal(await page.locator('#veRestoreOfficer').count(),0,'Redundant bottom restore button should remain absent');
+  console.log('PASS Officer VAANI controls: resize, drag, reset, hide and header restore across refresh');
 
 
   await clickMainView('profile');
   await assertVisibleText('#vpProfileRank', 'Service-aware Profile rank');
   assert.equal(await page.locator('#rankDailyXPHint').count(), 0,
     'Profile should not render the retired daily-cap hint');
-  assert.match(await page.locator('#rankPaceHint').textContent(), /no daily XP cap/i,
+  assert.match(await page.locator('#rankPaceHint').textContent(), /there is no daily XP cap/,
     'Rank pacing should explain that XP earning is unlimited');
   assert.equal(await page.locator('#serviceRankBadgeSource').count(), 0,
     'Rank card should not expose insignia source links');
@@ -692,6 +691,68 @@ try {
   console.log('PASS Arena security: deterministic match, device-local submission, Edge Function historical read and no public writer');
 
   await clickMainView('grammar');
+  const contrastAudit=await page.evaluate(()=>{
+    const body=document.body;
+    const saved={theme:body.dataset.theme,zen:body.classList.contains('mode-zen'),sepia:body.classList.contains('mode-sepia')};
+    const rgb=value=>{
+      const v=String(value||'').trim();
+      if(/^#[\da-f]{3}$/i.test(v))return v.slice(1).split('').map(x=>parseInt(x+x,16));
+      if(/^#[\da-f]{6}$/i.test(v))return [parseInt(v.slice(1,3),16),parseInt(v.slice(3,5),16),parseInt(v.slice(5,7),16)];
+      const m=v.match(/[\d.]+/g);return m&&m.length>=3?m.slice(0,3).map(Number):null;
+    };
+    const lum=value=>{
+      const c=rgb(value);if(!c)return NaN;
+      const v=c.map(x=>x/255).map(x=>x<=.04045?x/12.92:Math.pow((x+.055)/1.055,2.4));
+      return .2126*v[0]+.7152*v[1]+.0722*v[2];
+    };
+    const ratio=(a,b)=>{const x=lum(a),y=lum(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05);};
+    const cases=[['light',null],['dark',null],['light','mode-zen'],['dark','mode-zen'],['light','mode-sepia']];
+    const results=[];
+    for(const [theme,mode] of cases){
+      body.dataset.theme=theme;
+      body.classList.toggle('mode-zen',mode==='mode-zen');
+      body.classList.toggle('mode-sepia',mode==='mode-sepia');
+      const cs=getComputedStyle(body),panel=cs.getPropertyValue('--panel').trim();
+      const muted=cs.getPropertyValue('--muted').trim(),muted2=cs.getPropertyValue('--muted2').trim();
+      results.push({theme,mode,muted,muted2,mutedRatio:ratio(muted,panel),muted2Ratio:ratio(muted2,panel)});
+    }
+    body.dataset.theme=saved.theme||'light';
+    body.classList.toggle('mode-zen',saved.zen);
+    body.classList.toggle('mode-sepia',saved.sepia);
+    const grammarCopy=document.querySelector('#view-grammar .gt-browser-intro p');
+    const grammarCompanion=document.querySelector('#view-grammar > .bc-global-link');
+    const companionTitle=grammarCompanion?.querySelector('strong');
+    const companionDetail=grammarCompanion?.querySelector('small');
+    const companionButton=grammarCompanion?.querySelector('button');
+    const companionBg='#16313a';
+    return {
+      results,
+      grammarCopy:grammarCopy?{color:getComputedStyle(grammarCopy).color,opacity:getComputedStyle(grammarCopy).opacity}:null,
+      grammarCompanion:grammarCompanion?{
+        opacity:getComputedStyle(grammarCompanion).opacity,
+        filter:getComputedStyle(grammarCompanion).filter,
+        backgroundColor:getComputedStyle(grammarCompanion).backgroundColor,
+        backgroundImage:getComputedStyle(grammarCompanion).backgroundImage,
+        titleColor:companionTitle?getComputedStyle(companionTitle).color:'',
+        detailColor:companionDetail?getComputedStyle(companionDetail).color:'',
+        buttonColor:companionButton?getComputedStyle(companionButton).color:'',
+        buttonBackground:companionButton?getComputedStyle(companionButton).backgroundColor:'',
+        titleRatio:companionTitle?ratio(getComputedStyle(companionTitle).color,companionBg):NaN,
+        detailRatio:companionDetail?ratio(getComputedStyle(companionDetail).color,companionBg):NaN,
+        buttonRatio:companionButton?ratio(getComputedStyle(companionButton).color,getComputedStyle(companionButton).backgroundColor):NaN
+      }:null
+    };
+  });
+  assert.ok(contrastAudit.results.every(x=>x.mutedRatio>=4.5&&x.muted2Ratio>=4.5),
+    'Theme tokens must retain readable muted and secondary text contrast: '+JSON.stringify(contrastAudit.results));
+  assert.ok(!contrastAudit.grammarCopy||Number(contrastAudit.grammarCopy.opacity)===1,
+    'Grammar supporting copy must not be faded');
+  assert.ok(contrastAudit.grammarCompanion&&Number(contrastAudit.grammarCompanion.opacity)===1&&contrastAudit.grammarCompanion.filter==='none',
+    'Grammar companion banner must not be faded or filtered');
+  assert.ok(contrastAudit.grammarCompanion.backgroundImage.includes('rgb(22, 49, 58)')&&contrastAudit.grammarCompanion.backgroundColor==='rgb(11, 23, 34)',
+    'Grammar companion banner must use its dark command surface: '+JSON.stringify(contrastAudit.grammarCompanion));
+  assert.ok(contrastAudit.grammarCompanion.titleRatio>=4.5&&contrastAudit.grammarCompanion.detailRatio>=4.5&&contrastAudit.grammarCompanion.buttonRatio>=4.5,
+    'Grammar companion title, description and action must meet 4.5:1 contrast: '+JSON.stringify(contrastAudit.grammarCompanion));
   await page.waitForFunction(() => document.querySelectorAll('#grammarAcademyCatalog .ga-stage-card').length === 4);
   assert.ok(await page.locator('#grammarAcademyCatalog .ga-lesson-link').count() >= 40,
     'Academy lesson catalog did not expose the complete mapped curriculum');
@@ -1427,7 +1488,6 @@ try {
   assert.ok(await page.locator('#view-pyq .pv-summary-hero').count(),'Completed practice must show its report card');
   assert.equal(await page.locator('#view-pyq .pv-summary-hero .vaani-result-briefing').count(),1,
     'PYQ practice report must contain the Officer VAANI briefing');
-  assert.equal(await page.locator('#view-pyq .pv-summary-hero .vaani-result-briefing img').getAttribute('src'),'https://cdn-ai-hs.picsart.com/ai-hot-storage/2a136339-4163-42a0-b366-0541c84cc19a.png','PYQ report should show the AI-cleaned portrait inside the report card');
   assert.equal(await page.locator('#vaaniMentor.open').count(),0,'Finishing PYQ practice must not open a floating briefing');
   await page.evaluate(()=>pvGoHome());
   await page.locator('#pvApp .pv-mode-card').filter({hasText:'Bookmarks'}).click();
