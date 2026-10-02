@@ -366,3 +366,43 @@
 @media (prefers-reduced-motion:reduce){
   .vd-officer-image{animation:none;}
 }
+
+/* Compact Officer VAANI hero — presence without stealing the hero's content area */
+.vd-officer-stage{
+  width:clamp(180px,24vw,285px);
+  height:88%;
+  min-height:300px;
+  right:8px;
+}
+.vd-officer-image{height:100%;max-width:92%}
+.vd-officer-halo{width:78%;height:68%;right:7%}
+.vd-officer-badge{
+  right:7px;
+  bottom:12px;
+  padding:6px 8px;
+  border-radius:11px;
+}
+.vd-officer-badge b{font-size:.5rem}
+.vd-officer-badge small{font-size:.39rem}
+.vd-hero-inner{max-width:min(650px,68%);}
+@media(max-width:900px){
+  .vd-officer-stage{width:205px;min-height:270px;right:0}
+  .vd-hero-inner{max-width:72%}
+}
+@media(max-width:640px){
+  .vd-officer-stage{
+    width:128px;
+    height:46%;
+    min-height:172px;
+    right:-5px;
+  }
+  .vd-hero-inner{
+    max-width:100%;
+    padding-right:106px;
+  }
+  .vd-officer-badge{transform:scale(.82);transform-origin:right bottom}
+}
+@media(max-width:390px){
+  .vd-officer-stage{width:108px;min-height:154px}
+  .vd-hero-inner{padding-right:92px}
+}
