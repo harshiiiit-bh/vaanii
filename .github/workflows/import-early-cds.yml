@@ -18,27 +18,19 @@ jobs:
         with:
           node-version: 24
       - run: npm install --no-save --no-package-lock cheerio@1.0.0-rc.12
-      - name: Inspect error and blank entries
+      - name: Dump representative question nodes
         run: |
           node --input-type=module <<'NODE'
           import * as cheerio from 'cheerio';
-          const targets=[
-            ['09I','https://examvictor.com/cds-2009-english-question-paper-1/',['59','60']],
-            ['12II','https://examvictor.com/cds-2012-english-question-paper-2/',['33','71','72']],
-            ['10I','https://examvictor.com/cds-2010-english-question-paper-1/',['41','74']]
-          ];
-          for(const [id,url,starts] of targets){
-            const r=await fetch(url,{headers:{'user-agent':'Mozilla/5.0'}});
-            const $=cheerio.load(await r.text());const e=$('.entry-content').first();
-            console.log('PAPER',id);
-            for(const st of starts){
-              const ol=e.find('ol').filter((_,el)=>el.attribs.start===st).first();
-              if(!ol.length){console.log('START',st,'not found');continue;}
-              console.log('OLRAW',st,$.html(ol[0]));
-              for(const side of ['prev','next']){
-                let n=ol[side](),i=0;
-                while(n.length&&i<4){console.log(side.toUpperCase(),st,i,n[0].tagName, $.html(n[0])?.slice(0,700));n=n[side]();i++;}
-              }
-            }
+          const url='https://examvictor.com/cds-2009-english-question-paper-1/';
+          const r=await fetch(url,{headers:{'user-agent':'Mozilla/5.0'}});
+          const $=cheerio.load(await r.text());const e=$('.entry-content').first();
+          for(const st of ['1','12','15','17','18','21','23','24','28','31','35','38','44','59','68','95','101','105','109','116','119']){
+            const ol=e.find('ol').filter((_,el)=>el.attribs.start===st).first();
+            console.log('===START '+st+'===');
+            if(!ol.length){console.log('NOT FOUND');continue;}
+            const li=ol.children('li').first();
+            console.log('LI', $.html(li[0])?.slice(0,2500)?.replace(/\s+/g,' '));
+            console.log('NEAR',ol.nextAll().slice(0,8).toArray().map(x=>x.tagName+':'+$(x).text().trim().slice(0,130).replace(/\s+/g,' ')).join(' || '));
           }
           NODE
