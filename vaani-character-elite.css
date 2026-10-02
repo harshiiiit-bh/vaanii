@@ -342,7 +342,7 @@
   border:1px solid rgba(201,162,75,.38);
   border-radius:50%;
   background-color:#edf0e9;
-  background-image:url("https://gcdn.picsart.com/editing-temp/2ca4be62-1e4a-4425-8b14-018c55a4d4b4.png");
+  background-image:url("https://cdn-ai-hs.picsart.com/ai-hot-storage/acfec6d8-2627-4b42-bd67-1923ba9898f4.png");
   background-size:400% 300%;
   background-position:0 0;
   background-repeat:no-repeat;
@@ -376,7 +376,7 @@
   border-radius:16px;
   border:1px solid rgba(201,162,75,.28);
   background-color:rgba(245,244,237,.9);
-  background-image:url("https://gcdn.picsart.com/editing-temp/2ca4be62-1e4a-4425-8b14-018c55a4d4b4.png");
+  background-image:url("https://cdn-ai-hs.picsart.com/ai-hot-storage/acfec6d8-2627-4b42-bd67-1923ba9898f4.png");
   background-size:400% 300%;
   background-repeat:no-repeat;
   box-shadow:0 8px 20px rgba(8,18,24,.12),inset 0 1px 0 rgba(255,255,255,.7);
@@ -520,7 +520,7 @@
 
 .ve-header-mini,
 .ve-surface-mini{
-  background-image:url("https://gcdn.picsart.com/editing-temp/2ca4be62-1e4a-4425-8b14-018c55a4d4b4.png")!important;
+  background-image:url("https://cdn-ai-hs.picsart.com/ai-hot-storage/acfec6d8-2627-4b42-bd67-1923ba9898f4.png")!important;
 }
 
 /* COMPACT OFFICER VAANI CONTEXT RAIL */
@@ -609,7 +609,7 @@
   line-height:1;
 }
 .ve-header-mini{
-  background-image:url("https://cdn-ai-hs.picsart.com/ai-hot-storage/26983f1e-c8a3-4711-8463-852b639599c7.png")!important;
+  background-image:url("https://cdn-ai-hs.picsart.com/ai-hot-storage/2a136339-4163-42a0-b366-0541c84cc19a.png")!important;
   background-size:contain!important;
   background-position:center bottom!important;
   background-repeat:no-repeat!important;
@@ -774,3 +774,9 @@ body:has(#view-profile.active) #vaaniMentor:not(.bad-result){display:none!import
 
 /* Keep the floating character out of active assessments and their report cards. */
 body.vaani-assessment-active #vaaniMentor:not(.bad-result),body.pv-session-active #vaaniMentor:not(.bad-result){display:none!important}
+/* AI-cleaned portrait for the one header launcher; keep the dock on its pose sheet. */
+.ve-header-mini{background-image:url("https://cdn-ai-hs.picsart.com/ai-hot-storage/2a136339-4163-42a0-b366-0541c84cc19a.png")!important;background-size:contain!important;background-position:center bottom!important;background-repeat:no-repeat!important}
+.ve-surface-mini{background-image:url("https://cdn-ai-hs.picsart.com/ai-hot-storage/2a136339-4163-42a0-b366-0541c84cc19a.png")!important;background-size:contain!important;background-position:center bottom!important;background-repeat:no-repeat!important}
+body.ve-vaani-hidden #vaaniMentor:not(.bad-result),body.ve-vaani-hidden .ve-officer-station,body.ve-vaani-hidden .ve-surface-mini{display:none!important}
+body.ve-vaani-hidden .ve-header-mini{display:inline-flex!important}
+.ve-restore-officer{display:none!important}
