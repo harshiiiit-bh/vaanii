@@ -366,7 +366,7 @@ try {
   for (const required of ['function gtTopicBrowserHTML(', 'function gtApplyBrowserFilters(', 'function renderGrammarJourney()']) {
     if (!appSource.includes(required)) throw new Error('Grammar UI component missing: ' + required);
   }
-  if (!/<link\\b[^>]*\\bhref="vaani-grammar-ux\\.css(?:\\?[^\"]*)?"/i.test(pageSource)) throw new Error('Grammar UX stylesheet is not linked.');
+  if (!/<link\b[^>]*\bhref="vaani-grammar-ux\.css(?:\?[^"]*)?"/i.test(pageSource)) throw new Error('Grammar UX stylesheet is not linked.');
   if (pageSource.indexOf('js/vaani-grammar-academy.js') > pageSource.indexOf('js/app.js')) throw new Error('Grammar Academy interactions must load before the main app.');
   if (!pageSource.includes('data/grammar-academy.js') || pageSource.indexOf('data/grammar-academy.js') > pageSource.indexOf('js/app.js')) throw new Error('Grammar Academy curriculum must load before the main app.');
   const academyUi = readFileSync('js/vaani-grammar-academy.js', 'utf8');
@@ -431,7 +431,7 @@ try {
   if (!pageSource.includes('data/comparisons-extra.js') || pageSource.indexOf('data/comparisons-extra.js') > pageSource.indexOf('js/app.js')) {
     throw new Error('Additional comparisons must load before the main app.');
   }
-  if (!/<link\\b[^>]*\\bhref="vaani-site-refresh\\.css(?:\\?[^\"]*)?"/i.test(pageSource)) throw new Error('Site refresh stylesheet is not linked.');
+  if (!/<link\b[^>]*\bhref="vaani-site-refresh\.css(?:\?[^"]*)?"/i.test(pageSource)) throw new Error('Site refresh stylesheet is not linked.');
   if (pageSource.includes('id="flashCard"') || pageSource.includes('Flashcard Drill') || pageSource.includes('data-route="flashcards"')) throw new Error('The Vocabulary Flashcard Drill UI is still present.');
   for (const id of ['vpProfileAvatar', 'vpOverviewStats', 'vpActivityList', 'vpFocusMission', 'vpSkillSignals', 'vpRhythmGrid', 'serviceMetrics', 'serviceWeekWrap', 'serviceSkillSignals', 'serviceGoalList', 'fieldLogFilters', 'compareFilters', 'compareResultCount', 'dailyShuffleBtn']) {
     if (!pageSource.includes('id="' + id + '"')) throw new Error('Missing redesigned UI container: ' + id);
