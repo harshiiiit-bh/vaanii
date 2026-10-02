@@ -107,8 +107,13 @@ jobs:
                  && lis.every(li=>!$(li).find('ul').length)) continue;
               const hasExplicit=Number.isFinite(Number.parseInt(list.attr('start'),10));
               const start=hasExplicit?Number.parseInt(list.attr('start'),10):implicit;
-              for(let i=0;i<lis.length;i++){
-                const li=lis[i];
+              const nextOl=top.slice(ix+1).find(node=>node.tagName?.toLowerCase()==='ol');
+              const nextStart=nextOl&&Number.isFinite(Number.parseInt($(nextOl).attr('start'),10))?Number.parseInt($(nextOl).attr('start'),10):null;
+              const embeddedChoices=hasExplicit&&lis.length>=3&&nextStart===start+1&&
+                lis.slice(1).every(li=>!$(li).find('ul').length)&&!$(lis[0]).find('ul').length;
+              const itemsToProcess=embeddedChoices?lis.slice(0,1):lis;
+              for(let i=0;i<itemsToProcess.length;i++){
+                const li=itemsToProcess[i];
                 const num=Number.parseInt($(li).attr('value')||String(start+i),10);
                 if(!Number.isInteger(num)||num<1||num>120)continue;
                 const nested=$(li).find('ul').toArray();
@@ -118,6 +123,7 @@ jobs:
                 const hasError=(section==='Spotting Errors'||(under.length>=3&&under.some(x=>/no error/i.test(x))||under.length>=3&&/\([abcd]\)/i.test(q)));
                 let kind='';
                 let options=nestedOptions;
+                if(embeddedChoices&&i===0)options=lis.slice(1).map(option=>clean($(option).text())).filter(Boolean);
                 if(hasError){
                   kind='error';
                   const parts=under.filter(x=>!/^\(?[abcd]\)?$/i.test(x));
@@ -171,7 +177,7 @@ jobs:
                 if(passage && (sec==='Reading Comprehension'||kind==='cloze'))item.passage=passage;
                 records.push(item);
               }
-              if(lis.length)implicit=Math.max(implicit,start+lis.length);
+              if(itemsToProcess.length)implicit=Math.max(implicit,start+itemsToProcess.length);
             }
             records.sort((a,b)=>a.n-b.n);
             const ids=new Set(),dups=[];
