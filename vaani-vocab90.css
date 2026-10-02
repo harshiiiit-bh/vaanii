@@ -40,7 +40,7 @@
 .v90-progress-bottom{font-size:.64rem;color:var(--muted)}
 .v90-workspace{display:grid;grid-template-columns:minmax(245px,290px) minmax(0,1fr);align-items:start;gap:20px}
 .v90-day-panel,.v90-selected-day,.v90-reader-card{border:1px solid var(--line);border-radius:14px;background:var(--panel)}
-.v90-day-panel{padding:16px;position:sticky;top:16px}
+.v90-day-panel{padding:16px;position:sticky;top:calc(92px + var(--safe-t, 0px))}
 .v90-panel-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:15px}
 .v90-panel-heading h3,.v90-reader-head h3{margin:4px 0 0;color:var(--text);font-size:.98rem}
 .v90-reset{border:1px solid var(--line);border-radius:7px;padding:5px 8px;background:transparent;color:var(--muted);font-size:.65rem;cursor:pointer}
