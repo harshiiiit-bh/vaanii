@@ -217,6 +217,7 @@ try {
     };
     const launcher = document.querySelector('.ve-header-mini');
     if (!launcher) throw new Error('Officer VAANI header launcher missing');
+    window.vaaniCharacterHide();
     launcher.click();
     const afterElite = {
       ready: model.classList.contains('asset-ready'),
@@ -277,14 +278,16 @@ try {
   assert.equal(await page.locator('#vaaniMentor').evaluate(el=>el.classList.contains('ve-positioned')),false,'Reset did not return Officer VAANI to its default corner');
   await page.locator('#veDockHide').click();
   assert.equal(await page.locator('#vaaniMentor').isVisible(),false,'Hide did not remove Officer VAANI from view');
-  assert.equal(await page.locator('#veRestoreOfficer').isVisible(),true,'Restore control was not shown after hiding Officer VAANI');
+  assert.equal(await page.locator('#veRestoreOfficer').count(),0,'Redundant bottom restore control should be removed');
+  assert.equal(await page.locator('.ve-header-mini').isVisible(),true,'Header launcher should remain available after hiding Officer VAANI');
   assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('vaani-officer-dock-v1')||'{}').hidden),true,'Hidden preference was not persisted');
   await page.reload();
-  await page.waitForSelector('#veRestoreOfficer:not([hidden])',{timeout:10000});
+  await page.waitForSelector('.ve-header-mini',{timeout:10000});
   assert.equal(await page.locator('#vaaniMentor').isVisible(),false,'Officer VAANI reappeared after refresh despite saved hidden preference');
-  await page.locator('#veRestoreOfficer').click();
+  await page.locator('.ve-header-mini').click();
   await page.waitForSelector('#vaaniMentor.speaking',{timeout:5000});
-  assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('vaani-officer-dock-v1')||'{}').hidden),false,'Restore did not persist the visible preference');
+  assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('vaani-officer-dock-v1')||'{}').hidden),false,'Header restore did not persist the visible preference');
+  assert.equal(await page.locator('#veRestoreOfficer').count(),0,'Bottom restore control should not be re-created');
   console.log('PASS Officer VAANI controls: resize, drag, reset, hide, restore and refresh persistence');
 
 
