@@ -200,6 +200,8 @@ try {
   assert.ok(await page.locator('#dashBadgeGrid .badge').count() > 0, 'Dashboard achievements did not render');
   assert.ok(await page.locator('#focusSprintWidget .vd-focus-body').count() > 0, 'Focus Sprint did not render');
   console.log('PASS dashboard: hero, briefing, roadmap, missions, word, heatmap, badges and focus sprint');
+  assert.equal(await page.locator('.vd-flag-backdrop').getAttribute('src'),'assets/indian-flag-backdrop.svg','Dashboard should render the Indian flag backdrop');
+  assert.equal(await page.locator('.vd-officer-image').getAttribute('src'),'https://cdn-ai-hs.picsart.com/ai-hot-storage/2a136339-4163-42a0-b366-0541c84cc19a.png','Dashboard should use the AI-cleaned full portrait');
 
   // Officer VAANI must retain image state while either renderer changes poses.
   await page.evaluate(() => window.vaaniCharacterSpeak('dashboard'));
@@ -209,6 +211,7 @@ try {
     const model = mentor.querySelector('.vc-character');
     const img = model.querySelector('.vc-character-sheet');
     const fallback = model.querySelector('.vc-character-fallback');
+    const spriteSrc=img.getAttribute('src');
     img.dispatchEvent(new Event('load'));
     window.vaaniCharacterSpeak('grammar');
     const afterBase = {
@@ -217,6 +220,7 @@ try {
     };
     const launcher = document.querySelector('.ve-header-mini');
     if (!launcher) throw new Error('Officer VAANI header launcher missing');
+    window.vaaniCharacterHide();
     const launcherBefore = {
       activeView:document.querySelector('.view.active')?.id||'',
       assessmentActive:typeof window.VAANI_IS_ASSESSMENT_ACTIVE==='function'?window.VAANI_IS_ASSESSMENT_ACTIVE():null,
@@ -240,8 +244,9 @@ try {
     };
     img.dispatchEvent(new Event('load'));
     window.vaaniCharacterHide();
-    return {afterBase,afterElite,afterError,fallbackAsset:fallback.querySelector('img')?.getAttribute('src')||''};
+    return {afterBase,afterElite,afterError,fallbackAsset:fallback.querySelector('img')?.getAttribute('src')||'',spriteSrc};
   });
+  assert.equal(characterState.spriteSrc,'https://cdn-ai-hs.picsart.com/ai-hot-storage/acfec6d8-2627-4b42-bd67-1923ba9898f4.png','Dock should use the AI-cleaned four-by-three pose sheet');
   assert.equal(characterState.afterBase.ready,true,'Base pose change erased loaded-image state');
   assert.equal(characterState.afterBase.fallbackDisplay,'none','Loaded sprite did not hide its fallback');
   assert.equal(characterState.afterElite.ready,true,'Elite pose change erased loaded-image state');
@@ -284,15 +289,16 @@ try {
   assert.equal(await page.locator('#vaaniMentor').evaluate(el=>el.classList.contains('ve-positioned')),false,'Reset did not return Officer VAANI to its default corner');
   await page.locator('#veDockHide').click();
   assert.equal(await page.locator('#vaaniMentor').isVisible(),false,'Hide did not remove Officer VAANI from view');
-  assert.equal(await page.locator('#veRestoreOfficer').isVisible(),true,'Restore control was not shown after hiding Officer VAANI');
-  assert.match(await page.locator('#veRestoreOfficer').getAttribute('aria-label')||'',/restore Officer VAANI/i,'Restore control should have an accessible name');
+  assert.equal(await page.locator('#veRestoreOfficer').count(),0,'Redundant bottom restore control should be removed');
+  assert.equal(await page.locator('.ve-header-mini').isVisible(),true,'Header avatar should remain available after hiding Officer VAANI');
   assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('vaani-officer-dock-v1')||'{}').hidden),true,'Hidden preference was not persisted');
   await page.reload();
-  await page.waitForSelector('#veRestoreOfficer:not([hidden])',{timeout:10000});
+  await page.waitForSelector('.ve-header-mini',{timeout:10000});
   assert.equal(await page.locator('#vaaniMentor').isVisible(),false,'Officer VAANI reappeared after refresh despite saved hidden preference');
-  await page.locator('#veRestoreOfficer').click();
+  await page.locator('.ve-header-mini').click();
   await page.waitForSelector('#vaaniMentor.speaking',{timeout:5000});
-  assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('vaani-officer-dock-v1')||'{}').hidden),false,'Restore did not persist the visible preference');
+  assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('vaani-officer-dock-v1')||'{}').hidden),false,'Header restore did not persist the visible preference');
+  assert.equal(await page.locator('#veRestoreOfficer').count(),0,'Bottom restore button must remain absent');
   console.log('PASS Officer VAANI controls: resize, drag, reset, hide, restore and refresh persistence');
 
 
@@ -300,7 +306,7 @@ try {
   await assertVisibleText('#vpProfileRank', 'Service-aware Profile rank');
   assert.equal(await page.locator('#rankDailyXPHint').count(), 0,
     'Profile should not render the retired daily-cap hint');
-  assert.match(await page.locator('#rankPaceHint').textContent(), /there is no daily XP cap/,
+  assert.match(await page.locator('#rankPaceHint').textContent(), /no daily XP cap/i,
     'Rank pacing should explain that XP earning is unlimited');
   assert.equal(await page.locator('#serviceRankBadgeSource').count(), 0,
     'Rank card should not expose insignia source links');
@@ -1421,6 +1427,7 @@ try {
   assert.ok(await page.locator('#view-pyq .pv-summary-hero').count(),'Completed practice must show its report card');
   assert.equal(await page.locator('#view-pyq .pv-summary-hero .vaani-result-briefing').count(),1,
     'PYQ practice report must contain the Officer VAANI briefing');
+  assert.equal(await page.locator('#view-pyq .pv-summary-hero .vaani-result-briefing img').getAttribute('src'),'https://cdn-ai-hs.picsart.com/ai-hot-storage/2a136339-4163-42a0-b366-0541c84cc19a.png','PYQ report should show the AI-cleaned portrait inside the report card');
   assert.equal(await page.locator('#vaaniMentor.open').count(),0,'Finishing PYQ practice must not open a floating briefing');
   await page.evaluate(()=>pvGoHome());
   await page.locator('#pvApp .pv-mode-card').filter({hasText:'Bookmarks'}).click();
