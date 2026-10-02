@@ -2630,7 +2630,7 @@ function vaaniResultBriefingNode(score,label){
   const art=document.createElement('div');
   art.className='vaani-result-briefing-art';
   const portrait=document.createElement('img');
-  portrait.src='https://cdn-ai-hs.picsart.com/ai-hot-storage/2a136339-4163-42a0-b366-0541c84cc19a.png';
+  portrait.src='https://cdn-ai-hs.picsart.com/ai-hot-storage/80aa0fd9-5ef3-4c29-bd79-533fc4ecb0dd.png';
   portrait.alt='Officer VAANI';
   portrait.loading='lazy';
   portrait.decoding='async';

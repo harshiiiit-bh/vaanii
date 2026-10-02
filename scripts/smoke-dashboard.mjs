@@ -199,7 +199,9 @@ try {
   assert.equal(await page.locator('#heatmap .heat-cell').count(), 60, '60-day heatmap did not render');
   assert.ok(await page.locator('#dashBadgeGrid .badge').count() > 0, 'Dashboard achievements did not render');
   assert.ok(await page.locator('#focusSprintWidget .vd-focus-body').count() > 0, 'Focus Sprint did not render');
-  console.log('PASS dashboard: hero, briefing, roadmap, missions, word, heatmap, badges and focus sprint');
+  assert.equal(await page.locator('.vd-flag-backdrop').count(),1,'Dashboard must include the Indian flag backdrop');
+  assert.equal(await page.locator('.vd-officer-image').getAttribute('src'),'https://cdn-ai-hs.picsart.com/ai-hot-storage/80aa0fd9-5ef3-4c29-bd79-533fc4ecb0dd.png','Dashboard must use the AI-cleaned Officer VAANI cutout');
+  console.log('PASS dashboard: flag hero, clean officer, roadmap, missions, word, heatmap, badges and focus sprint');
 
   // Officer VAANI must retain image state while either renderer changes poses.
   await page.evaluate(() => window.vaaniCharacterSpeak('dashboard'));
@@ -284,16 +286,17 @@ try {
   assert.equal(await page.locator('#vaaniMentor').evaluate(el=>el.classList.contains('ve-positioned')),false,'Reset did not return Officer VAANI to its default corner');
   await page.locator('#veDockHide').click();
   assert.equal(await page.locator('#vaaniMentor').isVisible(),false,'Hide did not remove Officer VAANI from view');
-  assert.equal(await page.locator('#veRestoreOfficer').isVisible(),true,'Restore control was not shown after hiding Officer VAANI');
-  assert.match(await page.locator('#veRestoreOfficer').getAttribute('aria-label')||'',/restore Officer VAANI/i,'Restore control should have an accessible name');
+  assert.equal(await page.locator('#veRestoreOfficer').count(),0,'Redundant bottom restore button must not be created');
+  assert.equal(await page.locator('.ve-header-mini').isVisible(),true,'Header avatar should remain available to restore Officer VAANI');
   assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('vaani-officer-dock-v1')||'{}').hidden),true,'Hidden preference was not persisted');
   await page.reload();
-  await page.waitForSelector('#veRestoreOfficer:not([hidden])',{timeout:10000});
+  await page.waitForSelector('.ve-header-mini',{timeout:10000});
   assert.equal(await page.locator('#vaaniMentor').isVisible(),false,'Officer VAANI reappeared after refresh despite saved hidden preference');
-  await page.locator('#veRestoreOfficer').click();
+  await page.locator('.ve-header-mini').click();
   await page.waitForSelector('#vaaniMentor.speaking',{timeout:5000});
   assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('vaani-officer-dock-v1')||'{}').hidden),false,'Restore did not persist the visible preference');
-  console.log('PASS Officer VAANI controls: resize, drag, reset, hide, restore and refresh persistence');
+  assert.equal(await page.locator('#veRestoreOfficer').count(),0,'Redundant bottom restore button should remain absent');
+  console.log('PASS Officer VAANI controls: resize, drag, reset, hide and header restore across refresh');
 
 
   await clickMainView('profile');

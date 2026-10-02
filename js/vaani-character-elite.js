@@ -353,31 +353,16 @@
 
   function updateDockVisibility(){
     const p=getDockPreferences();
-    // Profile already owns the right edge with identity, rank and logout
-    // controls. Hide the floating dock there without changing user preference.
-    // Active assessments keep both the dock and its restore control out of view.
+    // Hide the floating dock on Profile and during assessments. The header
+    // avatar remains the single accessible restore/briefing control.
     const routeHidden=active()==='profile';
     const taskHidden=assessmentActive();
+    document.body.classList.toggle('ve-vaani-user-hidden',p.hidden);
+    document.body.classList.toggle('ve-vaani-route-hidden',routeHidden);
+    document.body.classList.toggle('ve-vaani-task-hidden',taskHidden);
     document.body.classList.toggle('ve-vaani-hidden',p.hidden||routeHidden||taskHidden);
-    let restore=document.getElementById('veRestoreOfficer');
-    if(p.hidden&&!routeHidden&&!taskHidden){
-      if(!restore){
-        restore=document.createElement('button');
-        restore.type='button';
-        restore.id='veRestoreOfficer';
-        restore.className='ve-restore-officer';
-        restore.setAttribute('aria-label','Restore Officer VAANI');
-        restore.innerHTML='<span aria-hidden="true">✦</span><span>Restore Officer VAANI</span><small>HIDDEN</small>';
-        restore.addEventListener('click',()=>{
-          setDockHidden(false,true);
-          brief();
-        });
-        document.body.appendChild(restore);
-      }
-      restore.hidden=false;
-    }else if(restore){
-      restore.remove();
-    }
+    // Remove legacy restore buttons left by older cached builds.
+    document.getElementById('veRestoreOfficer')?.remove();
   }
 
   function setDockHidden(hidden,save=true){
@@ -622,7 +607,7 @@
 
       // Launcher buttons open the briefing during this same bubbling click.
       // Do not interpret that click as an outside click and close it immediately.
-      if(e.target.closest('.ve-header-mini,.ve-restore-officer'))return;
+      if(e.target.closest('.ve-header-mini'))return;
       if(m.contains(e.target)){
         if(e.target.closest('#vcNext')||e.target.closest('#vcCharacter')){
           setTimeout(()=>{

@@ -777,3 +777,11 @@ body.vaani-assessment-active #vaaniMentor:not(.bad-result),body.pv-session-activ
 
 /* A collapsed idle character must not intercept page navigation; the header launcher opens it. */
 #vaaniMentor:not(.bad-result):not(.speaking):not(.open):not(.ve-move-mode){visibility:hidden!important;pointer-events:none!important}
+/* Clean portrait + single header restore; remove redundant bottom control. */
+.ve-header-mini{background-image:url("https://cdn-ai-hs.picsart.com/ai-hot-storage/80aa0fd9-5ef3-4c29-bd79-533fc4ecb0dd.png")!important;background-size:78% auto!important;background-position:center bottom!important;background-repeat:no-repeat!important;background-color:#edf0e9!important}
+body.ve-vaani-user-hidden:not(.ve-vaani-route-hidden):not(.ve-vaani-task-hidden) .ve-header-mini{display:inline-flex!important}
+.ve-restore-officer{display:none!important}
+.vaani-result-briefing{grid-template-columns:76px minmax(0,1fr);align-items:center;gap:11px}
+.vaani-result-briefing-art{width:76px;height:86px;min-width:0;align-self:stretch;display:flex;align-items:flex-end;justify-content:center;overflow:hidden;border:1px solid rgba(201,162,75,.2);border-radius:9px;background:linear-gradient(145deg,rgba(201,162,75,.11),rgba(120,150,137,.08))}
+.vaani-result-briefing-art img{display:block;width:100%;height:100%;max-width:100%;max-height:100%;object-fit:contain;object-position:center bottom;filter:drop-shadow(0 4px 5px rgba(0,0,0,.16))}
+@media(max-width:480px){.vaani-result-briefing{grid-template-columns:60px minmax(0,1fr)}.vaani-result-briefing-art{width:60px;height:76px}}

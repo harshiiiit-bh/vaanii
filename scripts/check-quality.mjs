@@ -113,7 +113,7 @@ if (!accountCodeCss.includes('@media(max-width:767px)') ||
   process.exitCode = 1;
 }
 if (!html.includes('vaani-profile.css?v=20261001-account-code1-service-rank-xp5') ||
-    !html.includes('js/app.js?v=20261002-result-report6')) {
+    !html.includes('js/app.js?v=20261002-result-report7')) {
   console.error('Account-code asset cache keys are outdated');
   process.exitCode = 1;
 }
@@ -600,7 +600,7 @@ try{
  const characterCss=readFileSync('vaani-character.css','utf8'),eliteCharacterCss=readFileSync('vaani-character-elite.css','utf8');
  if(!character.includes('window.vaaniCharacterSetPose=function(pose)')||!eliteCharacter.includes('window.vaaniCharacterSetPose(pose)'))throw new Error('Officer VAANI pose state helper is missing.');
  if(!eliteCharacter.includes("e.target.closest('.ve-header-mini,.ve-restore-officer')"))throw new Error('Officer VAANI launcher/restore clicks are not excluded from outside-click dismissal.');
-  if(!eliteCharacter.includes("restore.id='veRestoreOfficer'")||!eliteCharacter.includes("restore.addEventListener('click'")||!eliteCharacter.includes("p.hidden&&!routeHidden&&!taskHidden"))throw new Error('Officer VAANI hide/restore control is incomplete.');
+  if(!eliteCharacter.includes("document.getElementById('veRestoreOfficer')?.remove()")||!eliteCharacter.includes("restore.addEventListener('click'")||!eliteCharacter.includes("p.hidden&&!routeHidden&&!taskHidden"))throw new Error('Officer VAANI hide/restore control is incomplete.');
   if(!character.includes('window.vaaniCharacterEnsure=ensure')||!eliteCharacter.includes("window.vaaniCharacterEnsure==='function'"))throw new Error('Officer VAANI mount handshake is missing.');
   if(!character.includes('assets/officer-vaani.svg'))throw new Error('Officer VAANI base local art fallback is missing.');
   if(!eliteCharacter.includes("window.addEventListener('hashchange',()=>queueRouteBrief(180)"))throw new Error('Officer VAANI route-close hook is missing.');
@@ -609,12 +609,14 @@ try{
   if(eliteCharacter.includes('const host=target||view.firstElementChild')||!eliteCharacter.includes("const routeHidden=active()==='profile'")||!eliteCharacterCss.includes("body:has(#view-profile.active) #vaaniMentor:not(.bad-result){display:none!important}"))throw new Error('Officer VAANI dock must not overlap the Profile hero.');
   if(eliteCharacter.includes('function wrapResult(){'))throw new Error('Officer VAANI result callback must not open a floating recovery briefing.');
   if(!eliteCharacterCss.includes('#vaaniMentor:not(.bad-result):not(.speaking):not(.open):not(.ve-move-mode){visibility:hidden!important;pointer-events:none!important}'))throw new Error('Collapsed Officer VAANI must not block page controls.');
-  if(!html.includes('vaani-character-elite.css?v=20261002-result-report4')||!html.includes('js/vaani-character.js?v=20261002-passive-report1')||!html.includes('js/vaani-character-elite.js?v=20261002-passive-report3'))throw new Error('Officer VAANI asset cache keys are outdated.');
+  if(!html.includes('vaani-character-elite.css?v=20261002-result-report5')||!html.includes('js/vaani-character.js?v=20261002-passive-report1')||!html.includes('js/vaani-character-elite.js?v=20261002-passive-report4'))throw new Error('Officer VAANI asset cache keys are outdated.');
   if(!html.includes('vaani-contrast-repair.css?v=20261002-contrast1'))throw new Error('Site-wide contrast repair must load after all visual layers.');
   const contrastRepair=readFileSync('vaani-contrast-repair.css','utf8');
   if(!contrastRepair.includes('--muted:#b8c3ce')||!contrastRepair.includes('--muted2:#9aa8b5')||!contrastRepair.includes('#view-grammar .gt-topic-desc'))throw new Error('Site-wide contrast tokens or Grammar readability rules are missing.');
-  const appForReports=readFileSync('js/app.js','utf8');
+  const appForReports=readFileSync('js/app.js','utf8'),dashboardCss=readFileSync('vaani-dashboard.css','utf8');
   if(!appForReports.includes('function vaaniResultBriefingNode(')||!appForReports.includes("PV.screen='summary';pvRender();")||!appForReports.includes("completedCard.appendChild(briefing)"))throw new Error('Inline end-of-attempt report and Officer VAANI briefing are incomplete.');
+  if(!html.includes('assets/indian-flag-backdrop.svg')||!dashboardCss.includes('.vd-flag-backdrop'))throw new Error('Dashboard Indian flag backdrop is missing.');
+  if(!html.includes('https://cdn-ai-hs.picsart.com/ai-hot-storage/80aa0fd9-5ef3-4c29-bd79-533fc4ecb0dd.png')||!appForReports.includes("portrait.src='https://cdn-ai-hs.picsart.com/ai-hot-storage/80aa0fd9-5ef3-4c29-bd79-533fc4ecb0dd.png'"))throw new Error('AI-cleaned Officer VAANI cutout is not integrated across dashboard and result cards.');
   if(appForReports.includes('vaaniCharacterSpeak(name),700'))throw new Error('PYQ page rendering must not open a briefing during an attempt.');
   if(!appForReports.includes("const liveQuiz=step==='practice'&&!!document.querySelector('#pane-quiz .quiz-live-card')")||!appForReports.includes('window.VAANI_SET_ASSESSMENT_ACTIVE(liveQuiz)'))throw new Error('Grammar practice flow must activate and release assessment focus.');
   if(!appForReports.includes("XP in the '+(progress.current?progress.current.name:'starting')+' → '+progress.next.name+' band")||!appForReports.includes("' total XP · '+progress.remainingXP.toLocaleString('en-IN')+' XP to '+progress.next.name"))throw new Error('Service-rank labels must distinguish band progress from total XP.');
