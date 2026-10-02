@@ -469,10 +469,11 @@ var PYQ_CDS_2012_II = [
     "s": "II",
     "n": 33,
     "sec": "Spotting Errors",
-    "q": "He was prevented to accept the assignment | because he was a government employee",
+    "q": "He was prevented to accept the assignment | because he was a government employee | and as such barred from accepting such assignments",
     "o": [
       "He was prevented to accept the assignment",
       "because he was a government employee",
+      "and as such barred from accepting such assignments",
       "No error"
     ],
     "ans": 2
