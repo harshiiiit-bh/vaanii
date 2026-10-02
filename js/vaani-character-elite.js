@@ -470,7 +470,7 @@
         '</div>'+
         '<div class="ve-position-controls">'+
           '<label for="veDockX">Left <span>(px)</span><input id="veDockX" type="number" min="8" step="1" inputmode="numeric" aria-label="Officer VAANI left position in pixels"></label>'+
-          '<label for="veDockY">Top <span>(px)</span><input id="veDockY" type="number" min="8" step="1" inputmode="numeric" aria-label="Officer VAANI top position in pixels"></label>'+\
+          '<label for="veDockY">Top <span>(px)</span><input id="veDockY" type="number" min="8" step="1" inputmode="numeric" aria-label="Officer VAANI top position in pixels"></label>'+
           '<button type="button" id="veDockApply">Apply position</button>'+
         '</div>'+
         '<p id="veDockStatus" role="status" aria-live="polite">Move, resize, or enter exact pixel coordinates.</p>';
