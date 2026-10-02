@@ -4547,8 +4547,7 @@ function renderServiceRankProgress(){
   if(progress.next){
     hint.textContent=progress.points.toLocaleString('en-IN')+' / '+progress.next.xp.toLocaleString('en-IN')+' total XP · '+progress.remainingXP.toLocaleString('en-IN')+' XP to '+progress.next.name;
     if(paceHint)paceHint.textContent=progress.earnedToNext.toLocaleString('en-IN')+' / '+progress.requiredToNext.toLocaleString('en-IN')+' XP in the '+(progress.current?progress.current.name:'starting')+' → '+progress.next.name+' band · no daily XP cap.';
-    const minimumDays=getMinimumXPDays(progress.remainingXP);
-    if(paceHint)paceHint.textContent='Next milestone can be earned through continued practice — there is no daily XP cap.';
+
   }else{
     hint.textContent='Top VAANI milestone reached · XP keeps accumulating with no daily cap.';
     if(paceHint)paceHint.textContent='All listed milestones cleared. Daily XP remains available.';
