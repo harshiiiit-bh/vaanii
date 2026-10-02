@@ -246,10 +246,9 @@ try {
   assert.equal(characterState.afterError.ready,false,'Errored image remained marked as ready');
   assert.notEqual(characterState.afterError.fallbackDisplay,'none','Fallback disappeared after image failure');
   console.log('PASS Officer VAANI: pose state, local SVG fallback, launch click and briefing visibility');
-  await page.evaluate(() => { window.__vaaniBriefingRoutes=[]; document.addEventListener('vaani:briefing',e=>window.__vaaniBriefingRoutes.push(e.detail?.view||'')); });
-  await page.locator('.ve-header-mini').click();
-  await page.waitForTimeout(80);
-  assert.equal(await page.evaluate(()=>window.__vaaniBriefingRoutes.length),1,'Launcher should produce one Officer VAANI briefing');
+  await page.evaluate(() => window.vaaniCharacterSpeak('dashboard'));
+  await page.waitForSelector('#veAdjustToggle', { timeout:5000 });
+  assert.equal(await page.locator('#vaaniMentor').evaluate(el=>el.classList.contains('speaking')),true,'Officer VAANI briefing did not open for controls');
   await page.locator('#veAdjustToggle').click();
   assert.equal(await page.locator('#veAdjustPanel').isVisible(),true,'Adjust panel did not open');
   await page.locator('#veDockScale').evaluate(el=>{el.value='110';el.dispatchEvent(new Event('input',{bubbles:true}));});
