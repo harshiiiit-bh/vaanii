@@ -1490,11 +1490,38 @@ try {
     'PYQ practice report must contain the Officer VAANI briefing');
   assert.equal(await page.locator('#vaaniMentor.open').count(),0,'Finishing PYQ practice must not open a floating briefing');
   await page.evaluate(()=>pvGoHome());
+  await page.locator('#pvApp .pv-mode-card').filter({hasText:'Practice Mode'}).click();
+  await page.waitForSelector('.vx-setup-scrim .vx-source-card[data-source="NDA+CDS"]',{timeout:5000});
+  const combinedSetup=await page.evaluate(()=>({
+    choices:Array.from(document.querySelectorAll('.vx-source-card')).map(card=>({code:card.dataset.source,count:Number(card.dataset.count),label:card.querySelector('.vx-source-name')?.textContent||''})),
+    expected:Object.fromEntries(['NDA+CDS','CDS+AFCAT','NDA+AFCAT','ALL'].map(source=>[source,VX.poolFor(source,PYQ_ALL).length]))
+  }));
+  for(const code of ['NDA+CDS','CDS+AFCAT','NDA+AFCAT','ALL']){
+    const choice=combinedSetup.choices.find(item=>item.code===code);
+    assert.ok(choice, 'Combined setup is missing '+code);
+    assert.equal(choice.count,combinedSetup.expected[code],code+' displays an inaccurate question count');
+  }
+  assert.equal(combinedSetup.choices.find(item=>item.code==='ALL').label,'All three','The full combined bank should be labelled clearly');
+  await page.locator('.vx-source-card[data-source="CDS+AFCAT"]').click();
+  assert.equal(await page.locator('.vx-source-card[data-source="CDS+AFCAT"]').getAttribute('aria-pressed'),'true','Selected combination should have a clear selected state');
+  await page.locator('.vx-btn.primary').click();
+  await page.waitForFunction(()=>PV.screen==='session'&&PV.session?.mode==='practice');
+  const startedCombined=await page.evaluate(()=>({count:PV.session.questions.length,source:PV.session.questions.map(q=>q._exam)}));
+  assert.equal(startedCombined.count,20,'Combined bank should honour the chosen question count');
+  assert.ok(startedCombined.source.every(code=>['CDS','AFCAT'].includes(code)),'Combined practice drew questions outside the selected pair');
+  await page.evaluate(()=>pvGoHome());
+  await page.setViewportSize({width:390,height:844});
+  await page.evaluate(()=>pvLaunchMode('practice'));
+  await page.waitForSelector('.vx-setup-scrim .vx-source-card[data-source="NDA+AFCAT"]',{timeout:5000});
+  const mobileSetup=await page.locator('.vx-setup-sheet').evaluate(el=>({width:el.getBoundingClientRect().width,scrollWidth:el.scrollWidth,clientWidth:el.clientWidth}));
+  assert.ok(mobileSetup.width<=390&&mobileSetup.scrollWidth<=mobileSetup.clientWidth+1,'Mobile setup should fit without horizontal overflow: '+JSON.stringify(mobileSetup));
+  await page.keyboard.press('Escape');
+  await page.setViewportSize({width:1440,height:1000});
   await page.locator('#pvApp .pv-mode-card').filter({hasText:'Bookmarks'}).click();
   await page.waitForSelector('.vx-scrim[role="dialog"]',{timeout:5000});
   assert.match(await page.locator('.vx-scrim').getAttribute('aria-label'),/Bookmarks/i,
     'Saved-question mode did not open its accessible test-setup dialog');
-  assert.match(await page.locator('.vx-sheet .vx-readout').textContent(),/1 questions/,
+  assert.match(await page.locator('.vx-sheet .vx-readout').textContent(),/1 question/,
     'Bookmark setup did not constrain its question count to the saved bank');
   await page.locator('.vx-sheet .vx-btn.primary').click();
   await page.waitForFunction(() => PV.screen==='session'&&PV.session?.mode==='bookmarks');

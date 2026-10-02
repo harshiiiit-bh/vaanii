@@ -64,3 +64,37 @@ for (const file of files) {
   papers++;
 }
 console.log('PYQ bank checks passed: ' + papers + ' papers, ' + questions + ' questions, unique identities and normalized tags.');
+
+
+// Validate the real test-setup pool builder against representative NDA/CDS/AFCAT sources.
+const setupSandbox = {
+  console: { warn() {}, error() {}, log() {} },
+  document: { readyState: 'loading', addEventListener() {} }
+};
+setupSandbox.window = setupSandbox;
+setupSandbox.PYQ_ALL = [
+  { _id: 'N1', _exam: 'NDA' }, { _id: 'N2', _exam: 'NDA' },
+  { _id: 'C1', _exam: 'CDS' }, { _id: 'C2', _exam: 'CDS' }, { _id: 'C3', _exam: 'CDS' },
+  { _id: 'A1', _exam: 'AFCAT' }
+];
+vm.createContext(setupSandbox);
+vm.runInContext(fs.readFileSync(path.join(root, 'js/vaani-testkit.js'), 'utf8'), setupSandbox, { filename: 'vaani-testkit.js' });
+const vx = setupSandbox.VX;
+assert.ok(vx && typeof vx.poolFor === 'function' && typeof vx.sourceChoices === 'function', 'Test setup source API must be available');
+const sourceChoiceSnapshot = JSON.parse(JSON.stringify(vx.sourceChoices(setupSandbox.PYQ_ALL)));
+assert.deepEqual(sourceChoiceSnapshot.map(choice => choice.code), [
+  'NDA', 'CDS', 'AFCAT', 'NDA+CDS', 'CDS+AFCAT', 'NDA+AFCAT', 'ALL'
+], 'Setup selector must show all single, paired, and all-three banks');
+assert.deepEqual(sourceChoiceSnapshot.map(choice => choice.count), [2, 3, 1, 5, 4, 3, 6], 'Combined bank question counts must be exact');
+for (const [source, exams] of [
+  ['NDA+CDS', ['NDA', 'CDS']],
+  ['CDS+AFCAT', ['CDS', 'AFCAT']],
+  ['NDA+AFCAT', ['NDA', 'AFCAT']],
+  ['ALL', ['NDA', 'CDS', 'AFCAT']]
+]) {
+  const pool = vx.poolFor(source, setupSandbox.PYQ_ALL);
+  assert.ok(pool.length > 0, source + ' should have available questions');
+  assert.ok(pool.every(question => exams.includes(question._exam)), source + ' included an unrelated exam bank');
+}
+assert.equal(vx.poolFor('BOTH', setupSandbox.PYQ_ALL).length, 6, 'Legacy BOTH source should remain compatible');
+console.log('Combined exam setup tests passed: exact pair pools, all-three pool, counts, and legacy BOTH support.');

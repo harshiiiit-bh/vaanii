@@ -78,8 +78,10 @@
 
   VX.poolFor = function (source, baseList) {
     var list = baseList || allQuestions();
-    if (source === 'BOTH' || !source) return list.slice();
-    return list.filter(function (q) { return q._exam === source; });
+    if (source === 'BOTH' || source === 'ALL' || !source) return list.slice();
+    var selected = String(source).split('+').map(function (code) { return code.trim(); }).filter(Boolean);
+    if (!selected.length) return list.slice();
+    return list.filter(function (q) { return selected.indexOf(q._exam) !== -1; });
   };
 
   /** Which exam sources actually have questions loaded right now. */
@@ -95,6 +97,44 @@
     return order.map(function (code) { return { code: code, count: counts[code] }; });
   };
 
+  /** Stable, exam-aware options for one bank or a combined bank. */
+  VX.sourceChoices = function (baseList) {
+    var list = baseList || allQuestions();
+    var sources = VX.availableSources(list);
+    var present = sources.map(function (source) { return source.code; });
+    var examOrder = ['NDA', 'CDS', 'AFCAT'];
+    var ordered = examOrder.filter(function (code) { return present.indexOf(code) !== -1; })
+      .concat(present.filter(function (code) { return examOrder.indexOf(code) === -1; }));
+    var choices = ordered.map(function (code) {
+      var source = sources.filter(function (item) { return item.code === code; })[0];
+      return { code: code, label: code, detail: 'Single exam bank', count: source ? source.count : 0, kind: 'single' };
+    });
+    var pairs = [
+      { codes: ['NDA', 'CDS'], code: 'NDA+CDS', label: 'NDA + CDS' },
+      { codes: ['CDS', 'AFCAT'], code: 'CDS+AFCAT', label: 'CDS + AFCAT' },
+      { codes: ['NDA', 'AFCAT'], code: 'NDA+AFCAT', label: 'NDA + AFCAT' }
+    ];
+    pairs.forEach(function (pair) {
+      if (!pair.codes.every(function (code) { return present.indexOf(code) !== -1; })) return;
+      choices.push({
+        code: pair.code, label: pair.label, detail: 'Two-exam combination',
+        count: list.filter(function (q) { return pair.codes.indexOf(q._exam) !== -1; }).length,
+        kind: 'combined'
+      });
+    });
+    var hasAllThree = examOrder.every(function (code) { return present.indexOf(code) !== -1; });
+    if (hasAllThree) {
+      choices.push({ code: 'ALL', label: 'All three', detail: 'NDA + CDS + AFCAT', count: list.length, kind: 'all' });
+    } else if (ordered.length > 1) {
+      var coversAll = choices.some(function (choice) {
+        var codes = choice.code === 'ALL' || choice.code === 'BOTH' ? ordered : String(choice.code).split('+');
+        return codes.length === ordered.length && ordered.every(function (code) { return codes.indexOf(code) !== -1; });
+      });
+      if (!coversAll) choices.push({ code: 'BOTH', label: 'All available', detail: ordered.join(' + '), count: list.length, kind: 'all' });
+    }
+    return choices;
+  };
+
   /* =========================================================
      2. SETUP SCREEN
      VX.setup(opts) -> Promise<config | null>
@@ -106,11 +146,23 @@
   VX.setup = function (opts) {
     opts = opts || {};
     var sources = VX.availableSources(opts.baseList);
+    var sourceChoices = VX.sourceChoices(opts.baseList);
     var showSource = opts.source !== false && sources.length > 0;
+    var sourceCodes = sources.map(function (source) { return source.code; });
+    var allKnownExams = ['NDA', 'CDS', 'AFCAT'].every(function (code) { return sourceCodes.indexOf(code) !== -1; });
+    var defaultSource = opts.defaultSource || (allKnownExams ? 'ALL' : (sources.length > 1
+      ? (sourceCodes.length === 2 && sourceCodes.every(function (code) { return ['NDA', 'CDS', 'AFCAT'].indexOf(code) !== -1; })
+        ? ['NDA', 'CDS', 'AFCAT'].filter(function (code) { return sourceCodes.indexOf(code) !== -1; }).join('+')
+        : 'BOTH')
+      : (sources[0] ? sources[0].code : 'NDA')));
+    if (defaultSource === 'BOTH' && allKnownExams) defaultSource = 'ALL';
+    if (!sourceChoices.some(function (choice) { return choice.code === defaultSource; })) {
+      defaultSource = sourceChoices.length ? sourceChoices[sourceChoices.length - 1].code : 'NDA';
+    }
 
     var cfg = {
       count: opts.defaultCount || 20,
-      source: opts.defaultSource || (sources.length > 1 ? 'BOTH' : (sources[0] ? sources[0].code : 'NDA')),
+      source: defaultSource,
       timing: opts.defaultTiming || (opts.timing === 'countdown' ? 'countdown' : 'open'),
       minutes: opts.defaultMinutes || 15
     };
@@ -119,12 +171,14 @@
     if (lockTiming) cfg.timing = opts.timing;
 
     return new Promise(function (resolve) {
-      var scrim = el('div', 'vx-scrim');
+      var previousFocus = document.activeElement;
+      var previousOverflow = document.body.style.overflow;
+      var scrim = el('div', 'vx-scrim vx-setup-scrim');
       scrim.setAttribute('role', 'dialog');
       scrim.setAttribute('aria-modal', 'true');
       scrim.setAttribute('aria-label', opts.title || 'Set up your test');
 
-      var sheet = el('div', 'vx-sheet');
+      var sheet = el('div', 'vx-sheet vx-setup-sheet');
       scrim.appendChild(sheet);
 
       function poolSize() {
@@ -145,45 +199,100 @@
         return row;
       }
 
+      function textNode(tag, cls, value) {
+        var node = el(tag, cls);
+        node.textContent = value == null ? '' : String(value);
+        return node;
+      }
+
+      function displayCount(value) {
+        return Number(value || 0).toLocaleString('en-IN');
+      }
+
+      function sourceCard(choice) {
+        var selected = cfg.source === choice.code;
+        var card = el('button', 'vx-source-card' + (selected ? ' is-selected' : ''));
+        card.type = 'button';
+        card.dataset.source = choice.code;
+        card.dataset.count = String(choice.count);
+        card.setAttribute('aria-pressed', String(selected));
+        card.setAttribute('aria-label', choice.label + ', ' + displayCount(choice.count) + ' questions');
+        var top = el('span', 'vx-source-card-top');
+        top.appendChild(textNode('span', 'vx-source-tag', choice.kind === 'single' ? 'SINGLE BANK' : (choice.kind === 'all' ? 'COMPLETE MIX' : 'COMBINED')));
+        top.appendChild(textNode('span', 'vx-source-check', selected ? '✓' : ''));
+        card.appendChild(top);
+        card.appendChild(textNode('strong', 'vx-source-name', choice.label));
+        card.appendChild(textNode('span', 'vx-source-detail', choice.detail));
+        card.appendChild(textNode('span', 'vx-source-count', displayCount(choice.count) + ' questions'));
+        card.addEventListener('click', function () { cfg.source = choice.code; draw(); });
+        return card;
+      }
+
+      function sourceGroup(title, groupChoices) {
+        if (!groupChoices.length) return null;
+        var group = el('div', 'vx-source-group');
+        group.appendChild(textNode('div', 'vx-source-group-title', title));
+        var grid = el('div', 'vx-source-grid');
+        groupChoices.forEach(function (choice) { grid.appendChild(sourceCard(choice)); });
+        group.appendChild(grid);
+        return group;
+      }
+
       function draw() {
         var max = poolSize();
         if (cfg.count > max) cfg.count = max;
         sheet.innerHTML = '';
 
-        sheet.appendChild(el('h3', null, opts.title || 'Set up your test'));
-        sheet.appendChild(el('p', 'vx-sub',
-          opts.subtitle || 'Pick how much you want to attempt and how long you get. You can change this any time you start a test.'));
+        var heading = el('div', 'vx-setup-heading');
+        var headingCopy = el('div', 'vx-setup-heading-copy');
+        headingCopy.appendChild(textNode('div', 'vx-setup-eyebrow', 'VAANI  /  MISSION CONFIGURATION'));
+        var title = textNode('h3', null, opts.title || 'Set up your test');
+        title.id = 'vxSetupTitle';
+        headingCopy.appendChild(title);
+        var subtitle = textNode('p', 'vx-sub', opts.subtitle || 'Choose your question mix, set the size of the mission, and select the clock.');
+        subtitle.id = 'vxSetupSubtitle';
+        headingCopy.appendChild(subtitle);
+        heading.appendChild(headingCopy);
+        var closeButton = textNode('button', 'vx-setup-close', '×');
+        closeButton.type = 'button';
+        closeButton.setAttribute('aria-label', 'Close test setup');
+        closeButton.title = 'Close setup';
+        closeButton.addEventListener('click', close);
+        heading.appendChild(closeButton);
+        scrim.setAttribute('aria-labelledby', 'vxSetupTitle');
+        scrim.setAttribute('aria-describedby', 'vxSetupSubtitle');
+        sheet.appendChild(heading);
 
-        /* ---- live readout ---- */
-        var read = el('div', 'vx-readout');
-        read.innerHTML =
-          '<span><b>' + cfg.count + '</b> questions</span>' +
-          '<span>' + (cfg.timing === 'countdown'
-            ? '<b>' + cfg.minutes + '</b> min limit'
-            : 'No limit &middot; your time is recorded') + '</span>';
+        var selectedChoice = sourceChoices.filter(function (choice) { return choice.code === cfg.source; })[0];
+        var read = el('div', 'vx-readout vx-setup-readout');
+        var questionMetric = el('div', 'vx-readout-metric');
+        questionMetric.appendChild(textNode('span', 'vx-readout-label', 'QUESTION SET'));
+        questionMetric.appendChild(textNode('strong', 'vx-readout-value', cfg.count + (cfg.count === 1 ? ' question' : ' questions')));
+        questionMetric.appendChild(textNode('small', 'vx-readout-detail', displayCount(max) + ' available · ' + (selectedChoice ? selectedChoice.label : 'Selected bank')));
+        var clockMetric = el('div', 'vx-readout-metric');
+        clockMetric.appendChild(textNode('span', 'vx-readout-label', 'CLOCK'));
+        clockMetric.appendChild(textNode('strong', 'vx-readout-value', cfg.timing === 'countdown' ? cfg.minutes + ' min limit' : 'Track my time'));
+        clockMetric.appendChild(textNode('small', 'vx-readout-detail', cfg.timing === 'countdown' ? 'Auto-submit at zero' : 'No limit · duration recorded'));
+        read.appendChild(questionMetric);
+        read.appendChild(clockMetric);
         sheet.appendChild(read);
 
         /* ---- exam source ---- */
         if (showSource) {
-          var f0 = el('div', 'vx-field');
-          var avail = VX.availableSources(opts.baseList);
-          var totalAll = avail.reduce(function (sum, a) { return sum + a.count; }, 0);
-          f0.appendChild(el('label', null,
-            'Question bank<span class="vx-hint">Where the questions are drawn from.</span>'));
-          var choices = avail.map(function (a) { return a.code; });
-          if (avail.length > 1) choices.push('BOTH');
-          f0.appendChild(segRow(choices, cfg.source, function (v) {
-            if (v === 'BOTH') return 'Both (' + totalAll + ')';
-            var match = avail.filter(function (a) { return a.code === v; })[0];
-            return v + ' (' + (match ? match.count : 0) + ')';
-          }, function (v) { cfg.source = v; draw(); }));
+          var f0 = el('section', 'vx-field vx-source-field');
+          f0.setAttribute('aria-label', 'Choose exam question banks');
+          f0.appendChild(el('div', 'vx-field-title', '<strong>Question banks</strong><span class="vx-hint">Choose a single exam or combine banks into one mixed set.</span>'));
+          var singles = sourceChoices.filter(function (choice) { return choice.kind === 'single'; });
+          var combinations = sourceChoices.filter(function (choice) { return choice.kind !== 'single'; });
+          if (singles.length) f0.appendChild(sourceGroup('SINGLE EXAM', singles));
+          if (combinations.length) f0.appendChild(sourceGroup('COMBINED EXAMS', combinations));
           sheet.appendChild(f0);
         }
 
         /* ---- how many questions ---- */
-        var f1 = el('div', 'vx-field');
+        var f1 = el('section', 'vx-field vx-setup-count');
         f1.appendChild(el('label', null,
-          'How many questions<span class="vx-hint">' + max + ' available in this bank.</span>'));
+          'Question count<span class="vx-hint">' + displayCount(max) + ' available for the selected bank.</span>'));
         var presets = COUNT_PRESETS.filter(function (v) { return v <= max; });
         if (max > 0 && presets.indexOf(max) === -1 && max < 100) presets.push(max);
         f1.appendChild(segRow(presets, cfg.count, function (v) { return v; },
@@ -191,6 +300,7 @@
         var custom = el('input', 'vx-num');
         custom.type = 'number'; custom.min = 1; custom.max = max; custom.value = cfg.count;
         custom.setAttribute('aria-label', 'Custom number of questions');
+        custom.setAttribute('inputmode', 'numeric');
         custom.style.marginTop = '8px';
         custom.addEventListener('change', function () {
           var v = Math.max(1, Math.min(max, parseInt(custom.value, 10) || 1));
@@ -200,17 +310,17 @@
         sheet.appendChild(f1);
 
         /* ---- timing ---- */
-        var f2 = el('div', 'vx-field');
+        var f2 = el('section', 'vx-field vx-setup-clock');
         if (!lockTiming) {
           f2.appendChild(el('label', null,
-            'Clock<span class="vx-hint">Count down against a limit, or count up and just record how long you took.</span>'));
+            'Clock mode<span class="vx-hint">Count down for a challenge or track the time you take.</span>'));
           f2.appendChild(segRow(['countdown', 'open'], cfg.timing, function (v) {
             return v === 'countdown' ? 'Time limit' : 'Track my time';
           }, function (v) { cfg.timing = v; draw(); }));
         }
         if (cfg.timing === 'countdown') {
           var lbl = el('label', null,
-            'Total time<span class="vx-hint">The test submits itself when this runs out.</span>');
+            'Time limit<span class="vx-hint">The test submits automatically when time runs out.</span>');
           lbl.style.marginTop = lockTiming ? '0' : '16px';
           f2.appendChild(lbl);
           f2.appendChild(segRow(MINUTE_PRESETS, cfg.minutes, function (v) { return v + ' min'; },
@@ -218,6 +328,7 @@
           var cm = el('input', 'vx-num');
           cm.type = 'number'; cm.min = 1; cm.max = 300; cm.value = cfg.minutes;
           cm.setAttribute('aria-label', 'Custom minutes');
+          cm.setAttribute('inputmode', 'numeric');
           cm.style.marginTop = '8px';
           cm.addEventListener('change', function () {
             cfg.minutes = Math.max(1, Math.min(300, parseInt(cm.value, 10) || 1)); draw();
@@ -227,11 +338,11 @@
         sheet.appendChild(f2);
 
         /* ---- actions ---- */
-        var actions = el('div', 'vx-actions');
-        var cancel = el('button', 'vx-btn ghost', 'Cancel');
+        var actions = el('div', 'vx-actions vx-setup-actions');
+        var cancel = textNode('button', 'vx-btn ghost', 'Cancel');
         cancel.type = 'button';
         cancel.addEventListener('click', close);
-        var go = el('button', 'vx-btn primary', opts.confirmLabel || 'Start test');
+        var go = textNode('button', 'vx-btn primary', opts.confirmLabel || 'Start test');
         go.type = 'button';
         if (max < 1) { go.disabled = true; go.textContent = 'No questions in this bank'; }
         go.addEventListener('click', function () {
@@ -246,22 +357,35 @@
         actions.appendChild(go);
         sheet.appendChild(actions);
       }
-
       var settled = false;
       function teardown() {
         document.removeEventListener('keydown', onKey);
+        if (document.body) document.body.style.overflow = previousOverflow;
         scrim.remove();
+        if (previousFocus && typeof previousFocus.focus === 'function' && document.contains(previousFocus)) {
+          previousFocus.focus();
+        }
       }
       function close() { if (settled) return; settled = true; teardown(); resolve(null); }
       function done(v) { if (settled) return; settled = true; teardown(); resolve(v); }
-      function onKey(e) { if (e.key === 'Escape') close(); }
+      function onKey(e) {
+        if (e.key === 'Escape') { close(); return; }
+        if (e.key !== 'Tab') return;
+        var focusable = Array.prototype.slice.call(sheet.querySelectorAll('button:not([disabled]),input:not([disabled])'))
+          .filter(function (node) { return node.offsetParent !== null; });
+        if (!focusable.length) { e.preventDefault(); return; }
+        var first = focusable[0], last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
 
       scrim.addEventListener('mousedown', function (e) { if (e.target === scrim) close(); });
       document.addEventListener('keydown', onKey);
 
       draw();
       document.body.appendChild(scrim);
-      var first = sheet.querySelector('button, input');
+      document.body.style.overflow = 'hidden';
+      var first = sheet.querySelector('.vx-source-card[aria-pressed="true"], .vx-seg button[aria-pressed="true"], .vx-btn');
       if (first) first.focus();
     });
   };
