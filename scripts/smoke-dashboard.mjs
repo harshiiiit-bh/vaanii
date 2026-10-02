@@ -523,6 +523,11 @@ try {
   assert.equal(switchedBack.xp, 12, 'Switching back from a partial account lost the complete account data');
   assert.deepEqual(switchedBack.completed, {}, 'Partial-account switching introduced cross-account progress');
   await page.evaluate(() => finishGateEntry());
+  // finishGateEntry schedules a first-visit guide for the newly active account.
+  // Close that modal in the smoke browser before continuing with lesson clicks.
+  await page.waitForTimeout(1000);
+  if (await page.locator('#viTour.open').count()) await page.keyboard.press('Escape');
+  await page.waitForFunction(() => !document.getElementById('viTour')?.classList.contains('open'), null, { timeout: 5000 });
   console.log('PASS account isolation: create, logout, restore, switch and reject malformed records');
 
   await clickMainView('grammar');
