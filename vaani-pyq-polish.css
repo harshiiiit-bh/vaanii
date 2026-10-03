@@ -341,3 +341,44 @@
   #view-pyq .pv-topic-group-copy{flex:1 1 100%}
   #view-pyq .pv-topic-group-head-side{flex:1 1 100%;justify-content:space-between;flex-direction:row;align-items:center}
 }
+
+
+/* Structured arrangement v2 — fixed anchors + jumbled segments */
+#view-pyq .pv-structured-group{
+  display:grid;
+  gap:8px;
+  padding:10px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:var(--panel2);
+}
+#view-pyq .pv-structured-group + .pv-structured-group{margin-top:10px}
+#view-pyq .pv-structured-group-head{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:10px;
+  padding:2px 2px 5px;
+}
+#view-pyq .pv-structured-group-kicker{
+  color:var(--gold);
+  font-size:.62rem;
+  font-weight:900;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+}
+#view-pyq .pv-structured-group-head strong{
+  color:var(--text);
+  font-size:.76rem;
+  font-weight:800;
+}
+#view-pyq .pv-structured-fixed{
+  background:linear-gradient(180deg,rgba(201,162,75,.06),var(--panel2));
+}
+#view-pyq .pv-structured-jumbled{
+  background:linear-gradient(180deg,rgba(85,118,155,.04),var(--panel2));
+}
+@media(max-width:640px){
+  #view-pyq .pv-structured-group-head{display:block}
+  #view-pyq .pv-structured-group-head strong{display:block;margin-top:2px}
+}
