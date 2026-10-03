@@ -4768,16 +4768,18 @@ function normalizeProfileImageLink(raw){
   }catch(e){}
   return profilePhotoSafeUrl(url);
 }
-function loadProfileImageForCrop(src){
+function loadProfileImageForCrop(src,needCors){
   return new Promise((resolve,reject)=>{
     const image=new Image();
     image.onload=()=>resolve(image);
     image.onerror=()=>reject(new Error('The image link could not be loaded. Paste a direct image address or a Google Drive/image URL.'));
-    image.referrerPolicy='no-referrer';if(/^https?:\/\//i.test(src))image.crossOrigin='anonymous';image.src=src;
+    image.referrerPolicy='no-referrer';
+    if(needCors&&/^https?:\/\//i.test(src))image.crossOrigin='anonymous';
+    image.src=src;
   });
 }
 function bakeProfileCrop(src,x,y,zoom,size){
-  return loadProfileImageForCrop(src).then(image=>{
+  return loadProfileImageForCrop(src,true).then(image=>{
     const canvas=document.createElement('canvas');canvas.width=size||128;canvas.height=size||128;
     const target=canvas.width,scale=Math.max(target/(image.naturalWidth||1),target/(image.naturalHeight||1))*Number(zoom||1);
     const rw=(image.naturalWidth||1)*scale,rh=(image.naturalHeight||1)*scale,maxX=Math.max(0,rw-target),maxY=Math.max(0,rh-target);
@@ -4815,7 +4817,7 @@ function ensureProfilePhotoEditor(){
   function setStatus(text,bad){status.textContent=text||'';status.classList.toggle('is-error',!!bad);}
   async function setSource(src,kind){
     src=profilePhotoSafeUrl(src);if(!src){setStatus('That image link is not supported.',true);return;}setStatus('Loading image…');
-    try{await loadProfileImageForCrop(src);draft={src,kind:kind||(/^data:image\//i.test(src)?'data':'url'),x:50,y:50,zoom:1};renderDraft();setStatus('Image loaded. Drag the photo until the framing looks right.');}
+    try{await loadProfileImageForCrop(src,false);draft={src,kind:kind||(/^data:image\//i.test(src)?'data':'url'),x:50,y:50,zoom:1};renderDraft();setStatus('Image loaded. Drag the photo until the framing looks right.');}
     catch(err){setStatus(err.message||'Could not load that image.',true);}
   }
   modal.openEditor=()=>{
