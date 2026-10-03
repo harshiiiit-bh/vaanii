@@ -502,6 +502,13 @@
      Turns an endless document into finite chapters: 01/05,
      current mission, dots, and previous/next. It is an overlay,
      not a replacement for normal scrolling. */
+  /* Mobile Mission navigator removed: it was unnecessary visual chrome and
+     competed with the dashboard content. Keep the legacy JS harmless but never render it. */
+  #mobileMissionDeck{
+    display:none!important;
+    pointer-events:none!important;
+  }
+
   #mobileMissionDeck{
     position:fixed;
     left:10px;
