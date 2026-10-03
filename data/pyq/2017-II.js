@@ -525,7 +525,7 @@ var PYQ_2017_II = [
       "Q R P S",
       "Q S P R"
     ],
-    "ans": 3
+    "ans": 2
   },
   {
     "y": 2017,
