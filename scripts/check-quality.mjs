@@ -728,7 +728,7 @@ try {
     '.vx-host-participate',
     '.vx-host-spectate',
     '.vx-invite-action',
-    '.vx-invite-copy-code',
+    '.vx-invite-copy-row',
     '.vx-invite-share',
     'ARENA_RECOVERY_KEY',
     'function arenaAnalysis',
