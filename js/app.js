@@ -1304,6 +1304,31 @@ function pyqLabeledBlocks(q){
     if(tail&&blocks.length)blocks[blocks.length-1].text+=' '+tail;
     return blocks.length>=3?blocks:null;
   }
+  /* Some older OCR transcriptions preserve bare P/Q/R/S boundary markers
+     without punctuation. Use them only when they form a clean sequential
+     marker run and every resulting segment is non-empty; otherwise leave the
+     original text untouched rather than inventing a split. */
+  if(isPqrsParts){
+    const bare=[...source.matchAll(/\b([PQRS])\b/g)];
+    if(bare.length>=3){
+      const seq=bare.map(m=>m[1]).join('');
+      const expected=seq.startsWith('PQRS')?'PQRS':seq.startsWith('PQR')?'PQR':'';
+      if(expected && bare.length===expected.length){
+        const chunks=[];let cursor=0;
+        for(let i=0;i<bare.length;i++){
+          const marker=bare[i];
+          const text=source.slice(cursor,marker.index).trim();
+          if(text.length<3){chunks.length=0;break;}
+          chunks.push(text);
+          cursor=marker.index+marker[0].length;
+        }
+        const tail=source.slice(cursor).trim();
+        if(tail.length<3)chunks.length=0;
+        else chunks.push(tail);
+        if(chunks.length===4) return chunks.map((text,index)=>({label:['P','Q','R','S'][index],text}));
+      }
+    }
+  }
   const re=/(?:^|\n|\s|[\/\|]\s*)(S1|S2|S3|S6|P|Q|R|S)\s*[\.:]\s*/g;
   const matches=[...source.matchAll(re)];
   if(!matches.length)return null;
