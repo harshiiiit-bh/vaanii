@@ -420,3 +420,182 @@
     grid-column:auto!important;
   }
 }
+
+
+/* ==========================================================
+   V4 MOBILE COMMAND DECK + HERO RECOVERY
+   Mobile only. Desktop/tablet remain byte-for-byte unaffected.
+   ========================================================== */
+@media (max-width:767px){
+
+  /* Replace the dashboard Vocab shortcut with the Book Reading destination
+     after the mobile JS swaps the action/label. */
+  #view-dashboard .vd-qa[data-mobile-books-shortcut="1"] .vd-qa-btn{
+    min-width:0!important;
+  }
+
+  /* Officer VAANI — show the complete figure inside the hero instead of
+     letting the old compact-stage rules clip the upper/lower body. */
+  #view-dashboard .vd-hero{
+    overflow:hidden!important;
+  }
+  #view-dashboard .vd-officer-stage{
+    width:154px!important;
+    height:74%!important;
+    min-height:300px!important;
+    max-height:none!important;
+    right:-2px!important;
+    bottom:0!important;
+    opacity:1!important;
+    align-items:flex-end!important;
+    justify-content:center!important;
+    overflow:visible!important;
+  }
+  #view-dashboard .vd-officer-image{
+    width:auto!important;
+    height:100%!important;
+    max-width:100%!important;
+    max-height:none!important;
+    object-fit:contain!important;
+    object-position:center bottom!important;
+    transform:none!important;
+    animation:none!important;
+  }
+  #view-dashboard .vd-officer-halo{
+    width:108%!important;
+    height:70%!important;
+    right:-4%!important;
+    bottom:3%!important;
+  }
+  #view-dashboard .vd-officer-badge{
+    right:0!important;
+    bottom:8px!important;
+    transform:scale(.78)!important;
+    transform-origin:right bottom!important;
+    white-space:nowrap!important;
+  }
+  #view-dashboard .vd-hero-inner{
+    position:relative!important;
+    z-index:5!important;
+    max-width:100%!important;
+    padding-right:122px!important;
+  }
+  @media (max-width:390px){
+    #view-dashboard .vd-officer-stage{
+      width:132px!important;
+      height:70%!important;
+      min-height:280px!important;
+      right:-3px!important;
+    }
+    #view-dashboard .vd-hero-inner{padding-right:108px!important}
+    #view-dashboard .vd-officer-badge{transform:scale(.68)!important}
+  }
+
+  /* ---------------- MOBILE MISSION NAVIGATOR ----------------
+     Turns an endless document into finite chapters: 01/05,
+     current mission, dots, and previous/next. It is an overlay,
+     not a replacement for normal scrolling. */
+  #mobileMissionDeck{
+    position:fixed;
+    left:10px;
+    right:10px;
+    bottom:calc(var(--bottomnav-h,64px) + 9px + env(safe-area-inset-bottom));
+    z-index:8400;
+    padding:8px 9px 9px;
+    border:1px solid rgba(201,162,75,.34);
+    border-radius:17px;
+    background:rgba(7,15,22,.93);
+    color:#f4f1e9;
+    box-shadow:0 16px 42px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.05);
+    backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px);
+    pointer-events:auto;
+    animation:mdeckIn .24s ease both;
+  }
+  @keyframes mdeckIn{
+    from{opacity:0;transform:translateY(10px)}
+    to{opacity:1;transform:translateY(0)}
+  }
+  #mobileMissionDeck .mdeck-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:0 3px 5px;
+  }
+  #mobileMissionDeck .mdeck-kicker{
+    color:#b9c8ca;
+    font:700 .47rem var(--mono,monospace);
+    letter-spacing:.17em;
+  }
+  #mobileMissionDeck .mdeck-count{
+    color:#e2c77c;
+    font:800 .48rem var(--mono,monospace);
+    letter-spacing:.08em;
+  }
+  #mobileMissionDeck .mdeck-main{
+    display:grid;
+    grid-template-columns:34px minmax(0,1fr) 34px;
+    align-items:center;
+    gap:7px;
+  }
+  #mobileMissionDeck .mdeck-btn{
+    width:34px;
+    height:34px;
+    border:1px solid rgba(201,162,75,.28);
+    border-radius:10px;
+    background:#111e27;
+    color:#ead38f;
+    font-size:1.15rem;
+    line-height:1;
+  }
+  #mobileMissionDeck .mdeck-btn:disabled{
+    opacity:.28;
+  }
+  #mobileMissionDeck .mdeck-current{
+    min-width:0;
+    text-align:center;
+  }
+  #mobileMissionDeck .mdeck-current strong{
+    display:block;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    font:800 .62rem var(--serif,Georgia);
+    letter-spacing:.07em;
+    text-transform:uppercase;
+  }
+  #mobileMissionDeck .mdeck-dots{
+    display:flex;
+    justify-content:center;
+    gap:4px;
+    margin-top:5px;
+  }
+  #mobileMissionDeck .mdeck-dots i{
+    width:13px;
+    height:3px;
+    border-radius:99px;
+    background:#34434b;
+  }
+  #mobileMissionDeck .mdeck-dots i.active{
+    width:23px;
+    background:#d6b45e;
+  }
+  .mdeck-target{
+    scroll-margin-top:84px!important;
+    scroll-margin-bottom:150px!important;
+  }
+  body.mobile-more-open #mobileMissionDeck{
+    display:none!important;
+  }
+  body.mission-deck-open #bottomNav{
+    transform:translateY(0)!important;
+  }
+}
+
+@media (max-width:390px){
+  #mobileMissionDeck{
+    left:7px!important;
+    right:7px!important;
+    padding:7px 7px 8px!important;
+  }
+}
