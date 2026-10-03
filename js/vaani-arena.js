@@ -2814,7 +2814,8 @@
 
     function drawBoard() {
       entries = S.rows.slice(0, MAX_PLAYERS).map(function (row, i) { return { row: row, rank: i + 1 }; });
-      var myRank = entries.findIndex(function (entry) { return entry.row.pid === playerId(); }) + 1;
+      var currentPid = (res && res.pid) ? String(res.pid) : playerId();
+      var myRank = entries.findIndex(function (entry) { return entry.row.pid === currentPid; }) + 1;
       var topScore = entries.length ? String(entries[0].row.score) + '/' + String(entries[0].row.total) : '—';
       boardSummary.innerHTML = '';
       [
