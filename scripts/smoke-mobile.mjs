@@ -81,7 +81,6 @@ try{
   };
 
   await go('Grammar','grammar');
-  await assert.ok?.catch?.(()=>{}); // no-op to keep the test readable in old Node/Playwright runners
   await go('90-Day Vocab','vocab90');
   assert.ok(await page.locator('#mobileRoomSwitcher .mrs-tab').count()>=2,'Vocab90 mobile rooms were not built');
   await go('PYQ Vault','pyq');
