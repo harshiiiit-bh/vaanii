@@ -6272,14 +6272,16 @@ function sheetSubheader(title){
 }
 function showSheetBookmarks(){
   sheetSubheader('Bookmarks');
-  const bm = getBookmarks().filter(b=>b.startsWith('pyq:'));
+  // PYQ bookmarks are stored as raw question ids. Older builds may have used
+  // a "pyq:" prefix, so accept both formats here.
+  const bm = getBookmarks().filter(b=>b && (b.startsWith('pyq:') || PYQ_BY_ID[b]));
   const body = document.getElementById('sheetBody');
   if(!bm.length){
     body.innerHTML = `<div class="sheet-empty">No bookmarks yet.<br>Tap the ★ on any PYQ card to save it here.</div>`;
     return;
   }
   body.innerHTML = bm.map(b=>{
-    const qid = b.slice(4);
+    const qid = b.startsWith('pyq:') ? b.slice(4) : b;
     const q = PYQ_BY_ID[qid];
     if(!q) return '';
     return `<div class="sheet-bm-item" onclick="closeMoreSheet();switchView('pyq');">
