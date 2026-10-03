@@ -3,8 +3,57 @@
    Dedicated guide + post-update first-visit briefing.
 ============================================================ */
 (function(){
-  const INFO_TOUR_VERSION='20261002-info-center1';
-  const TOUR_TEXT='Welcome to VAANI, aspirant. I have moved the how-to information into one clean guide. Tap the new info button anytime to understand every feature, every XP rule and every part of your learning system.';
+  /*
+     RELEASE MANIFEST
+     Add one entry for every shipped feature/update. Keep the newest
+     release first. The same record drives:
+       1) first-login Officer VAANI briefing
+       2) Information Centre → What's New
+       3) per-account "already briefed" state
+  */
+  const FEATURE_RELEASES=[
+    {
+      version:'20261003-profile-avatar-arena1',
+      date:'03 OCT 2026',
+      tag:'FEATURE UPDATE',
+      title:'Profile pictures are live',
+      summary:'You can now set a circular profile picture and carry the same identity into Arena.',
+      bullets:[
+        'Choose a picture from your device gallery or drag & drop one on desktop.',
+        'Paste a usable image link, then crop, reposition and zoom it manually.',
+        'The picture is saved with your VAANI account instead of being tied only to one browser.',
+        'Arena now shows player avatars on the leaderboard and the host avatar on match screens and invites.'
+      ]
+    },
+    {
+      version:'20261003-arena-command1',
+      date:'03 OCT 2026',
+      tag:'ARENA UPDATE',
+      title:'Arena became a command console',
+      summary:'The Arena setup and host experience were rebuilt around faster question selection and clearer controls.',
+      bullets:[
+        'Question selection is grouped into bank, paper/type filters, challenge settings and match rules.',
+        'Hosts get direct access to the match, answer key and leaderboard.',
+        'Host identity is shown throughout the match briefing and share flow.',
+        'The leaderboard received a championship-style layout with search, filters and review.'
+      ]
+    },
+    {
+      version:'20261002-info-center1',
+      date:'02 OCT 2026',
+      tag:'SYSTEM UPDATE',
+      title:'The Information Centre arrived',
+      summary:'VAANI now has one dedicated field manual for understanding the platform, XP rules and major learning tools.',
+      bullets:[
+        'The info button opens the current platform guide.',
+        'The guide explains learning areas, testing modes, Arena, profile progress and Officer VAANI controls.',
+        'The XP system and study flow now have one reference point.'
+      ]
+    }
+  ];
+  const INFO_TOUR_VERSION=FEATURE_RELEASES[0].version;
+  const LATEST_RELEASE=FEATURE_RELEASES[0];
+  const TOUR_TEXT=LATEST_RELEASE.title+'. '+LATEST_RELEASE.summary;
 
   const officerSVG = '<img class="vi-officer-model" src="https://cdn-ai-hs.picsart.com/ai-hot-storage/26983f1e-c8a3-4711-8463-852b639599c7.png" alt="Officer VAANI" loading="lazy" decoding="async">';
 
@@ -44,14 +93,14 @@
       '<div class="vi-tour-scene">'+
         '<div class="vi-tour-officer" aria-hidden="true">'+officerSVG+'</div>'+
         '<div class="vi-tour-bubble">'+
-          '<div class="vi-tour-kicker">FIELD BRIEFING · UPDATE 01</div>'+
-          '<h3 id="viTourTitle">Your VAANI field manual</h3>'+
+          '<div class="vi-tour-kicker">FIELD BRIEFING · '+LATEST_RELEASE.tag+'</div>'+
+          '<h3 id="viTourTitle">'+LATEST_RELEASE.title+'</h3>'+
           '<p><span id="viTourText" class="vi-tour-type"></span><span class="vi-tour-cursor" aria-hidden="true"></span></p>'+
           '<div class="vi-tour-actions" id="viTourActions">'+
             '<button type="button" class="btn" id="viTourOpen">Open Guide</button>'+
             '<button type="button" class="btn ghost" id="viTourSkip">Skip briefing</button>'+
           '</div>'+
-          '<div class="vi-tour-note">This briefing appears once after this update. The guide remains available from the ⓘ button.</div>'+
+          '<div class="vi-tour-note">This briefing appears once per account for this release. The full update history remains in the Information Centre.</div>'+
         '</div>'+
       '</div>';
     document.body.appendChild(el);
@@ -82,6 +131,11 @@
     if(typeof ACTIVE_CODE==='undefined'||!ACTIVE_CODE)return;
     if(typeof State==='undefined')return;
     if(State.infoTourVersion===INFO_TOUR_VERSION)return;
+    if(typeof window.VAANI_FEATURE_UPDATE_BRIEFING==='function'){
+      window.VAANI_FEATURE_UPDATE_BRIEFING(LATEST_RELEASE);
+      markTourSeen();
+      return;
+    }
     buildTour();
     requestAnimationFrame(function(){
       positionTourSpot();
@@ -92,6 +146,22 @@
     });
   }
 
+
+  function renderReleaseHistoryHTML(){
+    return '<section class="vi-section reveal vi-whats-new"><div class="vi-section-head"><div><h2>What’s new</h2><p>Release notes shared by the same update manifest that drives Officer VAANI’s first-login briefing.</p></div><span class="vi-release-current">LATEST · '+escapeHtmlInfo(LATEST_RELEASE.version)+'</span></div>'+
+      '<div class="vi-release-list">'+FEATURE_RELEASES.map(function(release,index){
+        return '<article class="vi-release-card'+(index===0?' is-latest':'')+'">'+
+          '<div class="vi-release-top"><span class="vi-release-tag">'+escapeHtmlInfo(release.tag)+'</span><span class="vi-release-date">'+escapeHtmlInfo(release.date)+'</span></div>'+
+          '<h3>'+escapeHtmlInfo(release.title)+(index===0?'<span class="vi-release-new">NEW</span>':'')+'</h3>'+
+          '<p>'+escapeHtmlInfo(release.summary)+'</p>'+
+          '<ul>'+release.bullets.map(function(item){return '<li>'+escapeHtmlInfo(item)+'</li>';}).join('')+'</ul>'+
+          '</article>';
+      }).join('')+'</div></section>';
+  }
+  function escapeHtmlInfo(value){
+    return String(value==null?'':value).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});
+  }
+
   const INFO_HTML = [
     '<div class="vi-shell">',
       '<section class="vi-hero reveal">',
@@ -100,6 +170,7 @@
           '<div class="vi-command-art" aria-hidden="true"><svg viewBox="0 0 420 290"><g class="vi-svg-orbit" fill="none" stroke="rgba(230,198,111,.42)" stroke-width="1.5"><ellipse cx="210" cy="145" rx="150" ry="62"/><ellipse cx="210" cy="145" rx="150" ry="62" transform="rotate(58 210 145)"/><ellipse cx="210" cy="145" rx="150" ry="62" transform="rotate(-58 210 145)"/></g><circle cx="210" cy="145" r="58" fill="rgba(201,162,75,.13)" stroke="rgba(230,198,111,.64)" stroke-width="2"/><circle class="vi-svg-pulse" cx="210" cy="145" r="32" fill="none" stroke="#e6c66f" stroke-width="2"/><path class="vi-svg-dash" d="M78 235 C142 190 273 190 345 76" fill="none" stroke="#fff" stroke-opacity=".25" stroke-width="2" stroke-dasharray="8 10"/><circle cx="210" cy="145" r="10" fill="#e6c66f"/><path d="M192 167 L210 110 L228 167 L210 184Z" fill="#fff" opacity=".9"/><path d="M202 167 L210 129 L218 167" fill="#1b2a34"/></svg></div>',
         '</div>',
       '</section>',
+      renderReleaseHistoryHTML(),
       '<section class="vi-section reveal"><div class="vi-section-head"><div><h2>Start here</h2><p>The four things every aspirant should understand first.</p></div></div><div class="vi-flow">',
         '<div class="vi-step"><div class="vi-step-num">01</div><h3>Your account</h3><p>VAANI uses an account code to restore your saved learning record. Keep the code safe.</p></div>',
         '<div class="vi-step"><div class="vi-step-num">02</div><h3>Pick a route</h3><p>Use the bottom navigation on mobile or the desktop navigation to move between learning areas.</p></div>',
@@ -159,6 +230,9 @@
     if(typeof initReveal==='function')safeCall(initReveal,'initReveal(info)');
     setTimeout(function(){ if(typeof forceRevealIn==='function')forceRevealIn(document.getElementById('view-info')); },100);
   }
+
+  window.VAANI_FEATURE_RELEASES=FEATURE_RELEASES;
+  window.VAANI_LATEST_FEATURE_RELEASE=LATEST_RELEASE;
 
   window.openInfoCenter=function(){
     markTourSeen();

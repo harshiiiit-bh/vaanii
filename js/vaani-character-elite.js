@@ -139,6 +139,19 @@
     }
   }
 
+  window.VAANI_FEATURE_UPDATE_BRIEFING=function(release){
+    if(!release||assessmentActive())return false;
+    if(typeof window.vaaniCharacterEnsure==='function')window.vaaniCharacterEnsure();
+    const prefs=getDockPreferences();
+    if(prefs.hidden)setDockHidden(false,false);
+    const bullets=Array.isArray(release.bullets)?release.bullets.slice(0,4):[];
+    const detail=[release.summary||'',bullets.length?' '+bullets.join(' • '):''].join('').trim();
+    setText(release.tag||'FEATURE UPDATE',release.title||'New VAANI update',detail,'p2','point','FEATURE UPDATE');
+    open();
+    window.dispatchEvent(new CustomEvent('vaani:feature-update',{detail:release}));
+    return true;
+  };
+
   function brief(){
     if(getDockPreferences().hidden||assessmentActive())return;
     if(typeof window.vaaniCharacterEnsure==='function')window.vaaniCharacterEnsure();
