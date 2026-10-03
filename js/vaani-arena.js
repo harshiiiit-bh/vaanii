@@ -255,9 +255,23 @@
 
   A.questionsFor = function (match, playerName) {
     var pool = poolForSource(match.source);
+    var frozen = Array.isArray(match && match.frozenQuestionIds) ? match.frozenQuestionIds.map(function (id) { return String(id || ''); }).filter(Boolean) : [];
+    if (frozen.length) {
+      var byId = {};
+      pool.forEach(function (q) { byId[String(q._id || '')] = q; });
+      var pickedFrozen = [];
+      frozen.forEach(function (id) { if (byId[id]) pickedFrozen.push(byId[id]); });
+      if (pickedFrozen.length) {
+        if (match.shuffleOrder && playerName) {
+          pickedFrozen = seededShuffle(pickedFrozen, (match.seed ^ hashString(playerName)) >>> 0);
+        }
+        return pickedFrozen.slice(0, Math.min(match.count, pickedFrozen.length));
+      }
+    }
     pool = applyFilters(pool, match.type, match.paperKey);
-    // sort first so the starting order is identical everywhere,
-    // regardless of the order papers happened to load in
+    // Legacy matches created before frozen question IDs existed continue to
+    // use the original seeded-pool behavior. New matches freeze their IDs at
+    // creation, so later PYQ corrections cannot change an active match.
     pool = pool.slice().sort(function (a, b) {
       return String(a._id) < String(b._id) ? -1 : (String(a._id) > String(b._id) ? 1 : 0);
     });
@@ -381,7 +395,8 @@
         p_host_pid: playerId(),
         p_host_name: String(match.hostName || playerName() || 'Cadet'),
         p_host_avatar: match.hostAvatar && typeof match.hostAvatar === 'object' ? match.hostAvatar : null,
-        p_expires_at: Number(match.expiresAt) || 0
+        p_expires_at: Number(match.expiresAt) || 0,
+        p_question_ids: Array.isArray(match.frozenQuestionIds) ? match.frozenQuestionIds.map(function (id) { return String(id || ''); }).filter(Boolean) : []
       };
       return global.fetch(SHARED_REGISTER_MATCH_ENDPOINT, {
         method: 'POST',
@@ -764,6 +779,9 @@
       m.hostAvatar = meta.host_avatar;
     }
     if (meta.expires_at) m.expiresAt = Number(meta.expires_at) || m.expiresAt;
+    if (Array.isArray(meta.question_ids) && meta.question_ids.length) {
+      m.frozenQuestionIds = meta.question_ids.map(function (id) { return String(id || ''); }).filter(Boolean);
+    }
     rememberMatch(m);
     return m;
   }
@@ -1164,6 +1182,7 @@
         if(!parsed){say('Could not build a code from those settings.');return;}
         parsed.hostName=match.hostName;
         parsed.hostAvatar=match.hostAvatar;
+        freezeMatchQuestions(parsed);
         S.match=parsed;
         S.hostName=match.hostName;
         markHost(parsed.code);
@@ -1640,9 +1659,11 @@
         // round-trip so what we show is exactly what a joiner will read
         var parsed = A.decode(match.code);
         if (!parsed) { say('Could not build a code from those settings.'); return; }
+        freezeMatchQuestions(parsed);
         S.match = parsed;
         markHost(parsed.code);
         rememberMatch(parsed);
+        registerSharedMatchMetadata(parsed);
         go('share');
       });
       actions.appendChild(cancel); actions.appendChild(make);
@@ -1714,6 +1735,14 @@
     if (s || !parts.length) parts.push(s + ' sec');
     return parts.join(' ');
   }
+  function freezeMatchQuestions(m) {
+    if (!m) return m;
+    if (Array.isArray(m.frozenQuestionIds) && m.frozenQuestionIds.length) return m;
+    var qs = A.questionsFor(m, '');
+    m.frozenQuestionIds = qs.map(function (q) { return String(q._id || ''); }).filter(Boolean);
+    return m;
+  }
+
   function paperLabel(m) {
     var hit = papersFor(m.source).filter(function (p) { return p.key === m.paperKey; })[0];
     return hit ? ((hit.exam || '') + ' ' + (hit.s || '') + ' ' + (hit.y || '')) : 'One paper';
@@ -1771,11 +1800,13 @@
       fetchSharedMatchMetadata(m).then(function() {
         if (S.match && S.match.code === m.code) {
           S.match = m;
-          render();
+          rememberMatch(m);
+          go('briefing');
         }
+      }).catch(function() {
+        rememberMatch(m);
+        go('briefing');
       });
-      rememberMatch(m);
-      go('briefing');
     }
     go2.addEventListener('click', attempt);
     input.addEventListener('keydown', function (e) { if (e.key === 'Enter') attempt(); });
@@ -1950,6 +1981,9 @@
     }
 
     var qs = A.questionsFor(m, playerName());
+    if (!m.frozenQuestionIds && !isHost(m.code)) {
+      fetchSharedMatchMetadata(m).then(function(){ if (S.match && S.match.code === m.code) render(); });
+    }
     if (qs.length < m.count) {
       var warn = el('div', 'vx-briefing-notice warning');
       warn.textContent = 'This match requires ' + m.count + ' questions, but only ' + qs.length + ' are available on this device. Please update VAANI or ask the host to check the question bank.';
