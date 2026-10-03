@@ -478,7 +478,7 @@
   /* =========================================================
      VIEW STATE
      ========================================================= */
-  var S = { screen: 'home', match: null, draft: null, run: null, result: null, rows: [], hostSpectate: false, recoverySnapshot: null, practiceSummary: null };
+  var S = { screen: 'home', match: null, draft: null, run: null, result: null, rows: [], hostSpectate: false, recoverySnapshot: null, practiceSummary: null, _metadataRequests: Object.create(null), _metadataLoaded: Object.create(null) };
 
   function host() { return document.getElementById('view-games'); }
 
@@ -486,7 +486,8 @@
     if (S._qTimerHandle) { clearInterval(S._qTimerHandle); S._qTimerHandle = null; }
   }
 
-  function render() {
+  function render(options) {
+    options = options || {};
     clearQTimer(); // any per-question countdown belongs to the screen being replaced
     if (S._expiryTimer) { clearTimeout(S._expiryTimer); S._expiryTimer = null; }
     var h = host();
@@ -499,9 +500,9 @@
       join: screenJoin, briefing: screenBriefing, run: screenRun,
       result: screenResult, review: screenReview, hostAnswers: screenHostAnswers, help: screenHelp
     }[S.screen] || screenHome)(wrap);
-    // guarded: scrollIntoView is universal in real browsers, but costs
-    // nothing to check first rather than assume
-    if (typeof wrap.scrollIntoView === 'function') {
+    // Re-renders inside the current screen must not steal the user's scroll position.
+    // Navigation through go() explicitly opts into a top-of-screen jump.
+    if (options.scroll === true && typeof wrap.scrollIntoView === 'function') {
       wrap.scrollIntoView({ block: 'start', behavior: 'auto' });
     }
   }
@@ -510,7 +511,7 @@
   function go(screen) {
     S.screen=screen;
     if(typeof global.VAANI_SET_ASSESSMENT_ACTIVE==='function')global.VAANI_SET_ASSESSMENT_ACTIVE(screen==='run');
-    render();
+    render({scroll:true});
   }
 
   function backBtn(parent, label, screen) {
@@ -817,12 +818,30 @@
     if (!m || !m.code || !A.sync || typeof A.sync.getMatchMetadata !== 'function') {
       return Promise.resolve(m);
     }
-    return A.sync.getMatchMetadata(m.code).then(function(meta) {
+    var code = String(m.code);
+    if (S._metadataRequests[code]) return S._metadataRequests[code];
+    if (S._metadataLoaded[code]) return Promise.resolve(m);
+
+    var request = A.sync.getMatchMetadata(code).then(function(meta) {
+      // Mark this code as resolved even when the server has no extra metadata.
+      // That prevents a render -> fetch -> render loop on stale/legacy matches.
+      S._metadataLoaded[code] = true;
       if (meta) applySharedMatchMetadata(m, meta);
       return m;
     }).catch(function() {
+      // A failed metadata lookup must also be one-shot for this rendered screen;
+      // otherwise the briefing would continuously rebuild itself and jump.
+      S._metadataLoaded[code] = true;
       return m;
     });
+
+    S._metadataRequests[code] = request;
+    request.then(function() {
+      delete S._metadataRequests[code];
+    }, function() {
+      delete S._metadataRequests[code];
+    });
+    return request;
   }
 
   function arenaInviteUrl(m) {
@@ -1945,7 +1964,6 @@
      --------------------------------------------------------- */
   function screenBriefing(w) {
     var m = S.match;
-    if (m && !m.hostName && !m.hostAvatar) fetchSharedMatchMetadata(m);
     var panel = el('section', 'vx-briefing');
     backBtn(panel, 'Back to Arena', 'home');
 
@@ -2017,8 +2035,10 @@
     }
 
     var qs = A.questionsFor(m, playerName());
-    if (!m.frozenQuestionIds && !isHost(m.code)) {
-      fetchSharedMatchMetadata(m).then(function(){ if (S.match && S.match.code === m.code) render(); });
+    if (!isHost(m.code) && !S._metadataLoaded[String(m.code)] && !S._metadataRequests[String(m.code)]) {
+      fetchSharedMatchMetadata(m).then(function(){
+        if (S.match && S.match.code === m.code) render();
+      });
     }
     if (qs.length < m.count) {
       var warn = el('div', 'vx-briefing-notice warning');
