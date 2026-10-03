@@ -1,0 +1,1384 @@
+/*
+ * VAANI — DEEP MOBILE EXPERIENCE
+ * Dedicated phone layout. Desktop/laptop styles remain untouched.
+ * Breakpoint: 767px and below.
+ *
+ * Goals:
+ * - phone-first information hierarchy
+ * - single-column reading flow
+ * - compact but touch-friendly controls
+ * - no desktop grids squeezed into phone widths
+ * - separate mobile presentation layer for every major module
+ */
+@media (max-width:767px){
+
+  /* ==========================================================
+     01 — MOBILE FOUNDATION
+     ========================================================== */
+  html{
+    width:100%;
+    min-width:320px;
+    overflow-x:hidden;
+    scroll-padding-top:68px;
+  }
+  body{
+    width:100%;
+    min-width:320px;
+    overflow-x:hidden;
+    padding-bottom:calc(76px + env(safe-area-inset-bottom));
+    background:var(--bg,#f4f6f7);
+  }
+  #bgSystem,
+  #cursorGlow,
+  #cursorDot,
+  #scrollProgress{
+    display:none!important;
+  }
+  .grain{
+    opacity:.08;
+    pointer-events:none;
+  }
+  main{
+    width:100%!important;
+    max-width:none!important;
+    min-width:0!important;
+    margin:0!important;
+    padding:10px 11px 28px!important;
+  }
+  .view,
+  .view.active{
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+    padding:0 0 24px!important;
+  }
+  .view > *{
+    min-width:0!important;
+    max-width:100%;
+  }
+  img,svg,video,canvas{
+    max-width:100%;
+  }
+  table{
+    min-width:0;
+  }
+  button,
+  input,
+  select,
+  textarea{
+    font-size:16px;
+  }
+  button{
+    min-height:42px;
+  }
+  .view :is(h1,h2,h3,h4,p){
+    overflow-wrap:anywhere;
+  }
+  .view .card,
+  .view .panel,
+  .view .section-card,
+  .view .module-card{
+    min-width:0;
+    max-width:100%;
+    border-radius:16px;
+  }
+
+  /* ==========================================================
+     02 — MOBILE HEADER / NAV
+     ========================================================== */
+  header{
+    position:sticky!important;
+    top:0;
+    z-index:140;
+    width:100%;
+    background:rgba(12,22,32,.94)!important;
+    border-bottom:1px solid rgba(230,194,105,.18);
+    backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px);
+  }
+  .topbar{
+    min-height:58px!important;
+    height:58px!important;
+    padding:7px 10px!important;
+    gap:8px!important;
+    display:flex!important;
+    justify-content:space-between!important;
+    align-items:center!important;
+  }
+  .topbar > div:first-child{
+    min-width:0;
+    gap:8px!important;
+  }
+  .info-trigger{
+    width:34px!important;
+    height:34px!important;
+    flex:0 0 34px;
+  }
+  .brand{
+    min-width:0;
+    gap:7px!important;
+  }
+  .vaani-brand-logo{
+    width:31px!important;
+    height:31px!important;
+  }
+  .brand-name{
+    font-size:1rem!important;
+    letter-spacing:.13em!important;
+  }
+  .mainnav{
+    display:none!important;
+  }
+  .top-right{
+    min-width:0;
+    gap:4px!important;
+  }
+  .streak-pill,
+  .xp-pill{
+    display:none!important;
+  }
+  .top-right .theme-toggle{
+    width:34px!important;
+    height:34px!important;
+    min-height:34px!important;
+    padding:0!important;
+    border-radius:11px!important;
+    font-size:.9rem!important;
+  }
+  #focusBtn{
+    display:none!important;
+  }
+  .mobile-account-code{
+    margin:0!important;
+    border-top:1px solid rgba(255,255,255,.06);
+  }
+  .mobile-account-code-toggle{
+    width:100%;
+    min-height:38px!important;
+    padding:7px 11px!important;
+    font-size:.68rem!important;
+  }
+
+  .bottomnav{
+    position:fixed!important;
+    left:0!important;
+    right:0!important;
+    bottom:0!important;
+    z-index:180;
+    width:100%!important;
+    max-width:none!important;
+    min-height:68px!important;
+    padding:7px 7px calc(7px + env(safe-area-inset-bottom))!important;
+    display:grid!important;
+    grid-template-columns:repeat(6,minmax(0,1fr))!important;
+    gap:4px!important;
+    background:rgba(9,21,31,.97)!important;
+    border-top:1px solid rgba(230,194,105,.17)!important;
+    box-shadow:0 -10px 30px rgba(0,0,0,.14)!important;
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+  }
+  .bottomnav button{
+    min-width:0!important;
+    min-height:54px!important;
+    height:54px!important;
+    padding:4px 2px!important;
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    justify-content:center!important;
+    gap:2px!important;
+    border-radius:12px!important;
+    color:#91a0ad!important;
+    background:transparent!important;
+    font-size:.53rem!important;
+    line-height:1.05!important;
+    letter-spacing:.01em;
+  }
+  .bottomnav button.active{
+    color:#f0ca70!important;
+    background:rgba(224,183,79,.10)!important;
+  }
+  .bn-ico{
+    display:block!important;
+    font-size:1.12rem!important;
+    line-height:1!important;
+  }
+
+  /* ==========================================================
+     03 — GLOBAL MOBILE SURFACES / SECTION HEADERS
+     ========================================================== */
+  .section-head,
+  .section-header,
+  .module-head,
+  .panel-head{
+    margin:0 0 10px!important;
+    padding:2px 1px!important;
+    align-items:flex-start!important;
+  }
+  .section-head h2,
+  .section-header h2,
+  .module-head h2,
+  .panel-head h2{
+    margin:2px 0 0!important;
+    font-size:1.32rem!important;
+    line-height:1.08!important;
+  }
+  .section-desc{
+    margin:0 1px 13px!important;
+    font-size:.76rem!important;
+    line-height:1.55!important;
+  }
+  .eyebrow{
+    font-size:.54rem!important;
+    letter-spacing:.12em!important;
+  }
+  .panel-title{
+    min-width:0!important;
+    gap:7px!important;
+    margin-bottom:10px!important;
+    font-size:.9rem!important;
+  }
+  .panel-title .bar{
+    flex:0 0 3px!important;
+  }
+  .btn,
+  .vx-btn,
+  .gt-qa-btn,
+  .nc-btn,
+  .v90-nav-btn{
+    max-width:100%;
+    min-height:42px!important;
+  }
+  .btn-row,
+  .action-row,
+  .hero-actions,
+  .hero-buttons,
+  .toolbar,
+  .filter-row{
+    width:100%;
+    min-width:0;
+    gap:7px!important;
+  }
+  .btn-row > *,
+  .action-row > *,
+  .hero-actions > *,
+  .hero-buttons > *{
+    min-width:0!important;
+    max-width:100%;
+  }
+  .view :is(.grid-2,.grid-3,.grid-4){
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:10px!important;
+  }
+
+  /* ==========================================================
+     04 — DASHBOARD
+     ========================================================== */
+  #view-dashboard{
+    padding:0 0 22px!important;
+  }
+  #view-dashboard .vd-qa{
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:7px!important;
+    margin:0 0 10px!important;
+  }
+  #view-dashboard .vd-qa-btn{
+    min-height:64px!important;
+    padding:8px 4px!important;
+    border-radius:13px!important;
+  }
+  #view-dashboard .vd-qa-btn span:last-child{
+    font-size:.64rem!important;
+    line-height:1.1!important;
+  }
+  #view-dashboard .vd-hero{
+    display:block!important;
+    min-height:0!important;
+    border-radius:18px!important;
+    padding:0!important;
+  }
+  #view-dashboard .vd-hero::before{
+    background:
+      linear-gradient(180deg,rgba(5,10,16,.80),rgba(5,10,16,.91)),
+      linear-gradient(90deg,rgba(5,10,16,.94),rgba(5,10,16,.58));
+  }
+  #view-dashboard .vd-hero-compass{
+    width:210px!important;
+    height:210px!important;
+    right:-88px!important;
+    top:12px!important;
+    opacity:.055!important;
+  }
+  #view-dashboard .vd-hero .vd-flag-backdrop{
+    position:absolute;
+    right:-16px!important;
+    bottom:0!important;
+    width:54%!important;
+    max-width:240px!important;
+    opacity:.16!important;
+  }
+  #view-dashboard .vd-officer-stage{
+    position:absolute!important;
+    z-index:2!important;
+    right:2px!important;
+    top:12px!important;
+    width:35%!important;
+    max-width:150px!important;
+    min-width:0!important;
+    transform:none!important;
+  }
+  #view-dashboard .vd-officer-image{
+    width:100%!important;
+    height:auto!important;
+    object-fit:contain!important;
+  }
+  #view-dashboard .vd-officer-halo{
+    transform:scale(.78)!important;
+    opacity:.5!important;
+  }
+  #view-dashboard .vd-officer-badge{
+    transform:scale(.72)!important;
+    transform-origin:right top;
+    right:0!important;
+    top:6px!important;
+  }
+  #view-dashboard .vd-hero-inner{
+    z-index:3!important;
+    width:100%!important;
+    max-width:none!important;
+    padding:20px 16px 17px!important;
+  }
+  #view-dashboard .vd-eyebrow{
+    width:60%;
+    font-size:.52rem!important;
+    line-height:1.35!important;
+  }
+  #view-dashboard .vd-hero-title{
+    width:64%;
+    max-width:none!important;
+    margin:9px 0 16px!important;
+    font-size:clamp(1.55rem,8vw,2.1rem)!important;
+    line-height:1.02!important;
+  }
+  #view-dashboard .vd-hero-stats{
+    width:100%!important;
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:8px!important;
+    margin-bottom:13px!important;
+  }
+  #view-dashboard .vd-stat{
+    padding:8px 0!important;
+    border-top:1px solid rgba(255,255,255,.08);
+  }
+  #view-dashboard .vd-stat-num{
+    font-size:1.25rem!important;
+  }
+  #view-dashboard .vd-stat-lbl{
+    font-size:.52rem!important;
+    letter-spacing:.05em!important;
+  }
+  #view-dashboard .vd-hero .btn-row{
+    width:100%!important;
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:7px!important;
+  }
+  #view-dashboard .vd-hero .btn{
+    min-height:43px!important;
+    padding:9px 10px!important;
+    font-size:.67rem!important;
+  }
+
+  #view-dashboard .review-widget,
+  #view-dashboard .vd-card,
+  #view-dashboard .vd-briefing,
+  #view-dashboard .quote-panel{
+    margin-top:10px!important;
+  }
+  #view-dashboard .vd-card{
+    padding:15px!important;
+  }
+  #view-dashboard .vd-briefing-grid{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+  }
+  #view-dashboard .vd-brief-col{
+    padding:14px!important;
+  }
+  #view-dashboard .vd-brief-col + .vd-brief-col::before{
+    left:14px!important;
+    right:14px!important;
+  }
+  #view-dashboard .roadmap-track{
+    overflow-x:auto;
+    overscroll-behavior-inline:contain;
+    padding-bottom:5px;
+  }
+  #view-dashboard .mastery-strip{
+    margin-top:10px!important;
+  }
+  #view-dashboard #radarChartWrap{
+    overflow:hidden!important;
+    margin:12px 0 0!important;
+  }
+  #view-dashboard .activity-feed{
+    max-height:300px;
+    overflow:auto;
+  }
+  #view-dashboard .spin-row{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:12px!important;
+  }
+  #view-dashboard .spin-wheel{
+    margin-inline:auto;
+  }
+  #view-dashboard [id="dashPyqStrong"],
+  #view-dashboard [id="dashPyqWeak"]{
+    min-height:20px;
+  }
+  #view-dashboard [aria-label="XP Arcade"] > div:last-child{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:7px!important;
+  }
+  #view-dashboard [aria-label="XP Arcade"] .btn{
+    min-height:66px!important;
+    padding:10px!important;
+    justify-content:flex-start!important;
+  }
+
+  /* ==========================================================
+     05 — GRAMMAR / JOURNEY / LESSONS
+     ========================================================== */
+  #view-grammar .gt-header{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:8px!important;
+    margin-bottom:10px!important;
+  }
+  #view-grammar .gt-title{
+    font-size:1.55rem!important;
+  }
+  #view-grammar .gt-headchips{
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:6px!important;
+  }
+  #view-grammar .gt-chip{
+    min-width:0!important;
+    padding:8px 6px!important;
+    border-radius:11px!important;
+  }
+  #view-grammar .gt-chip-num{
+    font-size:1rem!important;
+  }
+  #view-grammar .bc-global-link{
+    display:grid!important;
+    grid-template-columns:1fr auto!important;
+    gap:8px!important;
+    padding:11px 12px!important;
+  }
+  #view-grammar .gt-layout{
+    display:flex!important;
+    flex-direction:column!important;
+    gap:10px!important;
+  }
+  #view-grammar .gt-sidebar{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:8px!important;
+  }
+  #view-grammar .gt-sidebar > *{
+    min-width:0!important;
+  }
+  #view-grammar .gt-weightage-card{
+    grid-column:1/-1;
+  }
+  #view-grammar .gt-card{
+    padding:13px!important;
+    border-radius:14px!important;
+  }
+  #view-grammar .gt-tree-wrap{
+    width:100%!important;
+    min-height:390px!important;
+    height:390px!important;
+    overflow:hidden!important;
+    border-radius:16px!important;
+  }
+  #view-grammar .gt-tree-canvas{
+    transform:scale(.79)!important;
+    transform-origin:50% 42%!important;
+  }
+  #view-grammar .gt-portal{
+    bottom:10px!important;
+    transform:scale(.82)!important;
+    transform-origin:center bottom!important;
+  }
+  #view-grammar .gt-quickactions{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:7px!important;
+  }
+  #view-grammar .gt-quickactions .primary{
+    grid-column:1/-1;
+  }
+  #view-grammar .ga-catalog{
+    padding:13px!important;
+    border-radius:16px!important;
+  }
+  #view-grammar .ga-catalog-head{
+    display:flex!important;
+    flex-direction:column!important;
+    gap:10px!important;
+  }
+  #view-grammar .ga-stage-grid{
+    grid-template-columns:1fr!important;
+  }
+
+  #view-journey .gj-head{
+    display:grid!important;
+    grid-template-columns:auto 1fr auto!important;
+    gap:8px!important;
+  }
+  #view-journey .gj-statsrow{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:7px!important;
+  }
+  #view-journey .gj-pathwrap{
+    overflow:hidden!important;
+    min-height:520px!important;
+  }
+
+  #view-topic .detail-head,
+  #view-compare-detail .detail-head{
+    display:grid!important;
+    grid-template-columns:1fr auto!important;
+    gap:8px!important;
+    align-items:start!important;
+  }
+  #view-topic .meta-strip{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:6px!important;
+  }
+  #view-topic .flow-stepper{
+    overflow-x:auto!important;
+    display:flex!important;
+    padding-bottom:4px!important;
+  }
+  #view-topic .tab-pane,
+  #view-topic .detail-head,
+  #view-topic .detail-back{
+    min-width:0!important;
+  }
+
+  /* ==========================================================
+     06 — COMPARISONS
+     ========================================================== */
+  #view-compare .cmp-hero{
+    padding:18px 15px!important;
+    border-radius:18px!important;
+  }
+  #view-compare .cmp-hero h2{
+    font-size:1.45rem!important;
+    line-height:1.03!important;
+  }
+  #view-compare .cmp-hero-stat{
+    display:grid!important;
+    grid-template-columns:auto 1fr auto 1fr!important;
+    gap:6px!important;
+    align-items:center;
+  }
+  #view-compare .cmp-library-strip{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:7px!important;
+  }
+  #view-compare .cmp-library-stat{
+    min-width:0!important;
+    padding:10px!important;
+  }
+  #view-compare .cmp-spotlight{
+    padding:12px!important;
+  }
+  #view-compare .cmp-explorer{
+    padding:12px!important;
+  }
+  #view-compare .cmp-explorer-top{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:8px!important;
+  }
+  #view-compare .cmp-filter-row{
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:stretch!important;
+  }
+  #view-compare .cmp-filters{
+    display:flex!important;
+    overflow-x:auto!important;
+    flex-wrap:nowrap!important;
+    padding-bottom:3px;
+  }
+  #view-compare .cmp-grid{
+    grid-template-columns:1fr!important;
+  }
+  #view-compare-detail .cmp-table{
+    min-width:520px!important;
+  }
+
+  /* ==========================================================
+     07 — VOCABULARY HUB / 90-DAY TRACK
+     ========================================================== */
+  #view-vocab .v90-entry{
+    display:grid!important;
+    grid-template-columns:auto 1fr!important;
+    gap:9px!important;
+    padding:13px!important;
+  }
+  #view-vocab .v90-entry-open{
+    grid-column:1/-1!important;
+    width:100%!important;
+  }
+  #view-vocab .vv-book-link{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:7px!important;
+    padding:11px 12px!important;
+  }
+  #view-vocab .vocab-toolbar{
+    display:block!important;
+  }
+  #view-vocab .filter-chips{
+    display:flex!important;
+    flex-wrap:nowrap!important;
+    overflow-x:auto!important;
+    max-width:100%!important;
+    gap:6px!important;
+    padding-bottom:3px!important;
+  }
+  #view-vocab .filter-chips .chip{
+    flex:0 0 auto!important;
+    white-space:nowrap!important;
+  }
+  #view-vocab .vv-word-grid,
+  #view-vocab .cw-grid{
+    grid-template-columns:1fr!important;
+  }
+  #view-vocab .daily-heading-row{
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:stretch!important;
+    gap:7px!important;
+  }
+  #view-vocab .daily-tabs{
+    display:flex!important;
+    overflow-x:auto!important;
+    flex-wrap:nowrap!important;
+    gap:6px!important;
+    padding-bottom:3px!important;
+  }
+  #view-vocab .daily-tabs > *{
+    flex:0 0 auto!important;
+  }
+  #view-vocab .singles-strip{
+    grid-template-columns:1fr 1fr!important;
+    gap:7px!important;
+  }
+
+  #view-vocab90 .v90-shell{
+    padding:0!important;
+  }
+  #view-vocab90 .v90-hero{
+    display:block!important;
+    padding:15px!important;
+    border-radius:18px!important;
+  }
+  #view-vocab90 .v90-hero-stats{
+    display:grid!important;
+    grid-template-columns:1fr 1fr 1fr!important;
+    gap:6px!important;
+  }
+  #view-vocab90 .v90-toolbar{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:8px!important;
+  }
+  #view-vocab90 .v90-mode-tabs{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+  }
+  #view-vocab90 .v90-daywise-view{
+    display:flex!important;
+    flex-direction:column!important;
+    gap:9px!important;
+  }
+  #view-vocab90 .v90-day-panel,
+  #view-vocab90 .v90-study-panel{
+    width:100%!important;
+    min-width:0!important;
+  }
+  #view-vocab90 .v90-day-panel{
+    position:static!important;
+    padding:12px!important;
+    border-radius:15px!important;
+  }
+  #view-vocab90 .v90-phase-tabs{
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:5px!important;
+  }
+  #view-vocab90 .v90-day-grid{
+    grid-template-columns:repeat(6,minmax(0,1fr))!important;
+    gap:5px!important;
+  }
+  #view-vocab90 .v90-day-grid button{
+    min-height:37px!important;
+    padding:4px!important;
+    font-size:.62rem!important;
+  }
+  #view-vocab90 .v90-selected-top{
+    display:grid!important;
+    grid-template-columns:1fr auto!important;
+    gap:8px!important;
+  }
+  #view-vocab90 .v90-selected-actions{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:7px!important;
+  }
+  #view-vocab90 .v90-day-nav{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:7px!important;
+  }
+
+  #view-worddetail .wd-head{
+    padding:15px!important;
+  }
+  #view-worddetail .wd-word{
+    font-size:2rem!important;
+  }
+  #view-worddetail .wd-grid-2{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:9px!important;
+  }
+  #view-worddetail .wd-cross-actions{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:7px!important;
+  }
+  #view-worddetail .wd-section{
+    padding:13px!important;
+    border-radius:14px!important;
+  }
+  #view-worddetail .wd-chips{
+    display:flex!important;
+    flex-wrap:wrap!important;
+    gap:6px!important;
+  }
+
+  /* ==========================================================
+     08 — BOOK READING / EMBEDDED READER
+     ========================================================== */
+  #view-books .section-desc{
+    margin-bottom:10px!important;
+  }
+  #view-books .bc-global-link{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:7px!important;
+    padding:11px!important;
+  }
+  #view-books .vbv-scope{
+    width:100%!important;
+    min-width:0!important;
+    border-radius:17px!important;
+    overflow:hidden!important;
+  }
+  #view-books .vbv-scope #topbar .topbar-main{
+    min-height:56px!important;
+    padding:6px 8px!important;
+  }
+  #view-books .vbv-scope #topbar .vbv-brand .brand-text small{
+    display:none!important;
+  }
+  #view-books .vbv-scope #topbar #vbv-mainnav{
+    display:none!important;
+  }
+  #view-books .vbv-scope #topbar #hamburger{
+    display:flex!important;
+  }
+  #view-books .vbv-scope #app{
+    width:100%!important;
+    min-width:0!important;
+  }
+  #view-books .vbv-scope :is(.grid,.cards-grid,.book-grid,.reading-grid){
+    grid-template-columns:1fr!important;
+  }
+  #view-books .vbv-scope :is(.toolbar,.filters,.actions-row){
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:stretch!important;
+  }
+  #view-books .vbv-scope :is(input,select,textarea){
+    width:100%!important;
+    max-width:100%!important;
+  }
+  #view-books .vbv-scope :is(.modal,.dialog,.sheet){
+    max-width:calc(100vw - 22px)!important;
+    margin-inline:auto!important;
+  }
+  #view-books .vbv-scope table{
+    display:block!important;
+    overflow-x:auto!important;
+    white-space:nowrap!important;
+  }
+  #view-books .vbv-scope footer{
+    padding-bottom:10px!important;
+  }
+
+  /* ==========================================================
+     09 — PYQ COMMAND VAULT
+     ========================================================== */
+  #view-pyq,
+  #view-pyq #pvApp{
+    min-width:0!important;
+    width:100%!important;
+  }
+  #view-pyq #pvApp{
+    overflow:hidden!important;
+  }
+  #view-pyq :is(.pv-app,.pv-shell,.pv-page,.pv-main,.pv-content){
+    width:100%!important;
+    max-width:none!important;
+    min-width:0!important;
+  }
+  #view-pyq :is(.pv-hero,.pv-header,.pv-briefing,.pv-command-panel){
+    border-radius:17px!important;
+    overflow:hidden!important;
+  }
+  #view-pyq :is(.pv-toolbar,.pv-filters,.pv-actions,.pv-controls){
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:stretch!important;
+    gap:7px!important;
+  }
+  #view-pyq :is(.pv-grid,.pv-paper-grid,.pv-question-grid,.pv-card-grid){
+    grid-template-columns:1fr!important;
+  }
+  #view-pyq :is(.pv-paper-card,.pv-question-card,.pv-card){
+    min-width:0!important;
+    padding:13px!important;
+  }
+  #view-pyq :is(.pv-question,.pv-question-card,.pv-option,.pv-answer){
+    overflow-wrap:anywhere!important;
+  }
+  #view-pyq :is(.pv-options,.pv-answers,.pv-choice-grid){
+    grid-template-columns:1fr!important;
+  }
+  #view-pyq table{
+    min-width:540px!important;
+  }
+
+  /* ==========================================================
+     10 — ARENA
+     ========================================================== */
+  #view-games{
+    padding-bottom:22px!important;
+  }
+  #view-games > .section-head{
+    margin-bottom:8px!important;
+  }
+  #view-games > .grid-2{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:9px!important;
+  }
+  #view-games > .grid-2 > .card{
+    padding:14px!important;
+  }
+
+  #view-games .vx-briefing{
+    width:100%!important;
+    max-width:none!important;
+    margin:0!important;
+    padding:11px!important;
+    border-radius:18px!important;
+  }
+  #view-games .vx-briefing .vx-back{
+    margin-bottom:11px!important;
+  }
+  #view-games .vx-briefing-hero{
+    padding:17px 14px!important;
+    border-radius:16px!important;
+  }
+  #view-games .vx-briefing-eyebrow{
+    font-size:.58rem!important;
+  }
+  #view-games .vx-briefing-code{
+    width:100%!important;
+    margin:4px 0 0!important;
+    font-size:.53rem!important;
+    line-height:1.3!important;
+    overflow-wrap:anywhere!important;
+  }
+  #view-games .vx-briefing-title{
+    margin:13px 0 6px!important;
+    font-size:2rem!important;
+  }
+  #view-games .vx-briefing-intro{
+    font-size:.79rem!important;
+    line-height:1.5!important;
+  }
+  #view-games .vx-briefing-stats{
+    grid-template-columns:1fr 1fr!important;
+    gap:7px!important;
+    margin:9px 0!important;
+  }
+  #view-games .vx-briefing-stat{
+    padding:10px!important;
+    border-radius:12px!important;
+  }
+  #view-games .vx-briefing-lower{
+    display:flex!important;
+    flex-direction:column!important;
+    gap:9px!important;
+    margin-top:9px!important;
+  }
+  #view-games .vx-briefing-deploy{
+    order:-1!important;
+    min-height:0!important;
+    padding:16px!important;
+    border-radius:16px!important;
+    justify-content:flex-start!important;
+  }
+  #view-games .vx-briefing-deploy-mark{
+    top:14px!important;
+    left:16px!important;
+    font-size:.58rem!important;
+  }
+  #view-games .vx-briefing-deploy-orbit{
+    right:11px!important;
+    top:21px!important;
+    width:78px!important;
+    height:78px!important;
+    font-size:1.65rem!important;
+    opacity:.7;
+  }
+  #view-games .vx-briefing-deploy-kicker{
+    padding-top:1px!important;
+    margin-top:26px!important;
+    max-width:70%!important;
+    font-size:.54rem!important;
+  }
+  #view-games .vx-briefing-deploy h3{
+    margin:6px 0!important;
+    font-size:1.48rem!important;
+  }
+  #view-games .vx-briefing-deploy > p{
+    margin-bottom:11px!important;
+    max-width:100%!important;
+    font-size:.69rem!important;
+  }
+  #view-games .vx-briefing-start{
+    min-height:50px!important;
+    padding:12px 14px!important;
+    border-radius:12px!important;
+    font-size:.82rem!important;
+  }
+  #view-games .vx-briefing-hint{
+    margin-top:7px!important;
+  }
+  #view-games .vx-briefing-rules{
+    padding:13px!important;
+    border-radius:15px!important;
+  }
+  #view-games .vx-briefing-section-head{
+    margin-bottom:11px!important;
+  }
+  #view-games .vx-briefing-rule-list{
+    gap:9px!important;
+  }
+  #view-games .vx-briefing-rule{
+    gap:8px!important;
+  }
+  #view-games .vx-briefing-rule-number{
+    flex-basis:26px!important;
+    height:26px!important;
+  }
+  #view-games .vx-briefing-rule-copy strong{
+    font-size:.72rem!important;
+  }
+  #view-games .vx-briefing-rule-copy p{
+    font-size:.66rem!important;
+  }
+  #view-games .vx-arena-source-grid,
+  #view-games .vx-arena-filter-grid,
+  #view-games .vx-arena-challenge-grid,
+  #view-games .vx-arena-rules-grid{
+    grid-template-columns:1fr!important;
+  }
+  #view-games .vx-deploy-summary-grid{
+    grid-template-columns:1fr 1fr!important;
+  }
+  #view-games .vx-arena-host-actions.is-host-choice{
+    grid-template-columns:1fr!important;
+  }
+  #view-games .vx-arena-share-hero{
+    padding:15px!important;
+  }
+  #view-games .vx-invite-copy-row{
+    grid-template-columns:1fr!important;
+  }
+  #view-games .vx-championship{
+    margin:10px 0!important;
+    padding:12px!important;
+    border-radius:18px!important;
+  }
+  #view-games .vx-championship-hero{
+    grid-template-columns:1fr!important;
+    min-height:0!important;
+    padding-bottom:14px!important;
+  }
+  #view-games .vx-championship-art{
+    min-height:120px!important;
+    order:-1!important;
+  }
+  #view-games .vx-championship-svg{
+    width:min(75%,250px)!important;
+  }
+  #view-games .vx-championship-metrics{
+    grid-template-columns:1fr 1fr!important;
+    gap:7px!important;
+    margin:10px 0!important;
+  }
+  #view-games .vx-championship-metric{
+    min-height:70px!important;
+    padding:10px!important;
+  }
+  #view-games .vx-championship-toolbar{
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:stretch!important;
+  }
+  #view-games .vx-championship-filters{
+    overflow-x:auto!important;
+    flex-wrap:nowrap!important;
+  }
+  #view-games .vx-championship-filter{
+    flex:0 0 auto!important;
+  }
+  #view-games .vx-championship-podium{
+    grid-template-columns:1fr 1fr!important;
+    grid-template-areas:"first first" "second third"!important;
+    gap:7px!important;
+  }
+  #view-games .vx-championship-podium-card.rank-1{
+    min-height:148px!important;
+  }
+  #view-games .vx-championship-podium-card{
+    min-height:118px!important;
+  }
+  #view-games .vx-championship-board .vx-championship-row{
+    grid-template-columns:31px minmax(0,1fr) auto!important;
+    gap:7px!important;
+    padding:9px!important;
+  }
+  #view-games .vx-championship-row > :is(.vx-championship-score,.vx-championship-time){
+    font-size:.62rem!important;
+  }
+  #view-games .vx-championship-row .vx-championship-rank-pill{
+    width:25px!important;
+    height:25px!important;
+  }
+
+  /* ==========================================================
+     11 — LEADERBOARD / SERVICE RECORD
+     ========================================================== */
+  #view-leaderboard .service-hero{
+    padding:17px 14px!important;
+    border-radius:18px!important;
+  }
+  #view-leaderboard .service-hero h2{
+    font-size:1.55rem!important;
+  }
+  #view-leaderboard .service-metrics{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:7px!important;
+  }
+  #view-leaderboard .service-grid,
+  #view-leaderboard .service-signal-grid{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:9px!important;
+  }
+  #view-leaderboard .service-card{
+    padding:14px!important;
+  }
+  #view-leaderboard .service-filter-row{
+    display:flex!important;
+    overflow-x:auto!important;
+    gap:6px!important;
+  }
+  #view-leaderboard .service-filter{
+    flex:0 0 auto!important;
+  }
+
+  /* ==========================================================
+     12 — PROFILE
+     ========================================================== */
+  #view-profile .vp-profile-hero{
+    display:grid!important;
+    grid-template-columns:auto 1fr!important;
+    gap:10px!important;
+    padding:14px!important;
+    border-radius:18px!important;
+    align-items:center!important;
+  }
+  #view-profile .vp-profile-avatar{
+    width:58px!important;
+    height:58px!important;
+  }
+  #view-profile .vp-profile-copy{
+    min-width:0!important;
+  }
+  #view-profile .vp-profile-copy h2{
+    margin:3px 0!important;
+    font-size:1.3rem!important;
+  }
+  #view-profile .vp-profile-rank{
+    grid-column:2;
+    justify-self:start;
+  }
+  #view-profile .vp-logout-btn{
+    grid-column:1/-1!important;
+    justify-self:stretch!important;
+  }
+  #view-profile .vp-account-code-card{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:9px!important;
+    padding:13px!important;
+  }
+  #view-profile .vp-overview{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:7px!important;
+  }
+  #view-profile .vp-profile-grid,
+  #view-profile .vp-focus-grid{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:9px!important;
+  }
+  #view-profile .vp-card{
+    padding:14px!important;
+  }
+  #view-profile .vp-prog-tree{
+    overflow-x:auto!important;
+    overscroll-behavior-inline:contain;
+    padding-bottom:5px;
+  }
+  #view-profile .vp-rhythm{
+    overflow:hidden!important;
+  }
+  #view-profile .vp-rhythm-grid{
+    overflow-x:auto!important;
+    padding-bottom:4px!important;
+  }
+
+  /* ==========================================================
+     13 — NOTIFICATIONS / INFO / CAREER DIRECTORY
+     ========================================================== */
+  #view-notifications .notification-grid,
+  #view-notifications .notifications-grid,
+  #view-info .info-grid,
+  #view-info .directory-grid{
+    grid-template-columns:1fr!important;
+  }
+  #view-notifications :is(.notification-card,.nc-card),
+  #view-info :is(.info-card,.nc-directory-card){
+    min-width:0!important;
+    padding:13px!important;
+    border-radius:14px!important;
+  }
+  #view-info .nc-filter-row,
+  #view-info .nc-sector-tabs{
+    display:flex!important;
+    overflow-x:auto!important;
+    flex-wrap:nowrap!important;
+    gap:6px!important;
+    padding-bottom:3px!important;
+  }
+  #view-info .nc-filter-row > *,
+  #view-info .nc-sector-tabs > *{
+    flex:0 0 auto!important;
+  }
+  #view-info .nc-directory-card .nc-dir-actions{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:6px!important;
+  }
+
+  /* ==========================================================
+     14 — MODALS / SHEETS / OVERLAYS
+     ========================================================== */
+  .gsearch-overlay,
+  .gt-sheet-overlay,
+  .gt-notes-overlay,
+  .review-overlay{
+    padding:8px!important;
+  }
+  .gsearch-box,
+  .gt-sheet,
+  .gt-notes-modal,
+  .review-card-wrap{
+    width:100%!important;
+    max-width:100%!important;
+    max-height:calc(100dvh - 16px)!important;
+    border-radius:18px!important;
+  }
+  .gt-sheet{
+    display:flex!important;
+    flex-direction:column!important;
+  }
+  .gt-dossier-scroll{
+    min-height:0!important;
+    overflow:auto!important;
+  }
+  .gt-sheet-actions{
+    position:sticky!important;
+    bottom:0!important;
+    z-index:3;
+    padding:9px!important;
+  }
+  .gt-sheet-actions-row{
+    display:grid!important;
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    gap:5px!important;
+  }
+  .gt-sheet-btn-sec{
+    min-width:0!important;
+  }
+  .review-card-wrap{
+    min-height:0!important;
+  }
+
+  #moreSheet{
+    left:0!important;
+    right:0!important;
+    bottom:0!important;
+    width:100%!important;
+    max-width:none!important;
+    border-radius:20px 20px 0 0!important;
+    padding-bottom:env(safe-area-inset-bottom)!important;
+  }
+  .sheet-body{
+    max-height:65dvh!important;
+    overflow:auto!important;
+  }
+
+  /* ==========================================================
+     15 — TEST / QUIZ / FULLSCREEN STATES
+     ========================================================== */
+  body:has(.exam-active) header,
+  body:has(.quiz-active) header{
+    display:none!important;
+  }
+  .test-header,
+  .quiz-header,
+  .exam-toolbar{
+    position:sticky!important;
+    top:0!important;
+    z-index:120!important;
+  }
+  :is(.question-card,.quiz-question,.exam-question,.question-panel){
+    padding:13px!important;
+    border-radius:15px!important;
+  }
+  :is(.options,.answer-options,.choice-list,.quiz-options){
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:7px!important;
+  }
+  :is(.options,.answer-options,.choice-list,.quiz-options) > *{
+    min-height:48px!important;
+    padding:11px!important;
+    border-radius:12px!important;
+  }
+  :is(.question-actions,.quiz-actions,.exam-actions){
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:7px!important;
+  }
+  :is(.question-actions,.quiz-actions,.exam-actions) > .primary{
+    grid-column:1/-1;
+  }
+
+  /* ==========================================================
+     16 — FOOTER / FLOATING UTILITIES
+     ========================================================== */
+  footer{
+    padding:18px 12px calc(90px + env(safe-area-inset-bottom))!important;
+    margin-bottom:0!important;
+  }
+  #backToTop{
+    width:42px!important;
+    height:42px!important;
+    right:11px!important;
+    bottom:82px!important;
+  }
+  .qnav-fab{
+    width:44px!important;
+    height:44px!important;
+    right:11px!important;
+    bottom:130px!important;
+  }
+  .qnav-menu{
+    right:11px!important;
+    bottom:182px!important;
+    max-width:calc(100vw - 22px)!important;
+  }
+
+  /* ==========================================================
+     17 — VERY NARROW PHONES
+     ========================================================== */
+  @media(max-width:380px){
+    main{
+      padding-inline:8px!important;
+    }
+    #view-dashboard .vd-qa{
+      grid-template-columns:1fr 1fr!important;
+    }
+    #view-dashboard .vd-hero .btn-row{
+      grid-template-columns:1fr!important;
+    }
+    #view-profile .vp-overview{
+      grid-template-columns:1fr!important;
+    }
+    #view-games .vx-championship-podium{
+      grid-template-columns:1fr!important;
+      grid-template-areas:"first" "second" "third"!important;
+    }
+    #view-games .vx-deploy-summary-grid{
+      grid-template-columns:1fr!important;
+    }
+    #view-vocab .singles-strip{
+      grid-template-columns:1fr!important;
+    }
+    #view-vocab90 .v90-day-grid{
+      grid-template-columns:repeat(5,minmax(0,1fr))!important;
+    }
+  }
+}
+
+/* On non-mobile widths, this file intentionally does nothing. */
