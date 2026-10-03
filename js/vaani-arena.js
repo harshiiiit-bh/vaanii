@@ -3071,13 +3071,41 @@
      see isHost) additionally gets the full question-by-question
      breakdown for that person, same colouring as "View answers".
      --------------------------------------------------------- */
+  function ensurePlayerSheetStyles() {
+    if (document.getElementById('vx-player-sheet-mobile-styles')) return;
+    var style = document.createElement('style');
+    style.id = 'vx-player-sheet-mobile-styles';
+    style.textContent =
+      '.vx-player-sheet{width:min(100% - 28px,560px);max-height:min(70vh,520px);overflow:auto;padding:22px 22px 18px;border-radius:22px;box-sizing:border-box}' +
+      '.vx-player-sheet h3{margin:0;font-size:1.35rem;line-height:1.1;letter-spacing:.01em}' +
+      '.vx-player-sheet .vx-sub{margin:6px 0 0;font-size:.88rem;line-height:1.4}' +
+      '.vx-player-sheet .vx-readout{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:16px}' +
+      '.vx-player-sheet .vx-readout span{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:58px;padding:9px 6px;border:1px solid rgba(127,142,158,.18);border-radius:13px;background:rgba(127,142,158,.06);font-size:.69rem;text-align:center}' +
+      '.vx-player-sheet .vx-readout b{font-size:1.12rem;line-height:1;color:inherit}' +
+      '.vx-player-sheet .vx-actions{margin-top:14px!important}' +
+      '.vx-player-sheet .vx-actions .vx-btn{min-height:42px;width:100%;border-radius:12px}' +
+      '@media (max-width:680px){' +
+        '.vx-player-sheet{width:calc(100% - 20px);max-height:none;height:auto;padding:18px 16px 14px;border-radius:20px;margin:0 auto 10px}' +
+        '.vx-player-sheet h3{font-size:1.18rem}' +
+        '.vx-player-sheet .vx-sub{font-size:.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}' +
+        '.vx-player-sheet .vx-readout{gap:6px;margin-top:12px}' +
+        '.vx-player-sheet .vx-readout span{min-height:52px;padding:7px 4px;font-size:.62rem;border-radius:11px}' +
+        '.vx-player-sheet .vx-readout b{font-size:1rem}' +
+        '.vx-player-sheet .vx-actions{margin-top:10px!important}' +
+        '.vx-player-sheet .vx-actions .vx-btn{min-height:38px;font-size:.82rem}' +
+      }';
+    document.head.appendChild(style);
+  }
+
   function openPlayerSheet(row, rank) {
-    var scrim = el('div', 'vx-scrim');
+    ensurePlayerSheetStyles();
+
+    var scrim = el('div', 'vx-scrim vx-player-sheet-backdrop');
     scrim.setAttribute('role', 'dialog');
     scrim.setAttribute('aria-modal', 'true');
     scrim.setAttribute('aria-label', row.name + (String(row.name).slice(-1) === 's' ? '\u2019' : '\u2019s') + ' attempt');
 
-    var sheet = el('div', 'vx-sheet');
+    var sheet = el('div', 'vx-sheet vx-player-sheet');
     scrim.appendChild(sheet);
 
     function teardown() {
@@ -3089,8 +3117,9 @@
     scrim.addEventListener('mousedown', function (e) { if (e.target === scrim) close(); });
     document.addEventListener('keydown', onKey);
 
-    if (isHost(S.match.code)) renderPlayerBreakdown(sheet, row, rank, close);
-    else renderPlayerSummary(sheet, row, rank, close);
+    // Everyone — host included — gets the same compact public summary.
+    // Never expose the question-by-question attempt breakdown from a leaderboard name tap.
+    renderPlayerSummary(sheet, row, rank, close);
 
     document.body.appendChild(scrim);
     var first = sheet.querySelector('button');
@@ -3114,19 +3143,14 @@
   function renderPlayerSummary(sheet, row, rank, close) {
     sheetHeader(sheet, row, rank);
     var stats = gradeRow(row);
-    if (stats) {
-      var read = el('div', 'vx-readout');
-      read.innerHTML =
-        '<span><b style="color:var(--vx-ok)">' + stats.correct + '</b> correct</span>' +
-        '<span><b style="color:var(--vx-danger)">' + stats.incorrect + '</b> incorrect</span>' +
-        '<span><b style="color:var(--vx-muted)">' + stats.skipped + '</b> skipped</span>';
-      sheet.appendChild(read);
-    } else {
-      sheet.appendChild(el('p', 'vx-sub', 'A detailed breakdown is not available for this attempt.'));
-    }
+    var read = el('div', 'vx-readout');
+    read.innerHTML =
+      '<span><b style="color:var(--vx-ok)">' + (stats ? stats.correct : '—') + '</b> correct</span>' +
+      '<span><b style="color:var(--vx-danger)">' + (stats ? stats.incorrect : '—') + '</b> incorrect</span>' +
+      '<span><b style="color:var(--vx-muted)">' + (stats ? stats.skipped : '—') + '</b> skipped</span>';
+    sheet.appendChild(read);
     sheet.appendChild(closeButton(close));
   }
-
   function renderPlayerBreakdown(sheet, row, rank, close) {
     sheetHeader(sheet, row, rank);
     var qs = Array.isArray(row.qSnapshots)&&row.qSnapshots.length ? row.qSnapshots : matchQuestions();
