@@ -112,8 +112,8 @@ if (!accountCodeCss.includes('@media(max-width:767px)') ||
   console.error('Account-code responsive profile/mobile layout is incomplete');
   process.exitCode = 1;
 }
-if (!html.includes('vaani-profile.css?v=20261001-account-code1-service-rank-xp5') ||
-    !html.includes('js/app.js?v=20261002-result-report7')) {
+if (!html.includes('vaani-profile.css?v=20261003-profile-photo1') ||
+    !html.includes('js/app.js?v=20261003-profile-photo1')) {
   console.error('Account-code asset cache keys are outdated');
   process.exitCode = 1;
 }
@@ -728,8 +728,8 @@ try {
     '.vx-host-participate',
     '.vx-host-spectate',
     '.vx-invite-action',
-    '.vx-invite-copy-code',
-    '.vx-invite-share',
+    '.vx-invite-action',
+    '.vx-invite-code',
     'ARENA_RECOVERY_KEY',
     'function arenaAnalysis',
     'function startMistakeDrill',
