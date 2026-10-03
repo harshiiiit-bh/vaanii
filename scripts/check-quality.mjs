@@ -708,7 +708,12 @@ try {
     'normalizedSourceFromCodes',
     'poolForSource',
     'Click two or more exam banks',
-    'sourceExamCodes(d.source)'
+    'sourceExamCodes(d.source)',
+    'hostSpectate',
+    'PARTICIPATE',
+    'Spectate',
+    'vx-host-spectate-panel',
+    'Open answer key'
   ]) {
     if (!arena.includes(marker)) throw new Error('Arena redesign marker is missing: ' + marker);
   }
@@ -717,7 +722,10 @@ try {
     '.vx-arena-share','.vx-host-identity','.vx-host-action-secondary',
     '.vx-host-answer-key',
     '.vx-arena-source-selection',
-    '.vx-arena-source-card-all'
+    '.vx-arena-source-card-all',
+    '.vx-host-spectate-panel',
+    '.vx-host-participate',
+    '.vx-host-spectate'
   ]) {
     if (!arenaCss.includes(marker)) throw new Error('Arena redesign style is missing: ' + marker);
   }
@@ -737,8 +745,12 @@ try {
   }
   if (!/v !== 2 && v !== CODE_VERSION/.test(arena)) throw new Error('Arena match-code decoder is not backward compatible with v2 invites.');
   if (!arena.includes('codeVersion: v')) throw new Error('Arena decoded matches do not retain the code version.');
-  if (!pageSource.includes('vaani-arena-briefing.css?v=20261003-multibank1')) throw new Error('Arena multi-bank CSS cache key is outdated.');
-  if (!pageSource.includes('js/vaani-arena.js?v=20261003-multibank1')) throw new Error('Arena multi-bank JS cache key is outdated.');
+  if (!pageSource.includes('vaani-arena-briefing.css?v=20261003-spectate1')) throw new Error('Arena spectate CSS cache key is outdated.');
+  if (!pageSource.includes('js/vaani-arena.js?v=20261003-spectate1')) throw new Error('Arena spectate JS cache key is outdated.');
+  if (!pageSource.includes('js/vaani-info-center.js?v=20261003-release4')) throw new Error('Feature release cache key is outdated.');
+  if (!arena.includes("S.hostSpectate=true")) throw new Error('Host spectate mode is not activated from the host-only control.');
+  if (!arena.includes("S.result=null;")) throw new Error('Host spectate must not create a player result before opening the board.');
+  if (!arena.includes("if(hostSpectating)")) throw new Error('Result screen is missing the host spectate presentation.');
   console.log('Arena multi-bank audit: v3 source matrix, v2 decode compatibility, combined pool generation, multi-select UI, responsive styling and cache keys validated');
   console.log('Arena: redesigned question-selection console, host controls, shared host identity and answer-key route validated');
 }catch(error){console.error('Arena audit failed:',error.message);process.exitCode=1;}
