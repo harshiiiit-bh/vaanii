@@ -113,7 +113,7 @@ if (!accountCodeCss.includes('@media(max-width:767px)') ||
   process.exitCode = 1;
 }
 if (!html.includes('vaani-profile.css?v=20261003-profile-photo1') ||
-    !html.includes('js/app.js?v=20261004-loginfix2')) {
+    !html.includes('js/app.js?v=20261004-loginfix3')) {
   console.error('Account-code asset cache keys are outdated');
   process.exitCode = 1;
 }
