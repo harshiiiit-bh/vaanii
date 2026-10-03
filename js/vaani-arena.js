@@ -362,7 +362,7 @@
   /* =========================================================
      VIEW STATE
      ========================================================= */
-  var S = { screen: 'home', match: null, draft: null, run: null, result: null, rows: [], hostSpectate: false };
+  var S = { screen: 'home', match: null, draft: null, run: null, result: null, rows: [], hostSpectate: false, recoverySnapshot: null, practiceSummary: null };
 
   function host() { return document.getElementById('view-games'); }
 
@@ -1638,6 +1638,95 @@
   }
 
   /* ---------------------------------------------------------
+     SESSION RECOVERY
+     --------------------------------------------------------- */
+  var ARENA_RECOVERY_KEY = 'vx_arena_active_recovery_v1';
+
+  function saveRunRecovery(){
+    var r=S.run,m=S.match;
+    if(!r||!m||r.practiceMode)return;
+    var snapshot={
+      version:1,
+      code:m.code,
+      index:Number(r.index)||0,
+      startedAt:Number(r.startedAt)||Date.now(),
+      qids:r.questions.map(function(q){return q._id;}),
+      answers:r.answers||{},
+      skipped:r.skipped||{},
+      savedAt:Date.now()
+    };
+    try{localStorage.setItem(ARENA_RECOVERY_KEY,JSON.stringify(snapshot));}catch(e){}
+  }
+
+  function clearRunRecovery(){
+    S.recoverySnapshot=null;
+    try{localStorage.removeItem(ARENA_RECOVERY_KEY);}catch(e){}
+  }
+
+  function readRunRecovery(){
+    try{
+      var snapshot=JSON.parse(localStorage.getItem(ARENA_RECOVERY_KEY)||'null');
+      if(!snapshot||snapshot.version!==1||!snapshot.code||!Array.isArray(snapshot.qids)||!snapshot.qids.length)return null;
+      if(Date.now()-Number(snapshot.savedAt||0)>7*24*60*60*1000)return null;
+      return snapshot;
+    }catch(e){return null;}
+  }
+
+  function questionsFromRecovery(m,snapshot){
+    var pool=A.questionsFor(m,playerName()),byId={};
+    pool.forEach(function(q){byId[q._id]=q;});
+    var questions=snapshot.qids.map(function(id){return byId[id];}).filter(Boolean);
+    return questions.length===snapshot.qids.length?questions:null;
+  }
+
+  function resumeRecoveredRun(){
+    var m=S.match,snapshot=S.recoverySnapshot||readRunRecovery();
+    if(!m||!snapshot||snapshot.code!==m.code){
+      say('The saved Arena session could not be restored.');
+      clearRunRecovery();
+      return;
+    }
+    var questions=questionsFromRecovery(m,snapshot);
+    if(!questions||!questions.length){
+      say('Those questions are no longer available on this device.');
+      clearRunRecovery();
+      return;
+    }
+    var elapsed=Math.max(0,Math.round((Date.now()-Number(snapshot.startedAt||Date.now()))/1000));
+    var remaining=Math.max(0,m.seconds-elapsed);
+    if(remaining<=0){
+      S.run={
+        questions:questions,
+        index:Math.min(Number(snapshot.index)||0,questions.length-1),
+        answers:snapshot.answers||{},
+        skipped:snapshot.skipped||{},
+        startedAt:Number(snapshot.startedAt)||Date.now(),
+        recovered:true
+      };
+      clearRunRecovery();
+      finishRun(true);
+      return;
+    }
+    S.run={
+      questions:questions,
+      index:Math.min(Number(snapshot.index)||0,questions.length-1),
+      answers:snapshot.answers||{},
+      skipped:snapshot.skipped||{},
+      startedAt:Number(snapshot.startedAt)||Date.now(),
+      recovered:true
+    };
+    clearRunRecovery();
+    go('run');
+    if(VX.timer){
+      VX.timer.start({
+        mode:'countdown',
+        seconds:remaining,
+        onEnd:function(){say('Time up — your recovered answers were submitted.');finishRun(true);}
+      });
+    }
+  }
+
+  /* ---------------------------------------------------------
      BRIEFING
      --------------------------------------------------------- */
   function screenBriefing(w) {
@@ -1673,6 +1762,28 @@
       tile.appendChild(icon);tile.appendChild(label);tile.appendChild(value);stats.appendChild(tile);
     });
     panel.appendChild(stats);
+
+    var recovery=S.recoverySnapshot||readRunRecovery();
+    if(recovery&&recovery.code===m.code){
+      S.recoverySnapshot=recovery;
+      var recoveryNotice=el('div','vx-briefing-recovery');
+      recoveryNotice.innerHTML='<div><span class="vx-briefing-recovery-kicker">SESSION RECOVERED</span><strong>Your Arena attempt was interrupted.</strong><p>Your saved answers and question position are ready. Resume without losing your attempt.</p></div>';
+      var recoveryActions=el('div','vx-briefing-recovery-actions');
+      var resume=el('button','vx-btn primary','Resume session');
+      resume.type='button';
+      resume.addEventListener('click',resumeRecoveredRun);
+      recoveryActions.appendChild(resume);
+      var discard=el('button','vx-btn ghost','Discard recovery');
+      discard.type='button';
+      discard.addEventListener('click',function(){
+        clearRunRecovery();
+        S.recoverySnapshot=null;
+        render();
+      });
+      recoveryActions.appendChild(discard);
+      recoveryNotice.appendChild(recoveryActions);
+      panel.appendChild(recoveryNotice);
+    }
 
     var prev = previousAttempt(m.code);
     if (prev) {
@@ -1732,14 +1843,23 @@
   /* ---------------------------------------------------------
      RUN
      --------------------------------------------------------- */
-  function beginRun(questions) {
-    S.run = { questions: questions, index: 0, answers: {}, skipped: {}, startedAt: Date.now() };
+  function beginRun(questions,options) {
+    options=options||{};
+    S.run={
+      questions:questions,
+      index:0,
+      answers:{},
+      skipped:{},
+      startedAt:Date.now(),
+      practiceMode:!!options.practice
+    };
+    if(!S.run.practiceMode)saveRunRecovery();
     go('run');
-    if (VX.timer) {
+    if(!S.run.practiceMode&&VX.timer){
       VX.timer.start({
-        mode: 'countdown',
-        seconds: S.match.seconds,
-        onEnd: function () { say('Time up — your answers were submitted.'); finishRun(true); }
+        mode:'countdown',
+        seconds:S.match.seconds,
+        onEnd:function(){say('Time up — your answers were submitted.');finishRun(true);}
       });
     }
   }
@@ -1776,7 +1896,7 @@
 
     var top = el('div', 'vx-meta-strip');
     top.innerHTML =
-      '<span class="vx-chip">Question ' + (r.index + 1) + ' of ' + r.questions.length + '</span>' +
+      '<span class="vx-chip ' + (r.practiceMode ? 'warn' : '') + '">' + (r.practiceMode ? 'MISTAKE DRILL · ' : '') + 'Question ' + (r.index + 1) + ' of ' + r.questions.length + '</span>' +
       '<span class="vx-chip">' + esc(q.sec || '') + '</span>' +
       '<span class="vx-chip">' + esc(q._exam || 'NDA') + ' ' + esc(q.s || '') + ' ' + esc(q.y || '') + '</span>';
     w.appendChild(top);
@@ -1819,6 +1939,7 @@
       b.addEventListener('click', function () {
         r.answers[q._id] = i;
         delete r.skipped[q._id];
+        if(!r.practiceMode)saveRunRecovery();
         if (r.index < r.questions.length - 1) { r.index++; render(); }
         else render();
       });
@@ -1831,19 +1952,21 @@
     nav.style.marginTop = '18px';
     var prev = el('button', 'vx-btn ghost', 'Previous'); prev.type = 'button';
     prev.disabled = r.index === 0;
-    prev.addEventListener('click', function () { r.index--; render(); });
+    prev.addEventListener('click', function () { r.index--; if(!r.practiceMode)saveRunRecovery(); render(); });
     var next = el('button', 'vx-btn ghost', 'Skip'); next.type = 'button';
     next.disabled = r.index >= r.questions.length - 1;
     next.addEventListener('click', function () {
       if (r.answers[q._id] === undefined) r.skipped[q._id] = true;
-      r.index++; render();
+      r.index++;
+      if(!r.practiceMode)saveRunRecovery();
+      render();
     });
     nav.appendChild(prev); nav.appendChild(next);
     w.appendChild(nav);
 
     var answered = Object.keys(r.answers).length;
     var submit = el('button', 'vx-btn ' + (answered === r.questions.length ? 'primary' : 'danger'),
-      'Submit (' + answered + '/' + r.questions.length + ' answered)');
+      (r.practiceMode ? 'Finish drill (' : 'Submit (') + answered + '/' + r.questions.length + ' answered)');
     submit.type = 'button';
     submit.style.marginTop = '12px';
     submit.addEventListener('click', function () {
@@ -1861,35 +1984,57 @@
   }
 
   function finishRun(auto) {
-    var r = S.run, m = S.match;
-    if (!r) return;
-    if (VX.timer) VX.timer.stop();
+    var r=S.run,m=S.match;
+    if(!r)return;
+    if(VX.timer)VX.timer.stop();
     clearQTimer();
-    var negFrac = NEG_MARKS[m.negMark] || 0;
-    var score = 0;
-    r.questions.forEach(function (q) {
-      var a = r.answers[q._id];
-      if (a === undefined) return; // blank — never penalised
-      score += (a === q.ans) ? 1 : negFrac;
+
+    if(r.practiceMode){
+      var practiceCorrect=0,practiceIncorrect=0,practiceSkipped=0;
+      r.questions.forEach(function(q){
+        var a=r.answers[q._id];
+        if(a===undefined)practiceSkipped++;
+        else if(a===q.ans)practiceCorrect++;
+        else practiceIncorrect++;
+      });
+      S.practiceSummary={
+        total:r.questions.length,
+        correct:practiceCorrect,
+        incorrect:practiceIncorrect,
+        skipped:practiceSkipped,
+        at:Date.now()
+      };
+      S.run=null;
+      go('result');
+      return;
+    }
+
+    clearRunRecovery();
+    var negFrac=NEG_MARKS[m.negMark]||0;
+    var score=0;
+    r.questions.forEach(function(q){
+      var a=r.answers[q._id];
+      if(a===undefined)return;
+      score+=(a===q.ans)?1:negFrac;
     });
-    score = Math.round(score * 100) / 100;
-    var seconds = Math.min(m.seconds, Math.round((Date.now() - r.startedAt) / 1000));
-    var entry = {
-      pid: playerId(), name: playerName(), score: score,
-      avatar: profileAvatarSnapshot(), seconds: seconds, total: r.questions.length,
-      at: Date.now(), auto: !!auto,
-      qids: r.questions.map(function (q) { return q._id; }),
-      answers: r.answers,
-      expiresAt: m.expiresAt
+    score=Math.round(score*100)/100;
+    var seconds=Math.min(m.seconds,Math.round((Date.now()-r.startedAt)/1000));
+    var entry={
+      pid:playerId(),name:playerName(),score:score,
+      avatar:profileAvatarSnapshot(),seconds:seconds,total:r.questions.length,
+      at:Date.now(),auto:!!auto,
+      qids:r.questions.map(function(q){return q._id;}),
+      answers:r.answers,
+      expiresAt:m.expiresAt
     };
-    S.result = entry;
-    S.run = null;
-    recordAttempt(m.code, entry);
-    if (typeof global.addXP === 'function') global.addXP(score * 2, 'Arena match');
-    A.sync.submit(m.code, entry).then(loadBoard).then(function () { go('result'); },
-      function () {
-        S._boardError = true;
-        S.rows = reconcileLocalAttempt([]);
+    S.result=entry;
+    S.run=null;
+    recordAttempt(m.code,entry);
+    if(typeof global.addXP==='function')global.addXP(score*2,'Arena match');
+    A.sync.submit(m.code,entry).then(loadBoard).then(function(){go('result');},
+      function(){
+        S._boardError=true;
+        S.rows=reconcileLocalAttempt([]);
         go('result');
       });
   }
@@ -1939,6 +2084,49 @@
     }
     var delay = Math.max(0, Number(match.expiresAt) - Date.now() + 25);
     S._expiryTimer = setTimeout(checkExpiry, Math.min(delay, 2147483647));
+  }
+
+  function arenaAnalysis(m,res){
+    if(!m||!res)return null;
+    var qs=matchQuestions(),sections={},mistakes=[];
+    qs.forEach(function(q,i){
+      var given=res.answers?res.answers[q._id]:undefined;
+      var key=q.sec||q._exam||'Mixed';
+      if(!sections[key])sections[key]={name:key,correct:0,incorrect:0,skipped:0,total:0};
+      var sec=sections[key];sec.total++;
+      if(given===undefined){sec.skipped++;mistakes.push({index:i+1,q:q,status:'skipped'});}
+      else if(Number(given)===Number(q.ans)){sec.correct++;}
+      else{sec.incorrect++;mistakes.push({index:i+1,q:q,status:'incorrect'});}
+    });
+    var sectionList=Object.keys(sections).map(function(k){
+      var item=sections[k];
+      var attempted=item.correct+item.incorrect;
+      item.accuracy=attempted?Math.round(item.correct/attempted*100):0;
+      return item;
+    }).sort(function(a,b){return b.accuracy-a.accuracy||b.total-a.total;});
+    var focus=sectionList.slice().sort(function(a,b){return a.accuracy-b.accuracy||b.total-a.total;});
+    return {
+      total:qs.length,
+      correct:Number(res.answers?qs.filter(function(q){return Number(res.answers[q._id])===Number(q.ans);}).length:0),
+      incorrect:mistakes.filter(function(x){return x.status==='incorrect';}).length,
+      skipped:mistakes.filter(function(x){return x.status==='skipped';}).length,
+      accuracy:qs.length?Math.round((qs.length-mistakes.length)/qs.length*100):0,
+      strongest:sectionList[0]||null,
+      weakest:focus[0]||null,
+      sections:sectionList,
+      mistakes:mistakes.slice(0,8)
+    };
+  }
+
+  function startMistakeDrill(){
+    var m=S.match,res=S.result;
+    if(!m||!res)return;
+    var qs=matchQuestions().filter(function(q){
+      var a=res.answers?res.answers[q._id]:undefined;
+      return a===undefined||Number(a)!==Number(q.ans);
+    });
+    if(!qs.length){say('No mistakes to drill — clean run.');return;}
+    beginRun(qs,{practice:true});
   }
 
   function screenResult(w) {
@@ -2013,6 +2201,74 @@
       addStat('Skipped', stats ? stats.skipped : '—', 'is-skipped');
       addStat('Time taken', esc(fmtClock(res.seconds)), 'is-time');
       w.appendChild(statsGrid);
+
+      var insights=arenaAnalysis(m,res);
+      if(insights){
+        var intel=el('section','vx-arena-intelligence');
+        var intelHead=el('div','vx-arena-intelligence-head');
+        intelHead.innerHTML='<div><span class="vx-arena-intelligence-kicker">VAANI INTELLIGENCE</span><h3>What this attempt tells you</h3><p>Your result is now converted into concrete study targets.</p></div>';
+        var intelActions=el('div','vx-arena-intelligence-actions');
+        var drill=el('button','vx-btn primary','Retry '+insights.mistakes.length+' mistake'+(insights.mistakes.length===1?'':'s'));
+        drill.type='button';
+        drill.disabled=!insights.mistakes.length;
+        drill.addEventListener('click',startMistakeDrill);
+        intelActions.appendChild(drill);
+        if(typeof window.VAANI_ARENA_ANALYSIS_BRIEFING==='function'){
+          var brief=el('button','vx-btn ghost','Brief Officer VAANI');
+          brief.type='button';
+          brief.addEventListener('click',function(){window.VAANI_ARENA_ANALYSIS_BRIEFING(insights);});
+          intelActions.appendChild(brief);
+        }
+        intelHead.appendChild(intelActions);
+        intel.appendChild(intelHead);
+
+        var intelGrid=el('div','vx-arena-intel-grid');
+        [
+          ['ACCURACY',insights.accuracy+'%','overall question accuracy'],
+          ['FOCUS ITEMS',String(insights.mistakes.length),'incorrect + skipped'],
+          ['STRONGEST',insights.strongest?insights.strongest.name:'—',insights.strongest?insights.strongest.accuracy+'% accuracy':'not enough data'],
+          ['FOCUS AREA',insights.weakest?insights.weakest.name:'—',insights.weakest?insights.weakest.accuracy+'% accuracy':'not enough data']
+        ].forEach(function(item){
+          var card=el('div','vx-arena-intel-card');
+          card.innerHTML='<span>'+esc(item[0])+'</span><strong>'+esc(item[1])+'</strong><small>'+esc(item[2])+'</small>';
+          intelGrid.appendChild(card);
+        });
+        intel.appendChild(intelGrid);
+
+        if(insights.sections.length){
+          var sections=el('div','vx-arena-intel-sections');
+          sections.innerHTML='<div class="vx-arena-intel-subhead"><span>TOPIC SIGNAL</span><small>accuracy among answered questions</small></div>';
+          insights.sections.slice(0,6).forEach(function(sec){
+            var row=el('div','vx-arena-intel-section');
+            row.innerHTML='<div><strong>'+esc(sec.name)+'</strong><small>'+sec.correct+' correct · '+sec.incorrect+' wrong · '+sec.skipped+' skipped</small></div><div class="vx-arena-intel-bar"><i style="width:'+sec.accuracy+'%"></i></div><b>'+sec.accuracy+'%</b>';
+            sections.appendChild(row);
+          });
+          intel.appendChild(sections);
+        }
+
+        if(insights.mistakes.length){
+          var misses=el('div','vx-arena-intel-mistakes');
+          misses.innerHTML='<div class="vx-arena-intel-subhead"><span>REVIEW QUEUE</span><small>the first items VAANI recommends revisiting</small></div>';
+          insights.mistakes.slice(0,5).forEach(function(item){
+            var row=el('button','vx-arena-intel-mistake');
+            row.type='button';
+            row.innerHTML='<span>Q'+item.index+'</span><span><strong>'+esc(item.q.sec||item.q._exam||'Mixed')+'</strong><small>'+(item.status==='skipped'?'Skipped':'Incorrect')+'</small></span><b>Review →</b>';
+            row.addEventListener('click',function(){S.screen='review';render();});
+            misses.appendChild(row);
+          });
+          intel.appendChild(misses);
+        }
+        w.appendChild(intel);
+        try{window.dispatchEvent(new CustomEvent('vaani:arena-analysis',{detail:insights}));}catch(e){}
+      }
+
+      if(S.practiceSummary){
+        var practice=el('div','vx-arena-practice-complete');
+        practice.innerHTML='<span class="vx-arena-intelligence-kicker">MISTAKE DRILL COMPLETE</span><strong>'+S.practiceSummary.correct+' correct · '+S.practiceSummary.incorrect+' wrong · '+S.practiceSummary.skipped+' skipped</strong><small>This drill did not change your official Arena leaderboard result.</small>';
+        w.appendChild(practice);
+        S.practiceSummary=null;
+      }
+
       if(typeof window.vaaniResultBriefingNode==='function'){
         var officerBriefing=window.vaaniResultBriefingNode(accuracy,'Arena match');
         if(officerBriefing)w.appendChild(officerBriefing);
@@ -2540,6 +2796,19 @@
       if (m) {
         m = hydrateMatch(m, inviteHost, inviteAvatar);
         S.match = m; S.screen = 'briefing'; rememberMatch(m);
+      }
+    } else {
+      var recovery=readRunRecovery();
+      if(recovery){
+        var recoveredMatch=A.decode(recovery.code);
+        if(recoveredMatch&&!previousAttempt(recovery.code)&&Date.now()<recoveredMatch.expiresAt){
+          S.match=recoveredMatch;
+          S.recoverySnapshot=recovery;
+          S.screen='briefing';
+          rememberMatch(recoveredMatch);
+        }else{
+          try{localStorage.removeItem(ARENA_RECOVERY_KEY);}catch(e){}
+        }
       }
     }
     if (host() && host().offsetParent !== null) render();
