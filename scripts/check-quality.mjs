@@ -533,6 +533,15 @@ try {
   const versions=[...infoSource.matchAll(/version:'([^']+)'/g)].map(match=>match[1]);
   if(versions.length<3)throw new Error('Feature release manifest is unexpectedly small: '+versions.length+' release(s).');
   if(new Set(versions).size!==versions.length)throw new Error('Duplicate feature release version detected.');
+  if(!infoSource.includes('NEW UPDATE · Officer briefing pending') || !infoSource.includes('UPDATE SEEN · replay anytime')) {
+    throw new Error('Release unread/seen status copy is missing.');
+  }
+  if(!infoSource.includes("window.openInfoCenter=function(options)")) {
+    throw new Error('Information Centre options API is missing.');
+  }
+  if(!infoSource.includes("if(opts.markRead)markLatestFeatureRead();")) {
+    throw new Error('Explicit mark-read path is missing.');
+  }
   for(const field of ['category:', 'scope:', 'impact:']) {
     const count=(infoSource.match(new RegExp(field,'g'))||[]).length;
     if(count!==versions.length)throw new Error('Release metadata is incomplete for '+field+' ('+count+'/'+versions.length+').');
