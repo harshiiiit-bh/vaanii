@@ -1117,39 +1117,106 @@
     shell.appendChild(actions);
 
     var copyRow=el('div','vx-invite-copy-row');
-    var copyInvite=el('button','vx-btn ghost','Copy invite link');
-    copyInvite.type='button';
+
+    function copyText(value, onSuccess){
+      value=String(value||'');
+      function done(){
+        if(typeof onSuccess==='function')onSuccess();
+      }
+      if(navigator.clipboard&&typeof navigator.clipboard.writeText==='function'){
+        navigator.clipboard.writeText(value).then(done).catch(function(){
+          try{
+            var area=document.createElement('textarea');
+            area.value=value;
+            area.style.position='fixed';
+            area.style.left='-9999px';
+            area.setAttribute('readonly','');
+            document.body.appendChild(area);
+            area.select();
+            var ok=document.execCommand('copy');
+            area.remove();
+            if(ok)done();else say('Copy is unavailable in this browser.');
+          }catch(e){say('Copy is unavailable in this browser.');}
+        });
+        return;
+      }
+      try{
+        var area=document.createElement('textarea');
+        area.value=value;
+        area.style.position='fixed';
+        area.style.left='-9999px';
+        area.setAttribute('readonly','');
+        document.body.appendChild(area);
+        area.select();
+        var ok=document.execCommand('copy');
+        area.remove();
+        if(ok)done();else say('Copy is unavailable in this browser.');
+      }catch(e){say('Copy is unavailable in this browser.');}
+    }
+
+    function actionButton(label, icon, className){
+      var button=el('button','vx-btn ghost vx-invite-action '+className);
+      button.type='button';
+      button.innerHTML='<span class="vx-invite-action-icon" aria-hidden="true">'+icon+'</span><span>'+label+'</span>';
+      return button;
+    }
+
+    var copyInvite=actionButton('Copy invite link','↗','vx-invite-copy-link');
+    copyInvite.setAttribute('aria-label','Copy Arena invite link');
     copyInvite.addEventListener('click',function(){
-      if(!navigator.clipboard){say('Clipboard is unavailable.');return;}
-      navigator.clipboard.writeText(inviteUrl).then(function(){
-        copyInvite.textContent='Invite link copied';setTimeout(function(){copyInvite.textContent='Copy invite link';},1600);
+      copyText(inviteUrl,function(){
+        copyInvite.classList.add('is-done');
+        copyInvite.querySelector('span:last-child').textContent='Link copied';
+        setTimeout(function(){
+          copyInvite.classList.remove('is-done');
+          copyInvite.querySelector('span:last-child').textContent='Copy invite link';
+        },1600);
       });
     });
     copyRow.appendChild(copyInvite);
 
-    var copyCode=el('button','vx-btn ghost','Copy code');
-    copyCode.type='button';
+    var copyCode=actionButton('Copy code','⌗','vx-invite-copy-code');
+    copyCode.setAttribute('aria-label','Copy Arena match code');
     copyCode.addEventListener('click',function(){
-      if(!navigator.clipboard){say('Clipboard is unavailable.');return;}
-      navigator.clipboard.writeText(A.prettyCode(m.code)).then(function(){
-        copyCode.textContent='Code copied';setTimeout(function(){copyCode.textContent='Copy code';},1600);
+      copyText(A.prettyCode(m.code),function(){
+        copyCode.classList.add('is-done');
+        copyCode.querySelector('span:last-child').textContent='Code copied';
+        setTimeout(function(){
+          copyCode.classList.remove('is-done');
+          copyCode.querySelector('span:last-child').textContent='Copy code';
+        },1600);
       });
     });
     copyRow.appendChild(copyCode);
 
-    if(navigator.share){
-      var share=el('button','vx-btn ghost','Share invite');
-      share.type='button';
-      share.addEventListener('click',function(){
-        navigator.share({title:'VAANI Arena · '+(hostName||'Host'),text:'Join my VAANI Arena match hosted by '+(hostName||'the host')+'.',url:inviteUrl}).catch(function(){});
+    var share=actionButton('Share invite','↗','vx-invite-share');
+    share.setAttribute('aria-label','Share Arena invite');
+    share.addEventListener('click',function(){
+      if(navigator.share){
+        navigator.share({
+          title:'VAANI Arena · '+(hostName||'Host'),
+          text:'Join my VAANI Arena match hosted by '+(hostName||'the host')+'.',
+          url:inviteUrl
+        }).catch(function(){});
+        return;
+      }
+      copyText(inviteUrl,function(){
+        share.classList.add('is-done');
+        share.querySelector('span:last-child').textContent='Link copied';
+        say('Sharing is unavailable here, so the invite link was copied.');
+        setTimeout(function(){
+          share.classList.remove('is-done');
+          share.querySelector('span:last-child').textContent='Share invite';
+        },1800);
       });
-      copyRow.appendChild(share);
-    }
+    });
+    copyRow.appendChild(share);
+
     shell.appendChild(copyRow);
 
     var note=el('div','vx-arena-host-note');
     note.innerHTML=ownHost
-      ? '<span>HOST ACCESS</span><p><b>Participate</b> enters the normal test. <b>Spectate</b> opens the private host control room with the answer key, leaderboard and question-by-question player performance without starting an attempt.</p>'
+      ? '<span>HOST ACCESS</span><p><b>Participate</b> enters the normal test. <b>Spectate</b> opens the private host control room with the answer key, leaderboard and question-by-question player performance without starting an attempt. Use the action bar above to copy or share the invite at any time.</p>'
       : '<span>MATCH IDENTITY</span><p>Open the shared invite link to keep the host name attached to this match on your device.</p>';
     shell.appendChild(note);
 
