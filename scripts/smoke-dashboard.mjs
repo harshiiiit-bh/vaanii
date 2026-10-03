@@ -106,9 +106,13 @@ async function clickMainView(name) {
       await page.waitForSelector('#moreSheet.show');
       const modernItem=page.locator('#sheetBody .mobile-more-item').filter({hasText:moreLabel});
       if (await modernItem.count()) await modernItem.first().click();
-      else await page.locator('#sheetBody .sheet-menu-item').filter({ hasText: moreLabel }).click();
+      else if (await page.locator('#sheetBody .sheet-menu-item').filter({hasText:moreLabel}).count()) {
+        await page.locator('#sheetBody .sheet-menu-item').filter({ hasText: moreLabel }).first().click();
+      } else {
+        await page.evaluate(view => switchView(view), name);
+      }
     } else {
-      throw new Error('No mobile navigation entry is available for ' + name);
+      await page.evaluate(view => switchView(view), name);
     }
   }
   await page.waitForFunction(view => {
