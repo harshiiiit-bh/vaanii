@@ -13,6 +13,23 @@
   */
   const FEATURE_RELEASES=[
     {
+      version:'20261004-arena-fairplay1',
+      date:'04 OCT 2026',
+      tag:'ARENA SAFETY UPDATE',
+      category:'FAIR PLAY',
+      scope:'Arena · Pre-attempt access · Question integrity',
+      impact:'Players cannot use the pre-attempt leaderboard/review path to inspect match results before submitting.',
+      title:'Arena Fair Play Lock is live',
+      summary:'Normal players stay locked into the test flow until their official attempt is submitted. Host Spectate remains the dedicated pre-attempt supervision mode.',
+      bullets:[
+        'Normal players no longer open the Arena leaderboard before completing their own attempt.',
+        'Answer review stays tied to the player’s recorded attempt.',
+        'Host Spectate remains the only intentional pre-attempt answer/leaderboard path.',
+        'Corrected CDS 2009-II Q73 so all four P/Q/R/S markers display in the Ordering-of-Words question.',
+        'The host answer key remains gated by host access.'
+      ]
+    },
+    {
       version:'20261003-arena-intelligence1',
       date:'03 OCT 2026',
       tag:'ARENA UPDATE',
