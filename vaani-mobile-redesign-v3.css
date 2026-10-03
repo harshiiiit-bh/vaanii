@@ -799,3 +799,49 @@
     }
   }
 }
+
+
+/* ==========================================================
+   DESKTOP/TABLET MOBILE-CHROME GUARD
+   V3 is loaded last. The mobile redesign scripts can still mount
+   their helper nodes on desktop, so keep those nodes out of the
+   desktop layout instead of relying on mobile-only CSS files.
+   ========================================================== */
+@media (min-width:768px){
+  .mobile-viewbar,
+  #mobileSectionSheet,
+  .mobile-section-sheet,
+  #mobileRoomSwitcher,
+  .mobile-room-switcher{
+    display:none!important;
+    visibility:hidden!important;
+    pointer-events:none!important;
+  }
+
+  /* Quick Navigate was retired from the global UI. */
+  #quickNavBtn,
+  #quickNavMenu,
+  .qnav-fab,
+  .qnav-menu,
+  button[title="Quick Navigate"]{
+    display:none!important;
+    visibility:hidden!important;
+    opacity:0!important;
+    pointer-events:none!important;
+  }
+}
+
+/* Keep the retired Quick Navigate control hidden on phones too.
+   Navigation is already available through the More command deck. */
+@media (max-width:767px){
+  #quickNavBtn,
+  #quickNavMenu,
+  .qnav-fab,
+  .qnav-menu,
+  button[title="Quick Navigate"]{
+    display:none!important;
+    visibility:hidden!important;
+    opacity:0!important;
+    pointer-events:none!important;
+  }
+}
