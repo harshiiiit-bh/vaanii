@@ -814,7 +814,7 @@
         '<span class="vx-arena-source-selection-dot"></span>' +
         '<strong>' + pickedCodes.length + ' bank' + (pickedCodes.length === 1 ? '' : 's') + ' selected</strong>' +
         '<span>' + esc(pickedCodes.join(' + ')) + '</span>';
-      sourceGrid.parentNode?.insertBefore(sourceStatus, sourceGrid);
+      pool.appendChild(sourceStatus);
 
       examCodes.forEach(function (code) {
         var item = avail.filter(function (a) { return a.code === code; })[0] || {};
