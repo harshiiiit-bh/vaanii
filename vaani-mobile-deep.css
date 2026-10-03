@@ -1366,7 +1366,7 @@
   #view-games .vx-deploy-summary-grid{grid-template-columns:1fr!important;}
   #view-vocab .singles-strip{grid-template-columns:1fr!important;}
   #view-vocab90 .v90-day-grid{grid-template-columns:repeat(5,minmax(0,1fr))!important;}
-}}
+}
 
 /* On non-mobile widths, this file intentionally does nothing. */
 
