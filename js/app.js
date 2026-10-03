@@ -651,7 +651,12 @@ function switchView(name, options={}){
   }
   if(name==='journey') setTimeout(()=>safeCall(renderGrammarJourney,'renderGrammarJourney'), 30);
   closeMobileNav();
-  if(!options.preserveScroll) window.scrollTo({top:0,behavior:'smooth'});
+  // Only move to the top when navigation actually changes the active top-level view.
+  // Re-entering/re-rendering the same view must never interrupt a user's scroll position
+  // (especially on mobile, where a harmless rebuild can otherwise feel like the page is
+  // constantly jumping upward).
+  const viewChanged = fromName !== name;
+  if(!options.preserveScroll && viewChanged) window.scrollTo({top:0,behavior:'smooth'});
   setTimeout(()=>{
     if(typeof initTilt==='function') safeCall(initTilt,'initTilt');
     if(typeof initReveal==='function') safeCall(initReveal,'initReveal');
