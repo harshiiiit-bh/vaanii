@@ -1027,6 +1027,12 @@ var PYQ_CDS_2009_II = [
     "n": 74,
     "sec": "Ordering of Words in a Sentence",
     "q": "the problems of working wives are different they have to look after, from those of (P) (Q) housewives because their family as well as their jobs",
+    "parts": [
+      "The problems of working wives are different",
+      "they have to look after,",
+      "from those of housewives because",
+      "their family as well as their jobs"
+    ],
     "o": [
       "P-S-R-Q",
       "P-R-Q-S",
