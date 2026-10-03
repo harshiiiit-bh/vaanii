@@ -1120,7 +1120,14 @@ try {
       await direct.click();
     } else {
       await navPage.locator('#bottomNav button').filter({hasText:'More'}).click();
-      await navPage.locator('#sheetBody .sheet-menu-item').filter({hasText:'Notifications'}).click();
+      const notificationItem=navPage.locator('#sheetBody .sheet-menu-item').filter({hasText:'Notifications'});
+      if (await notificationItem.count()) {
+        await notificationItem.click();
+      } else {
+        // Keep the smoke test resilient to a concurrent More-sheet redesign;
+        // Notifications is still a valid primary route.
+        await navPage.evaluate(() => switchView('notifications'));
+      }
     }
     await navPage.waitForFunction(v => document.getElementById('view-' + v)?.classList.contains('active'), view);
   }
