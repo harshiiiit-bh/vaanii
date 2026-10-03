@@ -127,7 +127,6 @@
    var card=document.createElement('article');card.className='v90-section-card';
    var head=document.createElement('div');head.className='v90-section-head';var title=document.createElement('h4');
    title.textContent=s.title||labels[s.key]||labels.other;head.appendChild(title);
-   if(s.meta){var meta=document.createElement('span');meta.className='v90-section-meta';meta.textContent=s.meta;head.appendChild(meta);}
    card.appendChild(head);var body=document.createElement('div');body.className='v90-section-content';
    if(s.key==='oneword'){
      var rows=parseOneWordRows(s.text);
