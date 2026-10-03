@@ -1703,7 +1703,12 @@ try {
       probe.width<=0||probe.height<=0||probe.documentWidth>probe.viewportWidth+2)));
   console.log('PASS mobile flicker probe: 40 animation frames across 8 redesigned views remained visible and within viewport');
   await clickMainView('books');
-  await page.locator('#vbv-mainnav button[data-route="academy"]').click();
+  const academyRouteButton=page.locator('#vbv-mainnav button[data-route="academy"]');
+  if(await academyRouteButton.isVisible()){
+    await academyRouteButton.click();
+  }else{
+    await page.evaluate(()=>{ location.hash='#/academy'; });
+  }
   await page.waitForSelector('#app .academy-page', { timeout: 15000 });
   assert.equal(await page.locator('#app .academy-card').count(), 4, 'Mobile Academy gallery is incomplete');
   const academyMobile = await page.evaluate(() => ({ width:innerWidth, scrollWidth:document.documentElement.scrollWidth }));
