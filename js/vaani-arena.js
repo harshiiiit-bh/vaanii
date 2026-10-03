@@ -227,7 +227,7 @@
 
   /* Distinct papers (exam + session + year) in a bank, newest first. */
   function papersFor(source) {
-    var pool = VX.poolFor ? VX.poolFor(source) : sharedPYQAll();
+    var pool = poolForSource(source);
     var seen = {}, out = [];
     pool.forEach(function (q) {
       var key = paperKeyOf(q);
@@ -254,7 +254,7 @@
   };
 
   A.questionsFor = function (match, playerName) {
-    var pool = (VX.poolFor ? VX.poolFor(match.source) : sharedPYQAll());
+    var pool = poolForSource(match.source);
     pool = applyFilters(pool, match.type, match.paperKey);
     // sort first so the starting order is identical everywhere,
     // regardless of the order papers happened to load in
@@ -807,8 +807,14 @@
 
       /* 01 — pool */
       var pool = setupSection('01 · QUESTION SELECTION', 'Pick exactly what the squad will face',
-        'Select one or more exam banks. The seed locks the combined question set identically across every device. Filters only change the pool before the match is created.');
+        'Click two or more exam banks to combine them. The seed locks the combined question set identically across every device. Filters only change the pool before the match is created.');
       var sourceGrid = el('div', 'vx-arena-source-grid');
+      var sourceStatus = el('div', 'vx-arena-source-selection');
+      sourceStatus.innerHTML =
+        '<span class="vx-arena-source-selection-dot"></span>' +
+        '<strong>' + pickedCodes.length + ' bank' + (pickedCodes.length === 1 ? '' : 's') + ' selected</strong>' +
+        '<span>' + esc(pickedCodes.join(' + ')) + '</span>';
+      sourceGrid.parentNode?.insertBefore(sourceStatus, sourceGrid);
 
       examCodes.forEach(function (code) {
         var item = avail.filter(function (a) { return a.code === code; })[0] || {};
