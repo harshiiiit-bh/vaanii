@@ -707,7 +707,7 @@ try {
     'CDS+AFCAT',
     'normalizedSourceFromCodes',
     'poolForSource',
-    'Select one or more exam banks',
+    'Click two or more exam banks',
     'sourceExamCodes(d.source)'
   ]) {
     if (!arena.includes(marker)) throw new Error('Arena redesign marker is missing: ' + marker);
