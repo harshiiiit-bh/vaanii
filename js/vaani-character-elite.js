@@ -116,7 +116,7 @@
     return enabled;
   };
 
-  function open(){
+  function open(duration=9000){
     const m=mentor();
     if(!m||m.classList.contains('bad-result')||getDockPreferences().hidden||assessmentActive())return;
     addMeta();
@@ -124,7 +124,7 @@
     // Replace any pending base/elite hide so a fresh briefing cannot vanish early.
     clearTimeout(window.__vaaniMentorTimer);
     m.classList.add('open','speaking','noted');
-    window.__vaaniMentorTimer=window.setTimeout(close,9000);
+    window.__vaaniMentorTimer=window.setTimeout(close,Math.max(5000,Number(duration)||9000));
     clearTimeout(m.__vaaniNoteTimer);
     m.__vaaniNoteTimer=setTimeout(()=>m.classList.remove('noted'),420);
   }
@@ -134,7 +134,7 @@
     clearTimeout(window.__vaaniMentorTimer);
     window.__vaaniMentorTimer=null;
     if(m){
-      m.classList.remove('open','speaking');
+      m.classList.remove('open','speaking','feature-update');
       gesturesOff();
     }
   }
@@ -144,10 +144,14 @@
     if(typeof window.vaaniCharacterEnsure==='function')window.vaaniCharacterEnsure();
     const prefs=getDockPreferences();
     if(prefs.hidden)setDockHidden(false,false);
-    const bullets=Array.isArray(release.bullets)?release.bullets.slice(0,4):[];
-    const detail=[release.summary||'',bullets.length?' '+bullets.join(' • '):''].join('').trim();
-    setText(release.tag||'FEATURE UPDATE',release.title||'New VAANI update',detail,'p2','point','FEATURE UPDATE');
-    open();
+    const bullets=Array.isArray(release.bullets)?release.bullets.filter(Boolean).slice(0,4):[];
+    const detail=[release.summary||'',bullets.length?'\n\nKEY CHANGES\n• '+bullets.join('\n• '):''].join('').trim();
+    const kicker=[release.tag||'FEATURE UPDATE',release.date||'CURRENT RELEASE'].join(' · ');
+    const section=['UPDATE',release.category||'FEATURE'].join(' · ');
+    setText(kicker,release.title||'New VAANI update',detail,'p2','point',section);
+    const m=mentor();
+    if(m)m.classList.add('feature-update');
+    open(12000);
     window.dispatchEvent(new CustomEvent('vaani:feature-update',{detail:release}));
     return true;
   };
