@@ -13,6 +13,23 @@
   */
   const FEATURE_RELEASES=[
     {
+      version:'20261003-arena-intelligence1',
+      date:'03 OCT 2026',
+      tag:'ARENA UPDATE',
+      category:'INTELLIGENCE',
+      scope:'Arena · Analytics · Recovery · Mistake Drill',
+      impact:'Every Arena attempt now turns into a concrete study plan instead of ending at the score.',
+      title:'Arena Intelligence is live',
+      summary:'VAANI can recover interrupted attempts, analyse the result, and launch a focused drill from the exact questions you missed.',
+      bullets:[
+        'Interrupted Arena attempts can now be recovered after a refresh or browser interruption.',
+        'Post-match intelligence highlights accuracy, strongest area, weakest area and review targets.',
+        'Retry mistakes launches a private drill without changing the official leaderboard result.',
+        'Officer VAANI can give a contextual performance debrief from the actual result.',
+        'Recovery and mistake-drill states stay separate from official Arena scoring.'
+      ]
+    },
+    {
       version:'20261003-arena-spectate1',
       date:'03 OCT 2026',
       tag:'ARENA UPDATE',
