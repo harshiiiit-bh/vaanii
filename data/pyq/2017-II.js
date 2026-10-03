@@ -309,7 +309,7 @@ var PYQ_2017_II = [
       "merely",
       "rarely"
     ],
-    "ans": 0,
+    "ans": 1,
     "passage": "After this incident I went to Nainital, and returned after nearly a month. I had 21. ______ 22. ______ my clothes when I saw Gangu standing 23. ______ a new baby. He was 24. ______ with joy. Even Nanda 25. ______ not have 26. ______ such joy 27. ______ getting Krishna. His face had the same 28. ______ that 29. ______ on the face of a 30. ______ man after a full meal."
   },
   {
@@ -324,7 +324,7 @@ var PYQ_2017_II = [
       "off",
       "on"
     ],
-    "ans": 0,
+    "ans": 2,
     "passage": "After this incident I went to Nainital, and returned after nearly a month. I had 21. ______ 22. ______ my clothes when I saw Gangu standing 23. ______ a new baby. He was 24. ______ with joy. Even Nanda 25. ______ not have 26. ______ such joy 27. ______ getting Krishna. His face had the same 28. ______ that 29. ______ on the face of a 30. ______ man after a full meal."
   },
   {
@@ -429,7 +429,7 @@ var PYQ_2017_II = [
       "rises",
       "shows"
     ],
-    "ans": 0,
+    "ans": 1,
     "passage": "After this incident I went to Nainital, and returned after nearly a month. I had 21. ______ 22. ______ my clothes when I saw Gangu standing 23. ______ a new baby. He was 24. ______ with joy. Even Nanda 25. ______ not have 26. ______ such joy 27. ______ getting Krishna. His face had the same 28. ______ that 29. ______ on the face of a 30. ______ man after a full meal."
   },
   {
