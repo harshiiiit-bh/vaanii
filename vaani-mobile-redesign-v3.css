@@ -613,3 +613,50 @@
     padding:7px 7px 8px!important;
   }
 }
+
+/* FINAL MOBILE CLEANUP — remove experimental chrome and the oversized officer badge. */
+@media (max-width:767px){
+  #mobileMissionDeck,
+  #mobileMissionDeck *{
+    display:none!important;
+    visibility:hidden!important;
+    pointer-events:none!important;
+  }
+
+  /* The officer artwork should stand on its own on small screens.
+     The desktop badge is too large/overlapping on the compact mobile hero. */
+  #view-dashboard .vd-officer-badge{
+    display:none!important;
+  }
+
+  #view-dashboard .vd-officer-stage{
+    width:122px!important;
+    height:66%!important;
+    min-height:250px!important;
+    right:-2px!important;
+    bottom:0!important;
+    overflow:visible!important;
+  }
+  #view-dashboard .vd-officer-image{
+    height:100%!important;
+    width:auto!important;
+    max-width:100%!important;
+    object-fit:contain!important;
+    object-position:center bottom!important;
+    transform:none!important;
+    animation:none!important;
+  }
+  #view-dashboard .vd-hero-inner{
+    padding-right:92px!important;
+  }
+}
+@media (max-width:390px){
+  #view-dashboard .vd-officer-stage{
+    width:108px!important;
+    height:62%!important;
+    min-height:225px!important;
+  }
+  #view-dashboard .vd-hero-inner{
+    padding-right:82px!important;
+  }
+}
