@@ -10,7 +10,7 @@ var PYQ_CDS_2019_II = [
     "o": [
       "Accommodate",
       "Acomodate",
-      "Accommodate",
+      "Accomdate",
       "Acomodait"
     ],
     "ans": 0,
