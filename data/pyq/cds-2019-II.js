@@ -90,7 +90,7 @@ var PYQ_CDS_2019_II = [
     "o": [
       "Aggressive",
       "Agresive",
-      "Aggressive",
+      "Agressive",
       "Aggresive"
     ],
     "ans": 0,
