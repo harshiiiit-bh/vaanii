@@ -49,7 +49,7 @@ assert.ok(a>=0&&b>a,'Native Vocab90 view missing.');
 const view=html.slice(a,b);
 assert.match(view,/data-v90-mode="all"/);assert.match(view,/v90DayGrid/);
 assert.doesNotMatch(view,/scribd|v90ReaderFrame|<iframe/i,'Third-party PDF reader is still embedded.');
-assert.match(html,/vaani-vocab90\.js\?v=20261003-structured1/);
+assert.match(html,/vaani-vocab90\.js\?v=20261004-structured3/);
 assert.match(html,/vaani-vocab90\.css\?v=20261003-structured2/);
 const app=readFileSync(resolve(root,'js/app.js'),'utf8');
 assert.match(app,/vocab90Completed/);assert.match(app,/vocab90XpAwarded/);assert.match(app,/V90Study\(open\)/);
