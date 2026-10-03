@@ -450,7 +450,7 @@
           'Content-Type': 'application/json',
           'apikey': SHARED_BOARD_API_KEY
         },
-        body: JSON.stringify({ code: code })
+        body: JSON.stringify({ p_code: String(code || '') })
       }).then(function (response) {
         if (!response.ok) {
           throw new Error('Shared leaderboard returned HTTP ' + response.status);
