@@ -64,6 +64,43 @@
   const LATEST_RELEASE=FEATURE_RELEASES[0];
   const TOUR_TEXT=LATEST_RELEASE.title+'. '+LATEST_RELEASE.summary;
 
+  function featureUpdateIsUnread(){
+    if(typeof State==='undefined')return false;
+    return State.infoTourVersion!==INFO_TOUR_VERSION;
+  }
+  function syncInfoUpdateIndicator(){
+    const btn=document.getElementById('infoBtn');
+    if(!btn)return;
+    const unread=featureUpdateIsUnread();
+    btn.classList.toggle('has-update',unread);
+    btn.setAttribute('aria-label',unread
+      ? 'Open VAANI information guide — new update available'
+      : 'Open Officer VAANI information guide');
+    btn.setAttribute('title',unread
+      ? 'Officer VAANI Guide · NEW UPDATE'
+      : 'Officer VAANI Guide');
+    let badge=btn.querySelector('.info-update-badge');
+    if(unread){
+      if(!badge){
+        badge=document.createElement('span');
+        badge.className='info-update-badge';
+        badge.setAttribute('aria-hidden','true');
+        btn.appendChild(badge);
+      }
+      badge.textContent='NEW';
+    }else if(badge){
+      badge.remove();
+    }
+  }
+  function markLatestFeatureRead(){
+    if(typeof State==='undefined')return false;
+    State.infoTourVersion=INFO_TOUR_VERSION;
+    State.infoTourSeenAt=Date.now();
+    if(typeof saveState==='function')saveState();
+    syncInfoUpdateIndicator();
+    return true;
+  }
+
   const officerSVG = '<img class="vi-officer-model" src="https://cdn-ai-hs.picsart.com/ai-hot-storage/26983f1e-c8a3-4711-8463-852b639599c7.png" alt="Officer VAANI" loading="lazy" decoding="async">';
 
   function positionTourSpot(){
@@ -76,10 +113,7 @@
   }
 
   function markTourSeen(){
-    if(typeof State==='undefined')return;
-    State.infoTourVersion=INFO_TOUR_VERSION;
-    State.infoTourSeenAt=Date.now();
-    if(typeof saveState==='function')saveState();
+    markLatestFeatureRead();
   }
 
   function closeTour(){
@@ -193,7 +227,10 @@
   }
   function releaseActionHTML(release,index){
     const label=index===0?'Replay latest brief':'Replay Officer brief';
-    return '<button type="button" class="btn ghost vi-release-brief-btn" data-release-version="'+escapeHtmlInfo(release.version)+'">'+label+'</button>';
+    const replay='<button type="button" class="btn ghost vi-release-brief-btn" data-release-version="'+escapeHtmlInfo(release.version)+'">'+label+'</button>';
+    if(index!==0)return replay;
+    const read='<button type="button" class="btn ghost vi-release-read-btn">Mark update read</button>';
+    return replay+read;
   }
   function renderReleaseHistoryHTML(){
     const latest=LATEST_RELEASE;
@@ -204,7 +241,7 @@
         '<div class="vi-release-hero-mark">01</div>'+
         '<div class="vi-release-hero-copy">'+
           '<div class="vi-release-top"><span class="vi-release-tag">'+escapeHtmlInfo(latest.tag)+'</span><span class="vi-release-date">'+escapeHtmlInfo(latest.date)+'</span></div>'+
-          '<h3>'+escapeHtmlInfo(latest.title)+'<span class="vi-release-new">LATEST</span></h3>'+
+          '<h3>'+escapeHtmlInfo(latest.title)+'<span class="vi-release-new">LATEST</span>'+(featureUpdateIsUnread()?'<span class="vi-release-unread">UNREAD</span>':'')+'</h3>'+
           '<p>'+escapeHtmlInfo(latest.summary)+'</p>'+
           '<div class="vi-release-meta"><span><b>AREA</b>'+escapeHtmlInfo(latest.scope||'VAANI')+'</span><span><b>IMPACT</b>'+escapeHtmlInfo(latest.impact||'Platform improvement')+'</span></div>'+
           '<div class="vi-release-actions">'+releaseActionHTML(latest,0)+'<span class="vi-release-status">First-login briefing · one time per account</span></div>'+
@@ -298,6 +335,19 @@
         if(typeof window.replayVaaniFeatureBriefing==='function')window.replayVaaniFeatureBriefing(version);
       });
     });
+    document.querySelectorAll('#view-info .vi-release-read-btn').forEach(function(btn){
+      if(btn.dataset.bound==='1')return;
+      btn.dataset.bound='1';
+      btn.addEventListener('click',function(){
+        if(markLatestFeatureRead()){
+          btn.textContent='Update marked read';
+          btn.disabled=true;
+          const badge=document.querySelector('#view-info .vi-release-unread');
+          if(badge)badge.remove();
+        }
+      });
+    });
+    syncInfoUpdateIndicator();
   }
   function renderInfoCenter(){
     const mount=document.getElementById('infoCenterMount');
@@ -318,15 +368,20 @@
     if(shown)window.dispatchEvent(new CustomEvent('vaani:feature-replay',{detail:release}));
     return shown;
   };
+  window.markVaaniFeatureUpdateRead=markLatestFeatureRead;
 
-  window.openInfoCenter=function(){
-    markTourSeen();
+  window.openInfoCenter=function(options){
+    const opts=options&&typeof options==='object'?options:{};
     renderInfoCenter();
+    syncInfoUpdateIndicator();
+    if(opts.markRead)markLatestFeatureRead();
     if(typeof switchView==='function')switchView('info');
     window.scrollTo({top:0,behavior:'smooth'});
   };
   window.maybeShowInfoTour=maybeShowInfoTour;
   window.closeInfoTour=closeTour;
+  window.refreshVaaniFeatureUpdateIndicator=syncInfoUpdateIndicator;
+  window.setTimeout(syncInfoUpdateIndicator,120);
 
   window.addEventListener('resize',function(){
     if(document.getElementById('viTour')?.classList.contains('open'))positionTourSpot();
