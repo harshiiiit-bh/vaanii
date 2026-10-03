@@ -89,3 +89,133 @@
   #view-info .vi-release-current{align-self:flex-start}
   #view-info .vi-release-card{padding:13px}
 }
+
+
+/* ============================================================
+   FEATURE RELEASE COMMAND CENTER — elevated release history
+============================================================ */
+#view-info .vi-release-count{
+  flex:0 0 auto;
+  padding:7px 10px;
+  border:1px solid rgba(197,157,68,.28);
+  border-radius:999px;
+  background:linear-gradient(180deg,rgba(197,157,68,.12),rgba(197,157,68,.045));
+  color:var(--gold);
+  font:900 .52rem var(--mono);
+  letter-spacing:.12em;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.34);
+}
+#view-info .vi-release-hero{
+  display:grid;
+  grid-template-columns:76px minmax(0,1fr);
+  gap:16px;
+  align-items:stretch;
+  padding:18px;
+  border:1px solid rgba(197,157,68,.42);
+  border-radius:18px;
+  background:
+    radial-gradient(circle at 85% 0%,rgba(230,198,111,.16),transparent 32%),
+    linear-gradient(135deg,rgba(197,157,68,.09),var(--panel) 58%);
+  box-shadow:0 14px 34px rgba(145,105,37,.10);
+  overflow:hidden;
+}
+#view-info .vi-release-hero-mark,
+#view-info .vi-release-index{
+  display:grid;
+  place-items:center;
+  width:76px;
+  min-height:76px;
+  border-radius:17px;
+  background:linear-gradient(145deg,#192b34,#253c47);
+  color:#f0d48c;
+  font:900 1.15rem var(--mono);
+  letter-spacing:.03em;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 12px 24px rgba(12,27,34,.16);
+}
+#view-info .vi-release-hero-copy{min-width:0}
+#view-info .vi-release-hero h3{margin:0;color:var(--text);font:800 1.3rem/1.18 var(--serif)}
+#view-info .vi-release-hero p{margin:7px 0 12px;color:var(--muted);font-size:.78rem;line-height:1.55}
+#view-info .vi-release-meta{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+  margin-top:9px;
+}
+#view-info .vi-release-meta span{
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+  min-width:0;
+  padding:8px 9px;
+  border:1px solid rgba(31,45,56,.08);
+  border-radius:11px;
+  background:rgba(255,255,255,.48);
+  color:var(--muted);
+  font-size:.64rem;
+  line-height:1.35;
+}
+#view-info .vi-release-meta b{
+  color:var(--gold);
+  font:900 .48rem var(--mono);
+  letter-spacing:.11em;
+}
+#view-info .vi-release-actions{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:12px;
+}
+#view-info .vi-release-actions .vi-release-brief-btn{min-height:30px;padding:6px 10px;font-size:.58rem}
+#view-info .vi-release-status{
+  color:var(--muted);
+  font:700 .53rem var(--mono);
+  letter-spacing:.04em;
+}
+#view-info .vi-release-list{gap:12px}
+#view-info .vi-release-card{
+  display:grid;
+  grid-template-columns:42px minmax(0,1fr);
+  gap:12px;
+  padding:14px;
+  transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease;
+}
+#view-info .vi-release-card:hover{
+  transform:translateY(-2px);
+  border-color:rgba(197,157,68,.28);
+  box-shadow:0 12px 26px rgba(18,31,43,.08);
+}
+#view-info .vi-release-card .vi-release-index{
+  width:42px;
+  min-height:42px;
+  height:42px;
+  border-radius:12px;
+  font-size:.72rem;
+}
+#view-info .vi-release-main{min-width:0}
+#view-info .vi-release-card h3{font-size:1rem}
+#view-info .vi-release-card> .vi-release-main > p{margin-top:6px}
+#view-info .vi-release-card .vi-release-meta{
+  margin-top:8px;
+}
+#view-info .vi-release-card .vi-release-meta span{
+  padding:7px 8px;
+  background:rgba(127,142,151,.035);
+}
+#view-info .vi-release-card .vi-release-actions{
+  border-top:1px solid rgba(31,45,56,.07);
+  padding-top:9px;
+}
+@media(max-width:640px){
+  #view-info .vi-release-hero{grid-template-columns:1fr}
+  #view-info .vi-release-hero-mark{width:48px;min-height:48px;border-radius:12px;font-size:.85rem}
+  #view-info .vi-release-meta{grid-template-columns:1fr}
+  #view-info .vi-release-actions{align-items:flex-start;flex-direction:column}
+  #view-info .vi-release-status{line-height:1.4}
+  #view-info .vi-release-card{grid-template-columns:32px minmax(0,1fr);padding:12px}
+  #view-info .vi-release-card .vi-release-index{width:32px;height:32px;min-height:32px;border-radius:9px;font-size:.6rem}
+}
+@media(prefers-reduced-motion:reduce){
+  #view-info .vi-release-card{transition:none}
+  #view-info .vi-release-card:hover{transform:none}
+}

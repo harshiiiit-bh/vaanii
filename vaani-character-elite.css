@@ -788,3 +788,53 @@ body.ve-vaani-user-hidden:not(.ve-vaani-route-hidden):not(.ve-vaani-task-hidden)
 
 /* Keep both compact officer entry points on the same AI-cleaned full portrait. */
 .ve-header-mini,.ve-surface-mini{background-image:url("https://cdn-ai-hs.picsart.com/ai-hot-storage/2a136339-4163-42a0-b366-0541c84cc19a.png")!important;background-size:contain!important;background-position:center bottom!important;background-repeat:no-repeat!important}
+
+
+/* FEATURE RELEASE BRIEFING — elevated presentation state */
+#vaaniMentor.feature-update:not(.bad-result) .vc-bubble{
+  border-color:rgba(201,162,75,.42);
+  box-shadow:0 26px 78px rgba(13,26,35,.26),0 0 0 1px rgba(230,198,111,.08);
+}
+#vaaniMentor.feature-update:not(.bad-result) .vc-bubble::before{
+  height:4px;
+  background:linear-gradient(90deg,#8d6826,#e6c66f,#fff1bb,#b78935,#8d6826);
+}
+#vaaniMentor.feature-update:not(.bad-result) .vc-kicker{
+  color:#846020;
+}
+#vaaniMentor.feature-update:not(.bad-result) .vc-text{
+  font-size:.82rem;
+  line-height:1.58;
+  font-weight:800;
+  color:#263a44;
+}
+#vaaniMentor.feature-update:not(.bad-result) .vc-quote{
+  white-space:pre-line;
+  max-height:180px;
+  overflow:auto;
+  scrollbar-width:thin;
+  background:linear-gradient(180deg,rgba(201,162,75,.075),rgba(201,162,75,.025));
+  border-left-color:#c9a24b;
+}
+#vaaniMentor.feature-update:not(.bad-result) .vc-intel span{
+  border-color:rgba(201,162,75,.22);
+  background:#fbf6e8;
+  color:#7d5e27;
+}
+#vaaniMentor.feature-update:not(.bad-result) .vc-character{
+  border-color:rgba(201,162,75,.5);
+  box-shadow:0 16px 40px rgba(80,57,16,.19),inset 0 1px 0 rgba(255,255,255,.8);
+}
+@media(max-width:640px){
+  #vaaniMentor.feature-update:not(.bad-result){
+    right:12px;
+    bottom:12px;
+    width:min(360px,calc(100vw - 20px));
+  }
+  #vaaniMentor.feature-update:not(.bad-result) .vc-quote{
+    max-height:150px;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  #vaaniMentor.feature-update.noted .vc-bubble{animation:none}
+}

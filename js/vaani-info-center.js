@@ -16,6 +16,9 @@
       version:'20261003-profile-avatar-arena1',
       date:'03 OCT 2026',
       tag:'FEATURE UPDATE',
+      category:'IDENTITY',
+      scope:'Profile · Account · Arena',
+      impact:'Personalise your identity once and carry it across the platform.',
       title:'Profile pictures are live',
       summary:'You can now set a circular profile picture and carry the same identity into Arena.',
       bullets:[
@@ -29,6 +32,9 @@
       version:'20261003-arena-command1',
       date:'03 OCT 2026',
       tag:'ARENA UPDATE',
+      category:'COMPETITIVE',
+      scope:'Arena · Matches · Leaderboards',
+      impact:'Host configuration is now easier to scan, control and review.',
       title:'Arena became a command console',
       summary:'The Arena setup and host experience were rebuilt around faster question selection and clearer controls.',
       bullets:[
@@ -42,6 +48,9 @@
       version:'20261002-info-center1',
       date:'02 OCT 2026',
       tag:'SYSTEM UPDATE',
+      category:'SYSTEM',
+      scope:'Information Centre · Guidance · XP',
+      impact:'A single reference point now explains the VAANI workflow and major systems.',
       title:'The Information Centre arrived',
       summary:'VAANI now has one dedicated field manual for understanding the platform, XP rules and major learning tools.',
       bullets:[
@@ -127,15 +136,17 @@
     window.setTimeout(tick,1150);
   }
 
-  function maybeShowInfoTour(){
-    if(typeof ACTIVE_CODE==='undefined'||!ACTIVE_CODE)return;
-    if(typeof State==='undefined')return;
-    if(State.infoTourVersion===INFO_TOUR_VERSION)return;
-    if(typeof window.VAANI_FEATURE_UPDATE_BRIEFING==='function'){
-      window.VAANI_FEATURE_UPDATE_BRIEFING(LATEST_RELEASE);
+  let featureBriefingPending=false;
+  function launchLatestOfficerBrief(){
+    if(typeof window.VAANI_FEATURE_UPDATE_BRIEFING!=='function')return false;
+    const shown=window.VAANI_FEATURE_UPDATE_BRIEFING(LATEST_RELEASE);
+    if(shown){
       markTourSeen();
-      return;
+      return true;
     }
+    return false;
+  }
+  function fallbackInfoTour(){
     buildTour();
     requestAnimationFrame(function(){
       positionTourSpot();
@@ -145,17 +156,73 @@
       typeTourText();
     });
   }
+  function maybeShowInfoTour(){
+    if(featureBriefingPending)return;
+    if(typeof ACTIVE_CODE==='undefined'||!ACTIVE_CODE)return;
+    if(typeof State==='undefined')return;
+    if(State.infoTourVersion===INFO_TOUR_VERSION)return;
+    featureBriefingPending=true;
+    if(typeof window.VAANI_IS_ASSESSMENT_ACTIVE==='function'&&window.VAANI_IS_ASSESSMENT_ACTIVE()){
+      featureBriefingPending=false;
+      return;
+    }
+    let attempts=0;
+    const tryOfficer=()=>{
+      if(typeof window.VAANI_IS_ASSESSMENT_ACTIVE==='function'&&window.VAANI_IS_ASSESSMENT_ACTIVE()){
+        featureBriefingPending=false;
+        return;
+      }
+      if(launchLatestOfficerBrief()){
+        featureBriefingPending=false;
+        return;
+      }
+      attempts+=1;
+      if(attempts<10){
+        window.setTimeout(tryOfficer,220);
+        return;
+      }
+      featureBriefingPending=false;
+      fallbackInfoTour();
+    };
+    tryOfficer();
+  }
 
 
+  function releaseByVersion(version){
+    return FEATURE_RELEASES.find(function(release){return release.version===version;})||null;
+  }
+  function releaseActionHTML(release,index){
+    const label=index===0?'Replay latest brief':'Replay Officer brief';
+    return '<button type="button" class="btn ghost vi-release-brief-btn" data-release-version="'+escapeHtmlInfo(release.version)+'">'+label+'</button>';
+  }
   function renderReleaseHistoryHTML(){
-    return '<section class="vi-section reveal vi-whats-new"><div class="vi-section-head"><div><h2>What’s new</h2><p>Release notes shared by the same update manifest that drives Officer VAANI’s first-login briefing.</p></div><span class="vi-release-current">LATEST · '+escapeHtmlInfo(LATEST_RELEASE.version)+'</span></div>'+
+    const latest=LATEST_RELEASE;
+    return '<section class="vi-section reveal vi-whats-new">'+
+      '<div class="vi-section-head"><div><h2>What’s new</h2><p>The release manifest below is the single source for Officer VAANI’s first-login briefing, the update history and manual replays.</p></div>'+
+      '<span class="vi-release-count">'+FEATURE_RELEASES.length+' RELEASE'+(FEATURE_RELEASES.length===1?'':'S')+'</span></div>'+
+      '<div class="vi-release-hero">'+
+        '<div class="vi-release-hero-mark">01</div>'+
+        '<div class="vi-release-hero-copy">'+
+          '<div class="vi-release-top"><span class="vi-release-tag">'+escapeHtmlInfo(latest.tag)+'</span><span class="vi-release-date">'+escapeHtmlInfo(latest.date)+'</span></div>'+
+          '<h3>'+escapeHtmlInfo(latest.title)+'<span class="vi-release-new">LATEST</span></h3>'+
+          '<p>'+escapeHtmlInfo(latest.summary)+'</p>'+
+          '<div class="vi-release-meta"><span><b>AREA</b>'+escapeHtmlInfo(latest.scope||'VAANI')+'</span><span><b>IMPACT</b>'+escapeHtmlInfo(latest.impact||'Platform improvement')+'</span></div>'+
+          '<div class="vi-release-actions">'+releaseActionHTML(latest,0)+'<span class="vi-release-status">First-login briefing · one time per account</span></div>'+
+        '</div>'+
+      '</div>'+
       '<div class="vi-release-list">'+FEATURE_RELEASES.map(function(release,index){
-        return '<article class="vi-release-card'+(index===0?' is-latest':'')+'">'+
-          '<div class="vi-release-top"><span class="vi-release-tag">'+escapeHtmlInfo(release.tag)+'</span><span class="vi-release-date">'+escapeHtmlInfo(release.date)+'</span></div>'+
-          '<h3>'+escapeHtmlInfo(release.title)+(index===0?'<span class="vi-release-new">NEW</span>':'')+'</h3>'+
-          '<p>'+escapeHtmlInfo(release.summary)+'</p>'+
-          '<ul>'+release.bullets.map(function(item){return '<li>'+escapeHtmlInfo(item)+'</li>';}).join('')+'</ul>'+
-          '</article>';
+        if(index===0)return '';
+        return '<article class="vi-release-card">'+
+          '<div class="vi-release-index">'+String(index+1).padStart(2,'0')+'</div>'+
+          '<div class="vi-release-main">'+
+            '<div class="vi-release-top"><span class="vi-release-tag">'+escapeHtmlInfo(release.tag)+'</span><span class="vi-release-date">'+escapeHtmlInfo(release.date)+'</span></div>'+
+            '<h3>'+escapeHtmlInfo(release.title)+'</h3>'+
+            '<p>'+escapeHtmlInfo(release.summary)+'</p>'+
+            '<div class="vi-release-meta"><span><b>AREA</b>'+escapeHtmlInfo(release.scope||'VAANI')+'</span><span><b>IMPACT</b>'+escapeHtmlInfo(release.impact||'Platform improvement')+'</span></div>'+
+            '<ul>'+release.bullets.map(function(item){return '<li>'+escapeHtmlInfo(item)+'</li>';}).join('')+'</ul>'+
+            '<div class="vi-release-actions">'+releaseActionHTML(release,index)+'<span class="vi-release-status">'+escapeHtmlInfo(release.category||'UPDATE')+'</span></div>'+
+          '</div>'+
+        '</article>';
       }).join('')+'</div></section>';
   }
   function escapeHtmlInfo(value){
@@ -222,17 +289,35 @@
     '</div>'
   ].join('');
 
+  function bindReleaseActions(){
+    document.querySelectorAll('#view-info .vi-release-brief-btn').forEach(function(btn){
+      if(btn.dataset.bound==='1')return;
+      btn.dataset.bound='1';
+      btn.addEventListener('click',function(){
+        const version=btn.getAttribute('data-release-version')||'';
+        if(typeof window.replayVaaniFeatureBriefing==='function')window.replayVaaniFeatureBriefing(version);
+      });
+    });
+  }
   function renderInfoCenter(){
     const mount=document.getElementById('infoCenterMount');
     if(!mount||mount.dataset.ready==='1')return;
     mount.innerHTML=INFO_HTML;
     mount.dataset.ready='1';
+    bindReleaseActions();
     if(typeof initReveal==='function')safeCall(initReveal,'initReveal(info)');
     setTimeout(function(){ if(typeof forceRevealIn==='function')forceRevealIn(document.getElementById('view-info')); },100);
   }
 
   window.VAANI_FEATURE_RELEASES=FEATURE_RELEASES;
   window.VAANI_LATEST_FEATURE_RELEASE=LATEST_RELEASE;
+  window.replayVaaniFeatureBriefing=function(version){
+    const release=releaseByVersion(version)||LATEST_RELEASE;
+    if(typeof window.VAANI_FEATURE_UPDATE_BRIEFING!=='function')return false;
+    const shown=window.VAANI_FEATURE_UPDATE_BRIEFING(release);
+    if(shown)window.dispatchEvent(new CustomEvent('vaani:feature-replay',{detail:release}));
+    return shown;
+  };
 
   window.openInfoCenter=function(){
     markTourSeen();

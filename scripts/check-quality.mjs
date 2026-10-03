@@ -505,20 +505,56 @@ try {
   const infoSource=readFileSync('js/vaani-info-center.js','utf8');
   const officerSource=readFileSync('js/vaani-character-elite.js','utf8');
   const infoCss=readFileSync('vaani-info-center.css','utf8');
+  const officerCss=readFileSync('vaani-character-elite.css','utf8');
   const pageSource=readFileSync('index.html','utf8');
-  for(const marker of ['FEATURE_RELEASES','INFO_TOUR_VERSION=FEATURE_RELEASES[0].version','LATEST_RELEASE','renderReleaseHistoryHTML','VAANI_FEATURE_RELEASES','VAANI_LATEST_FEATURE_RELEASE']) {
+  try { new Function(infoSource); } catch(error){ throw new Error('Info Centre JavaScript syntax is invalid: '+error.message); }
+  try { new Function(officerSource); } catch(error){ throw new Error('Officer VAANI JavaScript syntax is invalid: '+error.message); }
+
+  for(const marker of [
+    'FEATURE_RELEASES',
+    'INFO_TOUR_VERSION=FEATURE_RELEASES[0].version',
+    'LATEST_RELEASE',
+    'renderReleaseHistoryHTML',
+    'VAANI_FEATURE_RELEASES',
+    'VAANI_LATEST_FEATURE_RELEASE',
+    'window.replayVaaniFeatureBriefing',
+    'featureBriefingPending',
+    'bindReleaseActions'
+  ]) {
     if(!infoSource.includes(marker))throw new Error('Feature release manifest integration missing: '+marker);
   }
+  const versions=[...infoSource.matchAll(/version:'([^']+)'/g)].map(match=>match[1]);
+  if(versions.length<3)throw new Error('Feature release manifest is unexpectedly small: '+versions.length+' release(s).');
+  if(new Set(versions).size!==versions.length)throw new Error('Duplicate feature release version detected.');
+  for(const field of ['category:', 'scope:', 'impact:']) {
+    const count=(infoSource.match(new RegExp(field,'g'))||[]).length;
+    if(count!==versions.length)throw new Error('Release metadata is incomplete for '+field+' ('+count+'/'+versions.length+').');
+  }
+
   if(!infoSource.includes('VAANI_FEATURE_UPDATE_BRIEFING'))throw new Error('First-login briefing bridge is missing.');
   if(!officerSource.includes('window.VAANI_FEATURE_UPDATE_BRIEFING=function(release)'))throw new Error('Officer VAANI feature-briefing handler is missing.');
   if(!officerSource.includes("new CustomEvent('vaani:feature-update'"))throw new Error('Feature update briefing event is missing.');
-  for(const marker of ['.vi-release-card','.vi-release-card.is-latest','.vi-release-new']) {
+  if(!officerSource.includes('open(12000)')||!officerSource.includes('feature-update'))throw new Error('Elevated Officer release briefing presentation is missing.');
+
+  for(const marker of [
+    '.vi-release-card',
+    '.vi-release-card.is-latest',
+    '.vi-release-new',
+    '.vi-release-hero',
+    '.vi-release-count',
+    '.vi-release-meta',
+    '.vi-release-actions'
+  ]) {
     if(!infoCss.includes(marker))throw new Error('Information Centre release-note styling missing: '+marker);
   }
-  if(!pageSource.includes('js/vaani-info-center.js?v=20261003-release1')||!pageSource.includes('js/vaani-character-elite.js?v=20261003-release1')) {
-    throw new Error('Feature briefing asset cache keys were not refreshed.');
+  for(const marker of ['#vaaniMentor.feature-update', '.vc-quote{', 'FEATURE RELEASE BRIEFING']) {
+    if(!officerCss.includes(marker))throw new Error('Officer feature-briefing styling missing: '+marker);
   }
-  console.log('Feature updates: one release manifest drives per-account first-login Officer VAANI briefing and Information Centre What\'s New history');
+  if(!pageSource.includes('vaani-info-center.css?v=20261003-release2'))throw new Error('Info Centre cache key was not refreshed.');
+  if(!pageSource.includes('js/vaani-info-center.js?v=20261003-release2'))throw new Error('Info Centre script cache key was not refreshed.');
+  if(!pageSource.includes('vaani-character-elite.css?v=20261003-release2'))throw new Error('Officer elite CSS cache key was not refreshed.');
+  if(!pageSource.includes('js/vaani-character-elite.js?v=20261003-release2'))throw new Error('Officer elite script cache key was not refreshed.');
+  console.log('Feature updates: shared manifest, duplicate/version audit, bounded Officer retry, replay controls, release metadata, elevated briefing UI and cache keys validated');
 }catch(error){console.error('Feature release audit failed:',error.message);process.exitCode=1;}
 
 /* Profile picture + Arena avatar integrity audit. */
