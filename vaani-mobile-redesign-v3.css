@@ -845,3 +845,13 @@
     pointer-events:none!important;
   }
 }
+
+
+/* Retired global upgrade dock — navigation now lives in the main header
+   and mobile More command deck. Keep the old injected dock out everywhere. */
+#vaaniUpgradeDock{
+  display:none!important;
+  visibility:hidden!important;
+  opacity:0!important;
+  pointer-events:none!important;
+}
