@@ -755,12 +755,12 @@ try {
   }
   if (!/v !== 2 && v !== CODE_VERSION/.test(arena)) throw new Error('Arena match-code decoder is not backward compatible with v2 invites.');
   if (!arena.includes('codeVersion: v')) throw new Error('Arena decoded matches do not retain the code version.');
-  if (!pageSource.includes('vaani-arena-briefing.css?v=20261004-fairplay1')) throw new Error('Arena intelligence CSS cache key is outdated.');
-  if (!pageSource.includes('js/vaani-arena.js?v=20261004-fairplay1')) throw new Error('Arena intelligence JS cache key is outdated.');
+  if (!pageSource.includes('vaani-arena-briefing.css?v=20261004-qparts1')) throw new Error('Arena question-parts CSS cache key is outdated.');
+  if (!pageSource.includes('js/vaani-arena.js?v=20261004-qparts1')) throw new Error('Arena question-parts JS cache key is outdated.');
   if (!arena.includes('function copyText(value, onSuccess)')) throw new Error('Arena invite copy fallback is missing.');
   if (!arena.includes('var share=actionButton(\'Share invite\'')) throw new Error('Arena share action is not always rendered.');
   if (!arena.includes('navigator.share')) throw new Error('Native share action is missing.');
-  if (!pageSource.includes('js/vaani-info-center.js?v=20261003-release4')) throw new Error('Feature release cache key is outdated.');
+  if (!pageSource.includes('js/vaani-info-center.js?v=20261004-release7')) throw new Error('Feature release cache key is outdated.');
   if (!arena.includes("S.hostSpectate=true")) throw new Error('Host spectate mode is not activated from the host-only control.');
   if (!arena.includes("S.result=null;")) throw new Error('Host spectate must not create a player result before opening the board.');
   if (!arena.includes("if(hostSpectating)")) throw new Error('Result screen is missing the host spectate presentation.');
@@ -768,6 +768,10 @@ try {
   if (!arena.includes('if(!hostSpectating && !hasOwnAttempt)')) throw new Error('Pre-attempt result lock is missing.');
   if (!arena.includes('if(!S.hostSpectate && !previousAttempt(m.code))')) throw new Error('Host answer-key context gate is missing.');
   if (!arena.includes('Leaderboard after attempt')) throw new Error('Fair-play lock copy is missing.');
+  if (!arena.includes('function questionPromptHtml(q)')) throw new Error('Official question segmentation renderer is missing.');
+  if (!arena.includes('vx-question-parts')) throw new Error('Arena question segmentation markup is missing.');
+  if (!readFileSync('data/pyq/cds-2013-II.js','utf8').includes('"parts": [\n      "When the artist had started",\n      "singing a popular song",\n      "in chorus",\n      "everyone in the audience joined"')) throw new Error('CDS 2013-II Q75 P/Q/R/S source parts are missing.');
+  if (!pageSource.includes('js/vaani-info-center.js?v=20261004-release7')) throw new Error('Question-parts feature release cache key is outdated.');
   if (!readFileSync('data/pyq/cds-2009-II.js','utf8').includes('from behind a curtain (P) he held it in such a manner (Q) bringing the light (R) that it fell slantwise on her face. (S)')) throw new Error('CDS 2009-II Q73 P/Q/R/S source correction is missing.');
   const fairPlayInfo=readFileSync('js/vaani-info-center.js','utf8');
   if (!fairPlayInfo.includes("version:'20261004-arena-fairplay1'")) throw new Error('Arena fair-play release entry is missing.');
