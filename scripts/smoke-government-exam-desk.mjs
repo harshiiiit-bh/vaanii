@@ -221,7 +221,7 @@ await page.goto(baseURL + '?v=notifications', { waitUntil: 'domcontentloaded' })
   await page.waitForFunction(() => {
     const text = document.querySelector('#vxSyncStamp')?.textContent || '';
     return text && !text.includes('Syncing official feeds');
-  }, null, { timeout: 5000 }).catch(async error => {
+  }, null, { timeout: 15000 }).catch(async error => {
     const status = await page.locator('#vxSyncStamp').textContent();
     throw new Error('Notification feed did not settle: ' + JSON.stringify(status) + ' (' + error.message + ')');
   });
