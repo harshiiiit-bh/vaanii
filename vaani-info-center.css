@@ -219,3 +219,69 @@
   #view-info .vi-release-card{transition:none}
   #view-info .vi-release-card:hover{transform:none}
 }
+
+
+/* ============================================================
+   PERSISTENT UPDATE SIGNAL — header + release-read state
+============================================================ */
+.info-trigger{position:relative}
+.info-trigger.has-update{
+  border-color:rgba(230,198,111,.72);
+  box-shadow:0 9px 24px rgba(7,14,19,.16),0 0 0 3px rgba(201,162,75,.10);
+}
+.info-trigger.has-update::after{
+  content:"";
+  position:absolute;
+  inset:-4px;
+  border:1px solid rgba(230,198,111,.35);
+  border-radius:50%;
+  animation:viInfoPulse 2.2s ease-out infinite;
+  pointer-events:none;
+}
+.info-update-badge{
+  position:absolute;
+  right:-8px;
+  top:-7px;
+  z-index:3;
+  min-width:26px;
+  height:17px;
+  padding:0 5px;
+  display:grid;
+  place-items:center;
+  border:2px solid #18252e;
+  border-radius:999px;
+  background:linear-gradient(180deg,#f0d28a,#c89e48);
+  color:#172630;
+  font:900 .42rem/1 var(--mono,monospace);
+  letter-spacing:.06em;
+  box-shadow:0 5px 12px rgba(7,14,19,.2);
+}
+@keyframes viInfoPulse{
+  0%{opacity:.75;transform:scale(.94)}
+  70%,100%{opacity:0;transform:scale(1.12)}
+}
+#view-info .vi-release-unread{
+  display:inline-flex;
+  align-items:center;
+  margin-left:7px;
+  padding:3px 6px;
+  border:1px solid rgba(197,157,68,.3);
+  border-radius:999px;
+  background:rgba(197,157,68,.11);
+  color:var(--gold);
+  font:900 .45rem var(--mono);
+  letter-spacing:.08em;
+  vertical-align:middle;
+}
+#view-info .vi-release-read-btn[disabled]{
+  opacity:.72;
+  cursor:default;
+  transform:none!important;
+  box-shadow:none!important;
+}
+#view-info .vi-release-read-btn{
+  border-color:rgba(197,157,68,.26);
+}
+@media(prefers-reduced-motion:reduce){
+  .info-trigger.has-update::after{animation:none;opacity:.35;transform:none}
+}
