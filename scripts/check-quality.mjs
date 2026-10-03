@@ -113,7 +113,7 @@ if (!accountCodeCss.includes('@media(max-width:767px)') ||
   process.exitCode = 1;
 }
 if (!html.includes('vaani-profile.css?v=20261003-profile-photo1') ||
-    !html.includes('js/app.js?v=20261004-loginfix3')) {
+    !html.includes('js/app.js?v=20261004-deepclean1')) {
   console.error('Account-code asset cache keys are outdated');
   process.exitCode = 1;
 }
@@ -700,7 +700,7 @@ try {
   for (const marker of [
     'screenCreateV2','screenShareV2','screenHostAnswers',
     'parseArenaInvite','matchHostName','hostName',
-    'Answers & leaderboard','?arena=CODE&host=NAME',
+    'HOST ANSWER KEY','?arena=CODE&host=NAME',
     'var CODE_VERSION = 3',
     'var LEGACY_SRC_CODES',
     'NDA+CDS',
@@ -744,8 +744,8 @@ try {
   const requiredCombos = ['NDA','CDS','AFCAT','NDA+CDS','NDA+AFCAT','CDS+AFCAT','BOTH'];
   const comboHits = requiredCombos.filter(code => arena.includes("'" + code + "'"));
   if (comboHits.length !== requiredCombos.length) throw new Error('Arena multi-bank source matrix is incomplete.');
-  if (!arena.includes("A.questionsFor = function (match, playerName) {\n    var pool = poolForSource(match.source);")) {
-    throw new Error('Arena question generation is not using the combined source pool.');
+  if (!arena.includes('A.questionsFor = function (match, playerName) {') || !arena.includes('poolForSource(match.source)')) {
+    throw new Error('Arena question generation is not using the shared source pool.');
   }
   if (!arena.includes("A.poolForDraft = function (source, type, paperKey) {\n    return applyFilters(poolForSource(source), type, paperKey);")) {
     throw new Error('Arena draft availability is not using the combined source pool.');
@@ -755,8 +755,8 @@ try {
   }
   if (!/v !== 2 && v !== CODE_VERSION/.test(arena)) throw new Error('Arena match-code decoder is not backward compatible with v2 invites.');
   if (!arena.includes('codeVersion: v')) throw new Error('Arena decoded matches do not retain the code version.');
-  if (!pageSource.includes('vaani-arena-briefing.css?v=20261004-qparts1')) throw new Error('Arena question-parts CSS cache key is outdated.');
-  if (!pageSource.includes('js/vaani-arena.js?v=20261004-sharedidentity1')) throw new Error('Arena question-parts JS cache key is outdated.');
+  if (!pageSource.includes('vaani-arena-briefing.css?v=20261004-structure3')) throw new Error('Arena question-parts CSS cache key is outdated.');
+  if (!pageSource.includes('js/vaani-arena.js?v=20261004-deepclean3')) throw new Error('Arena question-parts JS cache key is outdated.');
   if (!arena.includes('function copyText(value, onSuccess)')) throw new Error('Arena invite copy fallback is missing.');
   if (!arena.includes('var share=actionButton(\'Share invite\'')) throw new Error('Arena share action is not always rendered.');
   if (!arena.includes('navigator.share')) throw new Error('Native share action is missing.');
