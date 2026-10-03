@@ -10,9 +10,9 @@
    bank, so it lands on the same questions in the same order.
    Nothing is fetched, nothing can drift.
 
-   What a verified server can add later: a shared leaderboard.
-   Until attempts are authenticated and validated server-side,
-   boards remain local to this device.
+   Shared leaderboard data is stored in Supabase and returned through
+   a narrow RPC. Scores remain unverified because the client supplies
+   the attempt payload; the server validates the shape before storing it.
    ============================================================ */
 (function (global) {
   'use strict';
@@ -330,7 +330,7 @@
 
   /* =========================================================
      LEADERBOARD SYNC
-     Default adapter: this device only.
+     Shared adapter: Supabase RPC, with local recovery/display fallback.
      ========================================================= */
   var LocalAdapter = {
     name: 'local',
@@ -352,9 +352,9 @@
 
   /* Shared Arena board:
      - submissions go to Supabase via the public RPC
-     - reads come from the narrow Edge Function
+     - reads come from the narrow leaderboard RPC
      - local storage remains only as an offline recovery/display cache */
-  var SHARED_BOARD_ENDPOINT = 'https://pccavdwwhykwyeitxixc.supabase.co/functions/v1/arena-leaderboard';
+  var SHARED_BOARD_ENDPOINT = 'https://pccavdwwhykwyeitxixc.supabase.co/rest/v1/rpc/arena_get_leaderboard';
   var SHARED_SUBMIT_ENDPOINT = 'https://pccavdwwhykwyeitxixc.supabase.co/rest/v1/rpc/arena_submit_attempt';
   var SHARED_REGISTER_MATCH_ENDPOINT = 'https://pccavdwwhykwyeitxixc.supabase.co/rest/v1/rpc/arena_register_match';
   var SHARED_GET_MATCH_ENDPOINT = 'https://pccavdwwhykwyeitxixc.supabase.co/rest/v1/rpc/arena_get_match';
