@@ -1242,21 +1242,12 @@ function pyqSpottingParts(q){
   if(Array.isArray(q.parts)&&(q.parts.length===3||q.parts.length===4)&&q.parts.every(p=>typeof p==='string'&&p.trim())){
     return q.parts.map(p=>pyqSpottingCleanPart(p));
   }
-  // Legacy NDA banks sometimes store the sentence fragments in q.o.
-  const choices=Array.isArray(q.o)?q.o.map(value=>String(value).trim()):[];
-  const hasNoError=choices.length>0&&pyqSpottingIsNoError(choices[choices.length-1]);
-  const count=choices.length-(hasNoError?1:0);
-  if((count===3||count===4)&&choices.slice(0,count).every(value=>value.length>2&&!/^error\s+in\s+part/i.test(value))){
-    const lower=source.toLocaleLowerCase();let cursor=0;const parts=[];
-    for(const phrase of choices.slice(0,count)){
-      const index=lower.indexOf(phrase.toLocaleLowerCase(),cursor);
-      if(index<0)return null;
-      parts.push(source.slice(index,index+phrase.length));cursor=index+phrase.length;
-    }
-    const tail=source.slice(cursor);
-    if(/^[\s.!?;:]*$/.test(tail)&&tail.trim())parts[parts.length-1]+=tail.trim();
-    return parts;
-  }
+  /*
+     IMPORTANT: some error-identification questions deliberately put the
+     sentence fragments themselves in q.o. Those are already answer choices
+     and must remain untouched. We only segment when the QUESTION TEXT itself
+     carries explicit (a)-(d), |, or an explicit parts[] structure.
+  */
   return null;
 }
 function pyqSpottingFormat(q,parts){
@@ -1299,75 +1290,109 @@ function pyqOptionLabels(q){
   }
   return q.o;
 }
+function pyqIsArrangementQuestion(q){
+  if(!q||typeof q!=='object')return false;
+  const sec=String(q._sourceSec||q.sec||q.topic||'');
+  const text=String(q.q||'');
+  return /(?:ordering\s+of\s+words|ordering\s+of\s+sentences|sentence\s+arrangement|reconstructing\s+passage|para\s+jumble|jumbled|arrange\s+p\s*[,/&]?\s*q\s*[,/&]?\s*r\s*[,/&]?\s*s|correct\s+sequence)/i.test(sec+' '+text);
+}
 function pyqLabeledBlocks(q){
-  if(!q||typeof q.q!=='string')return null;
-  const source=q.q;
-  const sourceSec=String(q._sourceSec||q.sec||'').trim().toLowerCase();
-  const isPqrsParts=/^(?:ordering of words in a sentence|sentence arrangement \(pqrs\))$/i.test(sourceSec);
-  const structuredParts=isPqrsParts && Array.isArray(q.parts) && (q.parts.length===3||q.parts.length===4) && q.parts.every(p=>typeof p==='string'&&p.trim())
-    ?q.parts.map(p=>String(p).trim()):null;
-  if(structuredParts){
-    const labels=['P','Q','R','S'];
-    return structuredParts.map((text,index)=>({label:labels[index],text}));
+  if(!q||typeof q.q!=='string'||!pyqIsArrangementQuestion(q))return null;
+  const source=String(q.q);
+
+  /* Explicit structured data wins. It is the safest representation for
+     questions whose source transcription cannot preserve marker positions. */
+  if(Array.isArray(q.parts) && (q.parts.length===3||q.parts.length===4) &&
+     q.parts.every(p=>typeof p==='string'&&p.trim())){
+    const labels=q.parts.length===4?['P','Q','R','S']:['P','Q','R'];
+    return q.parts.map((text,index)=>({label:labels[index],text:String(text).trim()}));
   }
-  const inline=[...source.matchAll(/\(([PQRS])\)\s*\/?\s*/g)];
-  if(inline.length>=3){
-    const blocks=[];let cursor=0;
-    for(const m of inline){
-      const text=source.slice(cursor,m.index).trim();
-      if(text)blocks.push({label:m[1],text});
-      cursor=m.index+m[0].length;
-    }
-    const tail=source.slice(cursor).trim();
-    if(tail&&blocks.length)blocks[blocks.length-1].text+=' '+tail;
-    return blocks.length>=3?blocks:null;
-  }
-  /* Some older OCR transcriptions preserve bare P/Q/R/S boundary markers
-     without punctuation. Use them only when they form a clean sequential
-     marker run and every resulting segment is non-empty; otherwise leave the
-     original text untouched rather than inventing a split. */
-  if(isPqrsParts){
-    const bare=[...source.matchAll(/\b([PQRS])\b/g)];
-    if(bare.length>=3){
-      const seq=bare.map(m=>m[1]).join('');
-      const expected=seq.startsWith('PQRS')?'PQRS':seq.startsWith('PQR')?'PQR':'';
-      if(expected && bare.length===expected.length){
-        const chunks=[];let cursor=0;
-        for(let i=0;i<bare.length;i++){
-          const marker=bare[i];
-          const text=source.slice(cursor,marker.index).trim();
-          if(text.length<3){chunks.length=0;break;}
-          chunks.push(text);
-          cursor=marker.index+marker[0].length;
-        }
-        const tail=source.slice(cursor).trim();
-        if(tail.length<3)chunks.length=0;
-        else chunks.push(tail);
-        if(chunks.length===4) return chunks.map((text,index)=>({label:['P','Q','R','S'][index],text}));
+
+  /*
+     Two source layouts exist in the PYQ bank:
+       1) "(P) / fragment (Q) / fragment (R) / fragment (S)"
+          -> each label closes the fragment, so read text BEFORE each marker.
+       2) "P: fragment  Q: fragment  R: fragment  S: fragment"
+          -> each label opens the fragment, so read text AFTER each marker.
+  */
+  const paren=[...source.matchAll(/\(([PQRS])\)\s*\/?\s*/gi)];
+  if(paren.length>=3){
+    const labels=paren.map(m=>m[1].toUpperCase());
+    const unique=labels.filter((v,i,a)=>a.indexOf(v)===i);
+    const inOrder=labels.join('').startsWith(unique.slice(0,4).join(''));
+    if(unique.length>=3){
+      const blocks=[];
+      let cursor=0;
+      for(const m of paren){
+        const text=source.slice(cursor,m.index).trim();
+        if(text)blocks.push({label:m[1].toUpperCase(),text});
+        cursor=m.index+m[0].length;
+      }
+      const tail=source.slice(cursor).trim();
+      if(tail&&blocks.length)blocks[blocks.length-1].text+=' '+tail;
+      /* Only accept a complete, unambiguous P/Q/R/S reconstruction.
+         Empty-marker OCR artifacts are deliberately rejected instead of
+         inventing sentence text. */
+      const expected=labels.length>=4?['P','Q','R','S']:['P','Q','R'];
+      const seen=blocks.map(b=>b.label);
+      if(blocks.length===expected.length && expected.every(x=>seen.includes(x))){
+        return blocks;
       }
     }
   }
-  const re=/(?:^|\n|\s|[\/\|]\s*)(S1|S2|S3|S6|P|Q|R|S)\s*[\.:]\s*/g;
-  const matches=[...source.matchAll(re)];
-  if(!matches.length)return null;
-  const blocks=[];
-  for(let i=0;i<matches.length;i++){
-    const label=matches[i][1];
-    const startAt=matches[i].index+matches[i][0].length;
-    const endAt=i+1<matches.length?matches[i+1].index:source.length;
-    const text=source.slice(startAt,endAt).replace(/\s*\/\s*$/,'').trim();
-    if(text)blocks.push({label,text});
+
+  const labelRe=/(?:^|[\\n|/]\\s*)(S\\d+|[PQRS])\\s*[:.,]\\s*/gi;
+  const labels=[...source.matchAll(labelRe)];
+  if(labels.length>=3){
+    const blocks=[];
+    for(let i=0;i<labels.length;i++){
+      const m=labels[i];
+      const startAt=m.index+m[0].length;
+      const endAt=i+1<labels.length?labels[i+1].index:source.length;
+      const text=source.slice(startAt,endAt).trim();
+      if(text)blocks.push({label:m[1].toUpperCase(),text});
+    }
+    const hasFixed=blocks.some(b=>/^S\\d+$/.test(b.label));
+    const pqrs=blocks.filter(b=>/^[PQRS]$/.test(b.label));
+    if(blocks.length && (pqrs.length>=3 || hasFixed)){
+      return blocks;
+    }
   }
-  return blocks.length>=3?blocks:null;
+
+  return null;
 }
 function pyqLabeledBlocksHTML(q){
   const blocks=pyqLabeledBlocks(q);
   if(!blocks)return null;
   const keyword=window.VaaniPyqTaxonomy&&typeof window.VaaniPyqTaxonomy.keyword==='function'
     ?window.VaaniPyqTaxonomy.keyword(q):String(q.keyword||'').trim();
-  return '<div class="pv-structured-question">'+blocks.map(b=>
-    '<div class="pv-structured-row"><span class="pv-structured-label">'+escapeHtmlVaani(b.label)+'</span><span class="pv-structured-text">'+pyqHighlightText(b.text,keyword)+'</span></div>'
-  ).join('')+'</div>';
+
+  const escBlock=block=>'<div class="pv-structured-row">'+
+    '<span class="pv-structured-label">'+escapeHtmlVaani(block.label)+'</span>'+
+    '<span class="pv-structured-text">'+pyqHighlightText(block.text,keyword)+'</span>'+
+  '</div>';
+
+  const fixed=blocks.filter(b=>/^S\\d+$/.test(String(b.label||'')));
+  const jumbled=blocks.filter(b=>/^[PQRS]$/.test(String(b.label||'')));
+  const other=blocks.filter(b=>fixed.indexOf(b)<0&&jumbled.indexOf(b)<0);
+
+  let html='<div class="pv-structured-question">';
+
+  if(fixed.length){
+    html+='<section class="pv-structured-group pv-structured-fixed">'+
+      '<div class="pv-structured-group-head"><span class="pv-structured-group-kicker">GIVEN SENTENCES</span><strong>Fixed part of the passage</strong></div>'+
+      fixed.map(escBlock).join('')+
+    '</section>';
+  }
+  if(jumbled.length){
+    html+='<section class="pv-structured-group pv-structured-jumbled">'+
+      '<div class="pv-structured-group-head"><span class="pv-structured-group-kicker">JUMBLED PARTS</span><strong>'+(fixed.length?'Arrange P–Q–R–S between them':'Arrange the labelled parts')+'</strong></div>'+
+      jumbled.map(escBlock).join('')+
+    '</section>';
+  }
+  if(other.length) html+=other.map(escBlock).join('');
+  html+='</div>';
+  return html;
 }
 function pyqPromptHTML(q){
   if(!q||typeof q.q!=='string')return '';
@@ -1380,7 +1405,7 @@ function pyqPromptHTML(q){
       parts.map((part,i)=>'<span class="pv-error-segment"><span class="pv-error-segment-text">'+escapeHtmlVaani(part)+'</span><span class="pv-error-segment-label" aria-label="Part '+partLabels[i]+'">('+partLabels[i]+')</span></span>').join('<span class="pv-error-segment-divider" aria-hidden="true"> / </span>')+
       '</span>';
   }
-  if(/^(?:choose the correct usage|ordering of sentences|ordering of words in a sentence|sentence arrangement \(pqrs\))$/i.test(sourceSec)){
+  if(pyqIsArrangementQuestion(q)){
     const structured=pyqLabeledBlocksHTML(q);if(structured)return structured;
   }
   return pyqHi(q);
