@@ -37,7 +37,7 @@
       items:[
         ['👤','Profile','Cadet profile & preferences','view','profile',false],
         ['📊','Leaderboard','Service record & stats','view','leaderboard',false],
-        ['🏅','Achievements','Badges & milestones','view','games',false],
+        ['🏅','Achievements','Badges & milestones','action','achievements',false],
         ['📢','Notifications','Updates & announcements','view','notifications',false]
       ]
     },
@@ -133,6 +133,15 @@
     if(value==='settings'){
       closeMore();
       callGlobal('toggleFocusPanel');
+      return;
+    }
+    if(value==='achievements'){
+      closeMore();
+      callGlobal('switchView','profile',{preserveScroll:false});
+      window.setTimeout(()=>{
+        const target=qs('#view-profile .vp-achievements');
+        target?.scrollIntoView?.({behavior:'smooth',block:'start'});
+      },120);
       return;
     }
     if(value==='bookmarks'){
