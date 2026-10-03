@@ -254,6 +254,15 @@
   };
 
   A.questionsFor = function (match, playerName) {
+    if (Array.isArray(match && match.frozenQuestions) && match.frozenQuestions.length) {
+      var snapshot = match.frozenQuestions.map(function (q) {
+        return q && typeof q === 'object' ? JSON.parse(JSON.stringify(q)) : null;
+      }).filter(Boolean);
+      if (match.shuffleOrder && playerName) {
+        snapshot = seededShuffle(snapshot, (match.seed ^ hashString(playerName)) >>> 0);
+      }
+      return snapshot.slice(0, Math.min(match.count, snapshot.length));
+    }
     var pool = poolForSource(match.source);
     var frozen = Array.isArray(match && match.frozenQuestionIds) ? match.frozenQuestionIds.map(function (id) { return String(id || ''); }).filter(Boolean) : [];
     if (frozen.length) {
@@ -396,7 +405,8 @@
         p_host_name: String(match.hostName || playerName() || 'Cadet'),
         p_host_avatar: match.hostAvatar && typeof match.hostAvatar === 'object' ? match.hostAvatar : null,
         p_expires_at: Number(match.expiresAt) || 0,
-        p_question_ids: Array.isArray(match.frozenQuestionIds) ? match.frozenQuestionIds.map(function (id) { return String(id || ''); }).filter(Boolean) : []
+        p_question_ids: Array.isArray(match.frozenQuestionIds) ? match.frozenQuestionIds.map(function (id) { return String(id || ''); }).filter(Boolean) : [],
+        p_question_snapshot: Array.isArray(match.frozenQuestions) ? match.frozenQuestions : []
       };
       return global.fetch(SHARED_REGISTER_MATCH_ENDPOINT, {
         method: 'POST',
@@ -781,6 +791,12 @@
     if (meta.expires_at) m.expiresAt = Number(meta.expires_at) || m.expiresAt;
     if (Array.isArray(meta.question_ids) && meta.question_ids.length) {
       m.frozenQuestionIds = meta.question_ids.map(function (id) { return String(id || ''); }).filter(Boolean);
+    }
+    if (Array.isArray(meta.question_snapshot) && meta.question_snapshot.length) {
+      m.frozenQuestions = meta.question_snapshot.map(snapshotArenaQuestion).filter(Boolean);
+      if (!m.frozenQuestionIds || !m.frozenQuestionIds.length) {
+        m.frozenQuestionIds = m.frozenQuestions.map(function (q) { return String(q._id || ''); }).filter(Boolean);
+      }
     }
     rememberMatch(m);
     return m;
@@ -1735,11 +1751,27 @@
     if (s || !parts.length) parts.push(s + ' sec');
     return parts.join(' ');
   }
+  function snapshotArenaQuestion(q) {
+    if (!q || typeof q !== 'object') return null;
+    var out = {};
+    Object.keys(q).forEach(function (key) {
+      if (key === '_id' || key === 'q' || key === 'o' || key === 'ans' ||
+          key === 'sec' || key === 's' || key === 'y' || key === '_exam' ||
+          key === 'parts' || key === 'passage' || key === 'keyword' ||
+          key === 'exp' || key === 'rule' || key === 'shortcut' ||
+          key === 'tags' || key === 'topic' || key === 'diff') {
+        out[key] = q[key];
+      }
+    });
+    return out._id ? out : null;
+  }
+
   function freezeMatchQuestions(m) {
     if (!m) return m;
-    if (Array.isArray(m.frozenQuestionIds) && m.frozenQuestionIds.length) return m;
+    if (Array.isArray(m.frozenQuestions) && m.frozenQuestions.length) return m;
     var qs = A.questionsFor(m, '');
     m.frozenQuestionIds = qs.map(function (q) { return String(q._id || ''); }).filter(Boolean);
+    m.frozenQuestions = qs.map(snapshotArenaQuestion).filter(Boolean);
     return m;
   }
 
@@ -1829,6 +1861,7 @@
       index:Number(r.index)||0,
       startedAt:Number(r.startedAt)||Date.now(),
       qids:r.questions.map(function(q){return q._id;}),
+      qSnapshots:r.questions.map(snapshotArenaQuestion).filter(Boolean),
       answers:r.answers||{},
       skipped:r.skipped||{},
       savedAt:Date.now()
@@ -1851,6 +1884,9 @@
   }
 
   function questionsFromRecovery(m,snapshot){
+    if (Array.isArray(snapshot.qSnapshots) && snapshot.qSnapshots.length) {
+      return snapshot.qSnapshots.map(snapshotArenaQuestion).filter(Boolean);
+    }
     var pool=A.questionsFor(m,playerName()),byId={};
     pool.forEach(function(q){byId[q._id]=q;});
     var questions=snapshot.qids.map(function(id){return byId[id];}).filter(Boolean);
