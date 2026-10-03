@@ -90,6 +90,29 @@ body.mode-sepia{
   outline:2px solid var(--gold);
   outline-offset:2px;
 }
+/* PYQ session contrast hardening: answered controls are still content, not disabled-looking placeholders. */
+[data-theme="dark"] #view-pyq .pv-qtext,
+[data-theme="dark"] #view-pyq .pv-error-segment,
+[data-theme="dark"] #view-pyq .pv-error-segment-text,
+[data-theme="dark"] #view-pyq .pv-structured-text{
+  color:#edf2f5!important;
+  opacity:1!important;
+  filter:none!important;
+}
+[data-theme="dark"] #view-pyq .pv-structured-question{border-color:rgba(201,162,75,.20);background:transparent}
+[data-theme="dark"] #view-pyq .pv-structured-row{
+  background:#1a2836;
+  border-color:rgba(201,162,75,.20);
+}
+[data-theme="dark"] #view-pyq .pv-option:disabled:not(.correct):not(.wrong){
+  opacity:1!important;
+  color:#e9ecef!important;
+  -webkit-text-fill-color:#e9ecef!important;
+}
+[data-theme="dark"] #view-pyq .pv-option:disabled:not(.correct):not(.wrong) .ol{
+  color:#aab6c2!important;
+}
+
 @media(prefers-reduced-motion:reduce){
   .view :is(.bc-entry,.bc-global-link,.gt-topic-card){transition:none!important}
 }
