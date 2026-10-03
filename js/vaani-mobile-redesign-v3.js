@@ -299,6 +299,223 @@
     if(menu) menu.setAttribute('aria-hidden','true');
   }
 
+
+  /* ----------------------------------------------------------
+     MOBILE COMMAND DECK
+     Long mobile pages are now navigated as finite mission chapters.
+     It does not alter desktop scrolling or the underlying view logic.
+  ---------------------------------------------------------- */
+  const CHAPTERS={
+    dashboard:[
+      ['Mission briefing','#view-dashboard .vd-hero'],
+      ["Today's focus",'#view-dashboard .vd-briefing'],
+      ['Focus sprint','#view-dashboard .vd-focus-sprint'],
+      ['More modules','#view-dashboard .mobile-dashboard-more'],
+      ['Practice','#view-dashboard .ga-catalog']
+    ],
+    grammar:[
+      ['Grammar map','#view-grammar .gt-tree-wrap'],
+      ['Progress','#view-grammar .gt-sidebar'],
+      ['Quick actions','#view-grammar .gt-quickactions'],
+      ['Academy','#view-grammar .ga-catalog']
+    ],
+    vocab:[
+      ['Word of the day','#view-vocab .word-of-day'],
+      ['Daily words','#view-vocab .singles-strip'],
+      ['Tools','#view-vocab .vocab-toolbar'],
+      ['Word library','#view-vocab .vv-word-grid']
+    ],
+    vocab90:[
+      ['Daily mission','#view-vocab90'],
+      ['Today','#view-vocab90 .v90-day'],
+      ['Vocabulary deck','#view-vocab90 .v90-section']
+    ],
+    books:[
+      ['Reading desk','#view-books .vbv-scope'],
+      ['Book companion','#view-books .bc-global-link']
+    ],
+    pyq:[
+      ['Command vault','#view-pyq #pvApp']
+    ],
+    games:[
+      ['Briefing','#view-games .vx-briefing'],
+      ['Arena','#view-games .vx-arena'],
+      ['Championship','#view-games .vx-championship']
+    ],
+    compare:[
+      ['Comparison library','#view-compare .cmp-library-strip'],
+      ['Precision pairs','#view-compare .cmp-spotlight']
+    ],
+    profile:[
+      ['Profile','#view-profile .vp-profile-hero'],
+      ['Learning path','#view-profile .vp-path-card'],
+      ['Rank','#view-profile .vp-rank-card'],
+      ['Activity','#view-profile .vp-activity-card'],
+      ['Achievements','#view-profile .vp-achievements']
+    ],
+    leaderboard:[
+      ['Service record','#view-leaderboard .service-hero'],
+      ['Personal bests','#view-leaderboard .service-grid'],
+      ['Performance','#view-leaderboard .service-signal-grid'],
+      ['Activity','#view-leaderboard .service-week'],
+      ['Field log','#view-leaderboard .service-fieldlog']
+    ],
+    notifications:[
+      ['Updates','#view-notifications .notification-grid'],
+      ['Exam desk','#view-notifications .nc-directory']
+    ],
+    info:[
+      ['Featured','#view-info .nc-featured'],
+      ['Exam directory','#view-info .nc-directory'],
+      ['Calendar','#view-info .nc-accordion']
+    ]
+  };
+
+  let missionDeck={name:null,items:[],index:0};
+
+  function getMissionItems(name){
+    const defs=CHAPTERS[name]||[];
+    return defs.map(([label,selector])=>{
+      const el=qs(selector);
+      return el?{label,el}:null;
+    }).filter(Boolean);
+  }
+
+  function removeMissionDeck(){
+    qs('#mobileMissionDeck')?.remove();
+    missionDeck={name:null,items:[],index:0};
+  }
+
+  function renderMissionDeck(name){
+    if(!mobile()) return;
+    const view=qs('#view-'+name);
+    if(!view) return;
+    const items=getMissionItems(name);
+    if(items.length<2){
+      removeMissionDeck();
+      return;
+    }
+
+    let deck=qs('#mobileMissionDeck');
+    if(!deck){
+      deck=document.createElement('aside');
+      deck.id='mobileMissionDeck';
+      deck.setAttribute('aria-label','Mobile mission navigator');
+      document.body.appendChild(deck);
+    }
+
+    missionDeck={name,items,index:0};
+
+    deck.innerHTML=
+      '<div class="mdeck-top">'+
+        '<span class="mdeck-kicker">MOBILE MISSION</span>'+
+        '<span class="mdeck-count" id="mdeckCount"></span>'+
+      '</div>'+
+      '<div class="mdeck-main">'+
+        '<button type="button" class="mdeck-btn" id="mdeckPrev" aria-label="Previous section">‹</button>'+
+        '<div class="mdeck-current">'+
+          '<strong id="mdeckTitle"></strong>'+
+          '<div class="mdeck-dots" id="mdeckDots" aria-hidden="true"></div>'+
+        '</div>'+
+        '<button type="button" class="mdeck-btn" id="mdeckNext" aria-label="Next section">›</button>'+
+      '</div>';
+
+    const prev=qs('#mdeckPrev',deck),next=qs('#mdeckNext',deck);
+    prev?.addEventListener('click',()=>moveMission(-1));
+    next?.addEventListener('click',()=>moveMission(1));
+
+    updateMissionDeck();
+  }
+
+  function updateMissionDeck(){
+    const deck=qs('#mobileMissionDeck');
+    if(!deck||!missionDeck.items.length)return;
+    const {items,index}=missionDeck;
+    const item=items[index];
+    const title=qs('#mdeckTitle',deck);
+    const count=qs('#mdeckCount',deck);
+    const dots=qs('#mdeckDots',deck);
+    if(title)title.textContent=item.label;
+    if(count)count.textContent=String(index+1).padStart(2,'0')+' / '+String(items.length).padStart(2,'0');
+    if(dots)dots.innerHTML=items.map((_,i)=>'<i class="'+(i===index?'active':'')+'"></i>').join('');
+    if(item.el){
+      item.el.classList.add('mdeck-target');
+      item.el.style.setProperty('--mdeck-index',String(index));
+    }
+    if(prev){} // kept deliberately empty; buttons are queried below for safe dynamic rerenders
+    const p=qs('#mdeckPrev',deck),n=qs('#mdeckNext',deck);
+    if(p)p.disabled=index===0;
+    if(n)n.disabled=index===items.length-1;
+  }
+
+  function moveMission(delta){
+    if(!mobile()||!missionDeck.items.length)return;
+    const next=Math.max(0,Math.min(missionDeck.items.length-1,missionDeck.index+delta));
+    if(next===missionDeck.index)return;
+    missionDeck.index=next;
+    updateMissionDeck();
+    missionDeck.items[next].el.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+
+  function setupMobileMissionDeck(name){
+    if(!mobile())return;
+    renderMissionDeck(name);
+  }
+
+  function patchMobileViewRouting(){
+    if(window.__VAANI_MOBILE_MISSION_ROUTING__)return;
+    window.__VAANI_MOBILE_MISSION_ROUTING__=true;
+
+    const original=window.switchView;
+    if(typeof original!=='function')return;
+    window.switchView=function(name){
+      const result=original.apply(this,arguments);
+      window.setTimeout(()=>{
+        if(mobile())setupMobileMissionDeck(name);
+        else removeMissionDeck();
+      },80);
+      return result;
+    };
+
+    window.addEventListener('scroll',()=>{
+      if(!mobile()||!missionDeck.items.length)return;
+      const threshold=window.scrollY+Math.max(90,window.innerHeight*.28);
+      let closest=0,best=Infinity;
+      missionDeck.items.forEach((item,i)=>{
+        const top=Math.abs(item.el.getBoundingClientRect().top+window.scrollY-threshold);
+        if(top<best){best=top;closest=i;}
+      });
+      if(closest!==missionDeck.index){
+        missionDeck.index=closest;
+        updateMissionDeck();
+      }
+    },{passive:true});
+  }
+
+  function replaceMobileDashboardShortcut(){
+    if(!mobile())return;
+    const qa=qs('#view-dashboard .vd-qa');
+    if(!qa||qa.dataset.mobileBooksShortcut==='1')return;
+
+    const vocab=Array.from(qa.querySelectorAll('button')).find(
+      b=>(b.textContent||'').trim().toLowerCase()==='vocab'
+    );
+    if(!vocab)return;
+
+    vocab.setAttribute('onclick',"switchView('books')");
+    vocab.setAttribute('aria-label','Open Book Reading');
+    vocab.dataset.mobileOriginalShortcut='vocab';
+    vocab.innerHTML=
+      '<span class="vd-qa-ico" aria-hidden="true">'+
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">'+
+          '<path d="M5 4.5h10.8A3.2 3.2 0 0 1 19 7.7V19H8.2A3.2 3.2 0 0 1 5 15.8V4.5Z"/>'+
+          '<path d="M8 19V7.7A3.2 3.2 0 0 1 11.2 4.5"/>'+
+          '<path d="M9.5 9h6.5M9.5 12h6.5"/>'+
+        '</svg>'+
+      '</span><span>Books</span>';
+    qa.dataset.mobileBooksShortcut='1';
+  }
+
   function init(){
     if(!mobile()) return;
     overrideMoreGlobals();
@@ -306,6 +523,9 @@
     setupDashboardMaster();
     enhanceDashboardSectionMap();
     patchSectionJump();
+    replaceMobileDashboardShortcut();
+    patchMobileViewRouting();
+    setupMobileMissionDeck(document.querySelector('.view.active')?.id?.replace(/^view-/,'')||'dashboard');
 
     // Defensive: a More-sheet open must never leave an invisible blocker behind.
     qs('#moreSheetBackdrop')?.addEventListener('click',closeMore,{passive:true});
