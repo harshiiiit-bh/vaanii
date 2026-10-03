@@ -373,6 +373,7 @@
   function render() {
     clearQTimer(); // any per-question countdown belongs to the screen being replaced
     if (S._expiryTimer) { clearTimeout(S._expiryTimer); S._expiryTimer = null; }
+    if (S._spectateTimer) { clearInterval(S._spectateTimer); S._spectateTimer = null; }
     var h = host();
     if (!h) return;
     h.innerHTML = '';
@@ -381,7 +382,8 @@
     ({
       home: screenHome, create: screenCreateV2, share: screenShareV2,
       join: screenJoin, briefing: screenBriefing, run: screenRun,
-      result: screenResult, review: screenReview, hostAnswers: screenHostAnswers, help: screenHelp
+      result: screenResult, review: screenReview, spectate: screenSpectate,
+      hostAnswers: screenHostAnswers, help: screenHelp
     }[S.screen] || screenHome)(wrap);
     // guarded: scrollIntoView is universal in real browsers, but costs
     // nothing to check first rather than assume
@@ -1081,23 +1083,34 @@
     shell.appendChild(codeCard);
 
     var inviteUrl=arenaInviteUrl(m);
-    var actions=el('div','vx-arena-host-actions');
-    var enter=el('button','vx-btn primary vx-host-action-main',ownHost?'Enter Arena':'Enter match');
-    enter.type='button';enter.innerHTML=(ownHost?'Enter Arena':'Join Arena')+' <span>→</span>';
-    enter.addEventListener('click',function(){go('briefing');});
-    actions.appendChild(enter);
+    var actions=el('div','vx-arena-host-actions'+(ownHost?' is-host-choice':''));
+    if(ownHost){
+      var participate=el('button','vx-btn primary vx-host-action-main vx-host-participate');
+      participate.type='button';
+      participate.innerHTML='<span class="vx-host-choice-kicker">PARTICIPATE</span><strong>Enter Arena</strong><small>Take the test under normal player rules.</small><b aria-hidden="true">→</b>';
+      participate.addEventListener('click',function(){go('briefing');});
+      actions.appendChild(participate);
 
-    var boardBtn=el('button','vx-btn ghost vx-host-action-secondary',ownHost?'Answers & leaderboard':'View leaderboard');
-    boardBtn.type='button';
-    boardBtn.addEventListener('click',function(){
-      if(ownHost){
-        S.result=null;
+      var spectate=el('button','vx-btn vx-host-action-secondary vx-host-spectate');
+      spectate.type='button';
+      spectate.innerHTML='<span class="vx-host-choice-kicker">HOST CONTROL</span><strong>Spectate</strong><small>See answers, leaderboard and question-level performance without attempting.</small><b aria-hidden="true">◉</b>';
+      spectate.addEventListener('click',function(){go('spectate');});
+      actions.appendChild(spectate);
+    }else{
+      var enter=el('button','vx-btn primary vx-host-action-main');
+      enter.type='button';
+      enter.innerHTML='Join Arena <span>→</span>';
+      enter.addEventListener('click',function(){go('briefing');});
+      actions.appendChild(enter);
+
+      var boardBtn=el('button','vx-btn ghost vx-host-action-secondary');
+      boardBtn.type='button';
+      boardBtn.textContent='View leaderboard';
+      boardBtn.addEventListener('click',function(){
         loadBoard().then(function(){go('result');}).catch(function(){go('result');});
-      }else{
-        loadBoard().then(function(){go('result');}).catch(function(){go('result');});
-      }
-    });
-    actions.appendChild(boardBtn);
+      });
+      actions.appendChild(boardBtn);
+    }
     shell.appendChild(actions);
 
     var copyRow=el('div','vx-invite-copy-row');
@@ -1133,7 +1146,7 @@
 
     var note=el('div','vx-arena-host-note');
     note.innerHTML=ownHost
-      ? '<span>HOST ACCESS</span><p>Your name is attached to the invite link so every player can see who created the match. The match code itself remains unchanged.</p>'
+      ? '<span>HOST ACCESS</span><p><b>Participate</b> enters the normal test. <b>Spectate</b> opens the private host control room with the answer key, leaderboard and question-by-question player performance without starting an attempt.</p>'
       : '<span>MATCH IDENTITY</span><p>Open the shared invite link to keep the host name attached to this match on your device.</p>';
     shell.appendChild(note);
 
