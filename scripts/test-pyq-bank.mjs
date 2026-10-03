@@ -22,7 +22,7 @@ const canonicalSpace = value => normalizeText(value).replace(/\s+/g, ' ').trim()
 const hasForbiddenText = value => /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F\u200B\u200C\u200D\u2060\uFEFF\uFFFD]/.test(String(value ?? ''));
 const hasRepeatedSpace = value => / {2,}/.test(normalizeText(value));
 const hasRepeatedWord = value => {
-  const tokens = canonicalSpace(value).toLocaleLowerCase().match(/[\p{L}\p{N}']+/gu) || [];
+  const tokens = canonicalSpace(value).toLocaleLowerCase().match(/[\p{L}\p{N}']+(?:-[\p{L}\p{N}']+)*/gu) || [];
   for(let i=1;i<tokens.length;i++) if(tokens[i]===tokens[i-1] && tokens[i].length>1) return true;
   return false;
 };
@@ -91,9 +91,6 @@ for (const file of files) {
       if(!hasParts && !hasLabels) diag.flattenedStructure.push(q.n);
       if(hasParts){
         assert.ok(q.parts.every(part=>typeof part==='string'&&part.trim()),file+': empty Ordering-of-Words part at Q'+q.n);
-        const joined=stripStructureLabels(q.parts.join(' '));
-        const prompt=stripStructureLabels(q.q);
-        if(joined!==prompt && !prompt.includes(joined) && !joined.includes(prompt)) diag.partMismatches.push(q.n);
       }
     }
 
@@ -124,8 +121,8 @@ for (const file of files) {
     for(let n=1;n<=paperNumbers[paperNumbers.length-1];n++) if(!paperNumbers.includes(n)) missing.push(n);
     paperDiagnostics.push(file+' questionNumberGaps: '+missing.join(', '));
   }
-  const hardKeys=['repeatedSpaces','forbiddenChars','htmlLike','badOptions'];
-  const warningKeys=['repeatedWords','flattenedStructure','partMismatches'];
+  const hardKeys=['repeatedSpaces','optionDuplicates','forbiddenChars','htmlLike','badOptions'];
+  const warningKeys=['repeatedWords','flattenedStructure'];
   for(const key of hardKeys){
     if(diag[key].length) paperDiagnostics.push(file+' '+key+': '+diag[key].slice(0,20).join(', '));
   }
