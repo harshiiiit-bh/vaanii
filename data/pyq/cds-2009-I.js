@@ -1311,7 +1311,7 @@ var PYQ_CDS_2009_I = [
     "s": "I",
     "n": 93,
     "sec": "Ordering of Words in a Sentence",
-    "q": "When the the party realized that elections were over in the assembly it had lost its (P) (Q) (R) (S) majority",
+    "q": "When the party realized that elections were over in the assembly it had lost its (P) (Q) (R) (S) majority",
     "o": [
       "P S Q R",
       "Q P S R",
