@@ -258,6 +258,23 @@
   function setupFolds(name){
     if(!isMobile()) return;
 
+    // Long detail pages: keep the core explanation visible, defer supplemental evidence.
+    if(name==='worddetail'){
+      qa('#view-worddetail > .wd-section').forEach((el,i)=>{
+        const heading=el.querySelector('h4')?.textContent?.trim()||'Word details';
+        makeFold(el,heading,i>=2);
+      });
+      qa('#view-worddetail > .wd-grid-2').forEach((el,i)=>{
+        if(i>=1) makeFold(el,'Additional word data',true);
+      });
+    }
+    if(name==='compare-detail'){
+      qa('#view-compare-detail > .card').forEach((el,i)=>{
+        const heading=el.querySelector('.panel-title')?.textContent?.trim()||'Comparison detail';
+        makeFold(el,heading,i>=1);
+      });
+    }
+
     const configs={
       dashboard:[
         ['#reviewWidgetCard','Mistake notebook',false],
