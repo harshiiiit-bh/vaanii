@@ -313,3 +313,110 @@
 }
 
 /* Desktop/tablet: V3 contributes nothing. */
+
+
+/* VAANI MOBILE V3 — Grammar layout recovery
+   The grammar topic browser is content-driven. Do not force the old tree canvas
+   into a fixed-height/transform box on phones; doing so creates the large blank
+   area seen above the topic browser. */
+@media (max-width:767px){
+  #view-grammar{
+    width:100%!important;
+    max-width:none!important;
+    padding-left:var(--m3-gutter)!important;
+    padding-right:var(--m3-gutter)!important;
+    overflow:visible!important;
+  }
+
+  #view-grammar .gt-layout{
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:stretch!important;
+    gap:12px!important;
+  }
+
+  #view-grammar .gt-tree-wrap{
+    order:1!important;
+    width:100%!important;
+    min-width:0!important;
+    min-height:0!important;
+    height:auto!important;
+    max-height:none!important;
+    overflow:visible!important;
+    padding:0!important;
+    align-items:stretch!important;
+  }
+
+  #view-grammar .gt-tree-canvas{
+    width:100%!important;
+    max-width:none!important;
+    min-height:0!important;
+    height:auto!important;
+    aspect-ratio:auto!important;
+    margin:0!important;
+    display:block!important;
+    transform:none!important;
+    transform-origin:center top!important;
+    overflow:visible!important;
+  }
+
+  #view-grammar .gt-sidebar{
+    order:2!important;
+    width:100%!important;
+    min-width:0!important;
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:8px!important;
+  }
+
+  #view-grammar .gt-sidebar > *{
+    width:auto!important;
+    min-width:0!important;
+  }
+
+  #view-grammar .gt-weightage-card{
+    grid-column:1/-1!important;
+  }
+
+  #view-grammar .gt-portal{
+    position:static!important;
+    margin:4px auto 0!important;
+    transform:none!important;
+    opacity:1!important;
+  }
+
+  #view-grammar .gt-quickactions{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:8px!important;
+    margin-top:10px!important;
+  }
+
+  #view-grammar .gt-quickactions .primary{
+    grid-column:1/-1!important;
+  }
+
+  #view-grammar .gt-qa-btn{
+    width:100%!important;
+    min-width:0!important;
+    min-height:46px!important;
+    padding:10px 8px!important;
+    font-size:.74rem!important;
+  }
+
+  #view-grammar .ga-catalog{
+    width:100%!important;
+    max-width:none!important;
+    margin-top:12px!important;
+    box-sizing:border-box!important;
+  }
+}
+
+@media (max-width:520px){
+  #view-grammar .gt-sidebar{
+    grid-template-columns:1fr!important;
+  }
+  #view-grammar .gt-weightage-card{
+    grid-column:auto!important;
+  }
+}
