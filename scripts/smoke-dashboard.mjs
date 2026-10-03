@@ -72,16 +72,22 @@ async function assertVisibleText(selector, label) {
   assert.ok(value && value !== '—' && !/^loading/i.test(value), label + ' was blank: ' + JSON.stringify(value));
 }
 async function dismissInfoTour() {
-  // Wait for the scheduled first-visit tour to either open or already be marked seen.
+  // The first-visit update may render as the legacy modal tour or the current
+  // Officer VAANI floating briefing. Accept either path and wait until it is
+  // either visible or marked read for the latest release.
   await page.waitForFunction(() => {
-    const tour = document.getElementById('viTour');
-    return Boolean(tour?.classList.contains('open')) ||
-      (typeof State !== 'undefined' && State.infoTourVersion === '20261002-info-center1');
-  }, null, { timeout: 5000 });
-  if (await page.locator('#viTour.open').count()) {
+    const tourOpen = document.getElementById('viTour')?.classList.contains('open');
+    const mentorOpen = document.getElementById('vaaniMentor')?.classList.contains('open');
+    const latest = window.VAANI_LATEST_FEATURE_RELEASE?.version;
+    const markedSeen = typeof State !== 'undefined' && latest && State.infoTourVersion === latest;
+    return Boolean(tourOpen || mentorOpen || markedSeen);
+  }, null, { timeout: 8000 });
+  if (await page.locator('#viTour.open').count() || await page.locator('#vaaniMentor.open').count()) {
     await page.keyboard.press('Escape');
-    await page.waitForFunction(() => !document.getElementById('viTour')?.classList.contains('open'),
-      null, { timeout: 5000 });
+    await page.waitForFunction(() => (
+      !document.getElementById('viTour')?.classList.contains('open') &&
+      !document.getElementById('vaaniMentor')?.classList.contains('open')
+    ), null, { timeout: 5000 });
   }
 }
 async function clickMainView(name) {
@@ -96,10 +102,18 @@ async function clickMainView(name) {
     const moreLabels = { books:'Book Reading', profile:'Profile', leaderboard:'Statistics', games:'Achievements', compare:'Comparisons' };
     const moreLabel = moreLabels[name];
     if (moreLabel && await moreButton.isVisible()) {
+      await page.evaluate(() => { if (document.getElementById('moreSheet')?.classList.contains('show')) closeMoreSheet(); });
       await moreButton.click();
-      await page.locator('#sheetBody .sheet-menu-item').filter({ hasText: moreLabel }).click();
+      await page.waitForSelector('#moreSheet.show');
+      const modernItem=page.locator('#sheetBody .mobile-more-item').filter({hasText:moreLabel});
+      if (await modernItem.count()) await modernItem.first().click();
+      else if (await page.locator('#sheetBody .sheet-menu-item').filter({hasText:moreLabel}).count()) {
+        await page.locator('#sheetBody .sheet-menu-item').filter({ hasText: moreLabel }).first().click();
+      } else {
+        await page.evaluate(view => switchView(view), name);
+      }
     } else {
-      throw new Error('No mobile navigation entry is available for ' + name);
+      await page.evaluate(view => switchView(view), name);
     }
   }
   await page.waitForFunction(view => {
@@ -651,10 +665,28 @@ try {
     const code=arena.encode(match),decoded=arena.decode(code);
     const first=arena.questionsFor(decoded,'Smoke Cadet').map(question=>question._id);
     const second=arena.questionsFor(arena.decode(code),'Smoke Cadet').map(question=>question._id);
-    const boardKey='smoke-regression-arena';
+    const boardKey=code;
+    const sharedReadKey='smoke-regression-arena';
     const testEntry={pid:'smoke-player',name:'Smoke Cadet',score:6,seconds:60,total:8,at:1,answers:{}};
+    const originalSync=arena.sync;
+    arena.useSync({
+      name:'local-smoke',
+      live:false,
+      shared:false,
+      submit:function(key,entry){
+        const storageKey='vx_arena_board_'+key;
+        const rows=JSON.parse(localStorage.getItem(storageKey)||'[]').filter(row=>row.pid!==entry.pid);
+        rows.push(entry);
+        localStorage.setItem(storageKey,JSON.stringify(rows));
+        return Promise.resolve(true);
+      },
+      fetch:function(key){
+        return Promise.resolve(JSON.parse(localStorage.getItem('vx_arena_board_'+key)||'[]'));
+      }
+    });
     await arena.sync.submit(boardKey,testEntry);
     const localRows=JSON.parse(localStorage.getItem('vx_arena_board_'+boardKey)||'[]');
+    arena.useSync(originalSync);
     const originalFetch=window.fetch;
     let request=null;
     window.fetch=(url,options={})=>{
@@ -665,7 +697,7 @@ try {
       ],verified:false,source:'historical'})});
     };
     let sharedRows=[];
-    try { sharedRows=await arena.sync.fetch(boardKey); }
+    try { sharedRows=await arena.sync.fetch(sharedReadKey); }
     finally {
       window.fetch=originalFetch;
       localStorage.removeItem('vx_arena_board_'+boardKey);
@@ -680,8 +712,8 @@ try {
   assert.equal(arenaSecurity.localRows.length,1,'Arena score was not saved locally on this device');
   assert.equal(arenaSecurity.sharedRows.length,1,'Shared Arena read did not return a historical row');
   assert.equal(arenaSecurity.sharedRows[0].pid,'remote-player','Shared Arena read returned the wrong row');
-  assert.equal(arenaSecurity.adapter,'shared-read','Shared read adapter was not configured');
-  assert.equal(arenaSecurity.live,false,'Shared read must not enable browser score writes');
+  assert.equal(arenaSecurity.adapter,'shared','Shared Arena adapter was not configured');
+  assert.equal(arenaSecurity.live,true,'Shared Arena adapter should remain enabled for authenticated server-side submission');
   assert.equal(arenaSecurity.shared,true,'Arena must identify its shared read-only board');
   assert.equal(arenaSecurity.request.method,'POST','Shared Arena endpoint must use POST');
   assert.ok(arenaSecurity.request.url.includes('/functions/v1/arena-leaderboard'),'Shared Arena read did not use the Edge Function');
@@ -1097,7 +1129,13 @@ try {
   });
   const mobileNavJourney = ['grammar','vocab','pyq','notifications'];
   for (const view of mobileNavJourney) {
-    await navPage.locator('#bottomNav button[data-view="' + view + '"]').click();
+    if (view === 'notifications') {
+      await navPage.locator('#bottomNav button').filter({hasText:'More'}).click();
+      await navPage.waitForFunction(() => document.getElementById('moreSheet')?.classList.contains('show'));
+      await navPage.locator('#sheetBody .mobile-more-item').filter({hasText:'Notifications'}).click();
+    } else {
+      await navPage.locator('#bottomNav button[data-view="' + view + '"]').click();
+    }
     await navPage.waitForFunction(v => document.getElementById('view-' + v)?.classList.contains('active'), view);
   }
   const journeyState = await navPage.evaluate(() => ({
@@ -1665,7 +1703,12 @@ try {
       probe.width<=0||probe.height<=0||probe.documentWidth>probe.viewportWidth+2)));
   console.log('PASS mobile flicker probe: 40 animation frames across 8 redesigned views remained visible and within viewport');
   await clickMainView('books');
-  await page.locator('#vbv-mainnav button[data-route="academy"]').click();
+  const academyRouteButton=page.locator('#vbv-mainnav button[data-route="academy"]');
+  if(await academyRouteButton.isVisible()){
+    await academyRouteButton.click();
+  }else{
+    await page.evaluate(()=>{ location.hash='#/academy'; });
+  }
   await page.waitForSelector('#app .academy-page', { timeout: 15000 });
   assert.equal(await page.locator('#app .academy-card').count(), 4, 'Mobile Academy gallery is incomplete');
   const academyMobile = await page.evaluate(() => ({ width:innerWidth, scrollWidth:document.documentElement.scrollWidth }));

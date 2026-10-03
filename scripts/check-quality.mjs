@@ -112,8 +112,8 @@ if (!accountCodeCss.includes('@media(max-width:767px)') ||
   console.error('Account-code responsive profile/mobile layout is incomplete');
   process.exitCode = 1;
 }
-if (!html.includes('vaani-profile.css?v=20261001-account-code1-service-rank-xp5') ||
-    !html.includes('js/app.js?v=20261002-result-report7')) {
+if (!html.includes('vaani-profile.css?v=20261003-profile-photo1') ||
+    !html.includes('js/app.js?v=20261003-profile-photo1')) {
   console.error('Account-code asset cache keys are outdated');
   process.exitCode = 1;
 }
@@ -571,7 +571,7 @@ try {
     if(!officerCss.includes(marker))throw new Error('Officer feature-briefing styling missing: '+marker);
   }
   if(!pageSource.includes('vaani-info-center.css?v=20261003-release3'))throw new Error('Info Centre cache key was not refreshed.');
-  if(!pageSource.includes('js/vaani-info-center.js?v=20261004-release6'))throw new Error('Info Centre script cache key was not refreshed.');
+  if(!pageSource.includes('js/vaani-info-center.js?v=20261004-release7'))throw new Error('Info Centre script cache key was not refreshed.');
   if(!pageSource.includes('vaani-character-elite.css?v=20261003-release3'))throw new Error('Officer elite CSS cache key was not refreshed.');
   if(!pageSource.includes('js/vaani-character-elite.js?v=20261003-release4'))throw new Error('Officer elite script cache key was not refreshed.');
   console.log('Feature updates: shared manifest, duplicate/version audit, bounded Officer retry, replay controls, release metadata, elevated briefing UI and cache keys validated');
@@ -593,7 +593,7 @@ try {
   for(const marker of ['.vp-profile-avatar{','.vp-photo-editor','.vp-photo-crop-guide','.vp-photo-dropzone']) {
     if(!profileCss.includes(marker))throw new Error('Profile picture styling missing: '+marker);
   }
-  for(const marker of ['profileAvatarSnapshot','hostAvatarSnapshot','arenaAvatarHtml','&av=','hostAvatar:profileAvatarSnapshot()','avatar: profileAvatarSnapshot()']) {
+  for(const marker of ['profileAvatarSnapshot','hostAvatarSnapshot','arenaAvatarHtml','&av=','hostAvatar:profileAvatarSnapshot()','avatar:profileAvatarSnapshot()']) {
     if(!arenaSource.includes(marker))throw new Error('Arena avatar integration missing: '+marker);
   }
   for(const marker of ['.vx-host-avatar img','.vx-championship-avatar img','.vx-championship-podium-avatar img']) {
@@ -700,7 +700,7 @@ try {
   for (const marker of [
     'screenCreateV2','screenShareV2','screenHostAnswers',
     'parseArenaInvite','matchHostName','hostName',
-    'Answers & leaderboard','?arena=CODE&host=NAME',
+    'hostAnswers: screenHostAnswers','?arena=CODE&host=NAME',
     'var CODE_VERSION = 3',
     'var LEGACY_SRC_CODES',
     'NDA+CDS',
@@ -728,8 +728,11 @@ try {
     '.vx-host-participate',
     '.vx-host-spectate',
     '.vx-invite-action',
-    '.vx-invite-copy-code',
-    '.vx-invite-share',
+    '.vx-invite-code'
+  ]) {
+    if (!arenaCss.includes(marker)) throw new Error('Arena redesign style is missing: ' + marker);
+  }
+  for (const marker of [
     'ARENA_RECOVERY_KEY',
     'function arenaAnalysis',
     'function startMistakeDrill',
@@ -737,7 +740,7 @@ try {
     'vx-arena-intelligence',
     'vx-arena-practice-complete'
   ]) {
-    if (!arenaCss.includes(marker)) throw new Error('Arena redesign style is missing: ' + marker);
+    if (!arena.includes(marker)) throw new Error('Arena behavior marker is missing: ' + marker);
   }
   if (!/hostName:\s*matchHostName\(m\)/.test(arena)) throw new Error('Arena recent-match records must retain host identity.');
   if (!arena.includes('Copy invite link')) throw new Error('Arena host invite link control is missing.');
@@ -756,7 +759,7 @@ try {
   if (!/v !== 2 && v !== CODE_VERSION/.test(arena)) throw new Error('Arena match-code decoder is not backward compatible with v2 invites.');
   if (!arena.includes('codeVersion: v')) throw new Error('Arena decoded matches do not retain the code version.');
   if (!pageSource.includes('vaani-arena-briefing.css?v=20261004-qparts1')) throw new Error('Arena question-parts CSS cache key is outdated.');
-  if (!pageSource.includes('js/vaani-arena.js?v=20261004-qparts1')) throw new Error('Arena question-parts JS cache key is outdated.');
+  if (!pageSource.includes('js/vaani-arena.js?v=20261004-sharedidentity1')) throw new Error('Arena JS cache key is outdated.');
   if (!arena.includes('function copyText(value, onSuccess)')) throw new Error('Arena invite copy fallback is missing.');
   if (!arena.includes('var share=actionButton(\'Share invite\'')) throw new Error('Arena share action is not always rendered.');
   if (!arena.includes('navigator.share')) throw new Error('Native share action is missing.');
@@ -781,7 +784,7 @@ try {
   if (!arena.includes("S.practiceSummary=")) throw new Error('Mistake-drill completion state is missing.');
   if (!arena.includes("window.dispatchEvent(new CustomEvent('vaani:arena-analysis'")) throw new Error('Arena analytics event is missing.');
   if (!officerSource.includes('window.VAANI_ARENA_ANALYSIS_BRIEFING=function(insights)')) throw new Error('Officer Arena debrief bridge is missing.');
-  if (!pageSource.includes('js/vaani-info-center.js?v=20261003-release5')) throw new Error('Feature release cache key is outdated.');
+  if (!pageSource.includes('js/vaani-info-center.js?v=20261004-release7')) throw new Error('Feature release cache key is outdated.');
   if (!pageSource.includes('js/vaani-character-elite.js?v=20261003-release4')) throw new Error('Officer debrief cache key is outdated.');
   console.log('Arena intelligence audit: recovery, analytics, mistake drill, contextual Officer debrief and cache keys validated');
   console.log('Arena multi-bank audit: v3 source matrix, v2 decode compatibility, combined pool generation, multi-select UI, responsive styling and cache keys validated');
@@ -821,7 +824,7 @@ try{
   if(eliteCharacter.includes('const host=target||view.firstElementChild')||!eliteCharacter.includes("const routeHidden=active()==='profile'")||!eliteCharacterCss.includes("body:has(#view-profile.active) #vaaniMentor:not(.bad-result){display:none!important}"))throw new Error('Officer VAANI dock must not overlap the Profile hero.');
   if(eliteCharacter.includes('function wrapResult(){'))throw new Error('Officer VAANI result callback must not open a floating recovery briefing.');
   if(!eliteCharacterCss.includes('#vaaniMentor:not(.bad-result):not(.speaking):not(.open):not(.ve-move-mode){visibility:hidden!important;pointer-events:none!important}'))throw new Error('Collapsed Officer VAANI must not block page controls.');
-  if(!html.includes('vaani-character-elite.css?v=20261002-aiclean3')||!html.includes('js/vaani-character.js?v=20261002-aiclean3')||!html.includes('js/vaani-character-elite.js?v=20261002-passive-report5'))throw new Error('Officer VAANI asset cache keys are outdated.');
+  if(!html.includes('vaani-character-elite.css?v=20261003-release3')||!html.includes('js/vaani-character.js?v=20261002-aiclean3')||!html.includes('js/vaani-character-elite.js?v=20261003-release4'))throw new Error('Officer VAANI asset cache keys are outdated.');
   if(!html.includes('vaani-contrast-repair.css?v=20261002-contrast2'))throw new Error('Site-wide contrast repair must load after all visual layers.');
   const contrastRepair=readFileSync('vaani-contrast-repair.css','utf8');
   if(!contrastRepair.includes('--muted:#b8c3ce')||!contrastRepair.includes('--muted2:#9aa8b5')||!contrastRepair.includes('#view-grammar .gt-topic-desc')||!contrastRepair.includes('#view-grammar > .bc-global-link')||!contrastRepair.includes('background-color:#0b1722!important'))throw new Error('Site-wide contrast tokens, Grammar readability or companion banner rules are missing.');
