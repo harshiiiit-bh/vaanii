@@ -695,6 +695,7 @@ try{
 try {
   const arena = readFileSync('js/vaani-arena.js','utf8');
   const arenaCss = readFileSync('vaani-arena-briefing.css','utf8');
+  const pageSource = readFileSync('index.html','utf8');
   for (const marker of [
     'screenCreateV2','screenShareV2','screenHostAnswers',
     'parseArenaInvite','matchHostName','hostName',
@@ -733,7 +734,9 @@ try {
   }
   if (!/v !== 2 && v !== CODE_VERSION/.test(arena)) throw new Error('Arena match-code decoder is not backward compatible with v2 invites.');
   if (!arena.includes('codeVersion: v')) throw new Error('Arena decoded matches do not retain the code version.');
-  console.log('Arena multi-bank audit: v3 source matrix, v2 decode compatibility, combined pool generation, multi-select UI and responsive styling validated');
+  if (!pageSource.includes('vaani-arena-briefing.css?v=20261003-multibank1')) throw new Error('Arena multi-bank CSS cache key is outdated.');
+  if (!pageSource.includes('js/vaani-arena.js?v=20261003-multibank1')) throw new Error('Arena multi-bank JS cache key is outdated.');
+  console.log('Arena multi-bank audit: v3 source matrix, v2 decode compatibility, combined pool generation, multi-select UI, responsive styling and cache keys validated');
   console.log('Arena: redesigned question-selection console, host controls, shared host identity and answer-key route validated');
 }catch(error){console.error('Arena audit failed:',error.message);process.exitCode=1;}
 
