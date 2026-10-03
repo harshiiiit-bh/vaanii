@@ -9,7 +9,14 @@
 
   /* Remove duplicate floating navigation from the mobile surface.
      The same destinations are available in the More command menu. */
-  #quickNavBtn,#quickNavMenu{display:none!important}
+  #quickNavBtn,#quickNavMenu,
+  .qnav-fab,.qnav-menu,
+  button[title="Quick Navigate"]{
+    display:none!important;
+    visibility:hidden!important;
+    opacity:0!important;
+    pointer-events:none!important;
+  }
   body.mobile-more-open #quickNavBtn,
   body.mobile-more-open #quickNavMenu{display:none!important}
 
