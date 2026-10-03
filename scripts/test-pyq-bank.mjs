@@ -158,6 +158,17 @@ for (const file of files) {
       'has faced all kinds of dangers'
     ], 'NDA II 2017 Q31 part transcription regression');
   }
+  if (file === 'cds-2020-II' && exam === 'CDS') {
+    const q41 = data.find(q => Number(q.n) === 41);
+    const q43 = data.find(q => Number(q.n) === 43);
+    const q50 = data.find(q => Number(q.n) === 50);
+    assert.equal(q41.q, 'He has been one the most revered member of the committee of enquiry. No error', 'CDS II 2020 Q41 transcription regression');
+    assert.equal(q41.ans, 1, 'CDS II 2020 Q41 answer-key regression');
+    assert.equal(q43.q, '‘Where there is a will then there is a way’ is an old epithet. No error', 'CDS II 2020 Q43 transcription regression');
+    assert.equal(q43.ans, 3, 'CDS II 2020 Q43 answer-key regression');
+    assert.equal(q50.q, 'Irrigation works have a special importance in an agricultural countries like India, Where rainfall is unequally distributed throughout the seasons. No error', 'CDS II 2020 Q50 transcription regression');
+    assert.equal(q50.ans, 2, 'CDS II 2020 Q50 answer-key regression');
+  }
   papers++;
 }
 if(paperDiagnostics.length){
