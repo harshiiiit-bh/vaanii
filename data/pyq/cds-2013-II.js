@@ -1067,7 +1067,13 @@ var PYQ_CDS_2013_II = [
     "s": "II",
     "n": 75,
     "sec": "Ordering of Words in a Sentence",
-    "q": "When the artist had started singing a popular song in chorus everyone In the audience P Q R S",
+    "q": "When the artist had started singing a popular song in chorus everyone in the audience joined.",
+    "parts": [
+      "When the artist had started",
+      "singing a popular song",
+      "in chorus",
+      "everyone in the audience joined"
+    ],
     "o": [
       "RPQS",
       "PQRS",
