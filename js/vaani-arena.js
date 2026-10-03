@@ -2898,6 +2898,177 @@
     championship.appendChild(status);
     w.appendChild(championship);
 
+    /* ---------------------------------------------------------
+       MOBILE ARENA BOARD
+       A deliberately separate composition from the desktop
+       championship board. Desktop markup remains unchanged.
+       --------------------------------------------------------- */
+    var mobileBoard = el('section', 'vx-arena-mobile-board');
+    mobileBoard.setAttribute('aria-label', 'Mobile match leaderboard');
+
+    var mobileTop = el('div', 'vx-amb-top');
+    var mobileTitle = el('div', 'vx-amb-title');
+    mobileTitle.innerHTML =
+      '<span class="vx-amb-eyebrow"><i></i> ARENA LIVE</span>' +
+      '<h3>Match standings</h3>' +
+      '<p>Fast view. Tap a cadet for score details.</p>';
+    var mobileRefresh = el('button', 'vx-amb-refresh', '↻');
+    mobileRefresh.type = 'button';
+    mobileRefresh.setAttribute('aria-label', 'Refresh leaderboard');
+    mobileTop.appendChild(mobileTitle);
+    mobileTop.appendChild(mobileRefresh);
+    mobileBoard.appendChild(mobileTop);
+
+    var mobileHero = el('div', 'vx-amb-you-card');
+    mobileBoard.appendChild(mobileHero);
+
+    var mobileStats = el('div', 'vx-amb-stats');
+    mobileBoard.appendChild(mobileStats);
+
+    var mobileControls = el('div', 'vx-amb-controls');
+    var mobileSearch = el('input', 'vx-amb-search');
+    mobileSearch.type = 'search';
+    mobileSearch.placeholder = 'Search cadets…';
+    mobileSearch.autocomplete = 'off';
+    mobileSearch.setAttribute('aria-label', 'Search leaderboard cadets');
+    mobileControls.appendChild(mobileSearch);
+    var mobileFilters = el('div', 'vx-amb-filter-row');
+    mobileControls.appendChild(mobileFilters);
+    mobileBoard.appendChild(mobileControls);
+
+    var mobilePodium = el('div', 'vx-amb-podium');
+    mobileBoard.appendChild(mobilePodium);
+
+    var mobileListHead = el('div', 'vx-amb-list-head');
+    mobileListHead.innerHTML = '<span>STANDINGS</span><span>SCORE</span>';
+    mobileBoard.appendChild(mobileListHead);
+    var mobileList = el('div', 'vx-amb-list');
+    mobileBoard.appendChild(mobileList);
+    var mobileStatus = el('div', 'vx-amb-status');
+    mobileBoard.appendChild(mobileStatus);
+
+    var mobileFilter = 'all';
+    var mobileFilterButtons = {};
+    [
+      {id:'all',label:'All'},
+      {id:'top3',label:'Top 3'},
+      {id:'mine',label:'My rank'}
+    ].forEach(function(def){
+      var b=el('button','vx-amb-filter',def.label);
+      b.type='button';
+      b.setAttribute('aria-pressed',String(def.id===mobileFilter));
+      b.addEventListener('click',function(){
+        mobileFilter=def.id;
+        Object.keys(mobileFilterButtons).forEach(function(id){
+          mobileFilterButtons[id].setAttribute('aria-pressed',String(id===mobileFilter));
+        });
+        drawMobileBoard();
+      });
+      mobileFilterButtons[def.id]=b;
+      mobileFilters.appendChild(b);
+    });
+
+    mobileRefresh.addEventListener('click', function(){
+      if(mobileRefresh.disabled || Date.now() >= Number(m.expiresAt)){
+        if(Date.now() >= Number(m.expiresAt)) go('result');
+        return;
+      }
+      mobileRefresh.disabled=true;
+      mobileRefresh.textContent='…';
+      loadBoard().then(function(){
+        if(S.screen !== 'result' || !S.match || S.match.code !== m.code) return;
+        mobileRefresh.disabled=false;
+        mobileRefresh.textContent='↻';
+        drawMobileBoard();
+      },function(){
+        mobileRefresh.disabled=false;
+        mobileRefresh.textContent='↻';
+        drawMobileBoard();
+      });
+    });
+    mobileSearch.addEventListener('input', drawMobileBoard);
+
+    function drawMobileBoard() {
+      var allEntries = S.rows.slice(0, MAX_PLAYERS).map(function(row,i){
+        return {row:row,rank:i+1};
+      });
+      var currentPid = (res && res.pid) ? String(res.pid) : playerId();
+      var my = allEntries.find(function(x){ return x.row.pid === currentPid; });
+      var myRank = my ? my.rank : 0;
+      var top = allEntries[0];
+
+      mobileHero.innerHTML =
+        '<div class="vx-amb-you-label">YOUR STANDING</div>' +
+        '<div class="vx-amb-you-main">' +
+          '<strong class="vx-amb-you-rank">' + (myRank ? '#'+myRank : '—') + '</strong>' +
+          '<div class="vx-amb-you-copy"><b>' + esc(my ? String(my.row.name || 'Cadet') : 'Your result') + '</b>' +
+          '<span>' + (my ? esc(String(my.row.score)+' / '+String(my.row.total)) : 'Not ranked yet') + '</span></div>' +
+        '</div>' +
+        '<div class="vx-amb-you-foot">' +
+          '<span>' + (my ? 'Finished in '+esc(fmtClock(my.row.seconds)) : 'Submit your attempt to enter the standings') + '</span>' +
+          '<em>' + (top ? 'Leader '+esc(String(top.row.score))+'/'+esc(String(top.row.total)) : 'No attempts yet') + '</em>' +
+        '</div>';
+
+      mobileStats.innerHTML =
+        '<div><span>PLAYERS</span><b>' + allEntries.length + '</b></div>' +
+        '<div><span>LEADER</span><b>' + (top ? esc(String(top.row.score)) : '—') + '</b></div>' +
+        '<div><span>YOUR RANK</span><b>' + (myRank ? '#'+myRank : '—') + '</b></div>';
+
+      var query=String(mobileSearch.value||'').trim().toLowerCase();
+      var visible=allEntries.filter(function(entry){
+        var name=String(entry.row.name||'Cadet').toLowerCase();
+        if(query && !name.includes(query)) return false;
+        if(mobileFilter==='top3' && entry.rank>3) return false;
+        if(mobileFilter==='mine' && entry.row.pid!==playerId()) return false;
+        return true;
+      });
+
+      mobilePodium.innerHTML='';
+      visible.filter(function(e){return e.rank<=3;}).forEach(function(entry){
+        var card=el('button','vx-amb-podium-card rank-'+entry.rank);
+        card.type='button';
+        var name=String(entry.row.name||'Cadet');
+        var medal={1:'1ST',2:'2ND',3:'3RD'}[entry.rank];
+        card.innerHTML=
+          '<span class="vx-amb-podium-rank">'+medal+'</span>'+
+          arenaAvatarHtml(entry.row.avatar || (entry.row.pid===playerId()?profileAvatarSnapshot():null),name,'vx-amb-podium-avatar')+
+          '<b>'+esc(name)+'</b>'+
+          '<span>'+esc(String(entry.row.score))+'/'+esc(String(entry.row.total))+' · '+esc(fmtClock(entry.row.seconds))+'</span>';
+        card.addEventListener('click',function(){openPlayerSheet(entry.row,entry.rank);});
+        mobilePodium.appendChild(card);
+      });
+      mobilePodium.hidden = mobilePodium.children.length === 0;
+
+      mobileList.innerHTML='';
+      if(!visible.length){
+        mobileList.appendChild(el('div','vx-amb-empty',
+          S._boardError ? 'Leaderboard unavailable. Tap refresh.' :
+          (mobileFilter==='mine' ? 'Your result is not on the board yet.' :
+          (query ? 'No cadets found.' : 'No attempts recorded yet.'))));
+      } else {
+        visible.forEach(function(entry){
+          var row=entry.row;
+          var name=String(row.name||'Cadet');
+          var item=el('button','vx-amb-row'+(row.pid===playerId()?' is-you':''));
+          item.type='button';
+          item.innerHTML=
+            '<span class="vx-amb-row-rank">'+entry.rank+'</span>'+
+            arenaAvatarHtml(row.avatar || (row.pid===playerId()?profileAvatarSnapshot():null),name,'vx-amb-row-avatar')+
+            '<span class="vx-amb-row-name"><b>'+esc(name)+'</b><small>'+
+              (row.pid===playerId()?'YOU':'CADET')+'</small></span>'+
+            '<span class="vx-amb-row-score"><b>'+esc(String(row.score))+
+              '<small>/'+esc(String(row.total))+'</small></b><small>'+esc(fmtClock(row.seconds))+'</small></span>'+
+            '<span class="vx-amb-row-arrow">›</span>';
+          item.setAttribute('aria-label',name+', rank '+entry.rank+', score '+row.score+' out of '+row.total);
+          item.addEventListener('click',function(){openPlayerSheet(row,entry.rank);});
+          mobileList.appendChild(item);
+        });
+      }
+      mobileStatus.textContent=visible.length+' '+(visible.length===1?'cadet':'cadets')+' shown';
+    }
+
+    w.appendChild(mobileBoard);
+
     function drawBoard() {
       entries = S.rows.slice(0, MAX_PLAYERS).map(function (row, i) { return { row: row, rank: i + 1 }; });
       var currentPid = (res && res.pid) ? String(res.pid) : playerId();
