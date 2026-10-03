@@ -663,7 +663,7 @@ try {
     const code=arena.encode(match),decoded=arena.decode(code);
     const first=arena.questionsFor(decoded,'Smoke Cadet').map(question=>question._id);
     const second=arena.questionsFor(arena.decode(code),'Smoke Cadet').map(question=>question._id);
-    const boardKey='smoke-regression-arena';
+    const boardKey=code;
     const testEntry={pid:'smoke-player',name:'Smoke Cadet',score:6,seconds:60,total:8,at:1,answers:{}};
     await arena.sync.submit(boardKey,testEntry);
     const localRows=JSON.parse(localStorage.getItem('vx_arena_board_'+boardKey)||'[]');
