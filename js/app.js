@@ -6332,7 +6332,7 @@ function showSheetBookmarks(){
     const q = PYQ_BY_ID[qid];
     if(!q) return '';
     return `<div class="sheet-bm-item" role="button" tabindex="0" aria-label="Open bookmarked question ${q.y} ${q.s}" onclick="closeMoreSheet();pvOpenSearchResult('${qid}')"
-      onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();closeMoreSheet();pvOpenSearchResult('${qid}')}"`>
+      onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();closeMoreSheet();pvOpenSearchResult('${qid}')}" >
       <b>${q.y} · ${q.s}</b> — ${(q.q||'').slice(0,70)}${(q.q||'').length>70?'…':''}
     </div>`;
   }).join('') || `<div class="sheet-empty">No bookmarks yet.</div>`;
