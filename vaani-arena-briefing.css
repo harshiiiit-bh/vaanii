@@ -784,3 +784,194 @@ body[data-theme="dark"] #view-games .vx-arena-inline-row{background:rgba(255,255
     grid-template-columns:1fr;
   }
 }
+
+
+/* ============================================================
+   ARENA INTELLIGENCE + SESSION RECOVERY
+============================================================ */
+#view-games .vx-briefing-recovery{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:12px;
+  align-items:center;
+  margin:0 0 15px;
+  padding:13px 14px;
+  border:1px solid rgba(201,162,75,.34);
+  border-radius:15px;
+  background:
+    radial-gradient(circle at 100% 0,rgba(226,196,102,.11),transparent 35%),
+    linear-gradient(145deg,rgba(201,162,75,.1),rgba(255,255,255,.035));
+}
+#view-games .vx-briefing-recovery-kicker{
+  display:block;
+  margin-bottom:4px;
+  color:#e3c26e;
+  font:900 .5rem/1.2 var(--vx-font-mono);
+  letter-spacing:.15em;
+}
+#view-games .vx-briefing-recovery strong{display:block;color:#f4f8fb;font:850 .86rem/1.2 var(--vx-font-display)}
+#view-games .vx-briefing-recovery p{margin:4px 0 0;color:#90a4b5;font-size:.63rem;line-height:1.5}
+#view-games .vx-briefing-recovery-actions{display:flex;gap:7px;flex-wrap:wrap}
+#view-games .vx-briefing-recovery-actions .vx-btn{min-height:38px;white-space:nowrap}
+
+#view-games .vx-arena-intelligence{
+  margin:16px 0 14px;
+  padding:17px;
+  border:1px solid rgba(197,157,68,.3);
+  border-radius:21px;
+  background:
+    radial-gradient(circle at 100% 0,rgba(197,157,68,.12),transparent 34%),
+    linear-gradient(145deg,rgba(197,157,68,.065),var(--vx-card));
+  box-shadow:0 13px 32px rgba(18,28,37,.08);
+}
+#view-games .vx-arena-intelligence-head{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:12px;
+  align-items:end;
+}
+#view-games .vx-arena-intelligence-kicker{
+  display:block;
+  color:var(--vx-gold);
+  font:900 .5rem/1.2 var(--vx-font-mono);
+  letter-spacing:.15em;
+}
+#view-games .vx-arena-intelligence-head h3{margin:4px 0 4px;font:900 1.18rem/1.14 var(--vx-font-display);color:var(--vx-ink)}
+#view-games .vx-arena-intelligence-head p{margin:0;color:var(--vx-muted);font-size:.68rem;line-height:1.5}
+#view-games .vx-arena-intelligence-actions{display:flex;flex-wrap:wrap;gap:7px;justify-content:flex-end}
+#view-games .vx-arena-intelligence-actions .vx-btn{min-height:38px;padding:9px 12px;font-size:.62rem}
+
+#view-games .vx-arena-intel-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:8px;
+  margin-top:13px;
+}
+#view-games .vx-arena-intel-card{
+  min-width:0;
+  padding:11px;
+  border:1px solid var(--vx-line);
+  border-radius:13px;
+  background:rgba(255,255,255,.52);
+}
+body[data-theme="dark"] #view-games .vx-arena-intel-card{background:rgba(255,255,255,.03)}
+#view-games .vx-arena-intel-card span,
+#view-games .vx-arena-intel-subhead span{
+  display:block;color:var(--vx-muted);font:850 .47rem/1.2 var(--vx-font-mono);letter-spacing:.11em
+}
+#view-games .vx-arena-intel-card strong{
+  display:block;
+  margin-top:5px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:var(--vx-ink);
+  font:900 .95rem/1.1 var(--vx-font-display);
+}
+#view-games .vx-arena-intel-card small{display:block;margin-top:4px;color:var(--vx-muted);font-size:.57rem;line-height:1.35}
+
+#view-games .vx-arena-intel-sections,
+#view-games .vx-arena-intel-mistakes{
+  margin-top:13px;
+  padding-top:12px;
+  border-top:1px solid var(--vx-line);
+}
+#view-games .vx-arena-intel-subhead{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:baseline;
+  margin-bottom:9px;
+}
+#view-games .vx-arena-intel-subhead small{color:var(--vx-muted);font-size:.56rem}
+#view-games .vx-arena-intel-section{
+  display:grid;
+  grid-template-columns:minmax(130px,.8fr) minmax(80px,1fr) 42px;
+  gap:9px;
+  align-items:center;
+  margin-top:7px;
+}
+#view-games .vx-arena-intel-section>div:first-child{min-width:0}
+#view-games .vx-arena-intel-section strong{
+  display:block;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:var(--vx-ink);
+  font-size:.64rem;
+}
+#view-games .vx-arena-intel-section small{display:block;color:var(--vx-muted);font-size:.53rem;margin-top:2px}
+#view-games .vx-arena-intel-bar{
+  height:8px;
+  overflow:hidden;
+  border-radius:999px;
+  background:rgba(129,146,162,.12);
+}
+#view-games .vx-arena-intel-bar i{
+  display:block;
+  width:0;
+  height:100%;
+  border-radius:inherit;
+  background:linear-gradient(90deg,var(--vx-gold),#e6c66f);
+}
+#view-games .vx-arena-intel-section>b{
+  text-align:right;
+  color:var(--vx-gold);
+  font:900 .62rem var(--vx-font-mono);
+}
+#view-games .vx-arena-intel-mistake{
+  width:100%;
+  display:grid;
+  grid-template-columns:38px minmax(0,1fr) auto;
+  gap:8px;
+  align-items:center;
+  padding:9px 10px;
+  margin-top:6px;
+  border:1px solid var(--vx-line);
+  border-radius:11px;
+  background:rgba(255,255,255,.035);
+  color:var(--vx-ink);
+  text-align:left;
+}
+#view-games .vx-arena-intel-mistake:hover{
+  border-color:rgba(197,157,68,.36);
+  background:rgba(197,157,68,.055);
+}
+#view-games .vx-arena-intel-mistake>span:first-child{
+  display:grid;
+  place-items:center;
+  width:30px;height:30px;border-radius:9px;
+  background:rgba(197,157,68,.1);
+  color:var(--vx-gold);
+  font:900 .58rem var(--vx-font-mono);
+}
+#view-games .vx-arena-intel-mistake strong{display:block;font-size:.63rem}
+#view-games .vx-arena-intel-mistake small{display:block;margin-top:2px;color:var(--vx-muted);font-size:.53rem}
+#view-games .vx-arena-intel-mistake>b{color:var(--vx-gold);font:800 .56rem var(--vx-font-mono)}
+
+#view-games .vx-arena-practice-complete{
+  margin:0 0 14px;
+  padding:12px 14px;
+  border:1px solid rgba(73,209,134,.24);
+  border-radius:14px;
+  background:rgba(73,209,134,.06);
+}
+#view-games .vx-arena-practice-complete strong{display:block;margin-top:4px;color:var(--vx-ink);font:850 .78rem var(--vx-font-display)}
+#view-games .vx-arena-practice-complete small{display:block;margin-top:3px;color:var(--vx-muted);font-size:.57rem}
+
+@media(max-width:820px){
+  #view-games .vx-arena-intel-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #view-games .vx-arena-intelligence-head{grid-template-columns:1fr}
+  #view-games .vx-arena-intelligence-actions{justify-content:flex-start}
+}
+@media(max-width:620px){
+  #view-games .vx-briefing-recovery{grid-template-columns:1fr}
+  #view-games .vx-arena-intel-grid{grid-template-columns:1fr 1fr}
+  #view-games .vx-arena-intel-section{grid-template-columns:minmax(105px,.8fr) minmax(65px,1fr) 38px}
+}
+@media(max-width:430px){
+  #view-games .vx-arena-intel-grid{grid-template-columns:1fr}
+  #view-games .vx-arena-intel-section{grid-template-columns:1fr 74px}
+  #view-games .vx-arena-intel-section>b{grid-column:2}
+  #view-games .vx-arena-intel-bar{grid-column:1}
+}
