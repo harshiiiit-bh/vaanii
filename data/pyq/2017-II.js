@@ -1,11 +1,11 @@
 // NDA English PYQ: 2017-II
-// Source: UPSC NDA & NA (II) 2017 GAT, Part A English questions 1–50.
+// Source: NDA/NA English II Question Paper 2017.
 var PYQ_2017_II = [
   {
     "y": 2017,
     "s": "II",
     "n": 1,
-    "sec": "Idioms and Phrases",
+    "sec": "Synonyms",
     "q": "The discussion was wound up after a long and fruitful exchange of views.",
     "o": [
       "postponed",
@@ -19,7 +19,7 @@ var PYQ_2017_II = [
     "y": 2017,
     "s": "II",
     "n": 2,
-    "sec": "Idioms and Phrases",
+    "sec": "Synonyms",
     "q": "He was fully alive to the need for making adjustments.",
     "o": [
       "concerned about",
@@ -79,7 +79,7 @@ var PYQ_2017_II = [
     "s": "II",
     "n": 6,
     "sec": "Synonyms",
-    "q": "The experts’ minute examination brought to light some important clues.",
+    "q": "The experts' minute examination brought to light some important clues.",
     "o": [
       "quick",
       "detailed",
@@ -153,7 +153,7 @@ var PYQ_2017_II = [
     "y": 2017,
     "s": "II",
     "n": 11,
-    "sec": "Idioms and Phrases",
+    "sec": "Antonyms",
     "q": "My mother has been working hard for the last two weeks and she feels run down.",
     "o": [
       "morbid",
@@ -175,7 +175,7 @@ var PYQ_2017_II = [
       "restraint",
       "sobriety"
     ],
-    "ans": 2,
+    "ans": 3,
     "keyword": "violence"
   },
   {
@@ -272,7 +272,7 @@ var PYQ_2017_II = [
     "y": 2017,
     "s": "II",
     "n": 19,
-    "sec": "Idioms and Phrases",
+    "sec": "Antonyms",
     "q": "We carried on the search for the missing person.",
     "o": [
       "delayed",
@@ -301,7 +301,7 @@ var PYQ_2017_II = [
     "y": 2017,
     "s": "II",
     "n": 21,
-    "sec": "Reading Comprehension",
+    "sec": "Selecting Words",
     "q": "Choose the word that best fits blank 21.",
     "o": [
       "hardly",
@@ -310,13 +310,13 @@ var PYQ_2017_II = [
       "rarely"
     ],
     "ans": 1,
-    "passage": "After this incident I went to Nainital, and returned after nearly a month. I had 21. ______ 22. ______ my clothes when I saw Gangu standing 23. ______ a new baby. He was 24. ______ with joy. Even Nanda 25. ______ not have 26. ______ such joy 27. ______ getting Krishna. His face had the same 28. ______ that 29. ______ on the face of a 30. ______ man after a full meal."
+    "passage": "After this incident I went to Nainital, and returned after nearly a month. I had 21. ______ taken 22. ______ my clothes when I saw Gangu standing 23. ______ a new baby. He was 24. ______ with joy. Even Nanda 25. ______ not have 26. ______ such joy 27. ______ getting Krishna. His face had the same 28. ______ that 29. ______ on the face of a 30. ______ man after a full meal."
   },
   {
     "y": 2017,
     "s": "II",
     "n": 22,
-    "sec": "Reading Comprehension",
+    "sec": "Selecting Words",
     "q": "Choose the word that best fits blank 22.",
     "o": [
       "out",
@@ -325,13 +325,13 @@ var PYQ_2017_II = [
       "on"
     ],
     "ans": 2,
-    "passage": "After this incident I went to Nainital, and returned after nearly a month. I had 21. ______ 22. ______ my clothes when I saw Gangu standing 23. ______ a new baby. He was 24. ______ with joy. Even Nanda 25. ______ not have 26. ______ such joy 27. ______ getting Krishna. His face had the same 28. ______ that 29. ______ on the face of a 30. ______ man after a full meal."
+    "passage": "After this incident I went to Nainital, and returned after nearly a month. I had 21. ______ taken 22. ______ my clothes when I saw Gangu standing 23. ______ a new baby. He was 24. ______ with joy. Even Nanda 25. ______ not have 26. ______ such joy 27. ______ getting Krishna. His face had the same 28. ______ that 29. ______ on the face of a 30. ______ man after a full meal."
   },
   {
     "y": 2017,
     "s": "II",
     "n": 23,
-    "sec": "Reading Comprehension",
+    "sec": "Selecting Words",
     "q": "Choose the word that best fits blank 23.",
     "o": [
       "by",
@@ -340,13 +340,13 @@ var PYQ_2017_II = [
       "at"
     ],
     "ans": 2,
-    "passage": "After this incident I went to Nainital, and returned after nearly a month. I had 21. ______ 22. ______ my clothes when I saw Gangu standing 23. ______ a new baby. He was 24. ______ with joy. Even Nanda 25. ______ not have 26. ______ such joy 27. ______ getting Krishna. His face had the same 28. ______ that 29. ______ on the face of a 30. ______ man after a full meal."
+    "passage": "After this incident I went to Nainital, and returned after nearly a month. I had 21. ______ taken 22. ______ my clothes when I saw Gangu standing 23. ______ a new baby. He was 24. ______ with joy. Even Nanda 25. ______ not have 26. ______ such joy 27. ______ getting Krishna. His face had the same 28. ______ that 29. ______ on the face of a 30. ______ man after a full meal."
   },
   {
     "y": 2017,
     "s": "II",
     "n": 24,
-    "sec": "Reading Comprehension",
+    "sec": "Selecting Words",
     "q": "Choose the word that best fits blank 24.",
     "o": [
       "jumping",
@@ -355,13 +355,13 @@ var PYQ_2017_II = [
       "singing"
     ],
     "ans": 1,
-    "passage": "After this incident I went to Nainital, and returned after nearly a month. I had 21. ______ 22. ______ my clothes when I saw Gangu standing 23. ______ a new baby. He was 24. ______ with joy. Even Nanda 25. ______ not have 26. ______ such joy 27. ______ getting Krishna. His face had the same 28. ______ that 29. ______ on the face of a 30. ______ man after a full meal."
+    "passage": "After this incident I went to Nainital, and returned after nearly a month. I had 21. ______ taken 22. ______ my clothes when I saw Gangu standing 23. ______ a new baby. He was 24. ______ with joy. Even Nanda 25. ______ not have 26. ______ such joy 27. ______ getting Krishna. His face had the same 28. ______ that 29. ______ on the face of a 30. ______ man after a full meal."
   },
   {
     "y": 2017,
     "s": "II",
     "n": 25,
-    "sec": "Reading Comprehension",
+    "sec": "Selecting Words",
     "q": "Choose the word that best fits blank 25.",
     "o": [
       "could",
@@ -370,13 +370,13 @@ var PYQ_2017_II = [
       "ought"
     ],
     "ans": 0,
-    "passage": "After this incident I went to Nainital, and returned after nearly a month. I had 21. ______ 22. ______ my clothes when I saw Gangu standing 23. ______ a new baby. He was 24. ______ with joy. Even Nanda 25. ______ not have 26. ______ such joy 27. ______ getting Krishna. His face had the same 28. ______ that 29. ______ on the face of a 30. ______ man after a full meal."
+    "passage": "After this incident I went to Nainital, and returned after nearly a month. I had 21. ______ taken 22. ______ my clothes when I saw Gangu standing 23. ______ a new baby. He was 24. ______ with joy. Even Nanda 25. ______ not have 26. ______ such joy 27. ______ getting Krishna. His face had the same 28. ______ that 29. ______ on the face of a 30. ______ man after a full meal."
   },
   {
     "y": 2017,
     "s": "II",
     "n": 26,
-    "sec": "Reading Comprehension",
+    "sec": "Selecting Words",
     "q": "Choose the word that best fits blank 26.",
     "o": [
       "experimented",
@@ -385,13 +385,13 @@ var PYQ_2017_II = [
       "heard"
     ],
     "ans": 2,
-    "passage": "After this incident I went to Nainital, and returned after nearly a month. I had 21. ______ 22. ______ my clothes when I saw Gangu standing 23. ______ a new baby. He was 24. ______ with joy. Even Nanda 25. ______ not have 26. ______ such joy 27. ______ getting Krishna. His face had the same 28. ______ that 29. ______ on the face of a 30. ______ man after a full meal."
+    "passage": "After this incident I went to Nainital, and returned after nearly a month. I had 21. ______ taken 22. ______ my clothes when I saw Gangu standing 23. ______ a new baby. He was 24. ______ with joy. Even Nanda 25. ______ not have 26. ______ such joy 27. ______ getting Krishna. His face had the same 28. ______ that 29. ______ on the face of a 30. ______ man after a full meal."
   },
   {
     "y": 2017,
     "s": "II",
     "n": 27,
-    "sec": "Reading Comprehension",
+    "sec": "Selecting Words",
     "q": "Choose the word that best fits blank 27.",
     "o": [
       "at",
@@ -400,13 +400,13 @@ var PYQ_2017_II = [
       "into"
     ],
     "ans": 0,
-    "passage": "After this incident I went to Nainital, and returned after nearly a month. I had 21. ______ 22. ______ my clothes when I saw Gangu standing 23. ______ a new baby. He was 24. ______ with joy. Even Nanda 25. ______ not have 26. ______ such joy 27. ______ getting Krishna. His face had the same 28. ______ that 29. ______ on the face of a 30. ______ man after a full meal."
+    "passage": "After this incident I went to Nainital, and returned after nearly a month. I had 21. ______ taken 22. ______ my clothes when I saw Gangu standing 23. ______ a new baby. He was 24. ______ with joy. Even Nanda 25. ______ not have 26. ______ such joy 27. ______ getting Krishna. His face had the same 28. ______ that 29. ______ on the face of a 30. ______ man after a full meal."
   },
   {
     "y": 2017,
     "s": "II",
     "n": 28,
-    "sec": "Reading Comprehension",
+    "sec": "Selecting Words",
     "q": "Choose the word that best fits blank 28.",
     "o": [
       "light",
@@ -415,13 +415,13 @@ var PYQ_2017_II = [
       "hope"
     ],
     "ans": 1,
-    "passage": "After this incident I went to Nainital, and returned after nearly a month. I had 21. ______ 22. ______ my clothes when I saw Gangu standing 23. ______ a new baby. He was 24. ______ with joy. Even Nanda 25. ______ not have 26. ______ such joy 27. ______ getting Krishna. His face had the same 28. ______ that 29. ______ on the face of a 30. ______ man after a full meal."
+    "passage": "After this incident I went to Nainital, and returned after nearly a month. I had 21. ______ taken 22. ______ my clothes when I saw Gangu standing 23. ______ a new baby. He was 24. ______ with joy. Even Nanda 25. ______ not have 26. ______ such joy 27. ______ getting Krishna. His face had the same 28. ______ that 29. ______ on the face of a 30. ______ man after a full meal."
   },
   {
     "y": 2017,
     "s": "II",
     "n": 29,
-    "sec": "Reading Comprehension",
+    "sec": "Selecting Words",
     "q": "Choose the word that best fits blank 29.",
     "o": [
       "comes",
@@ -430,13 +430,13 @@ var PYQ_2017_II = [
       "shows"
     ],
     "ans": 1,
-    "passage": "After this incident I went to Nainital, and returned after nearly a month. I had 21. ______ 22. ______ my clothes when I saw Gangu standing 23. ______ a new baby. He was 24. ______ with joy. Even Nanda 25. ______ not have 26. ______ such joy 27. ______ getting Krishna. His face had the same 28. ______ that 29. ______ on the face of a 30. ______ man after a full meal."
+    "passage": "After this incident I went to Nainital, and returned after nearly a month. I had 21. ______ taken 22. ______ my clothes when I saw Gangu standing 23. ______ a new baby. He was 24. ______ with joy. Even Nanda 25. ______ not have 26. ______ such joy 27. ______ getting Krishna. His face had the same 28. ______ that 29. ______ on the face of a 30. ______ man after a full meal."
   },
   {
     "y": 2017,
     "s": "II",
     "n": 30,
-    "sec": "Reading Comprehension",
+    "sec": "Selecting Words",
     "q": "Choose the word that best fits blank 30.",
     "o": [
       "starved",
@@ -445,7 +445,7 @@ var PYQ_2017_II = [
       "satisfied"
     ],
     "ans": 0,
-    "passage": "After this incident I went to Nainital, and returned after nearly a month. I had 21. ______ 22. ______ my clothes when I saw Gangu standing 23. ______ a new baby. He was 24. ______ with joy. Even Nanda 25. ______ not have 26. ______ such joy 27. ______ getting Krishna. His face had the same 28. ______ that 29. ______ on the face of a 30. ______ man after a full meal."
+    "passage": "After this incident I went to Nainital, and returned after nearly a month. I had 21. ______ taken 22. ______ my clothes when I saw Gangu standing 23. ______ a new baby. He was 24. ______ with joy. Even Nanda 25. ______ not have 26. ______ such joy 27. ______ getting Krishna. His face had the same 28. ______ that 29. ______ on the face of a 30. ______ man after a full meal."
   },
   {
     "y": 2017,
@@ -647,7 +647,7 @@ var PYQ_2017_II = [
     "s": "II",
     "n": 41,
     "sec": "Fill in the Blanks",
-    "q": "He looks as if he ___ weary.",
+    "q": "He looks as if he __________ weary.",
     "o": [
       "is",
       "was",
@@ -661,7 +661,7 @@ var PYQ_2017_II = [
     "s": "II",
     "n": 42,
     "sec": "Fill in the Blanks",
-    "q": "My house is insured ___ theft and fire.",
+    "q": "My house is insured __________ theft and fire.",
     "o": [
       "for",
       "against",
@@ -675,7 +675,7 @@ var PYQ_2017_II = [
     "s": "II",
     "n": 43,
     "sec": "Fill in the Blanks",
-    "q": "The result of the prolonged discussion was ___.",
+    "q": "The result of the prolonged discussion was __________.",
     "o": [
       "disappointment",
       "disappointing",
@@ -689,7 +689,7 @@ var PYQ_2017_II = [
     "s": "II",
     "n": 44,
     "sec": "Fill in the Blanks",
-    "q": "You are lucky ___ in the 20th century.",
+    "q": "You are lucky __________ in the 20th century.",
     "o": [
       "by being born",
       "to have been born",
@@ -703,7 +703,7 @@ var PYQ_2017_II = [
     "s": "II",
     "n": 45,
     "sec": "Fill in the Blanks",
-    "q": "Sita is true to ___.",
+    "q": "Sita is true to __________.",
     "o": [
       "word",
       "her words",
@@ -717,7 +717,7 @@ var PYQ_2017_II = [
     "s": "II",
     "n": 46,
     "sec": "Fill in the Blanks",
-    "q": "Years ___ since I saw her last.",
+    "q": "Years __________ since I saw her last.",
     "o": [
       "have passed",
       "had passed",
@@ -731,7 +731,7 @@ var PYQ_2017_II = [
     "s": "II",
     "n": 47,
     "sec": "Fill in the Blanks",
-    "q": "When he heard the terrible noise he asked me what was ___ on.",
+    "q": "When he heard the terrible noise he asked me what was __________ on.",
     "o": [
       "happening",
       "being",
@@ -745,7 +745,7 @@ var PYQ_2017_II = [
     "s": "II",
     "n": 48,
     "sec": "Fill in the Blanks",
-    "q": "Could you lend me some money? I am very ___ of cash at the moment.",
+    "q": "Could you lend me some money? I am very __________ of cash at the moment.",
     "o": [
       "down",
       "low",
@@ -759,7 +759,7 @@ var PYQ_2017_II = [
     "s": "II",
     "n": 49,
     "sec": "Fill in the Blanks",
-    "q": "I saw her when she was standing ___ the side of the old statue.",
+    "q": "I saw her when she was standing __________ the side of the old statue.",
     "o": [
       "by",
       "at",
@@ -773,7 +773,7 @@ var PYQ_2017_II = [
     "s": "II",
     "n": 50,
     "sec": "Fill in the Blanks",
-    "q": "True friends never ___ their loved ones in adversity.",
+    "q": "True friends never __________ their loved ones in adversity.",
     "o": [
       "abuse",
       "criticize",
