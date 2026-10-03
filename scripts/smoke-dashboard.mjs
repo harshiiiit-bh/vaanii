@@ -656,40 +656,56 @@ try {
     const second=arena.questionsFor(arena.decode(code),'Smoke Cadet').map(question=>question._id);
     const boardKey='smoke-regression-arena';
     const testEntry={pid:'smoke-player',name:'Smoke Cadet',score:6,seconds:60,total:8,at:1,answers:{}};
-    await arena.sync.submit(boardKey,testEntry);
-    const localRows=JSON.parse(localStorage.getItem('vx_arena_board_'+boardKey)||'[]');
     const originalFetch=window.fetch;
-    let request=null;
+    let submitRequest=null;
+    let readRequest=null;
     window.fetch=(url,options={})=>{
-      request={url:String(url),method:String(options.method||'GET'),body:options.body||null,
-        contentType:options.headers?.['Content-Type']||options.headers?.['content-type']||''};
-      return Promise.resolve({ok:true,json:()=>Promise.resolve({rows:[
-        {code:boardKey,pid:'remote-player',name:'Remote Cadet',score:7,seconds:45,total:8,at:2}
-      ],verified:false,source:'historical'})});
+      const request={
+        url:String(url),
+        method:String(options.method||'GET'),
+        body:options.body||null,
+        contentType:options.headers?.['Content-Type']||options.headers?.['content-type']||''
+      };
+      if(request.url.includes('/rest/v1/rpc/arena_submit_attempt')){
+        submitRequest=request;
+        return Promise.resolve({ok:true,json:()=>Promise.resolve({ok:true})});
+      }
+      if(request.url.includes('/functions/v1/arena-leaderboard')){
+        readRequest=request;
+        return Promise.resolve({ok:true,json:()=>Promise.resolve({rows:[
+          {code:boardKey,pid:'remote-player',name:'Remote Cadet',score:7,seconds:45,total:8,at:2}
+        ],verified:false,source:'historical'})});
+      }
+      return Promise.resolve({ok:true,json:()=>Promise.resolve({})});
     };
     let sharedRows=[];
-    try { sharedRows=await arena.sync.fetch(boardKey); }
-    finally {
+    try {
+      await arena.sync.submit(boardKey,testEntry);
+      sharedRows=await arena.sync.fetch(boardKey);
+    } finally {
       window.fetch=originalFetch;
       localStorage.removeItem('vx_arena_board_'+boardKey);
     }
-    return {code,decoded,first,second,localRows,sharedRows,request,
+    return {code,decoded,first,second,sharedRows,submitRequest,readRequest,
       adapter:arena.sync.name,live:arena.sync.live,shared:arena.sync.shared,
       remoteAdapter:typeof arena.supabaseAdapter};
   });
   assert.equal(arenaSecurity.code.length,32,'Arena match code did not round-trip');
   assert.equal(arenaSecurity.decoded?.seed,482731,'Arena match code lost its seed');
   assert.deepEqual(arenaSecurity.first,arenaSecurity.second,'Arena question selection changed for an identical match seed');
-  assert.equal(arenaSecurity.localRows.length,1,'Arena score was not saved locally on this device');
   assert.equal(arenaSecurity.sharedRows.length,1,'Shared Arena read did not return a historical row');
   assert.equal(arenaSecurity.sharedRows[0].pid,'remote-player','Shared Arena read returned the wrong row');
-  assert.equal(arenaSecurity.adapter,'shared-read','Shared read adapter was not configured');
-  assert.equal(arenaSecurity.live,false,'Shared read must not enable browser score writes');
+  assert.equal(arenaSecurity.adapter,'shared','Shared Arena adapter was not configured');
+  assert.equal(arenaSecurity.live,true,'Shared Arena writer should remain enabled through the validated endpoint');
   assert.equal(arenaSecurity.shared,true,'Arena must identify its shared read-only board');
-  assert.equal(arenaSecurity.request.method,'POST','Shared Arena endpoint must use POST');
-  assert.ok(arenaSecurity.request.url.includes('/functions/v1/arena-leaderboard'),'Shared Arena read did not use the Edge Function');
-  assert.equal(JSON.parse(arenaSecurity.request.body).code,'smoke-regression-arena','Shared Arena read sent the wrong match code');
-  assert.ok(arenaSecurity.request.contentType.toLowerCase().includes('application/json'),'Shared Arena read must send JSON');
+  assert.equal(arenaSecurity.submitRequest.method,'POST','Shared Arena submit endpoint must use POST');
+  assert.ok(arenaSecurity.submitRequest.url.includes('/rest/v1/rpc/arena_submit_attempt'),'Shared Arena submission did not use the validated RPC');
+  assert.equal(JSON.parse(arenaSecurity.submitRequest.body).p_code,'smoke-regression-arena','Shared Arena submission sent the wrong match code');
+  assert.ok(arenaSecurity.submitRequest.contentType.toLowerCase().includes('application/json'),'Shared Arena submission must send JSON');
+  assert.equal(arenaSecurity.readRequest.method,'POST','Shared Arena read endpoint must use POST');
+  assert.ok(arenaSecurity.readRequest.url.includes('/functions/v1/arena-leaderboard'),'Shared Arena read did not use the Edge Function');
+  assert.equal(JSON.parse(arenaSecurity.readRequest.body).code,'smoke-regression-arena','Shared Arena read sent the wrong match code');
+  assert.ok(arenaSecurity.readRequest.contentType.toLowerCase().includes('application/json'),'Shared Arena read must send JSON');
   assert.equal(arenaSecurity.remoteAdapter,'undefined','Browser score writes must not expose the removed Supabase adapter');
   console.log('PASS Arena security: deterministic match, device-local submission, Edge Function historical read and no public writer');
 
