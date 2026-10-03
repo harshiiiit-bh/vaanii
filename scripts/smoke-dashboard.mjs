@@ -1114,11 +1114,13 @@ try {
       });
     });
   });
-  const mobileNavJourney = ['grammar','vocab','pyq','notifications'];
+  const mobileNavJourney = ['grammar','vocab','pyq','dashboard'];
   for (const view of mobileNavJourney) {
     await navPage.locator('#bottomNav button[data-view="' + view + '"]').click();
     await navPage.waitForFunction(v => document.getElementById('view-' + v)?.classList.contains('active'), view);
   }
+  await navPage.evaluate(() => switchView('notifications'));
+  await navPage.waitForFunction(() => document.getElementById('view-notifications')?.classList.contains('active'));
   const journeyState = await navPage.evaluate(() => ({
     view: history.state?.vaaniView,
     url: location.href,
