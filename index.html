@@ -65,6 +65,7 @@
 <link rel="stylesheet" href="vaani-contrast-repair.css?v=20261002-contrast2&v=20261002-recovery1">
 <link rel="stylesheet" href="vaani-test-setup.css?v=20261002-setup1&v=20261002-recovery1">
 <link rel="stylesheet" href="vaani-mobile-deep.css?v=20261004-mobile1">
+<link rel="stylesheet" href="vaani-mobile-redesign-v2.css?v=20261004-mobile2">
 </head>
 <body data-theme="light">
 
@@ -235,11 +236,10 @@
 <!-- BOTTOM NAV (mobile/tablet <1024px) -->
 <nav class="bottomnav" id="bottomNav" aria-label="Primary">
   <button data-view="dashboard" class="active" aria-current="page" onclick="switchView('dashboard')"><span class="bn-ico">🏠</span>Home</button>
-  <button data-view="grammar" onclick="switchView('grammar')"><span class="bn-ico">📘</span>Grammar</button>
+  <button data-view="grammar" onclick="switchView('grammar')"><span class="bn-ico">📘</span>Learn</button>
+  <button data-view="pyq" onclick="switchView('pyq')"><span class="bn-ico">🎯</span>Practice</button>
   <button data-view="vocab" onclick="switchView('vocab')"><span class="bn-ico">🗂️</span>Vocab</button>
-  <button data-view="pyq" onclick="switchView('pyq')"><span class="bn-ico">🎯</span>PYQ</button>
-  <button data-view="notifications" onclick="switchView('notifications')"><span class="bn-ico">📢</span>Updates</button>
-  <button onclick="openMoreSheet()"><span class="bn-ico">☰</span>More</button>
+  <button type="button" onclick="openMoreSheet()"><span class="bn-ico">☰</span>More</button>
 </nav>
 
 <div class="gsearch-overlay" id="gsearchOverlay" role="dialog" aria-modal="true" aria-label="Search Vaani" aria-hidden="true" onclick="if(event.target===this)closeGlobalSearch()">
@@ -1796,5 +1796,6 @@
 <script src="js/vaani-upgrade-core.js?v=20261001-upgrade1&v=20261002-recovery1"></script>
 <script src="js/vaani-character.js?v=20261002-aiclean3&v=20261002-recovery1"></script>
 <script src="js/vaani-character-elite.js?v=20261003-release4&v=20261002-recovery1"></script>
+<script src="js/vaani-mobile-redesign-v2.js?v=20261004-mobile2"></script>
 </body>
 </html>
