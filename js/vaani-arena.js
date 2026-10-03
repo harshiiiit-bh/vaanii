@@ -2428,7 +2428,20 @@
       if (own && typeof own.pid === 'string' && own.pid) {
         var index = out.findIndex(function (row) { return row && row.pid === own.pid; });
         if (index < 0) out.push(own);
-        else if (Number(own.at) >= Number(out[index].at || 0)) out[index] = own;
+        else {
+          // The shared leaderboard intentionally returns only public ranking
+          // fields. Never let that sanitized row erase the local attempt
+          // payload on the device that actually submitted it. This was
+          // especially visible to the host: reopening the result replaced
+          // the host's answers/qSnapshots with the public row, so the host
+          // detail sheet said "detailed breakdown is not available".
+          var shared = out[index] || {};
+          var merged = Object.assign({}, shared);
+          Object.keys(own).forEach(function (key) {
+            if (own[key] !== undefined && own[key] !== null) merged[key] = own[key];
+          });
+          out[index] = merged;
+        }
       }
     }
     return rankRows(out);
