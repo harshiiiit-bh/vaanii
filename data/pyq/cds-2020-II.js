@@ -815,262 +815,262 @@ var PYQ_CDS_2020_II = [
     "y": 2020,
     "s": "II",
     "n": 41,
-    "sec": "Reading Comprehension",
-    "q": "one the most revered member of the committee of enquiry. No error (d)",
+    "sec": "Ordering of Sentences",
+    "q": "S1: The country's economy is growing and would continue to grow at a rapid pace in the coming years. S6: The market share of electrical vehicles increases with increasing availability of infrastructure.",
     "o": [
-      "(a)",
-      "(b)",
-      "(c)",
-      "(d)"
-    ],
-    "ans": 1,
-    "tags": [
-      "CDS",
-      "English",
-      "Reading Comprehension"
-    ],
-    "topic": "Reading Comprehension",
-    "parts": [
-      "one the most revered member",
-      "of the committee of enquiry.",
-      "No error (d)"
-    ],
-    "passage": "Post-colonial cultural analysis has been concerned with the elaboration of theoretical structures that contest the previous dominant western ways of seeing things. A simple analogy would be with feminism, which has involved a comparable kind of project: there was a time when any book you might read, any speech you might hear, any film that you saw, was always told from the point of view of male. The woman was there, but she was always an object, never a subject. From what you would read, or the films you would see, the woman was always the one who was looked at. She was never the observing eye. For centuries it was assumed that women were less intelligent than men and that they did not merit the same degree of education. They were not allowed a vote in the political system. By the same token, any kind of knowledge developed by women was regarded as non- serious, trivial, gossip or alternatively as knowledge that had been discredited by science, such as superstition or traditional practices of childbirth or healing. All these attitudes were part of a larger system in which women were dominated, exploited, and physically abused by men. Slowly, but increasingly, from the end of 18th century, feminists began to contest this situation. The more they contested it, the more it became increasingly obvious that these attitudes extended into the whole of the culture; social relations, politics, law, medicine, the arts, popular and academic knowledge."
-  },
-  {
-    "y": 2020,
-    "s": "II",
-    "n": 42,
-    "sec": "Reading Comprehension",
-    "q": "whether I was interested to joining the group for the trip. No error (d)",
-    "o": [
-      "(a)",
-      "(b)",
-      "(c)",
-      "(d)"
-    ],
-    "ans": 2,
-    "tags": [
-      "CDS",
-      "English",
-      "Reading Comprehension"
-    ],
-    "topic": "Reading Comprehension",
-    "parts": [
-      "whether I was interested",
-      "to joining the group for the trip.",
-      "No error (d)"
-    ],
-    "passage": "Post-colonial cultural analysis has been concerned with the elaboration of theoretical structures that contest the previous dominant western ways of seeing things. A simple analogy would be with feminism, which has involved a comparable kind of project: there was a time when any book you might read, any speech you might hear, any film that you saw, was always told from the point of view of male. The woman was there, but she was always an object, never a subject. From what you would read, or the films you would see, the woman was always the one who was looked at. She was never the observing eye. For centuries it was assumed that women were less intelligent than men and that they did not merit the same degree of education. They were not allowed a vote in the political system. By the same token, any kind of knowledge developed by women was regarded as non- serious, trivial, gossip or alternatively as knowledge that had been discredited by science, such as superstition or traditional practices of childbirth or healing. All these attitudes were part of a larger system in which women were dominated, exploited, and physically abused by men. Slowly, but increasingly, from the end of 18th century, feminists began to contest this situation. The more they contested it, the more it became increasingly obvious that these attitudes extended into the whole of the culture; social relations, politics, law, medicine, the arts, popular and academic knowledge."
-  },
-  {
-    "y": 2020,
-    "s": "II",
-    "n": 43,
-    "sec": "Reading Comprehension",
-    "q": "(d)",
-    "o": [
-      "(a)",
-      "(b)",
-      "(c)",
-      "(d)"
-    ],
-    "ans": 1,
-    "tags": [
-      "CDS",
-      "English",
-      "Reading Comprehension"
-    ],
-    "topic": "Reading Comprehension",
-    "parts": [
-      "",
-      "",
-      "(d)"
-    ],
-    "passage": "Post-colonial cultural analysis has been concerned with the elaboration of theoretical structures that contest the previous dominant western ways of seeing things. A simple analogy would be with feminism, which has involved a comparable kind of project: there was a time when any book you might read, any speech you might hear, any film that you saw, was always told from the point of view of male. The woman was there, but she was always an object, never a subject. From what you would read, or the films you would see, the woman was always the one who was looked at. She was never the observing eye. For centuries it was assumed that women were less intelligent than men and that they did not merit the same degree of education. They were not allowed a vote in the political system. By the same token, any kind of knowledge developed by women was regarded as non- serious, trivial, gossip or alternatively as knowledge that had been discredited by science, such as superstition or traditional practices of childbirth or healing. All these attitudes were part of a larger system in which women were dominated, exploited, and physically abused by men. Slowly, but increasingly, from the end of 18th century, feminists began to contest this situation. The more they contested it, the more it became increasingly obvious that these attitudes extended into the whole of the culture; social relations, politics, law, medicine, the arts, popular and academic knowledge."
-  },
-  {
-    "y": 2020,
-    "s": "II",
-    "n": 44,
-    "sec": "Reading Comprehension",
-    "q": "/ of the late nineteenth century / reached full maturity in the early twentieth century / No error (d).",
-    "o": [
-      "(a)",
-      "(b)",
-      "(c)",
-      "(d)"
+      "SRQP",
+      "RQSP",
+      "QPSR",
+      "QSRP"
     ],
     "ans": 0,
     "tags": [
       "CDS",
       "English",
-      "Reading Comprehension"
+      "Ordering of Sentences"
     ],
-    "topic": "Reading Comprehension",
+    "topic": "Ordering of Sentences",
     "parts": [
-      "/ of the late nineteenth century",
-      "/ reached full maturity in the early twentieth century",
-      "/ No error (d)."
+      "It also provides us an opportunity to grow as manufacturer of electric vehicles.",
+      "According to NITI Aayog (2019), if India reaches an electric vehicles sales penetration, emission and oil savings can be achieved.",
+      "Given the commitments that India has made on the climate front as a nation and on environmental aspects, it is likely that larger and larger share of automobile sector would be in the form of electric vehicles.",
+      "This presents a great opportunity for the automobile industry as the demand for automobiles would only increase."
+    ]
+  },
+  {
+    "y": 2020,
+    "s": "II",
+    "n": 42,
+    "sec": "Ordering of Sentences",
+    "q": "S1: Central government receipts can broadly be divided into non-debt and debt receipts. S6: This is also evident from the composition of non-debt receipts.",
+    "o": [
+      "SRPQ",
+      "RSQP",
+      "PQRS",
+      "QPRS"
     ],
-    "passage": "Post-colonial cultural analysis has been concerned with the elaboration of theoretical structures that contest the previous dominant western ways of seeing things. A simple analogy would be with feminism, which has involved a comparable kind of project: there was a time when any book you might read, any speech you might hear, any film that you saw, was always told from the point of view of male. The woman was there, but she was always an object, never a subject. From what you would read, or the films you would see, the woman was always the one who was looked at. She was never the observing eye. For centuries it was assumed that women were less intelligent than men and that they did not merit the same degree of education. They were not allowed a vote in the political system. By the same token, any kind of knowledge developed by women was regarded as non- serious, trivial, gossip or alternatively as knowledge that had been discredited by science, such as superstition or traditional practices of childbirth or healing. All these attitudes were part of a larger system in which women were dominated, exploited, and physically abused by men. Slowly, but increasingly, from the end of 18th century, feminists began to contest this situation. The more they contested it, the more it became increasingly obvious that these attitudes extended into the whole of the culture; social relations, politics, law, medicine, the arts, popular and academic knowledge."
+    "ans": 0,
+    "tags": [
+      "CDS",
+      "English",
+      "Ordering of Sentences"
+    ],
+    "topic": "Ordering of Sentences",
+    "parts": [
+      "Debt receipts mostly consist of market borrowing and other liabilities which the government is obliged to repay in the future.",
+      "The non-debt receipts comprise of tax revenue, non-tax revenue, recovery of loans and disinvestment receipts.",
+      "The outcomes as reflected in the Provisional Actual figures is lower than the budget estimate owing to reduction in the net tax revenue.",
+      "The Budget 2018-19 targeted significantly high growth in non-debt receipts of the Central Government, which was driven by robust growth."
+    ]
+  },
+  {
+    "y": 2020,
+    "s": "II",
+    "n": 43,
+    "sec": "Ordering of Sentences",
+    "q": "S1: Palaeontology is the study of the remains of dead organisms over enormous spans of time. S6: Faunal analysis gives information about the animal people hunted and domesticated, the age of animal at death, and the diseases that afflicted them.",
+    "o": [
+      "QPRS",
+      "SPQR",
+      "RSPQ",
+      "PQRS"
+    ],
+    "ans": 2,
+    "tags": [
+      "CDS",
+      "English",
+      "Ordering of Sentences"
+    ],
+    "topic": "Ordering of Sentences",
+    "parts": [
+      "Bones provide a great information.",
+      "The distribution of faunal remains (animal bones) at a site can indicate which areas were used for butchering, cooking, eating, bone tool making and refuse dumping.",
+      "Within this discipline, molecular biology and DNA studies have been used to understand hominid evolution.",
+      "Hominid evolution answers the questions about what ancient people looked like, and to plot patterns of migration."
+    ]
+  },
+  {
+    "y": 2020,
+    "s": "II",
+    "n": 44,
+    "sec": "Ordering of Sentences",
+    "q": "S1: Hormones have several functions in the body. S6: The role of insulin in keeping the blood glucose level within the narrow limit is an example of this function.",
+    "o": [
+      "PSRQ",
+      "RSPQ",
+      "SRQP",
+      "QRSP"
+    ],
+    "ans": 0,
+    "tags": [
+      "CDS",
+      "English",
+      "Ordering of Sentences"
+    ],
+    "topic": "Ordering of Sentences",
+    "parts": [
+      "They help to maintain the balance of biological activities in the body.",
+      "Insulin is released in response to the rapid rise in blood glucose level.",
+      "On the other hand hormone glucagon tends to increase the glucose level in the blood.",
+      "The two hormones together regulate the glucose level in the blood."
+    ]
   },
   {
     "y": 2020,
     "s": "II",
     "n": 45,
-    "sec": "Reading Comprehension",
-    "q": "and can pursues his/her interest. No error (d)",
+    "sec": "Ordering of Sentences",
+    "q": "S1: All living things affect the living and non-living things around them. This interdependability needs to be understood when we, humans consume much more than required and abuse nature. S6: Rabbit’s fleas carry the virus which causes myxomatosis, so they can affect the size of the rabbit population.",
     "o": [
-      "(a)",
-      "(b)",
-      "(c)",
-      "(d)"
+      "RSQP",
+      "PSRQ",
+      "QRSP",
+      "SQRP"
     ],
     "ans": 2,
     "tags": [
       "CDS",
       "English",
-      "Reading Comprehension"
+      "Ordering of Sentences"
     ],
-    "topic": "Reading Comprehension",
+    "topic": "Ordering of Sentences",
     "parts": [
-      "",
-      "and can pursues his/her interest. No error",
-      "(d)"
-    ],
-    "passage": "Post-colonial cultural analysis has been concerned with the elaboration of theoretical structures that contest the previous dominant western ways of seeing things. A simple analogy would be with feminism, which has involved a comparable kind of project: there was a time when any book you might read, any speech you might hear, any film that you saw, was always told from the point of view of male. The woman was there, but she was always an object, never a subject. From what you would read, or the films you would see, the woman was always the one who was looked at. She was never the observing eye. For centuries it was assumed that women were less intelligent than men and that they did not merit the same degree of education. They were not allowed a vote in the political system. By the same token, any kind of knowledge developed by women was regarded as non- serious, trivial, gossip or alternatively as knowledge that had been discredited by science, such as superstition or traditional practices of childbirth or healing. All these attitudes were part of a larger system in which women were dominated, exploited, and physically abused by men. Slowly, but increasingly, from the end of 18th century, feminists began to contest this situation. The more they contested it, the more it became increasingly obvious that these attitudes extended into the whole of the culture; social relations, politics, law, medicine, the arts, popular and academic knowledge."
+      "This can also affect the population of fox, if foxes depend on rabbits for food.",
+      "For example, earthworms make burrows and worm casts.",
+      "This act of earthworms affects the soil, and therefore the plants growing in it.",
+      "Rabbit’s fleas carry the virus which causes myxomatosis, so they can affect the size of the rabbit population."
+    ]
   },
   {
     "y": 2020,
     "s": "II",
     "n": 46,
-    "sec": "Reading Comprehension",
-    "q": "in every aspects of its implementation. No error (d)",
+    "sec": "Ordering of Sentences",
+    "q": "S1: The ecosystem of water is complex and many environmental factors are intricately linked. S6: The trees slowly transfer rainwater into the sub-soil and this is critical for sustaining water for months after the rains.",
     "o": [
-      "(a)",
-      "(b)",
-      "(c)",
-      "(d)"
+      "QRSP",
+      "PSRQ",
+      "SRQP",
+      "RQSP"
     ],
-    "ans": 2,
+    "ans": 0,
     "tags": [
       "CDS",
       "English",
-      "Reading Comprehension"
+      "Ordering of Sentences"
     ],
-    "topic": "Reading Comprehension",
+    "topic": "Ordering of Sentences",
     "parts": [
-      "",
-      "in every aspects of its implementation. No error",
-      "(d)"
-    ],
-    "passage": "Post-colonial cultural analysis has been concerned with the elaboration of theoretical structures that contest the previous dominant western ways of seeing things. A simple analogy would be with feminism, which has involved a comparable kind of project: there was a time when any book you might read, any speech you might hear, any film that you saw, was always told from the point of view of male. The woman was there, but she was always an object, never a subject. From what you would read, or the films you would see, the woman was always the one who was looked at. She was never the observing eye. For centuries it was assumed that women were less intelligent than men and that they did not merit the same degree of education. They were not allowed a vote in the political system. By the same token, any kind of knowledge developed by women was regarded as non- serious, trivial, gossip or alternatively as knowledge that had been discredited by science, such as superstition or traditional practices of childbirth or healing. All these attitudes were part of a larger system in which women were dominated, exploited, and physically abused by men. Slowly, but increasingly, from the end of 18th century, feminists began to contest this situation. The more they contested it, the more it became increasingly obvious that these attitudes extended into the whole of the culture; social relations, politics, law, medicine, the arts, popular and academic knowledge."
+      "Thick forests make for excellent catchments.",
+      "The problems we see are because we have undermined these links over decades.",
+      "First, rain and snowfall are the only sources of water — about 99%.",
+      "In the four months of monsoon, there are about 30-35 downpours and the challenge is to hold this water in systems that can last us over 365 days."
+    ]
   },
   {
     "y": 2020,
     "s": "II",
     "n": 47,
-    "sec": "Reading Comprehension",
-    "q": "Among people speaking different languages. No error (d)",
+    "sec": "Ordering of Sentences",
+    "q": "S1: Politics is exciting because people disagree. S6: It is not solitary people who make politics and a good society; it is the people together which make good politics and society.",
     "o": [
-      "(a)",
-      "(b)",
-      "(c)",
-      "(d)"
+      "RSQP",
+      "PQSR",
+      "QSRP",
+      "RSPQ"
     ],
-    "ans": 1,
+    "ans": 0,
     "tags": [
       "CDS",
       "English",
-      "Reading Comprehension"
+      "Ordering of Sentences"
     ],
-    "topic": "Reading Comprehension",
+    "topic": "Ordering of Sentences",
     "parts": [
-      "",
-      "Among people speaking different languages. No error",
-      "(d)"
-    ],
-    "passage": "Post-colonial cultural analysis has been concerned with the elaboration of theoretical structures that contest the previous dominant western ways of seeing things. A simple analogy would be with feminism, which has involved a comparable kind of project: there was a time when any book you might read, any speech you might hear, any film that you saw, was always told from the point of view of male. The woman was there, but she was always an object, never a subject. From what you would read, or the films you would see, the woman was always the one who was looked at. She was never the observing eye. For centuries it was assumed that women were less intelligent than men and that they did not merit the same degree of education. They were not allowed a vote in the political system. By the same token, any kind of knowledge developed by women was regarded as non- serious, trivial, gossip or alternatively as knowledge that had been discredited by science, such as superstition or traditional practices of childbirth or healing. All these attitudes were part of a larger system in which women were dominated, exploited, and physically abused by men. Slowly, but increasingly, from the end of 18th century, feminists began to contest this situation. The more they contested it, the more it became increasingly obvious that these attitudes extended into the whole of the culture; social relations, politics, law, medicine, the arts, popular and academic knowledge."
+      "For Aristotle politics is an attempt to create a good society because politics is, above all, a social activity.",
+      "They also disagree about how such matters should be resolved, how collective decision should be made and who should have a say.",
+      "They disagree about how they should live.",
+      "Who should get what? How should power and other resources be distributed? Should society be based on cooperation or conflict? And so on."
+    ]
   },
   {
     "y": 2020,
     "s": "II",
     "n": 48,
-    "sec": "Reading Comprehension",
-    "q": "whims and fancies on public places. No error (d)",
+    "sec": "Ordering of Sentences",
+    "q": "S1: Regular exercise makes many of the organ systems become more efficient. S6: Different activities require different levels of fitness.",
     "o": [
-      "(a)",
-      "(b)",
-      "(c)",
-      "(d)"
-    ],
-    "ans": 2,
-    "tags": [
-      "CDS",
-      "English",
-      "Reading Comprehension"
-    ],
-    "topic": "Reading Comprehension",
-    "parts": [
-      "",
-      "whims and fancies on public places. No error",
-      "(d)"
-    ],
-    "passage": "Post-colonial cultural analysis has been concerned with the elaboration of theoretical structures that contest the previous dominant western ways of seeing things. A simple analogy would be with feminism, which has involved a comparable kind of project: there was a time when any book you might read, any speech you might hear, any film that you saw, was always told from the point of view of male. The woman was there, but she was always an object, never a subject. From what you would read, or the films you would see, the woman was always the one who was looked at. She was never the observing eye. For centuries it was assumed that women were less intelligent than men and that they did not merit the same degree of education. They were not allowed a vote in the political system. By the same token, any kind of knowledge developed by women was regarded as non- serious, trivial, gossip or alternatively as knowledge that had been discredited by science, such as superstition or traditional practices of childbirth or healing. All these attitudes were part of a larger system in which women were dominated, exploited, and physically abused by men. Slowly, but increasingly, from the end of 18th century, feminists began to contest this situation. The more they contested it, the more it became increasingly obvious that these attitudes extended into the whole of the culture; social relations, politics, law, medicine, the arts, popular and academic knowledge."
-  },
-  {
-    "y": 2020,
-    "s": "II",
-    "n": 49,
-    "sec": "Reading Comprehension",
-    "q": "with the liberalization to her economy. No error (d)",
-    "o": [
-      "(a)",
-      "(b)",
-      "(c)",
-      "(d)"
-    ],
-    "ans": 2,
-    "tags": [
-      "CDS",
-      "English",
-      "Reading Comprehension"
-    ],
-    "topic": "Reading Comprehension",
-    "parts": [
-      "",
-      "with the liberalization to her economy. No error",
-      "(d)"
-    ],
-    "passage": "Post-colonial cultural analysis has been concerned with the elaboration of theoretical structures that contest the previous dominant western ways of seeing things. A simple analogy would be with feminism, which has involved a comparable kind of project: there was a time when any book you might read, any speech you might hear, any film that you saw, was always told from the point of view of male. The woman was there, but she was always an object, never a subject. From what you would read, or the films you would see, the woman was always the one who was looked at. She was never the observing eye. For centuries it was assumed that women were less intelligent than men and that they did not merit the same degree of education. They were not allowed a vote in the political system. By the same token, any kind of knowledge developed by women was regarded as non- serious, trivial, gossip or alternatively as knowledge that had been discredited by science, such as superstition or traditional practices of childbirth or healing. All these attitudes were part of a larger system in which women were dominated, exploited, and physically abused by men. Slowly, but increasingly, from the end of 18th century, feminists began to contest this situation. The more they contested it, the more it became increasingly obvious that these attitudes extended into the whole of the culture; social relations, politics, law, medicine, the arts, popular and academic knowledge."
-  },
-  {
-    "y": 2020,
-    "s": "II",
-    "n": 50,
-    "sec": "Reading Comprehension",
-    "q": "Where rainfall is unequally distributed throughout the seasons. No error (d)",
-    "o": [
-      "(a)",
-      "(b)",
-      "(c)",
-      "(d)"
+      "QRSP",
+      "RSPQ",
+      "PSQR",
+      "SQRP"
     ],
     "ans": 1,
     "tags": [
       "CDS",
       "English",
-      "Reading Comprehension"
+      "Ordering of Sentences"
     ],
-    "topic": "Reading Comprehension",
+    "topic": "Ordering of Sentences",
     "parts": [
-      "",
-      "Where rainfall is unequally distributed throughout the seasons. No error",
-      "(d)"
-    ],
-    "passage": "Post-colonial cultural analysis has been concerned with the elaboration of theoretical structures that contest the previous dominant western ways of seeing things. A simple analogy would be with feminism, which has involved a comparable kind of project: there was a time when any book you might read, any speech you might hear, any film that you saw, was always told from the point of view of male. The woman was there, but she was always an object, never a subject. From what you would read, or the films you would see, the woman was always the one who was looked at. She was never the observing eye. For centuries it was assumed that women were less intelligent than men and that they did not merit the same degree of education. They were not allowed a vote in the political system. By the same token, any kind of knowledge developed by women was regarded as non- serious, trivial, gossip or alternatively as knowledge that had been discredited by science, such as superstition or traditional practices of childbirth or healing. All these attitudes were part of a larger system in which women were dominated, exploited, and physically abused by men. Slowly, but increasingly, from the end of 18th century, feminists began to contest this situation. The more they contested it, the more it became increasingly obvious that these attitudes extended into the whole of the culture; social relations, politics, law, medicine, the arts, popular and academic knowledge."
+      "It can improve your strength; make your body more flexible and less likely to suffer from sprain. It can also improve your endurance.",
+      "It can also improve your endurance.",
+      "It also uses up energy and helps to prevent large amounts of fat building up in the body.",
+      "Exercise can increase your fitness in three ways."
+    ]
   },
+  {
+    "y": 2020,
+    "s": "II",
+    "n": 49,
+    "sec": "Ordering of Sentences",
+    "q": "S1: On increasing the temperature of solids, the kinetic energy of the particles increases. S6: The temperature at which a solid melts to become a liquid at the atmospheric pressure is called its melting point.",
+    "o": [
+      "QSRP",
+      "QRSP",
+      "PRSQ",
+      "SPRQ"
+    ],
+    "ans": 0,
+    "tags": [
+      "CDS",
+      "English",
+      "Ordering of Sentences"
+    ],
+    "topic": "Ordering of Sentences",
+    "parts": [
+      "A stage is reached when the solid melts and is converted to a liquid.",
+      "Due to the increase in kinetic energy, the particles start vibrating with greater speed.",
+      "The particles leave their fixed positions and start moving more freely.",
+      "The energy supplied by heat overcomes the forces of attraction between the particles."
+    ]
+  },
+  {
+    "y": 2020,
+    "s": "II",
+    "n": 50,
+    "sec": "Ordering of Sentences",
+    "q": "S1: Things are often not what they seem. S6: This happened without you even knowing it. So imagine the changes that occur to this earth and humanity.",
+    "o": [
+      "QRPS",
+      "RQPS",
+      "PQRS",
+      "SPRQ"
+    ],
+    "ans": 3,
+    "tags": [
+      "CDS",
+      "English",
+      "Ordering of Sentences"
+    ],
+    "topic": "Ordering of Sentences",
+    "parts": [
+      "But you are really not, because the Milky Way galaxy, of which you are a part, is moving through space at 2.1 million kilometre an hour.",
+      "So in roughly twenty second that it would have taken you to read this paragraph, you have already moved thousands of kilometre.",
+      "And that is without taking into account the effects of earth's rotation on its own axis, its orbiting around the sun and sun’s journey around the Milky Way.",
+      "As you read this sentence, perhaps sitting in a comfortable chair in your study, you would probably consider yourself at rest."
+    ]
+  }
   {
     "y": 2020,
     "s": "II",
