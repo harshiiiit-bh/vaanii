@@ -2114,7 +2114,9 @@
       strongest:sectionList[0]||null,
       weakest:focus[0]||null,
       sections:sectionList,
-      mistakes:mistakes.slice(0,8)
+      mistakeCount:mistakes.length,
+      mistakes:mistakes,
+      mistakePreview:mistakes.slice(0,8)
     };
   }
 
@@ -2208,7 +2210,7 @@
         var intelHead=el('div','vx-arena-intelligence-head');
         intelHead.innerHTML='<div><span class="vx-arena-intelligence-kicker">VAANI INTELLIGENCE</span><h3>What this attempt tells you</h3><p>Your result is now converted into concrete study targets.</p></div>';
         var intelActions=el('div','vx-arena-intelligence-actions');
-        var drill=el('button','vx-btn primary','Retry '+insights.mistakes.length+' mistake'+(insights.mistakes.length===1?'':'s'));
+        var drill=el('button','vx-btn primary','Retry '+insights.mistakeCount+' mistake'+(insights.mistakeCount===1?'':'s'));
         drill.type='button';
         drill.disabled=!insights.mistakes.length;
         drill.addEventListener('click',startMistakeDrill);
@@ -2246,10 +2248,10 @@
           intel.appendChild(sections);
         }
 
-        if(insights.mistakes.length){
+        if(insights.mistakeCount){
           var misses=el('div','vx-arena-intel-mistakes');
           misses.innerHTML='<div class="vx-arena-intel-subhead"><span>REVIEW QUEUE</span><small>the first items VAANI recommends revisiting</small></div>';
-          insights.mistakes.slice(0,5).forEach(function(item){
+          insights.mistakePreview.slice(0,5).forEach(function(item){
             var row=el('button','vx-arena-intel-mistake');
             row.type='button';
             row.innerHTML='<span>Q'+item.index+'</span><span><strong>'+esc(item.q.sec||item.q._exam||'Mixed')+'</strong><small>'+(item.status==='skipped'?'Skipped':'Incorrect')+'</small></span><b>Review →</b>';
