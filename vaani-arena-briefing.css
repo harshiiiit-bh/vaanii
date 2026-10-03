@@ -1062,3 +1062,18 @@ body[data-theme="dark"] #view-games .vx-arena-intel-card{background:rgba(255,255
   }
   #view-games .vx-question-part-row p{font-size:.82rem}
 }
+
+
+/* ============================================================
+   MOBILE BRIEFING CTA — keep the Begin match action above the
+   long rules block so the primary action is visible sooner.
+============================================================ */
+@media(max-width:720px){
+  .vx-briefing-lower{
+    display:flex;
+    flex-direction:column;
+  }
+  .vx-briefing-deploy{
+    order:-1;
+  }
+}
