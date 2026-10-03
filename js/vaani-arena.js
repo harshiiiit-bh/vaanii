@@ -2039,8 +2039,9 @@
 
   function questionPromptHtml(q){
     if(Array.isArray(q.parts)&&q.parts.length){
-      var labels = (q.sec||'').indexOf('Ordering of Words')>=0 ? ['P','Q','R','S'] : ['a','b','c','d'];
-      var title = (q.sec||'').indexOf('Ordering of Words')>=0
+      var orderingParts = /Ordering of (Words|Sentences)/i.test(q.sec||'');
+      var labels = orderingParts ? ['P','Q','R','S'] : ['a','b','c','d'];
+      var title = orderingParts
         ? '<div class="vx-question-parts-kicker">ARRANGE THESE PARTS</div>'
         : '<div class="vx-question-parts-kicker">SPOTTING ERROR · PARTS</div>';
       var rows=q.parts.map(function(part,i){
