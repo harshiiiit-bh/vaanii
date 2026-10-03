@@ -286,7 +286,7 @@ try {
         const normalizeSegmentText = value => String(value).toLocaleLowerCase()
           .replace(/[“”‘’]/g, "'").replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
         const reconstructablePrompt = explicitParts
-          ? String(q.q).replace(/\s*\|\s*no\s+error\.?\s*$/i, '')
+          ? String(q.q).replace(/\s*(?:\|\s*)?no\s+error\.?\s*$/i, '')
           : q.q;
         if (explicitParts && normalizeSegmentText(q.parts.join(' ')) !== normalizeSegmentText(reconstructablePrompt)) {
           throw new Error('Spotting Errors parts do not reconstruct the sentence: ' + at);
@@ -730,14 +730,13 @@ try {
     '.vx-invite-action',
     '.vx-invite-copy-row',
     '.vx-invite-action',
-    'ARENA_RECOVERY_KEY',
-    'function arenaAnalysis',
-    'function startMistakeDrill',
-    'SESSION RECOVERED',
     'vx-arena-intelligence',
     'vx-arena-practice-complete'
   ]) {
     if (!arenaCss.includes(marker)) throw new Error('Arena redesign style is missing: ' + marker);
+  }
+  for (const marker of ['ARENA_RECOVERY_KEY','function arenaAnalysis','function startMistakeDrill','SESSION RECOVERED']) {
+    if (!arena.includes(marker)) throw new Error('Arena runtime integrity marker is missing: ' + marker);
   }
   if (!/hostName:\s*matchHostName\(m\)/.test(arena)) throw new Error('Arena recent-match records must retain host identity.');
   if (!arena.includes('Copy invite link')) throw new Error('Arena host invite link control is missing.');
