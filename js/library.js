@@ -9,7 +9,8 @@
 /* ================= PORTABLE STORAGE LAYER ================= */
 /* Works inside Claude (window.storage) AND when exported to GitHub Pages,
    opened locally, or shared via WhatsApp (falls back to localStorage). */
-const INSIDE_CLAUDE = !!(window.storage && typeof window.storage.get === 'function');
+const FORCE_LOCAL_ACCOUNT_STORAGE = /(?:^|\\.)github\\.io$/i.test(location.hostname) || location.protocol === 'file:';
+const INSIDE_CLAUDE = !FORCE_LOCAL_ACCOUNT_STORAGE && !!(window.storage && typeof window.storage.get === 'function');
 const Store = INSIDE_CLAUDE ? window.storage : {
   async get(key){
     const raw = localStorage.getItem('vbv_'+key);
