@@ -660,3 +660,142 @@
     padding-right:82px!important;
   }
 }
+
+
+/* ==========================================================
+   MOBILE COMMAND ROOMS
+   A finite, app-like mobile information architecture.
+   Desktop/tablet are untouched.
+   ========================================================== */
+@media (max-width:767px){
+  body.mobile-rooms-mode #mainContent{
+    padding-bottom:calc(88px + env(safe-area-inset-bottom));
+  }
+
+  .mobile-room-switcher{
+    position:sticky;
+    top:0;
+    z-index:7600;
+    margin:0 12px 8px;
+    padding:5px;
+    border:1px solid var(--line);
+    border-radius:16px;
+    background:color-mix(in srgb,var(--bg) 94%,transparent);
+    box-shadow:0 8px 24px rgba(0,0,0,.12);
+    backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px);
+  }
+
+  .mobile-room-switcher .mrs-track{
+    display:flex;
+    gap:5px;
+    overflow-x:auto;
+    scrollbar-width:none;
+    overscroll-behavior-x:contain;
+    -webkit-overflow-scrolling:touch;
+  }
+  .mobile-room-switcher .mrs-track::-webkit-scrollbar{display:none}
+
+  .mobile-room-switcher .mrs-tab{
+    flex:0 0 auto;
+    min-width:78px;
+    min-height:38px!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    gap:6px;
+    padding:6px 10px!important;
+    border:1px solid transparent!important;
+    border-radius:11px!important;
+    background:transparent!important;
+    color:var(--muted)!important;
+    font-family:var(--mono)!important;
+    font-size:.56rem!important;
+    letter-spacing:.07em;
+    text-transform:uppercase;
+    white-space:nowrap;
+  }
+  .mobile-room-switcher .mrs-tab.active{
+    border-color:color-mix(in srgb,var(--gold) 48%,var(--line))!important;
+    background:color-mix(in srgb,var(--gold) 11%,var(--panel2))!important;
+    color:var(--text)!important;
+    box-shadow:inset 0 0 0 1px rgba(201,162,75,.06);
+  }
+  .mobile-room-switcher .mrs-icon{
+    color:var(--gold);
+    font-size:.78rem;
+    line-height:1;
+  }
+  .mobile-room-switcher .mrs-label{
+    line-height:1;
+  }
+  .mobile-room-switcher .mrs-progress{
+    height:2px;
+    margin:4px 6px 0;
+    overflow:hidden;
+    border-radius:999px;
+    background:color-mix(in srgb,var(--line) 75%,transparent);
+  }
+  .mobile-room-switcher .mrs-progress i{
+    display:block;
+    width:25%;
+    height:100%;
+    border-radius:999px;
+    background:var(--gold);
+    transition:width .24s ease;
+  }
+
+  /* Inactive rooms are genuinely removed from layout.
+     This is the core scroll reduction: the page contains only one room at a time. */
+  #mainContent .mobile-room-hidden{
+    display:none!important;
+    visibility:hidden!important;
+    pointer-events:none!important;
+  }
+
+  /* The view bar becomes a compact title row; the room strip below it
+     is the actual mobile navigation instead of another "Sections" menu. */
+  .mobile-viewbar{
+    margin-bottom:7px!important;
+  }
+  .mobile-viewbar-btn{
+    display:none!important;
+  }
+
+  /* Mobile grammar: quick actions were only extra vertical chrome. */
+  #view-grammar .gt-quickactions{
+    display:none!important;
+  }
+
+  /* Keep active dashboard room content breathing without creating
+     giant blank gaps from hidden sibling cards. */
+  body.mobile-rooms-mode #view-dashboard .vd-briefing{
+    margin-top:7px!important;
+  }
+  body.mobile-rooms-mode #view-dashboard .vd-focus-sprint{
+    margin-top:8px!important;
+  }
+
+  /* Swipe affordance without adding another button row. */
+  body.mobile-rooms-mode .mobile-room-switcher::after{
+    content:'SWIPE ←  →';
+    display:block;
+    text-align:center;
+    margin-top:3px;
+    color:var(--muted2);
+    font:600 .42rem var(--mono);
+    letter-spacing:.15em;
+    opacity:.6;
+  }
+
+  @media(max-width:390px){
+    .mobile-room-switcher{
+      margin-left:8px;
+      margin-right:8px;
+    }
+    .mobile-room-switcher .mrs-tab{
+      min-width:72px;
+      padding-inline:8px!important;
+    }
+  }
+}
