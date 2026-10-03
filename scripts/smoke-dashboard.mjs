@@ -103,7 +103,10 @@ async function clickMainView(name) {
     const moreLabel = moreLabels[name];
     if (moreLabel && await moreButton.isVisible()) {
       await moreButton.click();
-      await page.locator('#sheetBody .sheet-menu-item').filter({ hasText: moreLabel }).click();
+      await page.waitForSelector('#moreSheet.show');
+      const modernItem=page.locator('#sheetBody .mobile-more-item').filter({hasText:moreLabel});
+      if (await modernItem.count()) await modernItem.first().click();
+      else await page.locator('#sheetBody .sheet-menu-item').filter({ hasText: moreLabel }).click();
     } else {
       throw new Error('No mobile navigation entry is available for ' + name);
     }
