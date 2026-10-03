@@ -2128,17 +2128,87 @@
   }
 
   function questionPromptHtml(q){
-    if(Array.isArray(q.parts)&&q.parts.length){
-      var labels = (q.sec||'').indexOf('Ordering of Words')>=0 ? ['P','Q','R','S'] : ['a','b','c','d'];
-      var title = (q.sec||'').indexOf('Ordering of Words')>=0
-        ? '<div class="vx-question-parts-kicker">ARRANGE THESE PARTS</div>'
-        : '<div class="vx-question-parts-kicker">SPOTTING ERROR · PARTS</div>';
+    /* The main PYQ engine already knows how to safely split:
+       - S1/S6 + P/Q/R/S sentence-arrangement questions
+       - P/Q/R/S-only ordering questions
+       - spotting-error fragments
+       Reuse that parser here so Arena and the normal PYQ view never disagree. */
+    function renderBlocks(blocks){
+      if(!Array.isArray(blocks)||!blocks.length) return '';
+      var fixed=[], jumbled=[];
+      blocks.forEach(function(block){
+        var label=String(block&&block.label||'').trim().toUpperCase();
+        var text=String(block&&block.text||'').trim();
+        if(!text)return;
+        if(/^S(?:1|6)$/.test(label)) fixed.push({label:label,text:text});
+        else if(/^[PQRS]$/.test(label)) jumbled.push({label:label,text:text});
+        else jumbled.push({label:label,text:text});
+      });
+      var html='';
+      if(fixed.length){
+        html += '<div class="vx-arrange-section">' +
+          '<div class="vx-arrange-kicker">FIXED SENTENCES</div>' +
+          '<div class="vx-question-parts vx-fixed-parts">' +
+          fixed.map(function(block){
+            return '<div class="vx-question-part-row"><span>'+esc(block.label)+'</span><p>'+esc(block.text)+'</p></div>';
+          }).join('') +
+          '</div></div>';
+      }
+      if(jumbled.length){
+        html += '<div class="vx-arrange-section">' +
+          '<div class="vx-arrange-kicker">' +
+          (fixed.length ? 'ARRANGE P–Q–R–S BETWEEN THEM' : 'ARRANGE THESE PARTS') +
+          '</div>' +
+          '<div class="vx-question-parts vx-jumbled-parts">' +
+          jumbled.map(function(block){
+            return '<div class="vx-question-part-row"><span>'+esc(block.label)+'</span><p>'+esc(block.text)+'</p></div>';
+          }).join('') +
+          '</div></div>';
+      }
+      return html;
+    }
+
+    /* Spotting errors: explicitly label A/B/C(/D) so the sentence is
+       never presented as one long unlabeled line. */
+    var sec = String(q && (q._sourceSec || q.sec) || '').trim().toLowerCase();
+    if(sec === 'spotting errors' && typeof pyqSpottingParts === 'function'){
+      var spottingParts = pyqSpottingParts(q);
+      if(Array.isArray(spottingParts) && spottingParts.length){
+        var spottingRows = spottingParts.map(function(part,i){
+          var label=String.fromCharCode(97+i);
+          return '<div class="vx-question-part-row vx-error-part-row"><span>'+esc(label)+'</span><p>'+esc(part)+'</p></div>';
+        }).join('');
+        return '<div class="vx-arrange-section">' +
+          '<div class="vx-arrange-kicker">SPOTTING ERROR · IDENTIFY THE WRONG PART</div>' +
+          '<div class="vx-question-parts vx-error-parts">'+spottingRows+'</div>' +
+          '</div>';
+      }
+    }
+
+    /* PQRS / S1-S6: prefer the canonical parser from app.js. */
+    if(typeof pyqLabeledBlocks === 'function'){
+      try{
+        var parsed = pyqLabeledBlocks(q);
+        var parsedHtml = renderBlocks(parsed);
+        if(parsedHtml) return parsedHtml;
+      }catch(e){}
+    }
+
+    /* Fallback for legacy structured data. */
+    if(Array.isArray(q.parts) && q.parts.length){
+      var labels = sec.indexOf('ordering of words') >= 0 ? ['P','Q','R','S'] : ['a','b','c','d'];
       var rows=q.parts.map(function(part,i){
         var label=labels[i]||String(i+1);
         return '<div class="vx-question-part-row"><span>'+esc(label)+'</span><p>'+esc(part)+'</p></div>';
       }).join('');
-      return title+'<div class="vx-question-parts">'+rows+'</div>';
+      return '<div class="vx-arrange-section">' +
+        '<div class="vx-arrange-kicker">'+
+          (sec.indexOf('ordering') >= 0 ? 'ARRANGE THESE PARTS' : 'QUESTION PARTS')+
+        '</div>' +
+        '<div class="vx-question-parts">'+rows+'</div>' +
+      '</div>';
     }
+
     return (q.keyword ? '<b>' + esc(q.keyword) + '</b> — ' : '') + esc(q.q);
   }
 
