@@ -2380,7 +2380,7 @@
     var seconds=Math.min(m.seconds,Math.round((Date.now()-r.startedAt)/1000));
     var entry={
       pid:playerId(),name:playerName(),score:score,
-      avatar:profileAvatarSnapshot(),seconds:seconds,total:r.questions.length,
+      avatar: profileAvatarSnapshot(),seconds:seconds,total:r.questions.length,
       correct:correctCount,
       incorrect:incorrectCount,
       skipped:skippedCount,
