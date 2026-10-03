@@ -21,7 +21,7 @@
   var A = VX.arena = {};
 
   var MAX_PLAYERS = 100;
-  var CODE_VERSION = 2;
+  var CODE_VERSION = 3;
   var EPOCH = Date.UTC(2024, 0, 1) / 60000; // minutes since 2024-01-01, keeps codes short
   var NEG_MARKS = [0, -1 / 3, -1 / 2, -1]; // index stored in the code -> fraction lost per wrong answer
   var NEG_LABELS = ['No penalty', '&minus;1/3', '&minus;1/2', '&minus;1'];
@@ -81,7 +81,8 @@
      "shuffle the order per player". New exams just get appended to
      SRC_CODES — nothing else about the layout needs to change.
      --------------------------------------------------------- */
-  var SRC_CODES = ['NDA', 'CDS', 'AFCAT', 'BOTH'];
+  var SRC_CODES = ['NDA', 'CDS', 'AFCAT', 'NDA+CDS', 'NDA+AFCAT', 'CDS+AFCAT', 'BOTH'];
+  var LEGACY_SRC_CODES = ['NDA', 'CDS', 'AFCAT', 'BOTH'];
 
   /* Two-character FNV-1a check. One mistyped character must never
      decode into a different but valid match — that would quietly put
@@ -101,6 +102,19 @@
      0 means "no filter" (Mixed types / Any paper). Those lists come from
      the bundled question data, which is identical on every device — same
      assumption the seeded shuffle already relies on. */
+  function sourceLabel(source) {
+    return source === 'BOTH' ? 'NDA+CDS+AFCAT' : String(source || 'NDA');
+  }
+  function sourceExamCodes(source) {
+    return sourceLabel(source).split('+').filter(Boolean);
+  }
+  function normalizedSourceFromCodes(codes) {
+    var wanted = {}, ordered = ['NDA','CDS','AFCAT'], out = [];
+    (Array.isArray(codes) ? codes : []).forEach(function (code) { wanted[code] = true; });
+    ordered.forEach(function (code) { if (wanted[code]) out.push(code); });
+    return out.length === 3 ? 'BOTH' : (out.join('+') || 'NDA');
+  }
+
   A.encode = function (m) {
     var srcIdx = SRC_CODES.indexOf(m.source);
     if (srcIdx < 0) srcIdx = SRC_CODES.indexOf('BOTH');
@@ -133,12 +147,24 @@
     if (code.length !== 32) return null;
     var body = code.slice(0, 30);
     if (checksum(body) !== code.slice(30)) return null;
+
     var v = unb36(body.slice(0, 1));
-    if (v !== CODE_VERSION) return null;
+    if (v !== 2 && v !== CODE_VERSION) return null;
     var srcIdx = unb36(body.slice(1, 2));
-    var shuffleOrder = srcIdx >= SRC_CODES.length;
-    if (shuffleOrder) srcIdx -= SRC_CODES.length;
-    var source = SRC_CODES[srcIdx] || 'BOTH';
+    var sourceCodes;
+    var shuffleOrder;
+
+    if (v === 2) {
+      sourceCodes = LEGACY_SRC_CODES;
+      shuffleOrder = srcIdx >= sourceCodes.length;
+      if (shuffleOrder) srcIdx -= sourceCodes.length;
+    } else {
+      sourceCodes = SRC_CODES;
+      shuffleOrder = srcIdx >= sourceCodes.length;
+      if (shuffleOrder) srcIdx -= sourceCodes.length;
+    }
+
+    var source = sourceCodes[srcIdx] || 'BOTH';
     var typeIdx = unb36(body.slice(22, 24));
     var paperIdx = unb36(body.slice(24, 27));
     var types = typesFor(source), papers = papersFor(source);
@@ -154,7 +180,8 @@
       type: typeIdx > 0 ? (types[typeIdx - 1] || null) : null,
       paperKey: paperIdx > 0 ? ((papers[paperIdx - 1] || {}).key || null) : null,
       perQSeconds: unb36(body.slice(27, 29)),
-      negMark: unb36(body.slice(29, 30))
+      negMark: unb36(body.slice(29, 30)),
+      codeVersion: v
     };
     if (!m.count || !m.seconds) return null;
     return m;
@@ -174,11 +201,24 @@
 
   function paperKeyOf(q) { return String(q._exam || '') + '|' + String(q.s || '') + '|' + String(q.y || ''); }
 
+  function poolForSource(source) {
+    var codes = sourceExamCodes(source), merged = [], seen = {};
+    codes.forEach(function (code) {
+      var pool = VX.poolFor ? VX.poolFor(code) : sharedPYQAll();
+      pool.forEach(function (q) {
+        var id = String(q._id || '');
+        if (!seen[id]) { seen[id] = true; merged.push(q); }
+      });
+    });
+    return merged;
+  }
+  A.poolForSource = poolForSource;
+
   /* Distinct question types ("sec") available in a bank, alphabetical —
      same bundled data on every device means this list, and therefore
      its indices, line up host-to-joiner exactly like the seeded shuffle does. */
   function typesFor(source) {
-    var pool = VX.poolFor ? VX.poolFor(source) : sharedPYQAll();
+    var pool = poolForSource(source);
     var seen = {}, out = [];
     pool.forEach(function (q) { if (q.sec && !seen[q.sec]) { seen[q.sec] = true; out.push(q.sec); } });
     out.sort();
@@ -187,7 +227,7 @@
 
   /* Distinct papers (exam + session + year) in a bank, newest first. */
   function papersFor(source) {
-    var pool = VX.poolFor ? VX.poolFor(source) : sharedPYQAll();
+    var pool = poolForSource(source);
     var seen = {}, out = [];
     pool.forEach(function (q) {
       var key = paperKeyOf(q);
@@ -210,11 +250,11 @@
     return pool;
   }
   A.poolForDraft = function (source, type, paperKey) {
-    return applyFilters(VX.poolFor ? VX.poolFor(source) : sharedPYQAll(), type, paperKey);
+    return applyFilters(poolForSource(source), type, paperKey);
   };
 
   A.questionsFor = function (match, playerName) {
-    var pool = (VX.poolFor ? VX.poolFor(match.source) : sharedPYQAll());
+    var pool = poolForSource(match.source);
     pool = applyFilters(pool, match.type, match.paperKey);
     // sort first so the starting order is identical everywhere,
     // regardless of the order papers happened to load in
@@ -723,12 +763,23 @@
     function draw() {
       form.innerHTML = '';
       var avail = VX.availableSources ? VX.availableSources() : [];
-      var totalAll = avail.reduce(function (sum, a) { return sum + Number(a.count || 0); }, 0);
-      var sourceCodes = avail.map(function (a) { return a.code; });
-      if (avail.length > 1) sourceCodes.push('BOTH');
-      if (!sourceCodes.length) sourceCodes = ['NDA'];
+      var examCodes = avail.map(function (a) { return a.code; }).filter(function (code) {
+        return code === 'NDA' || code === 'CDS' || code === 'AFCAT';
+      });
+      if (!examCodes.length) examCodes = ['NDA'];
 
-      if (sourceCodes.indexOf(d.source) < 0) d.source = sourceCodes[0];
+      function selectedExamCodes() {
+        var picked = sourceExamCodes(d.source).filter(function (code) { return examCodes.indexOf(code) >= 0; });
+        if (!picked.length) picked = [examCodes[0]];
+        return ['NDA','CDS','AFCAT'].filter(function (code) { return picked.indexOf(code) >= 0; });
+      }
+      function syncDraftSource(codes) {
+        d.source = normalizedSourceFromCodes(codes);
+      }
+
+      var pickedCodes = selectedExamCodes();
+      syncDraftSource(pickedCodes);
+
       var typeOptsRaw = typesFor(d.source);
       if (d.type && typeOptsRaw.indexOf(d.type) < 0) d.type = null;
       var paperOptsRaw = papersFor(d.source);
@@ -745,7 +796,7 @@
         '<div class="vx-deploy-summary-main">' +
           '<span class="vx-deploy-summary-kicker">READY TO DEPLOY</span>' +
           '<strong id="vxDeployHeadline">' + esc(d.count + ' questions · ' + timeLabel(seconds)) + '</strong>' +
-          '<span id="vxDeployPool">' + esc((d.source === 'BOTH' ? 'Combined' : d.source) + ' · ' + max + ' available') + '</span>' +
+          '<span id="vxDeployPool">' + esc(sourceLabel(d.source).replace(/\+/g, ' + ') + ' · ' + max + ' available') + '</span>' +
         '</div>' +
         '<div class="vx-deploy-summary-grid">' +
           '<div><span>HOST</span><strong>' + esc(hostDisplay) + '</strong></div>' +
@@ -756,21 +807,58 @@
 
       /* 01 — pool */
       var pool = setupSection('01 · QUESTION SELECTION', 'Pick exactly what the squad will face',
-        'The seed keeps the selected question set identical across every device. Filters only change the pool before the match is created.');
+        'Click two or more exam banks to combine them. The seed locks the combined question set identically across every device. Filters only change the pool before the match is created.');
       var sourceGrid = el('div', 'vx-arena-source-grid');
-      sourceCodes.forEach(function (code) {
-        var count = code === 'BOTH' ? totalAll : ((avail.filter(function (a) { return a.code === code; })[0] || {}).count || 0);
-        var card = el('button', 'vx-arena-source-card' + (d.source === code ? ' is-selected' : ''));
+      var sourceStatus = el('div', 'vx-arena-source-selection');
+      sourceStatus.innerHTML =
+        '<span class="vx-arena-source-selection-dot"></span>' +
+        '<strong>' + pickedCodes.length + ' bank' + (pickedCodes.length === 1 ? '' : 's') + ' selected</strong>' +
+        '<span>' + esc(pickedCodes.join(' + ')) + '</span>';
+      pool.appendChild(sourceStatus);
+
+      examCodes.forEach(function (code) {
+        var item = avail.filter(function (a) { return a.code === code; })[0] || {};
+        var selected = pickedCodes.indexOf(code) >= 0;
+        var card = el('button', 'vx-arena-source-card' + (selected ? ' is-selected' : ''));
         card.type = 'button';
         card.innerHTML =
-          '<span class="vx-arena-source-icon">' + (code === 'NDA' ? 'N' : code === 'CDS' ? 'C' : code === 'AFCAT' ? 'A' : 'N+C+A') + '</span>' +
-          '<span class="vx-arena-source-name">' + esc(code === 'BOTH' ? 'Combined bank' : code) + '</span>' +
-          '<span class="vx-arena-source-count">' + esc(String(count)) + ' questions</span>' +
+          '<span class="vx-arena-source-icon">' + (code === 'NDA' ? 'N' : code === 'CDS' ? 'C' : 'A') + '</span>' +
+          '<span class="vx-arena-source-name">' + esc(code) + '</span>' +
+          '<span class="vx-arena-source-count">' + esc(String(Number(item.count || 0))) + ' questions</span>' +
           '<span class="vx-arena-source-check">✓</span>';
-        card.setAttribute('aria-pressed', String(d.source === code));
-        card.addEventListener('click', function () { d.source = code; draw(); });
+        card.setAttribute('aria-pressed', String(selected));
+        card.setAttribute('aria-label', code + (selected ? ' selected' : ' not selected'));
+        card.addEventListener('click', function () {
+          var next = pickedCodes.filter(function (name) { return name !== code; });
+          if (!selected) next.push(code);
+          if (!next.length) return;
+          syncDraftSource(next);
+          draw();
+        });
         sourceGrid.appendChild(card);
       });
+
+      if (examCodes.length === 3) {
+        var allSelected = d.source === 'BOTH';
+        var totalAll = examCodes.reduce(function (sum, code) {
+          var item = avail.filter(function (a) { return a.code === code; })[0] || {};
+          return sum + Number(item.count || 0);
+        }, 0);
+        var allCard = el('button', 'vx-arena-source-card vx-arena-source-card-all' + (allSelected ? ' is-selected' : ''));
+        allCard.type = 'button';
+        allCard.innerHTML =
+          '<span class="vx-arena-source-icon">N+C+A</span>' +
+          '<span class="vx-arena-source-name">All banks</span>' +
+          '<span class="vx-arena-source-count">' + esc(String(totalAll)) + ' questions</span>' +
+          '<span class="vx-arena-source-check">✓</span>';
+        allCard.setAttribute('aria-pressed', String(allSelected));
+        allCard.setAttribute('aria-label', allSelected ? 'All exam banks selected' : 'Select all exam banks');
+        allCard.addEventListener('click', function () {
+          syncDraftSource(allSelected ? [examCodes[0]] : examCodes.slice());
+          draw();
+        });
+        sourceGrid.appendChild(allCard);
+      }
       pool.appendChild(sourceGrid);
 
       var filterGrid = el('div', 'vx-arena-filter-grid');
@@ -1417,7 +1505,7 @@
       (hostName ? '<span class="vx-chip vx-host-chip">Hosted by ' + esc(hostName) + '</span>' : '') +
       '<span class="vx-chip">' + m.count + ' questions</span>' +
       '<span class="vx-chip">' + timeLabel(m.seconds) + '</span>' +
-      '<span class="vx-chip">' + (m.source === 'BOTH' ? 'Combined bank' : m.source) + '</span>' +
+      '<span class="vx-chip">' + (sourceLabel(m.source).replace(/\+/g, ' + ')) + '</span>' +
       (m.paperKey ? '<span class="vx-chip">' + esc(paperLabel(m)) + '</span>' : '') +
       (m.type ? '<span class="vx-chip">' + esc(m.type) + '</span>' : '') +
       (m.perQSeconds ? '<span class="vx-chip">' + m.perQSeconds + 's / question</span>' : '') +
@@ -1492,7 +1580,7 @@
     [
       {icon:'◈',label:'QUESTIONS',value:String(m.count)},
       {icon:'◷',label:'TIME LIMIT',value:timeLabel(m.seconds)},
-      {icon:'◎',label:'EXAM BANK',value:m.source === 'BOTH' ? 'Combined' : String(m.source || 'Mixed')},
+      {icon:'◎',label:'EXAM BANK',value:sourceLabel(m.source).replace(/\+/g, ' + ')},
       {icon:'♙',label:'PLAYERS',value:'Up to ' + m.cap}
     ].forEach(function(item){
       var tile=el('div','vx-briefing-stat');

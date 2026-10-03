@@ -567,3 +567,52 @@ body[data-theme="dark"] #view-games .vx-arena-inline-row{background:rgba(255,255
 #view-games .vx-championship-podium-avatar{overflow:hidden;position:relative}
 #view-games .vx-championship-avatar.has-photo,
 #view-games .vx-championship-podium-avatar.has-photo{color:transparent}
+
+
+/* ============================================================
+   ARENA MULTI-BANK SELECTOR
+   Multiple exam-bank cards can be active simultaneously.
+============================================================ */
+#view-games .vx-arena-source-selection{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:7px;
+  margin:0 0 10px;
+  padding:8px 10px;
+  border:1px solid rgba(65,159,184,.15);
+  border-radius:11px;
+  background:rgba(65,159,184,.045);
+  color:var(--vx-muted);
+  font:650 .61rem/1.35 var(--vx-font-mono);
+}
+#view-games .vx-arena-source-selection-dot{
+  width:7px;
+  height:7px;
+  flex:0 0 7px;
+  border-radius:50%;
+  background:#4cc899;
+  box-shadow:0 0 0 4px rgba(76,200,153,.1);
+}
+#view-games .vx-arena-source-selection strong{color:var(--vx-ink)}
+#view-games .vx-arena-source-selection span:last-child{
+  color:var(--vx-gold);
+  font-weight:850;
+  letter-spacing:.03em;
+}
+#view-games .vx-arena-source-card-all{
+  border-style:dashed;
+}
+#view-games .vx-arena-source-card-all.is-selected{
+  border-style:solid;
+}
+#view-games .vx-arena-source-card:not(.is-selected) .vx-arena-source-check{
+  opacity:.72;
+}
+@media(max-width:900px){
+  #view-games .vx-arena-source-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:560px){
+  #view-games .vx-arena-source-grid{grid-template-columns:1fr}
+  #view-games .vx-arena-source-card{min-height:82px}
+}

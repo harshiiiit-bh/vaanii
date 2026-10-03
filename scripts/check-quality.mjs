@@ -695,22 +695,51 @@ try{
 try {
   const arena = readFileSync('js/vaani-arena.js','utf8');
   const arenaCss = readFileSync('vaani-arena-briefing.css','utf8');
+  const pageSource = readFileSync('index.html','utf8');
   for (const marker of [
     'screenCreateV2','screenShareV2','screenHostAnswers',
     'parseArenaInvite','matchHostName','hostName',
-    'Answers & leaderboard','?arena=CODE&host=NAME'
+    'Answers & leaderboard','?arena=CODE&host=NAME',
+    'var CODE_VERSION = 3',
+    'var LEGACY_SRC_CODES',
+    'NDA+CDS',
+    'NDA+AFCAT',
+    'CDS+AFCAT',
+    'normalizedSourceFromCodes',
+    'poolForSource',
+    'Click two or more exam banks',
+    'sourceExamCodes(d.source)'
   ]) {
     if (!arena.includes(marker)) throw new Error('Arena redesign marker is missing: ' + marker);
   }
   for (const marker of [
     '.vx-arena-setup','.vx-arena-source-grid','.vx-arena-deploy-summary',
     '.vx-arena-share','.vx-host-identity','.vx-host-action-secondary',
-    '.vx-host-answer-key'
+    '.vx-host-answer-key',
+    '.vx-arena-source-selection',
+    '.vx-arena-source-card-all'
   ]) {
     if (!arenaCss.includes(marker)) throw new Error('Arena redesign style is missing: ' + marker);
   }
   if (!/hostName:\s*matchHostName\(m\)/.test(arena)) throw new Error('Arena recent-match records must retain host identity.');
   if (!arena.includes('Copy invite link')) throw new Error('Arena host invite link control is missing.');
+  const requiredCombos = ['NDA','CDS','AFCAT','NDA+CDS','NDA+AFCAT','CDS+AFCAT','BOTH'];
+  const comboHits = requiredCombos.filter(code => arena.includes("'" + code + "'"));
+  if (comboHits.length !== requiredCombos.length) throw new Error('Arena multi-bank source matrix is incomplete.');
+  if (!arena.includes("A.questionsFor = function (match, playerName) {\n    var pool = poolForSource(match.source);")) {
+    throw new Error('Arena question generation is not using the combined source pool.');
+  }
+  if (!arena.includes("A.poolForDraft = function (source, type, paperKey) {\n    return applyFilters(poolForSource(source), type, paperKey);")) {
+    throw new Error('Arena draft availability is not using the combined source pool.');
+  }
+  if (!arena.includes("function papersFor(source) {\n    var pool = poolForSource(source);")) {
+    throw new Error('Arena paper filters are not using the combined source pool.');
+  }
+  if (!/v !== 2 && v !== CODE_VERSION/.test(arena)) throw new Error('Arena match-code decoder is not backward compatible with v2 invites.');
+  if (!arena.includes('codeVersion: v')) throw new Error('Arena decoded matches do not retain the code version.');
+  if (!pageSource.includes('vaani-arena-briefing.css?v=20261003-multibank1')) throw new Error('Arena multi-bank CSS cache key is outdated.');
+  if (!pageSource.includes('js/vaani-arena.js?v=20261003-multibank1')) throw new Error('Arena multi-bank JS cache key is outdated.');
+  console.log('Arena multi-bank audit: v3 source matrix, v2 decode compatibility, combined pool generation, multi-select UI, responsive styling and cache keys validated');
   console.log('Arena: redesigned question-selection console, host controls, shared host identity and answer-key route validated');
 }catch(error){console.error('Arena audit failed:',error.message);process.exitCode=1;}
 
