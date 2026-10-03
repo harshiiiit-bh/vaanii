@@ -278,9 +278,18 @@
     return s.name || s.cadetName || (localStorage.getItem('vaani_name') || '').trim() || 'Cadet';
   }
   function playerId() {
-    var k = 'vx_player_id';
+    // Bind the Arena identity to the active VAANI account. A different
+    // account on the same browser must never inherit the previous account's
+    // Arena player id.
+    var account = '';
+    try { account = (typeof ACTIVE_CODE !== 'undefined' && ACTIVE_CODE) ? String(ACTIVE_CODE) : ''; }
+    catch (e) { account = ''; }
+    var k = account ? ('vx_player_id_' + account) : 'vx_player_id';
     var v = localStorage.getItem(k);
-    if (!v) { v = Math.random().toString(36).slice(2, 10); localStorage.setItem(k, v); }
+    if (!v) {
+      v = Math.random().toString(36).slice(2, 10);
+      try { localStorage.setItem(k, v); } catch (e) {}
+    }
     return v;
   }
 
@@ -323,12 +332,41 @@
      a trusted validation endpoint is implemented. */
   var SHARED_BOARD_ENDPOINT = 'https://pccavdwwhykwyeitxixc.supabase.co/functions/v1/arena-leaderboard';
   var SHARED_BOARD_API_KEY = 'sb_publishable_VfRmr2xFvu4Iv8sfSJReQQ_qzr5z_MI';
+  var SHARED_BOARD_ENDPOINT = 'https://pccavdwwhykwyeitxixc.supabase.co/functions/v1/arena-leaderboard';
+  var SHARED_SUBMIT_ENDPOINT = 'https://pccavdwwhykwyeitxixc.supabase.co/rest/v1/rpc/arena_submit_attempt';
+  var SHARED_BOARD_API_KEY = 'sb_publishable_VfRmr2xFvu4Iv8sfJRReQQ_qzr5z_MI';
   var SharedReadAdapter = {
-    name: 'shared-read',
-    live: false,
+    name: 'shared',
+    live: true,
     shared: true,
     submit: function (code, entry) {
-      return LocalAdapter.submit(code, entry);
+      if (typeof global.fetch !== 'function') return Promise.reject(new Error('Shared leaderboard submission is unavailable'));
+      var payload = {
+        p_code: code,
+        p_pid: String(entry.pid || ''),
+        p_name: String(entry.name || 'Cadet'),
+        p_score: Number(entry.score),
+        p_seconds: Math.max(0, Math.round(Number(entry.seconds) || 0)),
+        p_total: Math.max(1, Math.round(Number(entry.total) || 1)),
+        p_answers: entry.answers && typeof entry.answers === 'object' ? entry.answers : {},
+        p_expires_at: Number(entry.expiresAt) || null
+      };
+      return global.fetch(SHARED_SUBMIT_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SHARED_BOARD_API_KEY
+        },
+        body: JSON.stringify(payload)
+      }).then(function (response) {
+        if (!response.ok) throw new Error('Shared leaderboard submission returned HTTP ' + response.status);
+        return response.json();
+      }).then(function (payload) {
+        if (!payload || payload.ok !== true) {
+          throw new Error((payload && payload.error) || 'Shared leaderboard submission was rejected');
+        }
+        return true;
+      });
     },
     fetch: function (code) {
       if (typeof global.fetch !== 'function') return Promise.reject(new Error('Shared leaderboard fetch is unavailable'));
@@ -574,7 +612,7 @@
     var note = el('p', 'vx-sub');
     note.style.marginTop = '18px';
     note.innerHTML = A.sync.shared
-      ? 'Historical standings are shared across players as unverified records. New score submissions stay on this device.'
+      ? 'The shared board is live. New attempts are submitted to the common match board and appear for every participant.'
       : 'This board contains attempts saved on this device. Shared scores are disabled until a signed-in server verifies each attempt.';
     w.appendChild(note);
   }
@@ -2088,7 +2126,14 @@
   function loadBoard() {
     if (!S.match) { S.rows = []; S._boardError = true; return Promise.resolve(S.rows); }
     S._boardError = false;
-    return Promise.resolve().then(function () { return A.sync.fetch(S.match.code); }).then(function (rows) {
+    var own = S.result || previousAttempt(S.match.code);
+    // Retry a local attempt against the shared board whenever the result page
+    // is opened/refreshed. A transient network failure must not permanently
+    // strand an otherwise completed submission on one device.
+    var syncOwn = own && own.pid ? A.sync.submit(S.match.code, own).catch(function () { return false; }) : Promise.resolve(true);
+    return syncOwn.then(function () {
+      return A.sync.fetch(S.match.code);
+    }).then(function (rows) {
       S.rows = reconcileLocalAttempt(rows);
       return S.rows;
     }, function () {
@@ -2355,7 +2400,7 @@
     heroCopy.innerHTML =
       '<span class="vx-championship-kicker"><i aria-hidden="true"></i> ARENA · FINAL STANDINGS</span>' +
       '<h3>Every second counts.</h3>' +
-      '<p>Prior shared attempts are shown as unverified history. New submissions stay on this device until secure score validation is available.</p>';
+      '<p>The shared match board is live. Every submitted attempt is synchronized across participants; records remain unverified.</p>';
     var championshipStatus = el('div', 'vx-championship-status');
     var championshipStatusDot = el('span', 'vx-championship-status-dot');
     championshipStatusDot.setAttribute('aria-hidden', 'true');
@@ -2365,10 +2410,10 @@
     function updateChampionshipStatus() {
       if (A.sync.shared && !S._boardError) {
         championshipStatus.className = 'vx-championship-status is-shared';
-        championshipStatusText.textContent = 'SHARED READ · UNVERIFIED HISTORY';
+        championshipStatusText.textContent = 'SHARED LIVE BOARD · UNVERIFIED';
       } else if (A.sync.shared) {
         championshipStatus.className = 'vx-championship-status is-error';
-        championshipStatusText.textContent = 'SHARED READ OFFLINE · LOCAL FALLBACK';
+        championshipStatusText.textContent = 'SHARED BOARD OFFLINE · LOCAL COPY';
       } else {
         championshipStatus.className = 'vx-championship-status is-local';
         championshipStatusText.textContent = 'THIS DEVICE · LOCAL BOARD';
