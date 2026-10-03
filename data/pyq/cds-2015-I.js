@@ -1610,12 +1610,12 @@ var PYQ_CDS_2015_I = [
     "sec": "Ordering of Sentences",
     "q": "S1: The colonial powers had a very simple technique to rule the world. S6: Partition was the culmination. P: They lumped tribes and people together, played one against the other. Q: India’s provinces were more elaborately designed to play the game of divide and rule. R: Africa was divided on the basis of lines of longitude and latitude. S: They also purchased the loyalties of those locals who were needed as supports for the colonial presence. The proper sequence should be:",
     "o": [
-      "PQRS",
+      "PSRQ",
       "SPQR",
-      "SPQR",
+      "QPRS",
       "RPSQ"
     ],
-    "ans": 1
+    "ans": 0
   },
   {
     "y": 2015,
