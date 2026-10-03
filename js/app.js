@@ -1349,10 +1349,10 @@ function pyqLabeledBlocks(q){
       const m=labels[i];
       const startAt=m.index+m[0].length;
       const endAt=i+1<labels.length?labels[i+1].index:source.length;
-      const text=source.slice(startAt,endAt).replace(/\\s*[|/]\\s*$/,'').trim();
+      const text=source.slice(startAt,endAt).replace(/\s*[|/]\s*$/,'').trim();
       if(text)blocks.push({label:m[1].toUpperCase(),text});
     }
-    const hasFixed=blocks.some(b=>/^S\\d+$/.test(b.label));
+    const hasFixed=blocks.some(b=>/^S\d+$/.test(b.label));
     const pqrs=blocks.filter(b=>/^[PQRS]$/.test(b.label));
     if(blocks.length && (pqrs.length>=3 || hasFixed)){
       return blocks;
