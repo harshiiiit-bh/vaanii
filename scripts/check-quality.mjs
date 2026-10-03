@@ -726,11 +726,14 @@ try {
   const requiredCombos = ['NDA','CDS','AFCAT','NDA+CDS','NDA+AFCAT','CDS+AFCAT','BOTH'];
   const comboHits = requiredCombos.filter(code => arena.includes("'" + code + "'"));
   if (comboHits.length !== requiredCombos.length) throw new Error('Arena multi-bank source matrix is incomplete.');
-  if (!/A\.questionsFor = function \(match, playerName\) \{[\s\S]{0,500}pool = poolForSource\(match\.source\)/.test(arena)) {
+  if (!arena.includes("A.questionsFor = function (match, playerName) {\n    var pool = poolForSource(match.source);")) {
     throw new Error('Arena question generation is not using the combined source pool.');
   }
-  if (!/A\.poolForDraft = function \(source, type, paperKey\) \{[\s\S]{0,180}poolForSource\(source\)/.test(arena)) {
+  if (!arena.includes("A.poolForDraft = function (source, type, paperKey) {\n    return applyFilters(poolForSource(source), type, paperKey);")) {
     throw new Error('Arena draft availability is not using the combined source pool.');
+  }
+  if (!arena.includes("function papersFor(source) {\n    var pool = poolForSource(source);")) {
+    throw new Error('Arena paper filters are not using the combined source pool.');
   }
   if (!/v !== 2 && v !== CODE_VERSION/.test(arena)) throw new Error('Arena match-code decoder is not backward compatible with v2 invites.');
   if (!arena.includes('codeVersion: v')) throw new Error('Arena decoded matches do not retain the code version.');
