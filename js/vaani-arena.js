@@ -597,7 +597,7 @@
       var p = (typeof State !== 'undefined' && State.profilePhoto) ? State.profilePhoto : null;
       if (!p || !p.src) return null;
       var src = String(p.src || '');
-      if (!/^(?:https?:\\/\\/|data:image\\/)/i.test(src)) return null;
+      if (!/^(?:https?:\/\/|data:image\/)/i.test(src)) return null;
       if (src.length > 18000) return null;
       return { src: src, x: Number(p.x) || 50, y: Number(p.y) || 50, zoom: Number(p.zoom) || 1 };
     } catch (e) { return null; }
@@ -607,7 +607,7 @@
     return isHost(m && m.code) ? profileAvatarSnapshot() : null;
   }
   function arenaAvatarHtml(photo, name, cls) {
-    var safe = photo && photo.src && /^(?:https?:\\/\\/|data:image\\/)/i.test(String(photo.src)) ? String(photo.src) : '';
+    var safe = photo && photo.src && /^(?:https?:\/\/|data:image\/)/i.test(String(photo.src)) ? String(photo.src) : '';
     var n = String(name || 'Cadet').trim() || 'Cadet';
     var initial = n.slice(0, 1).toUpperCase() || 'C';
     var x = photo && Number.isFinite(Number(photo.x)) ? Number(photo.x) : 50;
