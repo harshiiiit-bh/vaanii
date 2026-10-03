@@ -129,12 +129,38 @@
     m.__vaaniNoteTimer=setTimeout(()=>m.classList.remove('noted'),420);
   }
 
+  function clearFeatureUpdateAction(){
+    const m=mentor();
+    const button=m?.querySelector('#veFeatureNotes');
+    if(button)button.remove();
+  }
+  function mountFeatureUpdateAction(){
+    const m=mentor();
+    const actions=m?.querySelector('.vc-actions');
+    if(!actions)return;
+    let button=actions.querySelector('#veFeatureNotes');
+    if(!button){
+      button=document.createElement('button');
+      button.type='button';
+      button.id='veFeatureNotes';
+      button.className='ve-feature-notes';
+      button.textContent='Release notes';
+      button.title='Open the VAANI Information Centre release notes';
+      button.addEventListener('click',function(){
+        if(typeof window.openInfoCenter==='function')window.openInfoCenter({markRead:true});
+      });
+      const next=actions.querySelector('#vcNext');
+      actions.insertBefore(button,next||null);
+    }
+  }
+
   function close(){
     const m=mentor();
     clearTimeout(window.__vaaniMentorTimer);
     window.__vaaniMentorTimer=null;
     if(m){
       m.classList.remove('open','speaking','feature-update');
+      clearFeatureUpdateAction();
       gesturesOff();
     }
   }
@@ -150,7 +176,10 @@
     const section=['UPDATE',release.category||'FEATURE'].join(' · ');
     setText(kicker,release.title||'New VAANI update',detail,'p2','point',section);
     const m=mentor();
-    if(m)m.classList.add('feature-update');
+    if(m){
+      m.classList.add('feature-update');
+      mountFeatureUpdateAction();
+    }
     open(12000);
     window.dispatchEvent(new CustomEvent('vaani:feature-update',{detail:release}));
     return true;
