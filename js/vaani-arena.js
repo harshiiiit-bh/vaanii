@@ -3093,7 +3093,7 @@
         '.vx-player-sheet .vx-readout b{font-size:1rem}' +
         '.vx-player-sheet .vx-actions{margin-top:10px!important}' +
         '.vx-player-sheet .vx-actions .vx-btn{min-height:38px;font-size:.82rem}' +
-      }';
+        '}';
     document.head.appendChild(style);
   }
 
