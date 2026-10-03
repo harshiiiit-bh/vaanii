@@ -768,7 +768,9 @@ try {
   if (!arena.includes('if(!hostSpectating && !hasOwnAttempt)')) throw new Error('Pre-attempt result lock is missing.');
   if (!arena.includes('if(!S.hostSpectate && !previousAttempt(m.code))')) throw new Error('Host answer-key context gate is missing.');
   if (!arena.includes('Leaderboard after attempt')) throw new Error('Fair-play lock copy is missing.');
-  if (!arena.includes('202604')) throw new Error('Fair-play source release marker is missing.');
+  if (!readFileSync('data/pyq/cds-2009-II.js','utf8').includes('from behind a curtain (P) he held it in such a manner (Q) bringing the light (R) that it fell slantwise on her face. (S)')) throw new Error('CDS 2009-II Q73 P/Q/R/S source correction is missing.');
+  const fairPlayInfo=readFileSync('js/vaani-info-center.js','utf8');
+  if (!fairPlayInfo.includes("version:'20261004-arena-fairplay1'")) throw new Error('Arena fair-play release entry is missing.');
   if (!arena.includes("clearRunRecovery();")) throw new Error('Arena recovery state is not cleared after official submission.');
   if (!arena.includes("if(!r.practiceMode)saveRunRecovery();")) throw new Error('Arena recovery is not persisted during active official runs.');
   if (!arena.includes("practiceMode:!!options.practice")) throw new Error('Mistake-drill practice mode is missing.');
