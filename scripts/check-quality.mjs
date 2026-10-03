@@ -571,9 +571,9 @@ try {
     if(!officerCss.includes(marker))throw new Error('Officer feature-briefing styling missing: '+marker);
   }
   if(!pageSource.includes('vaani-info-center.css?v=20261003-release3'))throw new Error('Info Centre cache key was not refreshed.');
-  if(!pageSource.includes('js/vaani-info-center.js?v=20261003-release3'))throw new Error('Info Centre script cache key was not refreshed.');
+  if(!pageSource.includes('js/vaani-info-center.js?v=20261003-release5'))throw new Error('Info Centre script cache key was not refreshed.');
   if(!pageSource.includes('vaani-character-elite.css?v=20261003-release3'))throw new Error('Officer elite CSS cache key was not refreshed.');
-  if(!pageSource.includes('js/vaani-character-elite.js?v=20261003-release3'))throw new Error('Officer elite script cache key was not refreshed.');
+  if(!pageSource.includes('js/vaani-character-elite.js?v=20261003-release4'))throw new Error('Officer elite script cache key was not refreshed.');
   console.log('Feature updates: shared manifest, duplicate/version audit, bounded Officer retry, replay controls, release metadata, elevated briefing UI and cache keys validated');
 }catch(error){console.error('Feature release audit failed:',error.message);process.exitCode=1;}
 
