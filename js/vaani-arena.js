@@ -2226,11 +2226,14 @@
     if (!S.match) { S.rows = []; S._boardError = true; return Promise.resolve(S.rows); }
     S._boardError = false;
     var own = S.result || previousAttempt(S.match.code);
+    var register = isHost(S.match.code) ? registerSharedMatchMetadata(S.match) : Promise.resolve(null);
     // Retry a local attempt against the shared board whenever the result page
     // is opened/refreshed. A transient network failure must not permanently
     // strand an otherwise completed submission on one device.
     var syncOwn = own && own.pid ? A.sync.submit(S.match.code, own).catch(function () { return false; }) : Promise.resolve(true);
-    return syncOwn.then(function () {
+    return register.then(function () {
+      return syncOwn;
+    }).then(function () {
       return A.sync.fetch(S.match.code);
     }).then(function (rows) {
       S.rows = reconcileLocalAttempt(rows);
