@@ -1284,6 +1284,14 @@ function pyqOptionLabels(q){
 function pyqLabeledBlocks(q){
   if(!q||typeof q.q!=='string')return null;
   const source=q.q;
+  const sourceSec=String(q._sourceSec||q.sec||'').trim().toLowerCase();
+  const isPqrsParts=/^(?:ordering of words in a sentence|sentence arrangement \(pqrs\))$/i.test(sourceSec);
+  const structuredParts=isPqrsParts && Array.isArray(q.parts) && (q.parts.length===3||q.parts.length===4) && q.parts.every(p=>typeof p==='string'&&p.trim())
+    ?q.parts.map(p=>String(p).trim()):null;
+  if(structuredParts){
+    const labels=['P','Q','R','S'];
+    return structuredParts.map((text,index)=>({label:labels[index],text}));
+  }
   const inline=[...source.matchAll(/\(([PQRS])\)\s*\/?\s*/g)];
   if(inline.length>=3){
     const blocks=[];let cursor=0;
@@ -1329,7 +1337,7 @@ function pyqPromptHTML(q){
       parts.map((part,i)=>'<span class="pv-error-segment"><span class="pv-error-segment-text">'+escapeHtmlVaani(part)+'</span><span class="pv-error-segment-label" aria-label="Part '+partLabels[i]+'">('+partLabels[i]+')</span></span>').join('<span class="pv-error-segment-divider" aria-hidden="true"> / </span>')+
       '</span>';
   }
-  if(/^(?:choose the correct usage|ordering of sentences|sentence arrangement \(pqrs\))$/i.test(sourceSec)){
+  if(/^(?:choose the correct usage|ordering of sentences|ordering of words in a sentence|sentence arrangement \(pqrs\))$/i.test(sourceSec)){
     const structured=pyqLabeledBlocksHTML(q);if(structured)return structured;
   }
   return pyqHi(q);
