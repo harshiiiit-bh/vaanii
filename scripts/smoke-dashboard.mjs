@@ -1357,15 +1357,17 @@ try {
     if (!question) throw new Error('NDA 2009-I legacy spotting-error question was not loaded');
     pvStartSession('section', [question], { title: 'NDA I 2009 Spotting Errors' });
   });
-  await page.waitForSelector('#view-pyq .pv-error-parts', { timeout: 10000 });
-  const ndaParts = await page.locator('#view-pyq .pv-error-segment-label').allTextContents();
-  assert.deepEqual(ndaParts, ['(a)', '(b)', '(c)'], 'Legacy NDA fragment choices must be rendered as marked parts');
-  const ndaPrompt = (await page.locator('#view-pyq .pv-error-parts').textContent()) || '';
-  assert.ok(ndaPrompt.includes('He hesitated to accept the post') &&
-    ndaPrompt.includes('as he did not think') &&
-    ndaPrompt.includes('that the salary would be enough'),
-    'Legacy NDA fragments were not mapped to the sentence');
-  console.log('PASS PYQ presentation: NDA 2009-I legacy answer-fragment format displays labelled parts');
+  await page.waitForTimeout(250);
+  assert.equal(await page.locator('#view-pyq .pv-error-parts').count(), 0,
+    'Legacy NDA answer-fragment format must remain untouched as response options');
+  const ndaOptions=await page.locator('#view-pyq .pv-options .pv-option').allTextContents();
+  assert.equal(ndaOptions.length,4,'Legacy NDA fragment question must retain four response options');
+  assert.ok(ndaOptions[0].includes('He hesitated to accept the post') &&
+    ndaOptions[1].includes('as he did not think') &&
+    ndaOptions[2].includes('that the salary would be enough') &&
+    ndaOptions[3].includes('No error'),
+    'Legacy NDA sentence fragments were altered instead of remaining as options');
+  console.log('PASS PYQ presentation: NDA 2009-I legacy answer-fragment format remains untouched');
   const fourPartFixture=await page.evaluate(()=>{
     const base=PYQ_ALL.find(q=>q._exam==='NDA'&&q.sec==='Spotting Errors');
     if(!base)throw new Error('No spotting-error record available for four-part fixture');
