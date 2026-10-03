@@ -584,8 +584,31 @@ try{
  for(const feature of ['Wren &amp; Martin companion','Configurable Test Kit','Final report cards','Career &amp; Exam Desk','Shared match codes','Officer VAANI controls','learning milestones only']){
    if(!infoGuide.includes(feature))throw new Error('Information Centre is missing an updated feature: '+feature);
  }
- console.log('Information Centre coverage audit: shipped learning, testing, career and VAANI controls are documented');
+ 
 }catch(error){console.error('Information Centre audit failed:',error.message);process.exitCode=1;}
+
+/* Arena command-console integrity audit. */
+try {
+  const arena = readFileSync('js/vaani-arena.js','utf8');
+  const arenaCss = readFileSync('vaani-arena-briefing.css','utf8');
+  for (const marker of [
+    'screenCreateV2','screenShareV2','screenHostAnswers',
+    'parseArenaInvite','matchHostName','hostName',
+    'Answers & leaderboard','?arena=CODE&host=NAME'
+  ]) {
+    if (!arena.includes(marker)) throw new Error('Arena redesign marker is missing: ' + marker);
+  }
+  for (const marker of [
+    '.vx-arena-setup','.vx-arena-source-grid','.vx-arena-deploy-summary',
+    '.vx-arena-share','.vx-host-identity','.vx-host-action-secondary',
+    '.vx-host-answer-key'
+  ]) {
+    if (!arenaCss.includes(marker)) throw new Error('Arena redesign style is missing: ' + marker);
+  }
+  if (!/hostName:\s*matchHostName\(m\)/.test(arena)) throw new Error('Arena recent-match records must retain host identity.');
+  if (!arena.includes('Copy invite link')) throw new Error('Arena host invite link control is missing.');
+  console.log('Arena: redesigned question-selection console, host controls, shared host identity and answer-key route validated');
+}catch(error){console.error('Arena audit failed:',error.message);process.exitCode=1;}
 
 /* Wren & Martin Book Companion integrity audit. */
 try{

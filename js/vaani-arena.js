@@ -339,9 +339,9 @@
     var wrap = el('div', 'vx-arena');
     h.appendChild(wrap);
     ({
-      home: screenHome, create: screenCreate, share: screenShare,
+      home: screenHome, create: screenCreateV2, share: screenShareV2,
       join: screenJoin, briefing: screenBriefing, run: screenRun,
-      result: screenResult, review: screenReview, help: screenHelp
+      result: screenResult, review: screenReview, hostAnswers: screenHostAnswers, help: screenHelp
     }[S.screen] || screenHome)(wrap);
     // guarded: scrollIntoView is universal in real browsers, but costs
     // nothing to check first rather than assume
@@ -574,6 +574,509 @@
     return Math.max(1, Math.min(46655, Math.round(secs)));
   }
   function draftPool(d) { return A.poolForDraft(d.source, d.type, d.paperKey); }
+
+
+  /* =========================================================
+     ARENA V2 UI
+     The data/match engine stays unchanged; these views are a
+     deeper command-console presentation layered over it.
+     ========================================================= */
+
+  function matchHostName(m) {
+    if (m && m.hostName) return String(m.hostName);
+    if (m && m.code) {
+      var recent = loadRecent();
+      var hit = recent.filter(function (r) { return r.code === m.code; })[0];
+      if (hit && hit.hostName) return String(hit.hostName);
+    }
+    return '';
+  }
+
+  function hydrateMatch(m, hostName) {
+    if (!m) return m;
+    var known = hostName || matchHostName(m);
+    if (known) m.hostName = String(known).slice(0, 40);
+    return m;
+  }
+
+  function arenaInviteUrl(m) {
+    var hostName = matchHostName(m);
+    var url = location.origin + location.pathname + '?arena=' + encodeURIComponent(m.code);
+    if (hostName) url += '&host=' + encodeURIComponent(hostName);
+    return url;
+  }
+
+  function parseArenaInvite(raw) {
+    var value = String(raw || '').trim();
+    var code = value;
+    var hostName = '';
+    try {
+      var u = new URL(value, location.href);
+      if (u.searchParams.get('arena')) {
+        code = u.searchParams.get('arena') || '';
+        hostName = u.searchParams.get('host') || '';
+      }
+    } catch (e) {}
+    if (!hostName) {
+      var mHost = value.match(/[?&]host=([^&#\s]+)/i);
+      if (mHost) {
+        try { hostName = decodeURIComponent(mHost[1]); } catch (e2) { hostName = mHost[1]; }
+      }
+    }
+    var m = A.decode(code);
+    return { match: hydrateMatch(m, hostName), hostName: hostName };
+  }
+
+  function setupSection(kicker, title, copy, cls) {
+    var section = el('section', 'vx-arena-setup-section' + (cls ? ' ' + cls : ''));
+    var head = el('div', 'vx-arena-setup-section-head');
+    head.innerHTML =
+      '<div><span class="vx-arena-setup-kicker">' + esc(kicker) + '</span>' +
+      '<h3>' + esc(title) + '</h3>' +
+      (copy ? '<p>' + esc(copy) + '</p>' : '') + '</div>';
+    section.appendChild(head);
+    return section;
+  }
+
+  function setupSelect(label, options, current, onPick) {
+    var wrap = el('label', 'vx-arena-select-wrap');
+    var top = el('span', 'vx-arena-control-label', label);
+    wrap.appendChild(top);
+    var select = el('select', 'vx-arena-select');
+    options.forEach(function (option) {
+      var node = document.createElement('option');
+      node.value = option.value;
+      node.textContent = option.label;
+      if (option.value === String(current == null ? '' : current)) node.selected = true;
+      select.appendChild(node);
+    });
+    select.addEventListener('change', function () { onPick(select.value); });
+    wrap.appendChild(select);
+    return wrap;
+  }
+
+  function setupChoiceButton(label, value, current, onPick, extraClass) {
+    var button = el('button', 'vx-arena-choice' + (extraClass ? ' ' + extraClass : ''));
+    button.type = 'button';
+    button.setAttribute('aria-pressed', String(value === current));
+    button.innerHTML = label;
+    button.addEventListener('click', function () { onPick(value); });
+    return button;
+  }
+
+  function screenCreateV2(w) {
+    var d = S.draft || defaultDraft();
+    S.draft = d;
+
+    var shell = el('div', 'vx-arena-setup');
+    var top = el('div', 'vx-arena-setup-top');
+    var back = el('button', 'vx-back', '&larr; Arena');
+    back.type = 'button';
+    back.addEventListener('click', function () { go('home'); });
+    top.appendChild(back);
+
+    var titleBlock = el('div', 'vx-arena-setup-title');
+    titleBlock.innerHTML =
+      '<span class="vx-arena-setup-kicker">MATCH DEPLOYMENT</span>' +
+      '<h2>Build your Arena</h2>' +
+      '<p>Lock the question pool, challenge settings and match rules before generating the invite.</p>';
+    top.appendChild(titleBlock);
+    shell.appendChild(top);
+
+    var summary = el('div', 'vx-arena-deploy-summary');
+    shell.appendChild(summary);
+
+    var form = el('div', 'vx-arena-setup-form');
+    shell.appendChild(form);
+    w.appendChild(shell);
+
+    function draw() {
+      form.innerHTML = '';
+      var avail = VX.availableSources ? VX.availableSources() : [];
+      var totalAll = avail.reduce(function (sum, a) { return sum + Number(a.count || 0); }, 0);
+      var sourceCodes = avail.map(function (a) { return a.code; });
+      if (avail.length > 1) sourceCodes.push('BOTH');
+      if (!sourceCodes.length) sourceCodes = ['NDA'];
+
+      if (sourceCodes.indexOf(d.source) < 0) d.source = sourceCodes[0];
+      var typeOptsRaw = typesFor(d.source);
+      if (d.type && typeOptsRaw.indexOf(d.type) < 0) d.type = null;
+      var paperOptsRaw = papersFor(d.source);
+      if (d.paperKey && !paperOptsRaw.some(function (p) { return p.key === d.paperKey; })) d.paperKey = null;
+
+      var max = draftPool(d).length;
+      if (max > 0) d.count = Math.max(1, Math.min(max, Number(d.count) || 1));
+      else d.count = 1;
+
+      var seconds = draftSeconds(d);
+      var hostDisplay = playerName();
+
+      summary.innerHTML =
+        '<div class="vx-deploy-summary-main">' +
+          '<span class="vx-deploy-summary-kicker">READY TO DEPLOY</span>' +
+          '<strong id="vxDeployHeadline">' + esc(d.count + ' questions · ' + timeLabel(seconds)) + '</strong>' +
+          '<span id="vxDeployPool">' + esc((d.source === 'BOTH' ? 'Combined' : d.source) + ' · ' + max + ' available') + '</span>' +
+        '</div>' +
+        '<div class="vx-deploy-summary-grid">' +
+          '<div><span>HOST</span><strong>' + esc(hostDisplay) + '</strong></div>' +
+          '<div><span>PLAYERS</span><strong>' + esc(String(d.cap)) + '</strong></div>' +
+          '<div><span>PENALTY</span><strong>' + esc(NEG_LABELS[d.negMark].replace('&minus;', '−')) + '</strong></div>' +
+          '<div><span>ORDER</span><strong>' + esc(d.shuffleOrder ? 'Per player' : 'Same') + '</strong></div>' +
+        '</div>';
+
+      /* 01 — pool */
+      var pool = setupSection('01 · QUESTION SELECTION', 'Pick exactly what the squad will face',
+        'The seed keeps the selected question set identical across every device. Filters only change the pool before the match is created.');
+      var sourceGrid = el('div', 'vx-arena-source-grid');
+      sourceCodes.forEach(function (code) {
+        var count = code === 'BOTH' ? totalAll : ((avail.filter(function (a) { return a.code === code; })[0] || {}).count || 0);
+        var card = el('button', 'vx-arena-source-card' + (d.source === code ? ' is-selected' : ''));
+        card.type = 'button';
+        card.innerHTML =
+          '<span class="vx-arena-source-icon">' + (code === 'NDA' ? 'N' : code === 'CDS' ? 'C' : code === 'AFCAT' ? 'A' : 'N+C+A') + '</span>' +
+          '<span class="vx-arena-source-name">' + esc(code === 'BOTH' ? 'Combined bank' : code) + '</span>' +
+          '<span class="vx-arena-source-count">' + esc(String(count)) + ' questions</span>' +
+          '<span class="vx-arena-source-check">✓</span>';
+        card.setAttribute('aria-pressed', String(d.source === code));
+        card.addEventListener('click', function () { d.source = code; draw(); });
+        sourceGrid.appendChild(card);
+      });
+      pool.appendChild(sourceGrid);
+
+      var filterGrid = el('div', 'vx-arena-filter-grid');
+      filterGrid.appendChild(setupSelect('Paper', [{value:'',label:'Any paper · all years mixed'}].concat(
+        paperOptsRaw.map(function (p) {
+          return { value: p.key, label: String(p.exam || '') + ' ' + String(p.s || '') + ' ' + String(p.y || '') + ' · ' + p.count + ' Q' };
+        })
+      ), d.paperKey || '', function (v) { d.paperKey = v || null; draw(); }));
+
+      filterGrid.appendChild(setupSelect('Question type', [{value:'',label:'Mixed · every question type'}].concat(
+        typeOptsRaw.map(function (t) { return { value: t, label: t }; })
+      ), d.type || '', function (v) { d.type = v || null; draw(); }));
+
+      pool.appendChild(filterGrid);
+
+      var availability = el('div', 'vx-arena-availability');
+      availability.innerHTML =
+        '<span class="vx-arena-availability-dot"></span>' +
+        '<span><strong>' + esc(String(max)) + ' questions</strong> are available after these filters.</span>' +
+        (d.paperKey || d.type ? '<button type="button">Reset filters</button>' : '');
+      if (d.paperKey || d.type) {
+        availability.querySelector('button').addEventListener('click', function () {
+          d.paperKey = null; d.type = null; draw();
+        });
+      }
+      pool.appendChild(availability);
+      form.appendChild(pool);
+
+      /* 02 — challenge */
+      var challenge = setupSection('02 · CHALLENGE SETTINGS', 'Choose the pace',
+        'Make the round short and sharp or give the squad an endurance test.');
+      var challengeGrid = el('div', 'vx-arena-challenge-grid');
+
+      var countCard = el('div', 'vx-arena-control-card');
+      countCard.innerHTML = '<span class="vx-arena-control-label">Questions</span><p class="vx-arena-control-hint">How many questions will everyone receive?</p>';
+      var countChoices = el('div', 'vx-arena-choice-grid');
+      [10,15,20,25,30,50,75,100].filter(function (v) { return v <= max; }).forEach(function (v) {
+        countChoices.appendChild(setupChoiceButton(String(v), v, d.count, function (value) { d.count = value; draw(); }));
+      });
+      countCard.appendChild(countChoices);
+      var countInput = el('input', 'vx-arena-inline-number');
+      countInput.type = 'number'; countInput.min = '1'; countInput.max = String(Math.max(1, Math.min(max, 1295))); countInput.value = String(d.count);
+      countInput.setAttribute('aria-label', 'Custom number of questions');
+      countInput.addEventListener('change', function () {
+        d.count = Math.max(1, Math.min(Number(countInput.max), parseInt(countInput.value, 10) || 1)); draw();
+      });
+      countCard.appendChild(countInput);
+      challengeGrid.appendChild(countCard);
+
+      var timeCard = el('div', 'vx-arena-control-card');
+      timeCard.innerHTML = '<span class="vx-arena-control-label">Overall clock</span><p class="vx-arena-control-hint">Everyone gets the same total time.</p>';
+      var timeUnitChoices = el('div', 'vx-arena-choice-grid two');
+      ['min','sec','hr','mixed'].forEach(function (unit) {
+        timeUnitChoices.appendChild(setupChoiceButton(
+          unit === 'min' ? 'Minutes' : unit === 'sec' ? 'Seconds' : unit === 'hr' ? 'Hours' : 'H · M · S',
+          unit, d.timeUnit, function (v) {
+            if (v === 'mixed' && d.timeUnit !== 'mixed') {
+              var hms = hmsFromSeconds(draftSeconds(d)); d.timeH = hms.h; d.timeM = hms.m; d.timeS = hms.s;
+            } else if (v !== 'mixed' && d.timeUnit === 'mixed') {
+              var total = draftSeconds(d);
+              d.timeValue = v === 'sec' ? total : v === 'min' ? Math.max(1, Math.round(total / 60)) : Math.max(1, Math.round(total / 3600));
+            } else if (v !== 'mixed' && d.timeUnit !== 'mixed') {
+              if (v === 'sec' && d.timeUnit === 'min') d.timeValue *= 60;
+              else if (v === 'min' && d.timeUnit === 'sec') d.timeValue = Math.max(1, Math.round(d.timeValue / 60));
+              else if (v === 'min' && d.timeUnit === 'hr') d.timeValue *= 60;
+              else if (v === 'hr' && d.timeUnit === 'min') d.timeValue = Math.max(1, Math.round(d.timeValue / 60));
+              else if (v === 'sec' && d.timeUnit === 'hr') d.timeValue *= 3600;
+              else if (v === 'hr' && d.timeUnit === 'sec') d.timeValue = Math.max(1, Math.round(d.timeValue / 3600));
+            }
+            d.timeUnit = v; draw();
+          }
+        ));
+      });
+      timeCard.appendChild(timeUnitChoices);
+
+      if (d.timeUnit === 'mixed') {
+        var hmsGrid = el('div', 'vx-arena-hms-grid');
+        [['Hours','timeH',12],['Minutes','timeM',59],['Seconds','timeS',59]].forEach(function (item) {
+          var lab = el('label', 'vx-arena-hms');
+          lab.innerHTML = '<span>' + item[0] + '</span>';
+          var inp = el('input', 'vx-arena-inline-number');
+          inp.type = 'number'; inp.min = '0'; inp.max = String(item[2]); inp.value = String(d[item[1]] || 0);
+          inp.addEventListener('change', function () { d[item[1]] = Math.max(0, Math.min(item[2], parseInt(inp.value, 10) || 0)); draw(); });
+          lab.appendChild(inp); hmsGrid.appendChild(lab);
+        });
+        timeCard.appendChild(hmsGrid);
+      } else {
+        var presets = {sec:[15,20,30,40,45,60,90], min:[5,10,15,20,25,30,45], hr:[1,2,3,4,6,8,12]};
+        var timeChoices = el('div', 'vx-arena-choice-grid');
+        presets[d.timeUnit].forEach(function (v) {
+          timeChoices.appendChild(setupChoiceButton(String(v) + (d.timeUnit === 'sec' ? 's' : d.timeUnit === 'min' ? ' min' : ' hr'), v, d.timeValue, function (value) { d.timeValue = value; draw(); }));
+        });
+        timeCard.appendChild(timeChoices);
+        var timeInput = el('input', 'vx-arena-inline-number');
+        timeInput.type='number'; timeInput.min='1'; timeInput.max=String({sec:3600,min:300,hr:12}[d.timeUnit]); timeInput.value=String(d.timeValue);
+        timeInput.setAttribute('aria-label','Custom time limit');
+        timeInput.addEventListener('change',function(){d.timeValue=Math.max(1,Math.min(Number(timeInput.max),parseInt(timeInput.value,10)||1));draw();});
+        timeCard.appendChild(timeInput);
+      }
+
+      var timeRead = el('div', 'vx-arena-mini-readout');
+      timeRead.innerHTML = '<span>LIVE CLOCK</span><strong>' + esc(timeLabel(seconds)) + '</strong>';
+      timeCard.appendChild(timeRead);
+      challengeGrid.appendChild(timeCard);
+      challenge.appendChild(challengeGrid);
+
+      var perQ = el('div', 'vx-arena-inline-row');
+      perQ.innerHTML = '<div><span class="vx-arena-control-label">Per-question timer</span><p class="vx-arena-control-hint">Optional. Auto-advance each question when its countdown ends.</p></div>';
+      var perQControls = el('div', 'vx-arena-inline-actions');
+      [false,true].forEach(function(v){ perQControls.appendChild(setupChoiceButton(v ? 'On' : 'Off', v, d.perQOn, function(value){d.perQOn=value;draw();})); });
+      perQ.appendChild(perQControls);
+      if (d.perQOn) {
+        var pq = el('input', 'vx-arena-inline-number vx-arena-inline-number-small');
+        pq.type='number';pq.min='5';pq.max='1295';pq.value=String(d.perQSeconds);
+        pq.setAttribute('aria-label','Seconds per question');
+        pq.addEventListener('change',function(){d.perQSeconds=Math.max(5,Math.min(1295,parseInt(pq.value,10)||5));draw();});
+        perQ.appendChild(pq);
+        perQ.appendChild(el('span','vx-arena-inline-suffix','seconds / question'));
+      }
+      challenge.appendChild(perQ);
+      form.appendChild(challenge);
+
+      /* 03 — rules */
+      var rules = setupSection('03 · MATCH RULES', 'Lock the playing conditions',
+        'These rules are encoded with the match and shown to every player before the attempt.');
+      var rulesGrid = el('div','vx-arena-rules-grid');
+
+      var penalty = el('div','vx-arena-control-card');
+      penalty.innerHTML='<span class="vx-arena-control-label">Negative marking</span><p class="vx-arena-control-hint">Wrong answers lose marks; blanks remain unpenalised.</p>';
+      var penaltyChoices=el('div','vx-arena-choice-grid');
+      [0,1,2,3].forEach(function(v){penaltyChoices.appendChild(setupChoiceButton(NEG_LABELS[v].replace('&minus;','−'),v,d.negMark,function(value){d.negMark=value;draw();}));});
+      penalty.appendChild(penaltyChoices); rulesGrid.appendChild(penalty);
+
+      var players = el('div','vx-arena-control-card');
+      players.innerHTML='<span class="vx-arena-control-label">Player cap</span><p class="vx-arena-control-hint">How many people can use the invite?</p>';
+      var playerChoices=el('div','vx-arena-choice-grid');
+      [2,3,5,10,15,20,25,50,100].forEach(function(v){playerChoices.appendChild(setupChoiceButton(String(v),v,d.cap,function(value){d.cap=value;draw();}));});
+      players.appendChild(playerChoices); rulesGrid.appendChild(players);
+
+      var order = el('div','vx-arena-control-card');
+      order.innerHTML='<span class="vx-arena-control-label">Question order</span><p class="vx-arena-control-hint">Same questions; optionally shuffle their order per player.</p>';
+      var orderChoices=el('div','vx-arena-choice-grid two');
+      orderChoices.appendChild(setupChoiceButton('Same for everyone',false,d.shuffleOrder,function(value){d.shuffleOrder=value;draw();}));
+      orderChoices.appendChild(setupChoiceButton('Shuffle per player',true,d.shuffleOrder,function(value){d.shuffleOrder=value;draw();}));
+      order.appendChild(orderChoices); rulesGrid.appendChild(order);
+
+      var deadline = el('label','vx-arena-control-card');
+      deadline.innerHTML='<span class="vx-arena-control-label">Invite closes</span><p class="vx-arena-control-hint">After this point, new attempts cannot start.</p>';
+      var dl = el('input','vx-arena-datetime');
+      dl.type='datetime-local'; dl.value=d.deadline; dl.min=new Date(Date.now()+6e4).toISOString().slice(0,16);
+      dl.addEventListener('change',function(){d.deadline=dl.value;draw();});
+      deadline.appendChild(dl); rulesGrid.appendChild(deadline);
+
+      rules.appendChild(rulesGrid);
+      form.appendChild(rules);
+
+      /* deploy bar */
+      var actionBar = el('div','vx-arena-deploy-bar');
+      var closeHint = el('div','vx-arena-deploy-note');
+      closeHint.innerHTML='<span class="vx-arena-deploy-icon">⌁</span><div><strong>Host: ' + esc(hostDisplay) + '</strong><span>Generate the code only when everything above is ready.</span></div>';
+      actionBar.appendChild(closeHint);
+      var actionButtons=el('div','vx-arena-deploy-actions');
+      var cancel=el('button','vx-btn ghost','Cancel');cancel.type='button';cancel.addEventListener('click',function(){go('home');});
+      var make=el('button','vx-btn primary','Generate Arena invite →');make.type='button';
+      if(max<1||seconds<=0){make.disabled=true;make.textContent='No valid questions / clock';}
+      make.addEventListener('click',function(){
+        var expiresAt=new Date(d.deadline).getTime();
+        if(!expiresAt||expiresAt<=Date.now()){say('Pick a closing time in the future.');return;}
+        var match={
+          source:d.source,count:d.count,seconds:seconds,cap:Math.min(d.cap,MAX_PLAYERS),
+          shuffleOrder:d.shuffleOrder,seed:Math.floor(Math.random()*2176782335),expiresAt:expiresAt,
+          type:d.type,paperKey:d.paperKey,perQSeconds:d.perQOn?d.perQSeconds:0,negMark:d.negMark,
+          hostName:playerName()
+        };
+        match.code=A.encode(match);
+        var parsed=A.decode(match.code);
+        if(!parsed){say('Could not build a code from those settings.');return;}
+        parsed.hostName=match.hostName;
+        S.match=parsed;
+        S.hostName=match.hostName;
+        markHost(parsed.code);
+        rememberMatch(parsed);
+        go('share');
+      });
+      actionButtons.appendChild(cancel);actionButtons.appendChild(make);actionBar.appendChild(actionButtons);
+      form.appendChild(actionBar);
+    }
+    draw();
+  }
+
+  function screenShareV2(w) {
+    var m = hydrateMatch(S.match);
+    S.match = m;
+    var hostName = matchHostName(m);
+    var ownHost = isHost(m.code);
+
+    var shell = el('div','vx-arena-share');
+    var back = el('button','vx-back','&larr; Arena');
+    back.type='button';back.addEventListener('click',function(){go('home');});
+    shell.appendChild(back);
+
+    var hero = el('div','vx-arena-share-hero');
+    hero.innerHTML =
+      '<div class="vx-share-eyebrow"><span>ARENA DEPLOYED</span><b>' + (ownHost ? 'HOST CONTROL' : 'MATCH READY') + '</b></div>' +
+      '<h2>' + (ownHost ? 'Your match is live.' : 'Match ready to enter.') + '</h2>' +
+      '<p>' + (ownHost ? 'The invite is locked. You can enter the test yourself or open the host board and answer key.' : 'Use the invite link or code below to enter the same locked question set.') + '</p>';
+    if(hostName){
+      var hostLine=el('div','vx-host-identity');
+      hostLine.innerHTML='<span class="vx-host-avatar">' + esc(hostName.trim().slice(0,1).toUpperCase()||'H') + '</span><span><small>HOSTED BY</small><strong>' + esc(hostName) + '</strong></span>';
+      hero.appendChild(hostLine);
+    }
+    shell.appendChild(hero);
+
+    var codeCard=el('div','vx-arena-invite-card');
+    codeCard.innerHTML =
+      '<div class="vx-invite-kicker">MATCH INVITE</div>' +
+      '<div class="vx-invite-code"><code>' + esc(A.prettyCode(m.code)) + '</code></div>' +
+      '<div class="vx-invite-meta">' + matchStrip(m).outerHTML + '</div>';
+    shell.appendChild(codeCard);
+
+    var inviteUrl=arenaInviteUrl(m);
+    var actions=el('div','vx-arena-host-actions');
+    var enter=el('button','vx-btn primary vx-host-action-main',ownHost?'Enter Arena':'Enter match');
+    enter.type='button';enter.innerHTML=(ownHost?'Enter Arena':'Join Arena')+' <span>→</span>';
+    enter.addEventListener('click',function(){go('briefing');});
+    actions.appendChild(enter);
+
+    var boardBtn=el('button','vx-btn ghost vx-host-action-secondary',ownHost?'Answers & leaderboard':'View leaderboard');
+    boardBtn.type='button';
+    boardBtn.addEventListener('click',function(){
+      if(ownHost){
+        S.result=null;
+        loadBoard().then(function(){go('result');}).catch(function(){go('result');});
+      }else{
+        loadBoard().then(function(){go('result');}).catch(function(){go('result');});
+      }
+    });
+    actions.appendChild(boardBtn);
+    shell.appendChild(actions);
+
+    var copyRow=el('div','vx-invite-copy-row');
+    var copyInvite=el('button','vx-btn ghost','Copy invite link');
+    copyInvite.type='button';
+    copyInvite.addEventListener('click',function(){
+      if(!navigator.clipboard){say('Clipboard is unavailable.');return;}
+      navigator.clipboard.writeText(inviteUrl).then(function(){
+        copyInvite.textContent='Invite link copied';setTimeout(function(){copyInvite.textContent='Copy invite link';},1600);
+      });
+    });
+    copyRow.appendChild(copyInvite);
+
+    var copyCode=el('button','vx-btn ghost','Copy code');
+    copyCode.type='button';
+    copyCode.addEventListener('click',function(){
+      if(!navigator.clipboard){say('Clipboard is unavailable.');return;}
+      navigator.clipboard.writeText(A.prettyCode(m.code)).then(function(){
+        copyCode.textContent='Code copied';setTimeout(function(){copyCode.textContent='Copy code';},1600);
+      });
+    });
+    copyRow.appendChild(copyCode);
+
+    if(navigator.share){
+      var share=el('button','vx-btn ghost','Share invite');
+      share.type='button';
+      share.addEventListener('click',function(){
+        navigator.share({title:'VAANI Arena · '+(hostName||'Host'),text:'Join my VAANI Arena match hosted by '+(hostName||'the host')+'.',url:inviteUrl}).catch(function(){});
+      });
+      copyRow.appendChild(share);
+    }
+    shell.appendChild(copyRow);
+
+    var note=el('div','vx-arena-host-note');
+    note.innerHTML=ownHost
+      ? '<span>HOST ACCESS</span><p>Your name is attached to the invite link so every player can see who created the match. The match code itself remains unchanged.</p>'
+      : '<span>MATCH IDENTITY</span><p>Open the shared invite link to keep the host name attached to this match on your device.</p>';
+    shell.appendChild(note);
+
+    w.appendChild(shell);
+  }
+
+  function screenHostAnswers(w) {
+    var m = hydrateMatch(S.match);
+    if (!m || !isHost(m.code)) {
+      w.appendChild(el('div','vx-empty','Host access is only available on the device that created this match.'));
+      return;
+    }
+
+    var shell=el('div','vx-host-answer-key');
+    var top=el('div','vx-host-answer-hero');
+    top.innerHTML='<span class="vx-arena-setup-kicker">HOST ANSWER KEY</span><h2>' + esc(matchHostName(m) || 'Host') + ' · Control Room</h2><p>Correct options for this match, using the exact question set encoded in the invite.</p>';
+    var back=el('button','vx-back','&larr; Leaderboard');
+    back.type='button';back.addEventListener('click',function(){go('result');});
+    top.appendChild(back);
+    shell.appendChild(top);
+
+    var tools=el('div','vx-host-answer-tools');
+    var search=el('input','vx-board-search');search.type='search';search.placeholder='Search question or topic…';search.setAttribute('aria-label','Search answer key');
+    tools.appendChild(search);
+    shell.appendChild(tools);
+
+    var list=el('div','vx-host-answer-list');
+    shell.appendChild(list);
+    w.appendChild(shell);
+
+    var qs=matchQuestions();
+    function drawAnswers(){
+      list.innerHTML='';
+      var query=String(search.value||'').trim().toLowerCase();
+      qs.forEach(function(q,i){
+        var hay=(String(q.q||'')+' '+String(q.sec||'')+' '+String(q.keyword||'')).toLowerCase();
+        if(query && hay.indexOf(query)<0)return;
+        var card=el('article','vx-host-answer-card');
+        var prompt=(typeof pyqHi==='function'?pyqHi(q):esc(q.q));
+        card.innerHTML='<div class="vx-host-answer-meta"><span>Q'+(i+1)+'</span><span>'+esc(q.sec||'Mixed')+'</span><span>'+esc((q._exam||'')+' '+(q.s||'')+' '+(q.y||''))+'</span></div>' +
+          (q.passage?'<div class="pv-passage"><div class="pv-passage-label">Passage</div><div class="pv-passage-text">'+esc(q.passage)+'</div></div>':'') +
+          '<div class="vx-host-answer-prompt">'+prompt+'</div>';
+        var opts=el('div','vx-host-answer-options');
+        (q.o||[]).forEach(function(option,oi){
+          var row=el('div','vx-host-answer-option'+(oi===q.ans?' is-correct':''));
+          row.innerHTML='<span class="vx-host-answer-letter">'+String.fromCharCode(65+oi)+'</span><span>'+esc(option)+'</span>'+(oi===q.ans?'<b>✓ CORRECT</b>':'');
+          opts.appendChild(row);
+        });
+        card.appendChild(opts);list.appendChild(card);
+      });
+      if(!list.children.length)list.appendChild(el('div','vx-empty','No questions match that search.'));
+    }
+    search.addEventListener('input',drawAnswers);
+    drawAnswers();
+
+    var actions=el('div','vx-actions');
+    var board=el('button','vx-btn primary','Back to leaderboard');board.type='button';board.addEventListener('click',function(){go('result');});
+    actions.appendChild(board);
+    var home=el('button','vx-btn ghost','Back to Arena');home.type='button';home.addEventListener('click',function(){go('home');});
+    actions.appendChild(home);
+    shell.appendChild(actions);
+  }
 
   function screenCreate(w) {
     backBtn(w, 'Arena', 'home');
@@ -878,7 +1381,9 @@
   function matchStrip(m) {
     var strip = el('div', 'vx-meta-strip');
     var closed = Date.now() > m.expiresAt;
+    var hostName = matchHostName(m);
     strip.innerHTML =
+      (hostName ? '<span class="vx-chip vx-host-chip">Hosted by ' + esc(hostName) + '</span>' : '') +
       '<span class="vx-chip">' + m.count + ' questions</span>' +
       '<span class="vx-chip">' + timeLabel(m.seconds) + '</span>' +
       '<span class="vx-chip">' + (m.source === 'BOTH' ? 'Combined bank' : m.source) + '</span>' +
@@ -913,8 +1418,10 @@
     var go2 = el('button', 'vx-btn primary', 'Look up match'); go2.type = 'button';
     function attempt() {
       err.textContent = '';
-      var m = A.decode(input.value);
-      if (!m) { err.textContent = 'That code could not be read. Check for a missing or mistyped character.'; return; }
+      var parsedInvite = parseArenaInvite(input.value);
+      var m = parsedInvite.match;
+      if (!m) { err.textContent = 'That code or invite link could not be read. Check for a missing or mistyped character.'; return; }
+      m = hydrateMatch(m, parsedInvite.hostName);
       if (Date.now() > m.expiresAt) {
         err.textContent = 'This code closed on ' + new Date(m.expiresAt).toLocaleString() + '. Ask the host for a new one.';
         return;
@@ -944,6 +1451,10 @@
     hero.appendChild(title);
     var intro = el('p', 'vx-briefing-intro', 'Review the rules, get focused, and make every answer count.');
     hero.appendChild(intro);
+    var hostLine = el('div', 'vx-host-identity vx-briefing-host');
+    var hostName = matchHostName(m);
+    hostLine.innerHTML = '<span class="vx-host-avatar">' + esc((hostName || 'H').trim().slice(0,1).toUpperCase()) + '</span><span><small>HOSTED BY</small><strong>' + esc(hostName || 'Host name shared by invite') + '</strong></span>';
+    hero.appendChild(hostLine);
     panel.appendChild(hero);
 
     var stats = el('div', 'vx-briefing-stats');
@@ -1541,6 +2052,14 @@
     drawBoard();
     scheduleResultExpiry(m);
 
+    if (isHost(m.code)) {
+      var hostKey = el('button', 'vx-btn primary vx-host-key-launch', 'Open host answer key');
+      hostKey.type = 'button';
+      hostKey.style.marginTop = '18px';
+      hostKey.addEventListener('click', function () { go('hostAnswers'); });
+      w.appendChild(hostKey);
+    }
+
     var again = el('button', 'vx-btn ghost', 'Back to Arena');
     again.type = 'button'; again.style.marginTop = '18px';
     again.addEventListener('click', function () { go('home'); });
@@ -1757,7 +2276,7 @@
   }
   function rememberMatch(m) {
     var list = loadRecent().filter(function (r) { return r.code !== m.code; });
-    list.unshift({ code: m.code, count: m.count, source: m.source, expiresAt: m.expiresAt, myScore: null });
+    list.unshift({ code: m.code, count: m.count, source: m.source, expiresAt: m.expiresAt, hostName: matchHostName(m), myScore: null });
     saveRecent(list);
   }
   function recordAttempt(code, entry) {
@@ -1785,12 +2304,16 @@
       };
       global.switchView.__vxArena = true;
     }
-    // deep link: ?arena=CODE
+    // deep link: ?arena=CODE&host=NAME
     var qs = new URLSearchParams(location.search);
     var code = qs.get('arena');
+    var inviteHost = qs.get('host') || '';
     if (code) {
       var m = A.decode(code);
-      if (m) { S.match = m; S.screen = 'briefing'; rememberMatch(m); }
+      if (m) {
+        m.hostName = inviteHost ? String(inviteHost).slice(0, 40) : matchHostName(m);
+        S.match = m; S.screen = 'briefing'; rememberMatch(m);
+      }
     }
     if (host() && host().offsetParent !== null) render();
     // Local boards need no remote cleanup; a future verified adapter owns its retention policy.
