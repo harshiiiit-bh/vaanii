@@ -855,3 +855,28 @@
   opacity:0!important;
   pointer-events:none!important;
 }
+
+
+/* =========================================================
+   MOBILE DEEP CLEAN — ROOM SWITCHER RETIRED
+   The mobile document now flows normally. Never show the old
+   Arena/Championship switcher or its hidden-room state.
+   ========================================================= */
+@media (max-width:767px){
+  #mobileRoomSwitcher,
+  .mobile-room-switcher{
+    display:none!important;
+    visibility:hidden!important;
+    pointer-events:none!important;
+  }
+
+  #mainContent .mobile-room-hidden{
+    display:block!important;
+    visibility:visible!important;
+    pointer-events:auto!important;
+  }
+
+  body.mobile-rooms-mode{
+    overflow-y:auto!important;
+  }
+}
