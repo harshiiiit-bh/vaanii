@@ -43,6 +43,18 @@
   function say(m) { (VX.say || console.log)(m); }
   function fmtClock(s) { return VX.fmtClock ? VX.fmtClock(s) : s + 's'; }
 
+  /*
+   * One correctness rule for every Arena surface.
+   * PYQ answer indices have historically appeared as both numbers and strings.
+   * Strict equality let score/result/analysis disagree about the same attempt.
+   */
+  function answerMatches(given, expected) {
+    if (given === undefined || given === null || expected === undefined || expected === null) return false;
+    var gn = Number(given), en = Number(expected);
+    if (Number.isFinite(gn) && Number.isFinite(en)) return gn === en;
+    return String(given).trim() === String(expected).trim();
+  }
+
   function b36(n, width) {
     var s = Math.max(0, Math.floor(n)).toString(36).toUpperCase();
     while (s.length < width) s = '0' + s;
@@ -2325,7 +2337,7 @@
       r.questions.forEach(function(q){
         var a=r.answers[q._id];
         if(a===undefined)practiceSkipped++;
-        else if(a===q.ans)practiceCorrect++;
+        else if(answerMatches(a,q.ans))practiceCorrect++;
         else practiceIncorrect++;
       });
       S.practiceSummary={
@@ -2343,25 +2355,46 @@
     clearRunRecovery();
     var negFrac=NEG_MARKS[m.negMark]||0;
     var score=0;
+    var correctCount=0, incorrectCount=0, skippedCount=0;
+
     r.questions.forEach(function(q){
       var a=r.answers[q._id];
-      if(a===undefined)return;
-      score+=(a===q.ans)?1:negFrac;
+      if(a===undefined){
+        skippedCount++;
+        return;
+      }
+      if(answerMatches(a,q.ans)){
+        correctCount++;
+        score+=1;
+      }else{
+        incorrectCount++;
+        score+=negFrac;
+      }
     });
+
     score=Math.round(score*100)/100;
     var seconds=Math.min(m.seconds,Math.round((Date.now()-r.startedAt)/1000));
     var entry={
       pid:playerId(),name:playerName(),score:score,
       avatar:profileAvatarSnapshot(),seconds:seconds,total:r.questions.length,
+      correct:correctCount,
+      incorrect:incorrectCount,
+      skipped:skippedCount,
       at:Date.now(),auto:!!auto,
       qids:r.questions.map(function(q){return q._id;}),
       answers:r.answers,
+      /*
+       * Keep the exact attempt-time question/answer key locally. This prevents
+       * future PYQ corrections from rewriting a historical Arena result.
+       */
+      qSnapshots:r.questions.map(function(q){return snapshotArenaQuestion(q);}).filter(Boolean),
       expiresAt:m.expiresAt
     };
     S.result=entry;
     S.run=null;
     recordAttempt(m.code,entry);
     if(typeof global.addXP==='function')global.addXP(score*2,'Arena match');
+
     A.sync.submit(m.code,entry).then(loadBoard).then(function(){go('result');},
       function(){
         S._boardError=true;
@@ -2369,7 +2402,6 @@
         go('result');
       });
   }
-
   /* ---------------------------------------------------------
      RESULT + BOARD
      --------------------------------------------------------- */
@@ -2434,16 +2466,39 @@
 
   function arenaAnalysis(m,res){
     if(!m||!res)return null;
-    var qs=matchQuestions(),sections={},mistakes=[];
+
+    var qs=Array.isArray(res.qSnapshots)&&res.qSnapshots.length
+      ? res.qSnapshots.map(function(q){return q&&typeof q==='object'?JSON.parse(JSON.stringify(q)):null;}).filter(Boolean)
+      : matchQuestions();
+    var sections={},mistakes=[];
+
+    /*
+     * A perfect official score is stronger evidence than a mutable legacy
+     * answer key. Older Arena matches did not freeze question snapshots, so
+     * later PYQ corrections could otherwise manufacture a fake "mistake".
+     */
+    var officialPerfect = Number(res.score) === Number(res.total) &&
+      Number(res.total) === qs.length && qs.length > 0;
+
     qs.forEach(function(q,i){
       var given=res.answers?res.answers[q._id]:undefined;
       var key=q.sec||q._exam||'Mixed';
       if(!sections[key])sections[key]={name:key,correct:0,incorrect:0,skipped:0,total:0};
       var sec=sections[key];sec.total++;
-      if(given===undefined){sec.skipped++;mistakes.push({index:i+1,q:q,status:'skipped'});}
-      else if(Number(given)===Number(q.ans)){sec.correct++;}
-      else{sec.incorrect++;mistakes.push({index:i+1,q:q,status:'incorrect'});}
+
+      if(officialPerfect){
+        sec.correct++;
+      }else if(given===undefined){
+        sec.skipped++;
+        mistakes.push({index:i+1,q:q,status:'skipped'});
+      }else if(answerMatches(given,q.ans)){
+        sec.correct++;
+      }else{
+        sec.incorrect++;
+        mistakes.push({index:i+1,q:q,status:'incorrect'});
+      }
     });
+
     var sectionList=Object.keys(sections).map(function(k){
       var item=sections[k];
       var attempted=item.correct+item.incorrect;
@@ -2451,12 +2506,20 @@
       return item;
     }).sort(function(a,b){return b.accuracy-a.accuracy||b.total-a.total;});
     var focus=sectionList.slice().sort(function(a,b){return a.accuracy-b.accuracy||b.total-a.total;});
+
+    var correctCount=officialPerfect?qs.length:qs.filter(function(q){
+      var given=res.answers?res.answers[q._id]:undefined;
+      return given!==undefined && answerMatches(given,q.ans);
+    }).length;
+    var incorrectCount=officialPerfect?0:mistakes.filter(function(x){return x.status==='incorrect';}).length;
+    var skippedCount=officialPerfect?0:mistakes.filter(function(x){return x.status==='skipped';}).length;
+
     return {
       total:qs.length,
-      correct:Number(res.answers?qs.filter(function(q){return Number(res.answers[q._id])===Number(q.ans);}).length:0),
-      incorrect:mistakes.filter(function(x){return x.status==='incorrect';}).length,
-      skipped:mistakes.filter(function(x){return x.status==='skipped';}).length,
-      accuracy:qs.length?Math.round((qs.length-mistakes.length)/qs.length*100):0,
+      correct:correctCount,
+      incorrect:incorrectCount,
+      skipped:skippedCount,
+      accuracy:qs.length?Math.round(correctCount/qs.length*100):0,
       strongest:sectionList[0]||null,
       weakest:focus[0]||null,
       sections:sectionList,
@@ -2465,7 +2528,6 @@
       mistakePreview:mistakes.slice(0,8)
     };
   }
-
   function startMistakeDrill(){
     var m=S.match,res=S.result;
     if(!m||!res)return;
@@ -2946,19 +3008,38 @@
      marking. Returns null when no answer record reached the board
      (e.g. an attempt submitted before this synced answers at all). */
   function gradeRow(row) {
+    if (!row) return null;
+
+    // New attempts carry counts computed against the exact questions at submit time.
+    if (Number.isFinite(Number(row.correct)) &&
+        Number.isFinite(Number(row.incorrect)) &&
+        Number.isFinite(Number(row.skipped))) {
+      return {
+        correct: Math.max(0, Math.round(Number(row.correct))),
+        incorrect: Math.max(0, Math.round(Number(row.incorrect))),
+        skipped: Math.max(0, Math.round(Number(row.skipped)))
+      };
+    }
+
     if (!row.answers) return null;
-    var qs = matchQuestions();
+    var qs = Array.isArray(row.qSnapshots)&&row.qSnapshots.length ? row.qSnapshots : matchQuestions();
     if (!qs.length) return null;
+
+    // For legacy perfect attempts, the official score proves every question
+    // earned its full mark even if the current question bank has since changed.
+    if (Number(row.score) === Number(row.total) && Number(row.total) === qs.length) {
+      return {correct:qs.length,incorrect:0,skipped:0};
+    }
+
     var correct = 0, incorrect = 0, skipped = 0;
     qs.forEach(function (q) {
       var given = row.answers[q._id];
       if (given === undefined) skipped++;
-      else if (given === q.ans) correct++;
+      else if (answerMatches(given, q.ans)) correct++;
       else incorrect++;
     });
     return { correct: correct, incorrect: incorrect, skipped: skipped };
   }
-
   /* ---------------------------------------------------------
      PLAYER DETAIL SHEET
      Any attempter tapping a name gets a time + correct/incorrect/
@@ -3024,7 +3105,7 @@
 
   function renderPlayerBreakdown(sheet, row, rank, close) {
     sheetHeader(sheet, row, rank);
-    var qs = matchQuestions();
+    var qs = Array.isArray(row.qSnapshots)&&row.qSnapshots.length ? row.qSnapshots : matchQuestions();
     if (!qs.length || !row.answers) {
       sheet.appendChild(el('p', 'vx-sub', 'A detailed breakdown is not available for this attempt.'));
       sheet.appendChild(closeButton(close));
@@ -3047,8 +3128,9 @@
       opts.style.flexDirection = 'column';
       (q.o || []).forEach(function (text, oi) {
         var cls = '';
-        if (oi === q.ans) cls = ' correct';
-        else if (oi === given) cls = ' wrong';
+        if (Number(row.score) === Number(row.total) && Number(row.total) === qs.length && given !== undefined) cls = (answerMatches(oi,given) ? ' correct' : '');
+        else if (answerMatches(oi,q.ans)) cls = ' correct';
+        else if (given !== undefined && answerMatches(oi,given)) cls = ' wrong';
         var b = el('div', 'opt-btn' + cls, esc(text));
         b.style.cursor = 'default';
         opts.appendChild(b);
@@ -3075,10 +3157,11 @@
     w.appendChild(el('p', 'vx-sub', 'Green is what you picked and correct. Red is what you picked and wrong — the correct option is marked separately. Grey means you left it blank.'));
 
     var byId = sharedById();
+    var resultQuestions = Array.isArray(res.qSnapshots)&&res.qSnapshots.length ? res.qSnapshots : null;
     var list = el('div');
     list.style.cssText = 'display:flex;flex-direction:column;gap:16px;margin-top:16px';
     res.qids.forEach(function (qid, i) {
-      var q = byId[qid];
+      var q = resultQuestions ? resultQuestions[i] : byId[qid];
       var card = el('div', 'vx-tile');
       card.style.cursor = 'default';
       if (!q) {
@@ -3098,8 +3181,10 @@
       opts.style.flexDirection = 'column';
       (q.o || []).forEach(function (text, oi) {
         var cls = '';
-        if (oi === q.ans) cls = ' correct';
-        else if (oi === given) cls = ' wrong';
+        var officialPerfect = Number(res.score) === Number(res.total) && Number(res.total) === res.qids.length && res.qids.length > 0;
+        if (officialPerfect && given !== undefined) cls = (answerMatches(oi,given) ? ' correct' : '');
+        else if (answerMatches(oi,q.ans)) cls = ' correct';
+        else if (given !== undefined && answerMatches(oi,given)) cls = ' wrong';
         var b = el('div', 'opt-btn' + cls, esc(text));
         b.style.cursor = 'default';
         opts.appendChild(b);
