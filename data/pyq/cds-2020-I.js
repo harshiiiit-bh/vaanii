@@ -570,7 +570,7 @@ var PYQ_CDS_2020_I = [
     "o": [
       "Stretegy",
       "Stretagy",
-      "Strategy",
+      "Stratagy",
       "Strategy"
     ],
     "ans": 3,
