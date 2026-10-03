@@ -255,10 +255,22 @@
 
   const roomState={name:null,rooms:[],index:0,touchX:0,touchY:0};
 
+  function normalizeRoomElement(el){
+    if(!el) return null;
+    if(el.matches('.vd-roadmap,.vd-badge-grid,.pyq-stat-mini')){
+      return el.closest('.card')||el;
+    }
+    if(el.matches('#activityFeed')){
+      return el.closest('.grid-2')||el.closest('.card')||el;
+    }
+    return el;
+  }
+
   function uniqueElements(selectors){
     const found=[];
     (selectors||[]).forEach(sel=>{
-      const el=qs(sel);
+      const raw=qs(sel);
+      const el=normalizeRoomElement(raw);
       if(el && !found.includes(el)) found.push(el);
     });
     return found;
@@ -366,7 +378,10 @@
 
     const viewbar=qs('.mobile-viewbar');
     const sectionBtn=qs('.mobile-viewbar-btn',viewbar||document);
-    if(sectionBtn) sectionBtn.style.display='none';
+    if(sectionBtn){
+      sectionBtn.style.display='none';
+      sectionBtn.setAttribute('aria-hidden','true');
+    }
 
     if(rooms.length<2){
       roomSwitcher()?.remove();
@@ -394,11 +409,15 @@
       },{passive:true});
       main.addEventListener('touchend',e=>{
         if(!mobile()||!roomState.rooms.length)return;
+        const target=e.target;
+        if(target?.closest?.('button,a,input,textarea,select,[contenteditable="true"],[data-no-room-swipe]')) return;
         const t=e.changedTouches?.[0];
         if(!t)return;
         const dx=t.clientX-roomState.touchX;
         const dy=t.clientY-roomState.touchY;
         if(Math.abs(dx)<55 || Math.abs(dx)<Math.abs(dy)*1.35)return;
+        const scrollBox=target?.closest?.('.scroll-x,.horizontal-scroll');
+        if(scrollBox && scrollBox.scrollWidth>scrollBox.clientWidth+8) return;
         setMobileRoom(roomState.index+(dx<0?1:-1),true);
       },{passive:true});
     }
