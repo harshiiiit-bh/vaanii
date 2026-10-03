@@ -202,10 +202,15 @@ var PYQ_CDS_2014_I = [
     "n": 15,
     "sec": "Spotting Errors",
     "q": "People blamed him for being a coward person.",
+    "parts": [
+      "People blamed him",
+      "for being",
+      "a coward person."
+    ],
     "o": [
       "People blamed him",
-      "for being a coward person",
-      "for being a coward person",
+      "for being",
+      "a coward person.",
       "No error"
     ],
     "ans": 2
