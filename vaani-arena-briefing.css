@@ -1009,3 +1009,56 @@ body[data-theme="dark"] #view-games .vx-arena-intel-card{background:rgba(255,255
   opacity:.55;
   filter:saturate(.45);
 }
+
+
+/* ============================================================
+   QUESTION SEGMENTATION — preserve official A/B/C and P/Q/R/S
+   structure instead of flattening the source sentence.
+============================================================ */
+#view-games .vx-question-prompt{
+  margin:0 0 16px;
+}
+#view-games .vx-question-parts-kicker{
+  margin:0 0 8px;
+  color:var(--vx-gold);
+  font:900 .48rem/1.2 var(--vx-font-mono);
+  letter-spacing:.14em;
+}
+#view-games .vx-question-parts{
+  display:grid;
+  gap:7px;
+}
+#view-games .vx-question-part-row{
+  display:grid;
+  grid-template-columns:34px minmax(0,1fr);
+  gap:9px;
+  align-items:start;
+  padding:10px 12px;
+  border:1px solid var(--vx-line);
+  border-radius:11px;
+  background:rgba(255,255,255,.045);
+}
+#view-games .vx-question-part-row>span{
+  display:grid;
+  place-items:center;
+  min-height:28px;
+  padding:0 6px;
+  border-radius:8px;
+  background:rgba(197,157,68,.1);
+  color:var(--vx-gold);
+  font:900 .56rem/1 var(--vx-font-mono);
+  text-transform:uppercase;
+}
+#view-games .vx-question-part-row p{
+  margin:2px 0 0;
+  color:var(--vx-ink);
+  font-size:.88rem;
+  line-height:1.5;
+}
+@media(max-width:560px){
+  #view-games .vx-question-part-row{
+    grid-template-columns:30px minmax(0,1fr);
+    padding:9px 10px;
+  }
+  #view-games .vx-question-part-row p{font-size:.82rem}
+}

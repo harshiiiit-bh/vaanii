@@ -13,6 +13,23 @@
   */
   const FEATURE_RELEASES=[
     {
+      version:'20261004-arena-question-parts1',
+      date:'04 OCT 2026',
+      tag:'ARENA QUALITY UPDATE',
+      category:'QUESTION DISPLAY',
+      scope:'Arena · PYQ integrity · Spotting Errors · Ordering of Words',
+      impact:'Official question part boundaries are now preserved in the live test, review and host answer-key views.',
+      title:'Arena now preserves question structure',
+      summary:'Spotting Errors displays A/B/C parts and Ordering-of-Words displays P/Q/R/S fragments instead of flattening the source sentence.',
+      bullets:[
+        'Spotting Errors questions now show their exact three labelled parts.',
+        'Ordering-of-Words questions now show P/Q/R/S fragments as separate labelled blocks.',
+        'The same renderer is used during the test, after-test review and host answer key.',
+        'CDS 2013-II Q75 now carries its four source fragments explicitly in the question data.',
+        'Answer indices and scoring logic are unchanged.'
+      ]
+    },
+    {
       version:'20261004-arena-fairplay1',
       date:'04 OCT 2026',
       tag:'ARENA SAFETY UPDATE',
