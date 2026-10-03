@@ -728,8 +728,11 @@ try {
     '.vx-host-participate',
     '.vx-host-spectate',
     '.vx-invite-action',
-    '.vx-invite-action',
-    '.vx-invite-code',
+    '.vx-invite-code'
+  ]) {
+    if (!arenaCss.includes(marker)) throw new Error('Arena redesign style is missing: ' + marker);
+  }
+  for (const marker of [
     'ARENA_RECOVERY_KEY',
     'function arenaAnalysis',
     'function startMistakeDrill',
@@ -737,7 +740,7 @@ try {
     'vx-arena-intelligence',
     'vx-arena-practice-complete'
   ]) {
-    if (!arenaCss.includes(marker)) throw new Error('Arena redesign style is missing: ' + marker);
+    if (!arena.includes(marker)) throw new Error('Arena behavior marker is missing: ' + marker);
   }
   if (!/hostName:\s*matchHostName\(m\)/.test(arena)) throw new Error('Arena recent-match records must retain host identity.');
   if (!arena.includes('Copy invite link')) throw new Error('Arena host invite link control is missing.');
