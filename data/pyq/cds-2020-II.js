@@ -48,7 +48,7 @@ var PYQ_CDS_2020_II = [
     "sec": "Spellings",
     "q": "Which one of the following alternatives has the correct spelling?",
     "o": [
-      "Curriculum",
+      "Curriculam",
       "Curiculum",
       "Curiculeum",
       "Curriculum"
