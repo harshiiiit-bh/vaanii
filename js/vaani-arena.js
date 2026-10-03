@@ -387,6 +387,9 @@
         p_score: Number(entry.score),
         p_seconds: Math.max(0, Math.round(Number(entry.seconds) || 0)),
         p_total: Math.max(1, Math.round(Number(entry.total) || 1)),
+        p_correct: Math.max(0, Math.round(Number(entry.correct) || 0)),
+        p_incorrect: Math.max(0, Math.round(Number(entry.incorrect) || 0)),
+        p_skipped: Math.max(0, Math.round(Number(entry.skipped) || 0)),
         p_answers: entry.answers && typeof entry.answers === 'object' ? entry.answers : {},
         p_expires_at: Number(entry.expiresAt) || null
       };
@@ -3284,9 +3287,33 @@
     return actions;
   }
 
+  function localAttemptForRow(row) {
+    var candidates = [];
+    try {
+      if (S.result) candidates.push(S.result);
+      if (S.match && S.match.code) {
+        var previous = previousAttempt(S.match.code);
+        if (previous) candidates.push(previous);
+      }
+    } catch (e) {}
+
+    var normalizedName = String(row && row.name || '').trim().toLowerCase();
+    for (var i = 0; i < candidates.length; i++) {
+      var candidate = candidates[i];
+      if (!candidate) continue;
+      if (row && candidate.pid && row.pid && String(candidate.pid) === String(row.pid)) return candidate;
+      if (normalizedName && String(candidate.name || '').trim().toLowerCase() === normalizedName && candidate.answers) return candidate;
+    }
+    return null;
+  }
+
   function renderPlayerSummary(sheet, row, rank, close) {
     sheetHeader(sheet, row, rank);
     var stats = gradeRow(row);
+    if (!stats) {
+      var local = localAttemptForRow(row);
+      if (local) stats = gradeRow(local);
+    }
     if (stats) {
       var read = el('div', 'vx-readout');
       read.innerHTML =
