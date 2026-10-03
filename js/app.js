@@ -39,7 +39,7 @@ document.addEventListener('mousemove',(e)=>{
 =============================================================*/
 function createDefaultState(){
   return {
-    name:'Cadet', xp:0, streak:0, lastActive:null, lastStreakRewardDate:null, infoTourVersion:null, infoTourSeenAt:null, serviceForce:null,
+    name:'Cadet', profilePhoto:{src:'',kind:'',x:50,y:50,zoom:1}, xp:0, streak:0, lastActive:null, lastStreakRewardDate:null, infoTourVersion:null, infoTourSeenAt:null, serviceForce:null,
     completedTopics:{}, quizScores:{}, vocabLearned:{}, vocab90Completed:{}, vocab90XpAwarded:{}, theme:'light', missions:{},
     dailyActivity:{}, dailyXpEarned:{}, focusSessions:{}, mysteryBoxesClaimed:0, reviewQueue:[],
     personalBests:{ bestCombo:0, longestStreak:0, highestQuizScore:0, fastestQuizSeconds:null, fastestQuizLabel:'', totalQuizzesTaken:0 },
@@ -121,6 +121,7 @@ function normalizeState(){
   State.mysteryBoxesClaimed=Number.isFinite(Number(State.mysteryBoxesClaimed))?Math.max(0,Math.floor(Number(State.mysteryBoxesClaimed))):0;
   State.reviewQueue=Array.isArray(State.reviewQueue)?State.reviewQueue.filter(x=>x&&typeof x==='object'&&!Array.isArray(x)):[];
   State.name=typeof State.name==='string'?(State.name.trim().slice(0,40)||'Cadet'):'Cadet';
+  State.profilePhoto=normalizeProfilePhoto(State.profilePhoto);
   State.xp=Number.isFinite(Number(State.xp))?Math.max(0,Math.floor(Number(State.xp))):0;
   State.streak=Number.isFinite(Number(State.streak))?Math.max(0,Math.floor(Number(State.streak))):0;
   State.lastStreakRewardDate=typeof State.lastStreakRewardDate==='string'?State.lastStreakRewardDate:null;
@@ -4702,11 +4703,157 @@ async function chooseServiceForce(force){
   return true;
 }
 
+
+const PROFILE_PHOTO_DEFAULT={src:'',kind:'',x:50,y:50,zoom:1};
+function clampProfilePhotoNumber(value,min,max,fallback){
+  const n=Number(value);
+  return Number.isFinite(n)?Math.max(min,Math.min(max,n)):fallback;
+}
+function normalizeProfilePhoto(raw){
+  const value=(raw&&typeof raw==='object'&&!Array.isArray(raw))?raw:{};
+  let src=typeof value.src==='string'?value.src.trim():'';
+  if(src && !/^(?:https?:\/\/|data:image\/)/i.test(src))src='';
+  if(src.length>600000)src='';
+  const kind=src?(src.indexOf('data:image/')===0?'data':'url'):'';
+  return {src,kind,x:clampProfilePhotoNumber(value.x,0,100,50),y:clampProfilePhotoNumber(value.y,0,100,50),zoom:clampProfilePhotoNumber(value.zoom,1,4,1)};
+}
+function profilePhotoSafeUrl(raw){
+  const src=String(raw||'').trim();
+  return /^(?:https?:\/\/|data:image\/)/i.test(src)?src:'';
+}
+function profilePhotoVisual(container,sizeClass){
+  if(!container)return;
+  const photo=normalizeProfilePhoto(State.profilePhoto);
+  const name=String(State.name||'Cadet').trim()||'Cadet';
+  const initials=name.split(/\s+/).filter(Boolean).slice(0,2).map(part=>part.charAt(0).toUpperCase()).join('')||'C';
+  container.innerHTML='';
+  container.classList.toggle('has-photo',!!photo.src);
+  const initialsEl=document.createElement('span');initialsEl.className='vp-profile-avatar-initials';initialsEl.textContent=initials;container.appendChild(initialsEl);
+  if(photo.src){
+    const img=document.createElement('img');img.className='vp-profile-avatar-image';img.alt=name+' profile picture';img.loading='eager';img.decoding='async';img.src=profilePhotoSafeUrl(photo.src);
+    img.style.objectPosition=photo.x+'% '+photo.y+'%';img.style.transform='scale('+photo.zoom+')';
+    img.addEventListener('error',()=>{container.classList.remove('has-photo');img.remove();},{once:true});container.appendChild(img);
+  }
+  if(sizeClass)container.classList.add(sizeClass);
+  container.title='Change profile picture';
+}
+function readProfileImageFile(file){
+  return new Promise((resolve,reject)=>{
+    if(!file||!/^image\//i.test(file.type)){reject(new Error('Please choose an image file.'));return;}
+    const reader=new FileReader();
+    reader.onerror=()=>reject(new Error('Could not read that image.'));
+    reader.onload=()=>{
+      const src=String(reader.result||'');const image=new Image();
+      image.onload=()=>{
+        try{
+          const max=1024,scale=Math.min(1,max/Math.max(image.naturalWidth||1,image.naturalHeight||1));
+          const canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round((image.naturalWidth||1)*scale));canvas.height=Math.max(1,Math.round((image.naturalHeight||1)*scale));
+          canvas.getContext('2d').drawImage(image,0,0,canvas.width,canvas.height);resolve(canvas.toDataURL('image/jpeg',.82));
+        }catch(err){resolve(src);}
+      };
+      image.onerror=()=>reject(new Error('That image could not be decoded by this browser.'));image.src=src;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+function normalizeProfileImageLink(raw){
+  let url=String(raw||'').trim();if(!url)return '';
+  try{
+    const parsed=new URL(url,location.href);
+    const imgurl=parsed.searchParams.get('imgurl')||parsed.searchParams.get('url');
+    if(imgurl&&/^https?:\/\//i.test(imgurl))url=imgurl;
+    else if(/(?:^|\.)drive\.google\.com$/i.test(parsed.hostname)){
+      const match=parsed.pathname.match(/\/file\/d\/([^/]+)/);if(match)url='https://drive.google.com/uc?export=view&id='+encodeURIComponent(match[1]);
+    }
+  }catch(e){}
+  return profilePhotoSafeUrl(url);
+}
+function loadProfileImageForCrop(src){
+  return new Promise((resolve,reject)=>{
+    const image=new Image();
+    image.onload=()=>resolve(image);
+    image.onerror=()=>reject(new Error('The image link could not be loaded. Paste a direct image address or a Google Drive/image URL.'));
+    image.referrerPolicy='no-referrer';if(/^https?:\/\//i.test(src))image.crossOrigin='anonymous';image.src=src;
+  });
+}
+function bakeProfileCrop(src,x,y,zoom,size){
+  return loadProfileImageForCrop(src).then(image=>{
+    const canvas=document.createElement('canvas');canvas.width=size||128;canvas.height=size||128;
+    const target=canvas.width,scale=Math.max(target/(image.naturalWidth||1),target/(image.naturalHeight||1))*Number(zoom||1);
+    const rw=(image.naturalWidth||1)*scale,rh=(image.naturalHeight||1)*scale,maxX=Math.max(0,rw-target),maxY=Math.max(0,rh-target);
+    const dx=-(Number(x||50)/100)*maxX,dy=-(Number(y||50)/100)*maxY;
+    canvas.getContext('2d').drawImage(image,dx,dy,rw,rh);return canvas.toDataURL('image/jpeg',.80);
+  });
+}
+function ensureProfilePhotoEditor(){
+  let modal=document.getElementById('vpProfilePhotoEditor');if(modal)return modal;
+  modal=document.createElement('div');modal.id='vpProfilePhotoEditor';modal.className='vp-photo-editor';modal.hidden=true;
+  modal.innerHTML=\`
+    <div class="vp-photo-editor-scrim" data-photo-close>
+      <section class="vp-photo-editor-dialog" role="dialog" aria-modal="true" aria-labelledby="vpPhotoEditorTitle">
+        <div class="vp-photo-editor-head"><div><span class="vp-profile-kicker">PROFILE PICTURE</span><h3 id="vpPhotoEditorTitle">Choose your picture</h3><p>Upload, drop an image, or paste an image link. Then drag and zoom to frame the circular crop.</p></div><button type="button" class="vp-photo-editor-close" data-photo-close aria-label="Close profile picture editor">×</button></div>
+        <div class="vp-photo-editor-body">
+          <div class="vp-photo-editor-stage-wrap"><div class="vp-photo-editor-stage" id="vpPhotoEditorStage"><img id="vpPhotoCropImage" alt="Profile picture crop preview" draggable="false"><div class="vp-photo-crop-guide" aria-hidden="true"></div><div class="vp-photo-empty" id="vpPhotoEmpty">Choose an image to begin</div></div><div class="vp-photo-editor-hint">Drag to reposition · use the zoom slider to frame your face</div></div>
+          <div class="vp-photo-editor-controls">
+            <input id="vpPhotoFileInput" type="file" accept="image/*" hidden>
+            <div class="vp-photo-upload-grid"><button type="button" class="btn ghost" id="vpPhotoPick">Choose from device</button><div class="vp-photo-dropzone" id="vpPhotoDropzone" tabindex="0">Drop image here</div></div>
+            <label class="vp-photo-link-field"><span>Image link</span><div class="vp-photo-link-row"><input id="vpPhotoUrl" type="url" inputmode="url" placeholder="Paste a direct image URL…"><button type="button" class="btn ghost" id="vpPhotoUseUrl">Use link</button></div></label>
+            <label class="vp-photo-zoom-field"><span>Zoom <output id="vpPhotoZoomValue">1.00×</output></span><input id="vpPhotoZoom" type="range" min="1" max="4" step="0.05" value="1"></label>
+            <div class="vp-photo-editor-status" id="vpPhotoStatus" role="status" aria-live="polite"></div>
+            <div class="vp-photo-editor-actions"><button type="button" class="btn ghost" id="vpPhotoRemove">Remove photo</button><span></span><button type="button" class="btn ghost" data-photo-close>Cancel</button><button type="button" class="btn primary" id="vpPhotoSave">Save picture</button></div>
+          </div>
+        </div>
+      </section>
+    </div>\`;
+  document.body.appendChild(modal);
+  const stage=modal.querySelector('#vpPhotoEditorStage'),img=modal.querySelector('#vpPhotoCropImage'),empty=modal.querySelector('#vpPhotoEmpty'),zoom=modal.querySelector('#vpPhotoZoom'),zoomValue=modal.querySelector('#vpPhotoZoomValue'),status=modal.querySelector('#vpPhotoStatus');
+  let draft={src:'',kind:'',x:50,y:50,zoom:1},drag=null;
+  function renderDraft(){
+    const usable=!!draft.src;empty.hidden=usable;img.hidden=!usable;zoom.disabled=!usable;zoom.value=String(draft.zoom);zoomValue.textContent=draft.zoom.toFixed(2)+'×';
+    if(usable){img.src=draft.src;img.style.objectPosition=draft.x+'% '+draft.y+'%';img.style.transform='scale('+draft.zoom+')';}
+  }
+  function setStatus(text,bad){status.textContent=text||'';status.classList.toggle('is-error',!!bad);}
+  async function setSource(src,kind){
+    src=profilePhotoSafeUrl(src);if(!src){setStatus('That image link is not supported.',true);return;}setStatus('Loading image…');
+    try{await loadProfileImageForCrop(src);draft={src,kind:kind||(/^data:image\//i.test(src)?'data':'url'),x:50,y:50,zoom:1};renderDraft();setStatus('Image loaded. Drag the photo until the framing looks right.');}
+    catch(err){setStatus(err.message||'Could not load that image.',true);}
+  }
+  modal.openEditor=()=>{
+    draft=Object.assign({},normalizeProfilePhoto(State.profilePhoto));renderDraft();setStatus(draft.src?'Adjust your framing, then save.':'Choose an image to begin.');
+    modal.querySelector('#vpPhotoUrl').value='';modal.hidden=false;document.body.classList.add('vp-photo-editor-open');setTimeout(()=>modal.querySelector('#vpPhotoPick').focus(),0);
+  };
+  modal.closeEditor=()=>{modal.hidden=true;document.body.classList.remove('vp-photo-editor-open');};
+  modal.querySelectorAll('[data-photo-close]').forEach(node=>node.addEventListener('click',e=>{if(e.target===node||node.classList.contains('vp-photo-editor-close'))modal.closeEditor();}));
+  modal.querySelector('#vpPhotoPick').addEventListener('click',()=>modal.querySelector('#vpPhotoFileInput').click());
+  modal.querySelector('#vpPhotoFileInput').addEventListener('change',async e=>{try{const src=await readProfileImageFile(e.target.files&&e.target.files[0]);await setSource(src,'data');}catch(err){setStatus(err.message,true);}e.target.value='';});
+  const drop=modal.querySelector('#vpPhotoDropzone');
+  ['dragenter','dragover'].forEach(type=>drop.addEventListener(type,e=>{e.preventDefault();drop.classList.add('is-dragging');}));
+  ['dragleave','drop'].forEach(type=>drop.addEventListener(type,e=>{e.preventDefault();drop.classList.remove('is-dragging');if(type==='drop'){const file=e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files[0];if(file)readProfileImageFile(file).then(src=>setSource(src,'data')).catch(err=>setStatus(err.message,true));}}));
+  drop.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();modal.querySelector('#vpPhotoFileInput').click();}});
+  modal.querySelector('#vpPhotoUseUrl').addEventListener('click',()=>setSource(normalizeProfileImageLink(modal.querySelector('#vpPhotoUrl').value),'url'));
+  modal.querySelector('#vpPhotoUrl').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();modal.querySelector('#vpPhotoUseUrl').click();}});
+  zoom.addEventListener('input',()=>{draft.zoom=Number(zoom.value)||1;renderDraft();});
+  stage.addEventListener('pointerdown',e=>{if(!draft.src)return;drag={x:e.clientX,y:e.clientY,px:draft.x,py:draft.y};stage.setPointerCapture(e.pointerId);stage.classList.add('is-dragging');});
+  stage.addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;draft.x=Math.max(0,Math.min(100,drag.px-dx*.28));draft.y=Math.max(0,Math.min(100,drag.py-dy*.28));renderDraft();});
+  ['pointerup','pointercancel'].forEach(type=>stage.addEventListener(type,()=>{drag=null;stage.classList.remove('is-dragging');}));
+  stage.addEventListener('wheel',e=>{if(!draft.src)return;e.preventDefault();draft.zoom=Math.max(1,Math.min(4,draft.zoom+(e.deltaY<0?.08:-.08)));renderDraft();},{passive:false});
+  modal.querySelector('#vpPhotoRemove').addEventListener('click',()=>{State.profilePhoto=Object.assign({},PROFILE_PHOTO_DEFAULT);saveState();renderProfileSnapshot();modal.closeEditor();if(typeof toast==='function')toast('Profile picture removed.');});
+  modal.querySelector('#vpPhotoSave').addEventListener('click',async()=>{
+    if(!draft.src){setStatus('Choose an image first.',true);return;}const btn=modal.querySelector('#vpPhotoSave');btn.disabled=true;setStatus('Saving picture…');
+    try{
+      let finalSrc=draft.src,finalKind=draft.kind,x=draft.x,y=draft.y,zoomValueFinal=draft.zoom;
+      try{finalSrc=await bakeProfileCrop(draft.src,draft.x,draft.y,draft.zoom,128);finalKind='data';x=50;y=50;zoomValueFinal=1;}catch(e){}
+      State.profilePhoto={src:finalSrc,kind:finalKind,x,y,zoom:zoomValueFinal};normalizeState();saveState();renderProfileSnapshot();modal.closeEditor();if(typeof toast==='function')toast('Profile picture updated.');
+    }catch(err){setStatus('Could not save that picture.',true);}finally{btn.disabled=false;}
+  });
+  return modal;
+}
+function openProfilePhotoEditor(){ensureProfilePhotoEditor().openEditor();}
+
 function renderProfileSnapshot(){
   refreshAccountCodeControls();
   const name=String(State.name||'Cadet').trim()||'Cadet';
-  const initials=name.split(/\s+/).filter(Boolean).slice(0,2).map(part=>part.charAt(0).toUpperCase()).join('')||'C';
-  const avatar=document.getElementById('vpProfileAvatar');if(avatar)avatar.textContent=initials;
+  const avatar=document.getElementById('vpProfileAvatar');if(avatar)profilePhotoVisual(avatar);
   const completed=GRAMMAR.filter(g=>!!State.completedTopics[g.id]).length;
   const scores=Object.values(State.quizScores).map(Number).filter(n=>Number.isFinite(n)&&n>=0&&n<=100);
   const avg=scores.length?Math.round(scores.reduce((sum,n)=>sum+n,0)/scores.length):null;
