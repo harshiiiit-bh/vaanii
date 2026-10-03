@@ -2250,14 +2250,23 @@
       '<div class="vx-question-prompt">' + questionPromptHtml(q) + '</div>';
     card.innerHTML = body;
 
-    var opts = el('div', 'vx-seg');
+    var isArrangement = typeof pyqIsArrangementQuestion === 'function' && pyqIsArrangementQuestion(q);
+    var opts = el('div', 'vx-seg' + (isArrangement ? ' vx-arrange-options' : ''));
     opts.style.flexDirection = 'column';
     q.o.forEach(function (text, i) {
-      var b = el('button', null, esc(text));
+      var b = el('button', null);
       b.type = 'button';
       b.style.textAlign = 'left';
       b.style.width = '100%';
       b.setAttribute('aria-pressed', String(r.answers[q._id] === i));
+      if(isArrangement){
+        b.classList.add('vx-answer-choice');
+        b.innerHTML =
+          '<span class="vx-answer-choice-label">' + String.fromCharCode(65+i) + '</span>' +
+          '<span class="vx-answer-choice-text">' + esc(text) + '</span>';
+      }else{
+        b.textContent = String(text);
+      }
       b.addEventListener('click', function () {
         r.answers[q._id] = i;
         delete r.skipped[q._id];
