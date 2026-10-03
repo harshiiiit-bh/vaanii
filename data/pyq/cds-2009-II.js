@@ -928,7 +928,7 @@ var PYQ_CDS_2009_II = [
     "s": "II",
     "n": 67,
     "sec": "Ordering of Words in a Sentence",
-    "q": "from behind a curtain he held it in such a manner bringing the light that it fell slantwise (P) (Q) (R) (S) on her face.",
+    "q": "from behind a curtain (P) he held it in such a manner (Q) bringing the light (R) that it fell slantwise on her face. (S)",
     "o": [
       "S-Q-R-P",
       "R-P-Q-S",
