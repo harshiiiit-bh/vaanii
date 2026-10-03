@@ -658,6 +658,7 @@ try {
     const first=arena.questionsFor(decoded,'Smoke Cadet').map(question=>question._id);
     const second=arena.questionsFor(arena.decode(code),'Smoke Cadet').map(question=>question._id);
     const boardKey=code;
+    const sharedReadKey='smoke-regression-arena';
     const testEntry={pid:'smoke-player',name:'Smoke Cadet',score:6,seconds:60,total:8,at:1,answers:{}};
     const originalSync=arena.sync;
     arena.useSync({
@@ -688,7 +689,7 @@ try {
       ],verified:false,source:'historical'})});
     };
     let sharedRows=[];
-    try { sharedRows=await arena.sync.fetch(boardKey); }
+    try { sharedRows=await arena.sync.fetch(sharedReadKey); }
     finally {
       window.fetch=originalFetch;
       localStorage.removeItem('vx_arena_board_'+boardKey);
