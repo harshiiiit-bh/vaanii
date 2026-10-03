@@ -1,0 +1,701 @@
+/*
+ * VAANI MOBILE REDESIGN V2
+ * Dedicated mobile presentation layer.
+ * Desktop/tablet styles are intentionally unaffected.
+ *
+ * UX direction:
+ * 1. Five primary destinations instead of a six-button command strip.
+ * 2. Secondary destinations are grouped inside the existing More sheet.
+ * 3. Long pages use progressive disclosure: secondary panels collapse on phones.
+ * 4. Bottom navigation hides while scrolling down and returns on reverse scroll.
+ * 5. The current view gets one compact context bar with a single Sections action.
+ */
+@media (max-width:767px){
+
+  :root{
+    --mobile-gutter:12px;
+    --mobile-radius:15px;
+    --mobile-gap:9px;
+    --mobile-nav-h:64px;
+    --mobile-header-h:56px;
+  }
+
+  body{
+    padding-bottom:calc(var(--mobile-nav-h) + env(safe-area-inset-bottom));
+  }
+
+  main{
+    padding:10px var(--mobile-gutter) 30px!important;
+  }
+
+  /* ----------------------------------------------------------
+     APP BAR — one compact row, secondary actions stay in overflow
+     ---------------------------------------------------------- */
+  header{
+    height:auto!important;
+    min-height:56px!important;
+  }
+  .topbar{
+    min-height:56px!important;
+    height:56px!important;
+    padding:7px 10px!important;
+  }
+  .topbar > div:first-child{
+    gap:7px!important;
+  }
+  .info-trigger{
+    width:32px!important;
+    height:32px!important;
+    min-width:32px!important;
+    min-height:32px!important;
+  }
+  .brand{
+    gap:6px!important;
+  }
+  .vaani-brand-logo{
+    width:30px!important;
+    height:30px!important;
+  }
+  .brand-name{
+    font-size:.95rem!important;
+    letter-spacing:.12em!important;
+  }
+  .top-right{
+    gap:4px!important;
+  }
+  .top-right .theme-toggle{
+    width:34px!important;
+    height:34px!important;
+    min-width:34px!important;
+    min-height:34px!important;
+    padding:0!important;
+  }
+  .top-right .theme-toggle:nth-last-child(1){
+    display:flex!important;
+  }
+  #focusBtn{
+    display:none!important;
+  }
+  .streak-pill,.xp-pill{
+    display:none!important;
+  }
+
+  /* ----------------------------------------------------------
+     CONTEXT BAR — replaces repeated page-level action clusters
+     ---------------------------------------------------------- */
+  .mobile-viewbar{
+    position:sticky;
+    top:56px;
+    z-index:125;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    width:100%;
+    min-height:42px;
+    margin:0 0 9px;
+    padding:5px 7px 5px 11px;
+    border:1px solid var(--line);
+    border-radius:13px;
+    background:color-mix(in srgb,var(--panel) 92%,transparent);
+    box-shadow:0 5px 16px rgba(22,33,46,.07);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+  }
+  .mobile-viewbar-title{
+    flex:1;
+    min-width:0;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    font-family:var(--serif);
+    font-size:.72rem;
+    letter-spacing:.09em;
+    text-transform:uppercase;
+    color:var(--text);
+  }
+  .mobile-viewbar-meta{
+    color:var(--muted);
+    font-family:var(--mono);
+    font-size:.57rem;
+    white-space:nowrap;
+  }
+  .mobile-viewbar-btn{
+    flex:0 0 auto;
+    min-height:32px!important;
+    height:32px!important;
+    padding:5px 10px!important;
+    border:1px solid var(--line);
+    border-radius:10px;
+    background:var(--panel2);
+    color:var(--gold);
+    font-family:var(--mono);
+    font-size:.58rem!important;
+    letter-spacing:.04em;
+  }
+
+  /* ----------------------------------------------------------
+     FIVE-DESTINATION BOTTOM NAV
+     ---------------------------------------------------------- */
+  .bottomnav{
+    display:grid!important;
+    grid-template-columns:repeat(5,minmax(0,1fr))!important;
+    height:calc(var(--mobile-nav-h) + env(safe-area-inset-bottom))!important;
+    min-height:calc(var(--mobile-nav-h) + env(safe-area-inset-bottom))!important;
+    padding:5px 6px calc(5px + env(safe-area-inset-bottom))!important;
+    gap:3px!important;
+    transition:transform .24s cubic-bezier(.2,.7,.3,1),opacity .18s ease!important;
+  }
+  .bottomnav.mobile-nav-hidden{
+    transform:translateY(110%)!important;
+    opacity:.2!important;
+    pointer-events:none!important;
+  }
+  .bottomnav button{
+    min-width:0!important;
+    min-height:52px!important;
+    height:52px!important;
+    padding:5px 2px!important;
+    border-radius:12px!important;
+    font-size:.52rem!important;
+  }
+  .bottomnav button .bn-ico{
+    font-size:1.05rem!important;
+  }
+  .bottomnav button[data-mobile-primary="true"]::after{
+    content:'';
+    width:3px;
+    height:3px;
+    border-radius:50%;
+    background:currentColor;
+    opacity:.35;
+    margin-top:1px;
+  }
+
+  /* ----------------------------------------------------------
+     GLOBAL DENSITY
+     ---------------------------------------------------------- */
+  .view{
+    padding-bottom:20px!important;
+  }
+  .section-head{
+    margin-bottom:9px!important;
+  }
+  .section-head h2{
+    font-size:1.28rem!important;
+  }
+  .section-desc{
+    font-size:.74rem!important;
+    line-height:1.5!important;
+    margin-bottom:10px!important;
+  }
+  .card,.panel,.section-card,.module-card{
+    border-radius:var(--mobile-radius)!important;
+  }
+  .panel-title{
+    min-height:26px;
+    margin-bottom:8px!important;
+    font-size:.84rem!important;
+  }
+  .btn{
+    min-height:42px!important;
+    padding:10px 14px!important;
+    font-size:.67rem!important;
+  }
+  .btn-row{
+    gap:7px!important;
+  }
+  .view :is(.grid-2,.grid-3,.grid-4){
+    gap:var(--mobile-gap)!important;
+  }
+
+  /* ----------------------------------------------------------
+     PROGRESSIVE DISCLOSURE
+     ---------------------------------------------------------- */
+  .mobile-fold{
+    position:relative;
+    overflow:hidden;
+    transition:box-shadow .2s ease,border-color .2s ease;
+  }
+  .mobile-fold.is-collapsed{
+    box-shadow:none!important;
+  }
+  .mobile-fold.is-collapsed .mobile-fold-body{
+    display:none!important;
+  }
+  .mobile-fold-head{
+    display:flex!important;
+    align-items:center!important;
+    justify-content:space-between!important;
+    gap:8px!important;
+    width:100%!important;
+    min-width:0!important;
+  }
+  .mobile-fold-head > :first-child{
+    min-width:0!important;
+  }
+  .mobile-fold-toggle{
+    flex:0 0 auto;
+    width:32px!important;
+    height:32px!important;
+    min-width:32px!important;
+    min-height:32px!important;
+    padding:0!important;
+    border:1px solid var(--line);
+    border-radius:9px;
+    background:var(--panel2);
+    color:var(--gold);
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    font-size:.82rem!important;
+    line-height:1;
+  }
+  .mobile-fold.is-collapsed .mobile-fold-toggle{
+    color:var(--muted);
+  }
+  .mobile-fold.is-collapsed .mobile-fold-head::after{
+    content:'Tap to open';
+    margin-left:auto;
+    color:var(--muted2);
+    font-family:var(--mono);
+    font-size:.51rem;
+    letter-spacing:.02em;
+    white-space:nowrap;
+  }
+
+  /* ----------------------------------------------------------
+     DASHBOARD — mobile is a mission screen, not a long report
+     ---------------------------------------------------------- */
+  #view-dashboard .vd-qa{
+    display:grid!important;
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    gap:6px!important;
+    margin-bottom:8px!important;
+  }
+  #view-dashboard .vd-qa-btn{
+    min-height:58px!important;
+    padding:7px 3px!important;
+    border-radius:12px!important;
+  }
+  #view-dashboard .vd-qa-btn span:last-child{
+    font-size:.58rem!important;
+  }
+  #view-dashboard .vd-hero{
+    border-radius:17px!important;
+  }
+  #view-dashboard .vd-hero-inner{
+    padding:18px 15px 15px!important;
+  }
+  #view-dashboard .vd-hero-title{
+    margin:8px 0 13px!important;
+    font-size:clamp(1.5rem,7.6vw,2rem)!important;
+  }
+  #view-dashboard .vd-hero-stats{
+    gap:6px 12px!important;
+    margin-bottom:11px!important;
+  }
+  #view-dashboard .vd-stat{
+    padding:6px 0!important;
+  }
+  #view-dashboard .vd-stat-num{
+    font-size:1.16rem!important;
+  }
+  #view-dashboard .vd-stat-lbl{
+    font-size:.49rem!important;
+  }
+  #view-dashboard .vd-hero .btn-row{
+    grid-template-columns:1fr 1fr!important;
+  }
+  #view-dashboard .vd-hero .btn{
+    padding:9px 8px!important;
+  }
+  #view-dashboard .review-widget{
+    margin-top:8px!important;
+    padding:13px!important;
+  }
+  #view-dashboard .vd-briefing{
+    margin-top:8px!important;
+  }
+  #view-dashboard .vd-briefing-head{
+    padding:12px 13px!important;
+  }
+  #view-dashboard .vd-brief-col{
+    padding:12px!important;
+  }
+  #view-dashboard .vd-card{
+    padding:13px!important;
+  }
+  #view-dashboard .mastery-strip{
+    gap:8px!important;
+    padding-top:13px!important;
+    margin-top:13px!important;
+  }
+  #view-dashboard .mastery-row{
+    gap:8px!important;
+    margin-bottom:8px!important;
+    font-size:.72rem!important;
+  }
+  #view-dashboard .mastery-row span:first-child{
+    width:92px!important;
+  }
+  #view-dashboard .grid-2{
+    gap:8px!important;
+  }
+  #view-dashboard .activity-feed{
+    max-height:220px!important;
+  }
+  #view-dashboard .vd-focus-sprint{
+    margin-top:8px!important;
+  }
+  #view-dashboard .quote-panel{
+    margin-top:8px!important;
+    padding:13px!important;
+  }
+  #view-dashboard .spin-card{
+    margin-top:8px!important;
+  }
+
+  /* Keep only one prominent primary action in the Arcade on phones. */
+  #view-dashboard [aria-label="XP Arcade"]{
+    padding:13px!important;
+  }
+  #view-dashboard [aria-label="XP Arcade"] > div:last-child{
+    grid-template-columns:1fr 1fr!important;
+    gap:6px!important;
+  }
+  #view-dashboard [aria-label="XP Arcade"] .btn{
+    min-height:58px!important;
+    padding:8px!important;
+    font-size:.63rem!important;
+  }
+
+  /* ----------------------------------------------------------
+     GRAMMAR — tree first; stats/actions are secondary drawers
+     ---------------------------------------------------------- */
+  #view-grammar .gt-root{
+    border-radius:17px!important;
+  }
+  #view-grammar .gt-header{
+    margin-bottom:9px!important;
+  }
+  #view-grammar .gt-headchips{
+    gap:5px!important;
+  }
+  #view-grammar .gt-chip{
+    padding:7px 5px!important;
+  }
+  #view-grammar .gt-layout{
+    gap:8px!important;
+  }
+  #view-grammar .gt-sidebar{
+    grid-template-columns:1fr 1fr!important;
+    gap:6px!important;
+  }
+  #view-grammar .gt-card{
+    padding:11px!important;
+    border-radius:13px!important;
+  }
+  #view-grammar .gt-tree-wrap{
+    min-height:350px!important;
+    height:350px!important;
+  }
+  #view-grammar .gt-tree-canvas{
+    transform:scale(.72)!important;
+  }
+  #view-grammar .gt-quickactions{
+    grid-template-columns:1fr 1fr!important;
+    gap:6px!important;
+  }
+  #view-grammar .gt-quickactions .primary{
+    grid-column:1/-1;
+  }
+  #view-grammar .ga-catalog{
+    margin-top:9px!important;
+    padding:12px!important;
+  }
+
+  /* ----------------------------------------------------------
+     VOCAB / WORD DETAIL
+     ---------------------------------------------------------- */
+  #view-vocab .word-of-day{
+    padding:18px 13px!important;
+    margin-bottom:10px!important;
+  }
+  #view-vocab .singles-strip{
+    gap:6px!important;
+    margin-bottom:10px!important;
+  }
+  #view-vocab .single-card{
+    padding:11px!important;
+    border-radius:12px!important;
+  }
+  #view-vocab .word-card{
+    padding:13px!important;
+  }
+  #view-vocab .vocab-toolbar{
+    gap:7px!important;
+    margin-bottom:10px!important;
+  }
+  #view-worddetail .wd-head{
+    padding:14px!important;
+    margin-bottom:9px!important;
+  }
+  #view-worddetail .wd-section{
+    padding:12px!important;
+    margin-bottom:8px!important;
+  }
+
+  /* ----------------------------------------------------------
+     PYQ — command console, not a stack of control bars
+     ---------------------------------------------------------- */
+  #view-pyq #pvApp{
+    border-radius:17px!important;
+  }
+  #view-pyq :is(.pv-toolbar,.pv-filters,.pv-actions,.pv-controls){
+    gap:6px!important;
+  }
+  #view-pyq :is(.pv-paper-card,.pv-question-card,.pv-card){
+    padding:12px!important;
+  }
+
+  /* ----------------------------------------------------------
+     ARENA — action hierarchy + compact scoreboard
+     ---------------------------------------------------------- */
+  #view-games .vx-briefing,
+  #view-games .vx-championship{
+    border-radius:16px!important;
+  }
+  #view-games .vx-briefing{
+    padding:9px!important;
+  }
+  #view-games .vx-briefing-hero{
+    padding:14px 12px!important;
+  }
+  #view-games .vx-briefing-title{
+    font-size:1.75rem!important;
+  }
+  #view-games .vx-briefing-start{
+    min-height:48px!important;
+  }
+  #view-games .vx-championship{
+    padding:9px!important;
+  }
+
+  /* ----------------------------------------------------------
+     PROFILE / SERVICE RECORD
+     ---------------------------------------------------------- */
+  #view-profile .vp-profile-hero{
+    padding:12px!important;
+  }
+  #view-profile .vp-card,
+  #view-leaderboard .service-card{
+    padding:12px!important;
+  }
+  #view-leaderboard .service-hero{
+    padding:14px 12px!important;
+  }
+
+  /* ----------------------------------------------------------
+     INFO / EXAM DIRECTORY
+     ---------------------------------------------------------- */
+  #view-info .nc-directory-card,
+  #view-info .nc-card,
+  #view-info .nc-panel{
+    padding:12px!important;
+  }
+  #view-info .nc-accordion summary{
+    min-height:52px!important;
+    padding:10px 12px!important;
+  }
+
+  /* ----------------------------------------------------------
+     BOOK READING — leave its internal app intact, only constrain chrome
+     ---------------------------------------------------------- */
+  #view-books .vbv-scope{
+    border-radius:16px!important;
+  }
+
+  /* ----------------------------------------------------------
+     SEARCH / SHEETS / DIALOGS
+     ---------------------------------------------------------- */
+  .bottom-sheet{
+    max-height:82dvh!important;
+    border-radius:20px 20px 0 0!important;
+  }
+  .sheet-body{
+    max-height:68dvh!important;
+    overflow:auto!important;
+    overscroll-behavior:contain;
+  }
+  .sheet-menu-group{
+    margin:5px 0 11px;
+  }
+  .sheet-group-label{
+    display:block;
+    padding:7px 8px 5px;
+    color:var(--muted2);
+    font-family:var(--mono);
+    font-size:.56rem;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+  }
+  .sheet-menu-item{
+    min-height:46px!important;
+  }
+  .sheet-category{
+    width:100%;
+    min-height:64px!important;
+    display:grid!important;
+    grid-template-columns:40px 1fr 20px;
+    align-items:center;
+    gap:10px;
+    margin-bottom:7px;
+    padding:9px 10px!important;
+    border:1px solid var(--line);
+    border-radius:14px;
+    background:var(--panel2);
+    color:var(--text);
+    text-align:left;
+  }
+  .sheet-category .smi-icon{
+    width:38px;
+    height:38px;
+    display:grid;
+    place-items:center;
+    border-radius:11px;
+    background:rgba(201,162,75,.1);
+    font-size:1.15rem;
+  }
+  .sheet-category .smi-label{
+    font-family:var(--serif);
+    font-size:.76rem;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+  }
+  .sheet-category small{
+    display:block;
+    margin-top:2px;
+    color:var(--muted);
+    font-size:.61rem;
+    font-family:var(--body);
+    letter-spacing:0;
+    text-transform:none;
+  }
+  .sheet-category .smi-arrow{
+    color:var(--gold);
+    font-size:1.1rem;
+  }
+  .mobile-section-sheet{
+    position:fixed;
+    inset:0;
+    z-index:600;
+    display:flex;
+    align-items:flex-end;
+    background:rgba(4,8,12,.52);
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+    transition:opacity .2s ease,visibility .2s ease;
+  }
+  .mobile-section-sheet.show{
+    opacity:1;
+    visibility:visible;
+    pointer-events:auto;
+  }
+  .mobile-section-panel{
+    width:100%;
+    max-height:72dvh;
+    overflow:auto;
+    padding:10px 12px calc(14px + env(safe-area-inset-bottom));
+    border-radius:20px 20px 0 0;
+    background:var(--panel);
+    border:1px solid var(--line);
+    box-shadow:0 -20px 50px rgba(0,0,0,.2);
+    transform:translateY(20px);
+    transition:transform .24s cubic-bezier(.2,.7,.3,1);
+  }
+  .mobile-section-sheet.show .mobile-section-panel{
+    transform:translateY(0);
+  }
+  .mobile-section-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:4px 3px 10px;
+  }
+  .mobile-section-head strong{
+    font-family:var(--serif);
+    font-size:.78rem;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+  }
+  .mobile-section-close{
+    width:34px;
+    height:34px;
+    min-width:34px!important;
+    min-height:34px!important;
+    border:1px solid var(--line);
+    border-radius:10px;
+    background:var(--panel2);
+  }
+  .mobile-section-link{
+    width:100%;
+    min-height:48px!important;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:10px 11px!important;
+    margin-bottom:6px;
+    border:1px solid var(--line);
+    border-radius:12px;
+    background:var(--panel2);
+    color:var(--text);
+    text-align:left;
+  }
+  .mobile-section-link span:first-child{
+    min-width:0;
+    font-family:var(--body);
+    font-size:.73rem;
+  }
+  .mobile-section-link span:last-child{
+    color:var(--muted2);
+    font-family:var(--mono);
+    font-size:.56rem;
+  }
+
+  /* ----------------------------------------------------------
+     REDUCE CHROME WHILE READING / TESTING
+     ---------------------------------------------------------- */
+  body.mobile-reading-mode .mobile-viewbar,
+  body.mobile-reading-mode .bottomnav{
+    opacity:.08;
+    pointer-events:none;
+    transform:translateY(110%);
+  }
+
+  /* ----------------------------------------------------------
+     NARROW PHONES
+     ---------------------------------------------------------- */
+  @media(max-width:380px){
+    :root{--mobile-gutter:9px}
+    #view-dashboard .vd-qa{
+      grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    }
+    #view-dashboard .vd-hero .btn-row{
+      grid-template-columns:1fr!important;
+    }
+    #view-dashboard [aria-label="XP Arcade"] > div:last-child{
+      grid-template-columns:1fr!important;
+    }
+    #view-grammar .gt-tree-wrap{
+      min-height:320px!important;
+      height:320px!important;
+    }
+    .mobile-viewbar-meta{
+      display:none;
+    }
+  }
+}
+
+/* Tablet/laptop/desktop deliberately receive no rules from this file. */
