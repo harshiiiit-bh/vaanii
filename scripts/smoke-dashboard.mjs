@@ -1130,7 +1130,7 @@ try {
   assert.match(journeyState.url, /[?&]v=notifications(?:#|$)/, 'Mobile nav route URL is not distinct');
   assert.ok(journeyState.length >= 5, 'Mobile navigation did not create enough history entries: ' + JSON.stringify(journeyState));
 
-  for (const expected of ['pyq','vocab','grammar','dashboard']) {
+  for (const expected of ['dashboard','pyq','vocab','grammar']) {
     const beforeBack = await navPage.evaluate(() => ({
       url:location.href, state:history.state, active:document.querySelector('.view.active')?.id||null, length:history.length
     }));
@@ -1154,7 +1154,7 @@ try {
   }
   assert.equal(await navPage.evaluate(() => history.state?.vaaniView), 'dashboard',
     'Final back state is not Dashboard');
-  console.log('PASS full mobile back journey: Updates → PYQ → Vocab → Grammar → Home');
+  console.log('PASS full mobile back journey: Updates → Home → PYQ → Vocab → Grammar');
 
   // Word-detail browser Back is also exercised in the isolated tab.
   await navPage.locator('#bottomNav button[data-view="vocab"]').click();
