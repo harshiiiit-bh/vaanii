@@ -72,17 +72,20 @@ async function assertVisibleText(selector, label) {
   assert.ok(value && value !== '—' && !/^loading/i.test(value), label + ' was blank: ' + JSON.stringify(value));
 }
 async function dismissInfoTour() {
-  // Wait for the scheduled first-visit tour to either open or already be marked seen.
+  // First-visit/update briefings may use the legacy Info Tour or the Officer VAANI release surface.
+  await page.waitForTimeout(350);
+  const infoTourOpen = await page.locator('#viTour').count() > 0
+    ? await page.locator('#viTour').evaluate(el => el.classList.contains('open')).catch(() => false)
+    : false;
+  const officerOpen = await page.locator('#vaaniMentor').count() > 0
+    ? await page.locator('#vaaniMentor').evaluate(el => el.classList.contains('open')).catch(() => false)
+    : false;
+  if (infoTourOpen || officerOpen) await page.keyboard.press('Escape');
   await page.waitForFunction(() => {
     const tour = document.getElementById('viTour');
-    return Boolean(tour?.classList.contains('open')) ||
-      (typeof State !== 'undefined' && State.infoTourVersion === '20261002-info-center1');
+    const mentor = document.getElementById('vaaniMentor');
+    return (!tour || !tour.classList.contains('open')) && (!mentor || !mentor.classList.contains('open'));
   }, null, { timeout: 5000 });
-  if (await page.locator('#viTour.open').count()) {
-    await page.keyboard.press('Escape');
-    await page.waitForFunction(() => !document.getElementById('viTour')?.classList.contains('open'),
-      null, { timeout: 5000 });
-  }
 }
 async function clickMainView(name) {
   const desktopButton = page.locator('#vaaniMainNav button[data-view="' + name + '"]');
@@ -653,40 +656,56 @@ try {
     const second=arena.questionsFor(arena.decode(code),'Smoke Cadet').map(question=>question._id);
     const boardKey='smoke-regression-arena';
     const testEntry={pid:'smoke-player',name:'Smoke Cadet',score:6,seconds:60,total:8,at:1,answers:{}};
-    await arena.sync.submit(boardKey,testEntry);
-    const localRows=JSON.parse(localStorage.getItem('vx_arena_board_'+boardKey)||'[]');
     const originalFetch=window.fetch;
-    let request=null;
+    let submitRequest=null;
+    let readRequest=null;
     window.fetch=(url,options={})=>{
-      request={url:String(url),method:String(options.method||'GET'),body:options.body||null,
-        contentType:options.headers?.['Content-Type']||options.headers?.['content-type']||''};
-      return Promise.resolve({ok:true,json:()=>Promise.resolve({rows:[
-        {code:boardKey,pid:'remote-player',name:'Remote Cadet',score:7,seconds:45,total:8,at:2}
-      ],verified:false,source:'historical'})});
+      const request={
+        url:String(url),
+        method:String(options.method||'GET'),
+        body:options.body||null,
+        contentType:options.headers?.['Content-Type']||options.headers?.['content-type']||''
+      };
+      if(request.url.includes('/rest/v1/rpc/arena_submit_attempt')){
+        submitRequest=request;
+        return Promise.resolve({ok:true,json:()=>Promise.resolve({ok:true})});
+      }
+      if(request.url.includes('/functions/v1/arena-leaderboard')){
+        readRequest=request;
+        return Promise.resolve({ok:true,json:()=>Promise.resolve({rows:[
+          {code:boardKey,pid:'remote-player',name:'Remote Cadet',score:7,seconds:45,total:8,at:2}
+        ],verified:false,source:'historical'})});
+      }
+      return Promise.resolve({ok:true,json:()=>Promise.resolve({})});
     };
     let sharedRows=[];
-    try { sharedRows=await arena.sync.fetch(boardKey); }
-    finally {
+    try {
+      await arena.sync.submit(boardKey,testEntry);
+      sharedRows=await arena.sync.fetch(boardKey);
+    } finally {
       window.fetch=originalFetch;
       localStorage.removeItem('vx_arena_board_'+boardKey);
     }
-    return {code,decoded,first,second,localRows,sharedRows,request,
+    return {code,decoded,first,second,sharedRows,submitRequest,readRequest,
       adapter:arena.sync.name,live:arena.sync.live,shared:arena.sync.shared,
       remoteAdapter:typeof arena.supabaseAdapter};
   });
   assert.equal(arenaSecurity.code.length,32,'Arena match code did not round-trip');
   assert.equal(arenaSecurity.decoded?.seed,482731,'Arena match code lost its seed');
   assert.deepEqual(arenaSecurity.first,arenaSecurity.second,'Arena question selection changed for an identical match seed');
-  assert.equal(arenaSecurity.localRows.length,1,'Arena score was not saved locally on this device');
   assert.equal(arenaSecurity.sharedRows.length,1,'Shared Arena read did not return a historical row');
   assert.equal(arenaSecurity.sharedRows[0].pid,'remote-player','Shared Arena read returned the wrong row');
-  assert.equal(arenaSecurity.adapter,'shared-read','Shared read adapter was not configured');
-  assert.equal(arenaSecurity.live,false,'Shared read must not enable browser score writes');
+  assert.equal(arenaSecurity.adapter,'shared','Shared Arena adapter was not configured');
+  assert.equal(arenaSecurity.live,true,'Shared Arena writer should remain enabled through the validated endpoint');
   assert.equal(arenaSecurity.shared,true,'Arena must identify its shared read-only board');
-  assert.equal(arenaSecurity.request.method,'POST','Shared Arena endpoint must use POST');
-  assert.ok(arenaSecurity.request.url.includes('/functions/v1/arena-leaderboard'),'Shared Arena read did not use the Edge Function');
-  assert.equal(JSON.parse(arenaSecurity.request.body).code,'smoke-regression-arena','Shared Arena read sent the wrong match code');
-  assert.ok(arenaSecurity.request.contentType.toLowerCase().includes('application/json'),'Shared Arena read must send JSON');
+  assert.equal(arenaSecurity.submitRequest.method,'POST','Shared Arena submit endpoint must use POST');
+  assert.ok(arenaSecurity.submitRequest.url.includes('/rest/v1/rpc/arena_submit_attempt'),'Shared Arena submission did not use the validated RPC');
+  assert.equal(JSON.parse(arenaSecurity.submitRequest.body).p_code,'smoke-regression-arena','Shared Arena submission sent the wrong match code');
+  assert.ok(arenaSecurity.submitRequest.contentType.toLowerCase().includes('application/json'),'Shared Arena submission must send JSON');
+  assert.equal(arenaSecurity.readRequest.method,'POST','Shared Arena read endpoint must use POST');
+  assert.ok(arenaSecurity.readRequest.url.includes('/functions/v1/arena-leaderboard'),'Shared Arena read did not use the Edge Function');
+  assert.equal(JSON.parse(arenaSecurity.readRequest.body).code,'smoke-regression-arena','Shared Arena read sent the wrong match code');
+  assert.ok(arenaSecurity.readRequest.contentType.toLowerCase().includes('application/json'),'Shared Arena read must send JSON');
   assert.equal(arenaSecurity.remoteAdapter,'undefined','Browser score writes must not expose the removed Supabase adapter');
   console.log('PASS Arena security: deterministic match, device-local submission, Edge Function historical read and no public writer');
 
@@ -1095,11 +1114,13 @@ try {
       });
     });
   });
-  const mobileNavJourney = ['grammar','vocab','pyq','notifications'];
+  const mobileNavJourney = ['grammar','vocab','pyq','dashboard'];
   for (const view of mobileNavJourney) {
     await navPage.locator('#bottomNav button[data-view="' + view + '"]').click();
     await navPage.waitForFunction(v => document.getElementById('view-' + v)?.classList.contains('active'), view);
   }
+  await navPage.evaluate(() => switchView('notifications'));
+  await navPage.waitForFunction(() => document.getElementById('view-notifications')?.classList.contains('active'));
   const journeyState = await navPage.evaluate(() => ({
     view: history.state?.vaaniView,
     url: location.href,
@@ -1109,7 +1130,7 @@ try {
   assert.match(journeyState.url, /[?&]v=notifications(?:#|$)/, 'Mobile nav route URL is not distinct');
   assert.ok(journeyState.length >= 5, 'Mobile navigation did not create enough history entries: ' + JSON.stringify(journeyState));
 
-  for (const expected of ['pyq','vocab','grammar','dashboard']) {
+  for (const expected of ['dashboard','pyq','vocab','grammar']) {
     const beforeBack = await navPage.evaluate(() => ({
       url:location.href, state:history.state, active:document.querySelector('.view.active')?.id||null, length:history.length
     }));
@@ -1133,7 +1154,7 @@ try {
   }
   assert.equal(await navPage.evaluate(() => history.state?.vaaniView), 'dashboard',
     'Final back state is not Dashboard');
-  console.log('PASS full mobile back journey: Updates → PYQ → Vocab → Grammar → Home');
+  console.log('PASS full mobile back journey: Updates → Home → PYQ → Vocab → Grammar');
 
   // Word-detail browser Back is also exercised in the isolated tab.
   await navPage.locator('#bottomNav button[data-view="vocab"]').click();

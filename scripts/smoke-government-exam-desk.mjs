@@ -213,10 +213,21 @@ await page.goto(baseURL + '?v=notifications', { waitUntil: 'domcontentloaded' })
   await page.waitForSelector('#serviceForcePicker[data-mode="onboarding"]', { state: 'visible', timeout: 15000 });
   await page.locator('#serviceForcePicker .service-force-option[data-force="army"]').click();
   await page.waitForFunction(() => document.getElementById('gate')?.classList.contains('hide'), null, { timeout: 15000 });
-  // The first-visit briefing is intentionally modal; dismiss it so the smoke test can exercise the page beneath it.
-  await page.waitForFunction(() => document.getElementById('viTour')?.classList.contains('open'), null, { timeout: 5000 });
-  await page.keyboard.press('Escape');
-  await page.waitForFunction(() => !document.getElementById('viTour')?.classList.contains('open'), null, { timeout: 5000 });
+  // New-release briefings may use the Officer VAANI surface instead of the legacy Info Tour modal.
+  // Dismiss whichever transient briefing surface is actually present, without requiring the retired modal.
+  await page.waitForTimeout(350);
+  const infoTourOpen = await page.locator('#viTour').count() > 0
+    ? await page.locator('#viTour').evaluate(el => el.classList.contains('open')).catch(() => false)
+    : false;
+  const officerOpen = await page.locator('#vaaniMentor').count() > 0
+    ? await page.locator('#vaaniMentor').evaluate(el => el.classList.contains('open')).catch(() => false)
+    : false;
+  if (infoTourOpen || officerOpen) await page.keyboard.press('Escape');
+  await page.waitForFunction(() => {
+    const tour = document.getElementById('viTour');
+    const mentor = document.getElementById('vaaniMentor');
+    return (!tour || !tour.classList.contains('open')) && (!mentor || !mentor.classList.contains('open'));
+  }, null, { timeout: 5000 });
   await page.locator('#vxSyncStamp').waitFor();
   await page.waitForFunction(() => {
     const text = document.querySelector('#vxSyncStamp')?.textContent || '';
