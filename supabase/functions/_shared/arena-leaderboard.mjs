@@ -33,6 +33,14 @@ export function sanitizeArenaRows(input, code) {
         !Number.isInteger(total) || !Number.isInteger(at) || !Number.isFinite(at) ||
         at <= 0 || total < 1 || total > 100 || seconds < 0 || seconds > 86400 ||
         score < -total || score > total) continue;
+    const correct = Number.isInteger(row.correct) ? row.correct : null;
+    const incorrect = Number.isInteger(row.incorrect) ? row.incorrect : null;
+    const skipped = Number.isInteger(row.skipped) ? row.skipped : null;
+    if (correct !== null || incorrect !== null || skipped !== null) {
+      if (correct === null || incorrect === null || skipped === null ||
+          correct < 0 || incorrect < 0 || skipped < 0 ||
+          correct + incorrect + skipped !== total) continue;
+    }
     const cleaned = {
       code,
       pid,
@@ -40,6 +48,9 @@ export function sanitizeArenaRows(input, code) {
       score,
       seconds,
       total,
+      correct,
+      incorrect,
+      skipped,
       at
     };
     const previous = byPlayer.get(pid);
