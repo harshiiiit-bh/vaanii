@@ -52,7 +52,7 @@ for (const file of files) {
   assert.ok(Array.isArray(data) && data.length > 0, 'Paper did not expose a non-empty array: ' + file);
   const paperIds = new Set();
   const paperNumbers = [];
-  const diag = { repeatedSpaces: [], repeatedWords: [], optionDuplicates: [], flattenedStructure: [], partMismatches: [], forbiddenChars: [], htmlLike: [], badOptions: [] };
+  const diag = { edgeWhitespace: [], repeatedSpaces: [], repeatedWords: [], optionDuplicates: [], flattenedStructure: [], partMismatches: [], forbiddenChars: [], htmlLike: [], badOptions: [] };
 
   for (const q of data) {
     assert.ok(q && typeof q === 'object', file + ': question must be an object');
@@ -62,7 +62,7 @@ for (const file of files) {
     paperNumbers.push(Number(q.n));
 
     assert.ok(typeof q.q === 'string' && q.q.trim(), file + ': empty question at Q' + q.n);
-    assert.equal(q.q, q.q.trim(), file + ': leading/trailing whitespace in question at Q' + q.n);
+    if(q.q!==q.q.trim()) diag.edgeWhitespace.push('Q'+q.n+' question');
     assert.ok(!hasForbiddenText(q.q), file + ': forbidden/invisible/replacement character in question at Q' + q.n);
     if(hasRepeatedSpace(q.q)) diag.repeatedSpaces.push(q.n);
     if(hasRepeatedWord(q.q)) diag.repeatedWords.push(q.n);
@@ -73,7 +73,7 @@ for (const file of files) {
     if(new Set(canonicalOptions).size!==canonicalOptions.length) diag.optionDuplicates.push(q.n);
     q.o.forEach((option, optionIndex) => {
       assert.ok(typeof option === 'string' && option.trim(), file + ': empty option at Q' + q.n + ' option ' + (optionIndex + 1));
-      assert.equal(option, option.trim(), file + ': leading/trailing whitespace in option at Q' + q.n + ' option ' + (optionIndex + 1));
+      if(option!==option.trim()) diag.edgeWhitespace.push('Q'+q.n+' option '+(optionIndex+1));
       assert.ok(!hasForbiddenText(option), file + ': forbidden/invisible/replacement character in option at Q' + q.n + ' option ' + (optionIndex + 1));
       if(/<\/?(?:div|span|p|br|script|style)\b/i.test(option)) diag.htmlLike.push(q.n+':'+optionIndex);
     });
@@ -121,7 +121,7 @@ for (const file of files) {
     for(let n=1;n<=paperNumbers[paperNumbers.length-1];n++) if(!paperNumbers.includes(n)) missing.push(n);
     paperDiagnostics.push(file+' questionNumberGaps: '+missing.join(', '));
   }
-  const hardKeys=['repeatedSpaces','optionDuplicates','forbiddenChars','htmlLike','badOptions'];
+  const hardKeys=['edgeWhitespace','repeatedSpaces','optionDuplicates','forbiddenChars','htmlLike','badOptions'];
   const warningKeys=['repeatedWords','flattenedStructure'];
   for(const key of hardKeys){
     if(diag[key].length) paperDiagnostics.push(file+' '+key+': '+diag[key].slice(0,20).join(', '));
