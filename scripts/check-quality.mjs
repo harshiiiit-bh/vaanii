@@ -698,19 +698,42 @@ try {
   for (const marker of [
     'screenCreateV2','screenShareV2','screenHostAnswers',
     'parseArenaInvite','matchHostName','hostName',
-    'Answers & leaderboard','?arena=CODE&host=NAME'
+    'Answers & leaderboard','?arena=CODE&host=NAME',
+    'var CODE_VERSION = 3',
+    'var LEGACY_SRC_CODES',
+    'NDA+CDS',
+    'NDA+AFCAT',
+    'CDS+AFCAT',
+    'normalizedSourceFromCodes',
+    'poolForSource',
+    'Select one or more exam banks',
+    'sourceExamCodes(d.source)'
   ]) {
     if (!arena.includes(marker)) throw new Error('Arena redesign marker is missing: ' + marker);
   }
   for (const marker of [
     '.vx-arena-setup','.vx-arena-source-grid','.vx-arena-deploy-summary',
     '.vx-arena-share','.vx-host-identity','.vx-host-action-secondary',
-    '.vx-host-answer-key'
+    '.vx-host-answer-key',
+    '.vx-arena-source-selection',
+    '.vx-arena-source-card-all'
   ]) {
     if (!arenaCss.includes(marker)) throw new Error('Arena redesign style is missing: ' + marker);
   }
   if (!/hostName:\s*matchHostName\(m\)/.test(arena)) throw new Error('Arena recent-match records must retain host identity.');
   if (!arena.includes('Copy invite link')) throw new Error('Arena host invite link control is missing.');
+  const requiredCombos = ['NDA','CDS','AFCAT','NDA+CDS','NDA+AFCAT','CDS+AFCAT','BOTH'];
+  const comboHits = requiredCombos.filter(code => arena.includes("'" + code + "'"));
+  if (comboHits.length !== requiredCombos.length) throw new Error('Arena multi-bank source matrix is incomplete.');
+  if (!/A\.questionsFor = function \(match, playerName\) \{[\s\S]{0,500}pool = poolForSource\(match\.source\)/.test(arena)) {
+    throw new Error('Arena question generation is not using the combined source pool.');
+  }
+  if (!/A\.poolForDraft = function \(source, type, paperKey\) \{[\s\S]{0,180}poolForSource\(source\)/.test(arena)) {
+    throw new Error('Arena draft availability is not using the combined source pool.');
+  }
+  if (!/v !== 2 && v !== CODE_VERSION/.test(arena)) throw new Error('Arena match-code decoder is not backward compatible with v2 invites.');
+  if (!arena.includes('codeVersion: v')) throw new Error('Arena decoded matches do not retain the code version.');
+  console.log('Arena multi-bank audit: v3 source matrix, v2 decode compatibility, combined pool generation, multi-select UI and responsive styling validated');
   console.log('Arena: redesigned question-selection console, host controls, shared host identity and answer-key route validated');
 }catch(error){console.error('Arena audit failed:',error.message);process.exitCode=1;}
 
