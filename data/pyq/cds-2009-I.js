@@ -1144,13 +1144,19 @@ var PYQ_CDS_2009_I = [
     "n": 81,
     "sec": "Ordering of Words in a Sentence",
     "q": "Guards often use to search for cavities metal probing rods which they push through (P) (Q) (R) the ground (S)",
+    "parts": [
+      "to search for cavities",
+      "metal probing rods",
+      "which they push",
+      "through the ground"
+    ],
     "o": [
       "S Q R P",
       "Q R S P",
       "S R Q P",
       "Q S P R"
     ],
-    "ans": 2
+    "ans": 1
   },
   {
     "y": 2009,
