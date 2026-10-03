@@ -3151,45 +3151,6 @@
     sheet.appendChild(read);
     sheet.appendChild(closeButton(close));
   }
-  function renderPlayerBreakdown(sheet, row, rank, close) {
-    sheetHeader(sheet, row, rank);
-    var qs = Array.isArray(row.qSnapshots)&&row.qSnapshots.length ? row.qSnapshots : matchQuestions();
-    if (!qs.length || !row.answers) {
-      sheet.appendChild(el('p', 'vx-sub', 'A detailed breakdown is not available for this attempt.'));
-      sheet.appendChild(closeButton(close));
-      return;
-    }
-    sheet.appendChild(el('p', 'vx-sub', 'Green is correct. Red is what they picked and got wrong — the correct option is marked separately. Grey means they left it blank.'));
-    var list = el('div');
-    list.style.cssText = 'display:flex;flex-direction:column;gap:16px;margin-top:6px';
-    qs.forEach(function (q, i) {
-      var given = row.answers[q._id];
-      var card = el('div', 'vx-tile');
-      card.style.cursor = 'default';
-      card.innerHTML =
-        '<p style="font-size:.78rem;color:var(--vx-muted);margin:0 0 8px">Question ' + (i + 1) + (q.sec ? ' &middot; ' + esc(q.sec) : '') + '</p>' +
-        (q.passage ? '<div class="pv-passage"><div class="pv-passage-label">Passage</div><div class="pv-passage-text">' + esc(q.passage) + '</div></div>' : '') +
-        '<p style="font-size:1rem;line-height:1.6;color:var(--vx-ink);margin:0 0 14px">' +
-        (q.keyword ? '<b>' + esc(q.keyword) + '</b> &mdash; ' : '') +
-        (typeof pyqHi === 'function' ? pyqHi(q) : esc(q.q)) + '</p>';
-      var opts = el('div', 'vx-seg');
-      opts.style.flexDirection = 'column';
-      (q.o || []).forEach(function (text, oi) {
-        var cls = '';
-        if (Number(row.score) === Number(row.total) && Number(row.total) === qs.length && given !== undefined) cls = (answerMatches(oi,given) ? ' correct' : '');
-        else if (answerMatches(oi,q.ans)) cls = ' correct';
-        else if (given !== undefined && answerMatches(oi,given)) cls = ' wrong';
-        var b = el('div', 'opt-btn' + cls, esc(text));
-        b.style.cursor = 'default';
-        opts.appendChild(b);
-      });
-      card.appendChild(opts);
-      if (given === undefined) card.appendChild(el('p', 'vx-hint', 'Left blank &mdash; no penalty.'));
-      list.appendChild(card);
-    });
-    sheet.appendChild(list);
-    sheet.appendChild(closeButton(close));
-  }
 
   /* ---------------------------------------------------------
      REVIEW  ·  question-by-question right/wrong after submission
