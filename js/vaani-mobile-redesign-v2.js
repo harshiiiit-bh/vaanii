@@ -297,8 +297,14 @@
     };
 
     (configs[name]||[]).forEach(([sel,label,collapsed])=>{
-      const el=q(sel);
-      if(el) makeFold(el,label,collapsed);
+      let el=q(sel);
+      if(!el) return;
+      // Inner data grids fold as their containing card so the card heading remains
+      // the visible summary instead of inserting a heading into a grid.
+      if(el.matches('.vd-roadmap,.vd-badge-grid,.pyq-stat-mini,.activity-feed')){
+        el=el.closest('.vd-card')||el;
+      }
+      makeFold(el,label,collapsed);
     });
   }
 
