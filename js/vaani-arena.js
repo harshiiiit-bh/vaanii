@@ -2599,7 +2599,7 @@
       control.innerHTML=
         '<div><span class="vx-arena-setup-kicker">HOST CONTROL · SPECTATE MODE</span>' +
         '<h2>Observe without attempting.</h2>' +
-        '<p>The leaderboard below is live. Click any submitted player to inspect correct, incorrect and skipped questions. The answer key is available without starting the test.</p></div>';
+        '<p>The leaderboard below is live. Tap any submitted player to view their public score summary. The answer key is available without starting the test.</p></div>';
       var controlActions=el('div','vx-host-spectate-panel-actions');
 
       var keyBtn=el('button','vx-btn primary','Open answer key');
