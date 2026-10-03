@@ -72,17 +72,20 @@ async function assertVisibleText(selector, label) {
   assert.ok(value && value !== '—' && !/^loading/i.test(value), label + ' was blank: ' + JSON.stringify(value));
 }
 async function dismissInfoTour() {
-  // Wait for the scheduled first-visit tour to either open or already be marked seen.
+  // First-visit/update briefings may use the legacy Info Tour or the Officer VAANI release surface.
+  await page.waitForTimeout(350);
+  const infoTourOpen = await page.locator('#viTour').count() > 0
+    ? await page.locator('#viTour').evaluate(el => el.classList.contains('open')).catch(() => false)
+    : false;
+  const officerOpen = await page.locator('#vaaniMentor').count() > 0
+    ? await page.locator('#vaaniMentor').evaluate(el => el.classList.contains('open')).catch(() => false)
+    : false;
+  if (infoTourOpen || officerOpen) await page.keyboard.press('Escape');
   await page.waitForFunction(() => {
     const tour = document.getElementById('viTour');
-    return Boolean(tour?.classList.contains('open')) ||
-      (typeof State !== 'undefined' && State.infoTourVersion === '20261002-info-center1');
+    const mentor = document.getElementById('vaaniMentor');
+    return (!tour || !tour.classList.contains('open')) && (!mentor || !mentor.classList.contains('open'));
   }, null, { timeout: 5000 });
-  if (await page.locator('#viTour.open').count()) {
-    await page.keyboard.press('Escape');
-    await page.waitForFunction(() => !document.getElementById('viTour')?.classList.contains('open'),
-      null, { timeout: 5000 });
-  }
 }
 async function clickMainView(name) {
   const desktopButton = page.locator('#vaaniMainNav button[data-view="' + name + '"]');
