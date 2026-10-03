@@ -1,0 +1,315 @@
+/* VAANI MOBILE REDESIGN V3 — recovery + hierarchy layer.
+   Loaded after V2 on phones only. Desktop/tablet are untouched. */
+@media (max-width:767px){
+  :root{
+    --m3-gutter:12px;
+    --m3-radius:16px;
+    --m3-nav-h:64px;
+  }
+
+  /* Remove duplicate floating navigation from the mobile surface.
+     The same destinations are available in the More command menu. */
+  #quickNavBtn,#quickNavMenu{display:none!important}
+  body.mobile-more-open #quickNavBtn,
+  body.mobile-more-open #quickNavMenu{display:none!important}
+
+  /* The More sheet is a real command drawer, not a long nested menu. */
+  #moreSheet{
+    z-index:900!important;
+    width:100%!important;
+    max-width:none!important;
+    max-height:88dvh!important;
+    min-height:0!important;
+    left:0!important;
+    right:0!important;
+    bottom:0!important;
+    padding:0 0 env(safe-area-inset-bottom)!important;
+    border:1px solid color-mix(in srgb,var(--line) 85%,transparent)!important;
+    border-bottom:none!important;
+    border-radius:24px 24px 0 0!important;
+    background:var(--bg)!important;
+    color:var(--text)!important;
+    box-shadow:0 -24px 60px rgba(0,0,0,.35)!important;
+  }
+  #moreSheet .sheet-grabber{
+    width:42px!important;
+    height:4px!important;
+    margin:9px auto 5px!important;
+    background:var(--muted2)!important;
+  }
+  #moreSheet .sheet-header{
+    position:sticky;
+    top:0;
+    z-index:2;
+    min-height:52px;
+    padding:8px 14px 10px!important;
+    background:color-mix(in srgb,var(--bg) 92%,transparent)!important;
+    backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px);
+  }
+  #moreSheet .sheet-header #sheetTitle{
+    font-family:var(--serif)!important;
+    font-size:.92rem!important;
+    letter-spacing:.09em!important;
+    text-transform:uppercase;
+  }
+  #moreSheet .sheet-back,
+  #moreSheet .sheet-close{
+    width:36px!important;
+    height:36px!important;
+    min-width:36px!important;
+    min-height:36px!important;
+    border:1px solid var(--line)!important;
+    background:var(--panel2)!important;
+    color:var(--text)!important;
+  }
+  #moreSheet .sheet-body{
+    max-height:calc(88dvh - 62px)!important;
+    overflow:auto!important;
+    overscroll-behavior:contain;
+    padding:12px 12px 18px!important;
+  }
+
+  .mobile-more-intro{
+    padding:2px 3px 10px;
+  }
+  .mobile-more-intro strong{
+    display:block;
+    font-family:var(--serif);
+    font-size:1.04rem;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+  }
+  .mobile-more-intro span{
+    display:block;
+    margin-top:3px;
+    color:var(--muted);
+    font-size:.66rem;
+    line-height:1.45;
+  }
+  .mobile-more-group{
+    margin:10px 0 14px;
+  }
+  .mobile-more-group-title{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    margin:0 3px 7px;
+    color:var(--muted2);
+    font-family:var(--mono);
+    font-size:.54rem;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+  }
+  .mobile-more-group-title::before{
+    content:'';
+    width:16px;
+    height:1px;
+    background:var(--gold);
+    opacity:.75;
+  }
+  .mobile-more-grid{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:7px;
+  }
+  .mobile-more-item{
+    min-width:0;
+    min-height:64px!important;
+    display:grid!important;
+    grid-template-columns:30px minmax(0,1fr);
+    grid-template-rows:auto auto;
+    column-gap:8px;
+    align-items:center;
+    padding:9px 9px!important;
+    border:1px solid var(--line)!important;
+    border-radius:14px!important;
+    background:var(--panel2)!important;
+    color:var(--text)!important;
+    text-align:left!important;
+    box-shadow:none!important;
+    transition:transform .15s ease,border-color .15s ease,background .15s ease;
+  }
+  .mobile-more-item:active{
+    transform:scale(.985);
+    border-color:var(--gold)!important;
+  }
+  .mobile-more-item .more-ico{
+    grid-row:1 / span 2;
+    width:30px;
+    height:30px;
+    display:grid;
+    place-items:center;
+    border:1px solid color-mix(in srgb,var(--gold) 35%,var(--line));
+    border-radius:9px;
+    background:color-mix(in srgb,var(--gold) 9%,var(--panel2));
+    font-size:1rem;
+  }
+  .mobile-more-item .more-label{
+    min-width:0;
+    font-family:var(--serif);
+    font-size:.64rem;
+    line-height:1.1;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .mobile-more-item .more-sub{
+    min-width:0;
+    color:var(--muted);
+    font-size:.54rem;
+    line-height:1.25;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .mobile-more-item .more-arrow{
+    display:none;
+  }
+  .mobile-more-item.is-feature{
+    grid-column:1 / -1;
+    grid-template-columns:36px minmax(0,1fr) auto;
+    grid-template-rows:auto;
+    min-height:58px!important;
+    padding:10px 11px!important;
+  }
+  .mobile-more-item.is-feature .more-ico{
+    grid-row:auto;
+    width:36px;height:36px;
+  }
+  .mobile-more-item.is-feature .more-sub{font-size:.56rem}
+
+  /* No floating quick-action pill while the More drawer is open. */
+  body.mobile-more-open .qnav-fab,
+  body.mobile-more-open .qnav-menu{
+    display:none!important;
+  }
+
+  /* MASTER DASHBOARD DISCLOSURE:
+     Core mission content remains visible; the long analytics/modules are
+     grouped behind one control instead of 7 separate fold headers. */
+  .mobile-dashboard-more{
+    margin-top:10px!important;
+    border:1px solid var(--line);
+    border-radius:18px;
+    background:var(--panel);
+    overflow:hidden;
+  }
+  .mobile-dashboard-more-head{
+    width:100%;
+    min-height:56px!important;
+    display:flex!important;
+    align-items:center!important;
+    gap:10px;
+    padding:9px 12px!important;
+    border:0!important;
+    background:transparent!important;
+    color:var(--text)!important;
+    text-align:left!important;
+  }
+  .mobile-dashboard-more-head .m3-more-mark{
+    width:34px;height:34px;flex:0 0 34px;
+    display:grid;place-items:center;
+    border:1px solid color-mix(in srgb,var(--gold) 35%,var(--line));
+    border-radius:10px;
+    color:var(--gold);
+    background:color-mix(in srgb,var(--gold) 8%,var(--panel2));
+    font-family:var(--mono);
+    font-size:.8rem;
+  }
+  .mobile-dashboard-more-head .m3-more-copy{
+    min-width:0;flex:1;
+  }
+  .mobile-dashboard-more-head strong{
+    display:block;
+    font-family:var(--serif);
+    font-size:.73rem;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+  }
+  .mobile-dashboard-more-head small{
+    display:block;
+    margin-top:3px;
+    color:var(--muted);
+    font-family:var(--mono);
+    font-size:.5rem;
+  }
+  .mobile-dashboard-more-head .m3-more-plus{
+    width:32px;height:32px;flex:0 0 32px;
+    display:grid;place-items:center;
+    border:1px solid var(--line);
+    border-radius:9px;
+    color:var(--gold);
+    background:var(--panel2);
+    font-size:.9rem;
+  }
+  .mobile-dashboard-more-body{
+    padding:0 10px 10px;
+  }
+  .mobile-dashboard-more.is-collapsed .mobile-dashboard-more-body{
+    display:none;
+  }
+  .mobile-dashboard-more.is-collapsed .m3-more-plus::before{
+    content:'+';
+  }
+  .mobile-dashboard-more:not(.is-collapsed) .m3-more-plus::before{
+    content:'−';
+  }
+  .mobile-dashboard-more-body > .mobile-fold,
+  .mobile-dashboard-more-body > .card,
+  .mobile-dashboard-more-body > .grid-2,
+  .mobile-dashboard-more-body > .quote-panel,
+  .mobile-dashboard-more-body > section,
+  .mobile-dashboard-more-body > #mysteryBoxWrap{
+    margin-top:7px!important;
+  }
+  .mobile-dashboard-more-body > .mobile-fold .mobile-fold-head{
+    min-height:44px!important;
+  }
+
+  /* Prevent the old fold labels from becoming repeated large blocks inside the master drawer. */
+  .mobile-dashboard-more-body .mobile-fold.is-collapsed{
+    min-height:0!important;
+  }
+
+  /* Dashboard core: tighten the first screen and keep action hierarchy clear. */
+  #view-dashboard .vd-qa{
+    margin-bottom:7px!important;
+  }
+  #view-dashboard .vd-hero{
+    margin-top:0!important;
+  }
+  #view-dashboard .review-widget{
+    margin-top:8px!important;
+  }
+  #view-dashboard .vd-briefing{
+    margin-top:8px!important;
+  }
+  #view-dashboard .vd-focus-sprint{
+    margin-top:9px!important;
+  }
+  #view-dashboard .vd-focus-sprint .btn{
+    min-height:44px!important;
+  }
+
+  /* Keep section navigation compact rather than another tall toolbar. */
+  .mobile-viewbar{
+    min-height:40px!important;
+    margin-bottom:8px!important;
+  }
+
+  /* Fold headers elsewhere: compact, predictable hit target. */
+  .mobile-fold-head{
+    min-height:46px!important;
+  }
+
+  @media(max-width:380px){
+    :root{--m3-gutter:9px}
+    .mobile-more-grid{grid-template-columns:1fr 1fr}
+    .mobile-more-item{min-height:60px!important}
+  }
+}
+
+/* Desktop/tablet: V3 contributes nothing. */
