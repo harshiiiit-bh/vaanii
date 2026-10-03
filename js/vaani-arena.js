@@ -1882,7 +1882,7 @@
       if (i === r.index) b.classList.add('current');
       b.setAttribute('aria-label', 'Question ' + (i + 1) + ' — ' +
         (state === 'ok' ? 'attempted' : state === 'skip' ? 'skipped' : 'not attempted'));
-      b.addEventListener('click', function () { r.index = i; render(); });
+      b.addEventListener('click', function () { r.index = i; if(!r.practiceMode)saveRunRecovery(); render(); });
       grid.appendChild(b);
     });
     wrap.appendChild(grid);
