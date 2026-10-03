@@ -1106,10 +1106,17 @@
       enter.addEventListener('click',function(){S.hostSpectate=false;go('briefing');});
       actions.appendChild(enter);
 
+      var hasOwnAttempt=!!previousAttempt(m.code);
       var boardBtn=el('button','vx-btn ghost vx-host-action-secondary');
       boardBtn.type='button';
-      boardBtn.textContent='View leaderboard';
+      boardBtn.textContent=hasOwnAttempt?'View leaderboard':'Leaderboard after attempt';
+      boardBtn.disabled=!hasOwnAttempt;
+      boardBtn.setAttribute('aria-disabled',String(!hasOwnAttempt));
       boardBtn.addEventListener('click',function(){
+        if(!hasOwnAttempt){
+          say('Finish your official attempt to unlock the leaderboard and answer review.');
+          return;
+        }
         loadBoard().then(function(){go('result');}).catch(function(){go('result');});
       });
       actions.appendChild(boardBtn);
@@ -1227,6 +1234,10 @@
     var m = hydrateMatch(S.match);
     if (!m || !isHost(m.code)) {
       w.appendChild(el('div','vx-empty','Host access is only available on the device that created this match.'));
+      return;
+    }
+    if(!S.hostSpectate && !previousAttempt(m.code)){
+      w.appendChild(el('div','vx-empty','Host answer access is reserved for Spectate mode before the host attempts the match.'));
       return;
     }
 
@@ -2142,6 +2153,25 @@
     }
 
     var closed = Date.now() >= Number(m.expiresAt);
+    var hasOwnAttempt = !!res || !!previousAttempt(m.code);
+
+    if(!hostSpectating && !hasOwnAttempt){
+      var locked=el('section','vx-preattempt-lock');
+      locked.innerHTML=
+        '<span class="vx-arena-setup-kicker">FAIR PLAY LOCK</span>' +
+        '<h2>Leaderboard locked until your attempt.</h2>' +
+        '<p>Everyone gets the same question set. Answer review and match standings unlock after you submit your official attempt. The host can spectate separately.</p>';
+      var joinBtn=el('button','vx-btn primary','Enter Arena');
+      joinBtn.type='button';
+      joinBtn.addEventListener('click',function(){S.hostSpectate=false;go('briefing');});
+      locked.appendChild(joinBtn);
+      w.appendChild(locked);
+      w.appendChild(matchStrip(m));
+      if(closed){
+        w.appendChild(el('div','vx-empty','This match has already closed.'));
+      }
+      return;
+    }
 
     if(hostSpectating){
       var control=el('section','vx-host-spectate-panel');

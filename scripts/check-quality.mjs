@@ -571,7 +571,7 @@ try {
     if(!officerCss.includes(marker))throw new Error('Officer feature-briefing styling missing: '+marker);
   }
   if(!pageSource.includes('vaani-info-center.css?v=20261003-release3'))throw new Error('Info Centre cache key was not refreshed.');
-  if(!pageSource.includes('js/vaani-info-center.js?v=20261003-release5'))throw new Error('Info Centre script cache key was not refreshed.');
+  if(!pageSource.includes('js/vaani-info-center.js?v=20261004-release6'))throw new Error('Info Centre script cache key was not refreshed.');
   if(!pageSource.includes('vaani-character-elite.css?v=20261003-release3'))throw new Error('Officer elite CSS cache key was not refreshed.');
   if(!pageSource.includes('js/vaani-character-elite.js?v=20261003-release4'))throw new Error('Officer elite script cache key was not refreshed.');
   console.log('Feature updates: shared manifest, duplicate/version audit, bounded Officer retry, replay controls, release metadata, elevated briefing UI and cache keys validated');
@@ -755,8 +755,8 @@ try {
   }
   if (!/v !== 2 && v !== CODE_VERSION/.test(arena)) throw new Error('Arena match-code decoder is not backward compatible with v2 invites.');
   if (!arena.includes('codeVersion: v')) throw new Error('Arena decoded matches do not retain the code version.');
-  if (!pageSource.includes('vaani-arena-briefing.css?v=20261003-intel1')) throw new Error('Arena intelligence CSS cache key is outdated.');
-  if (!pageSource.includes('js/vaani-arena.js?v=20261003-intel1')) throw new Error('Arena intelligence JS cache key is outdated.');
+  if (!pageSource.includes('vaani-arena-briefing.css?v=20261004-fairplay1')) throw new Error('Arena intelligence CSS cache key is outdated.');
+  if (!pageSource.includes('js/vaani-arena.js?v=20261004-fairplay1')) throw new Error('Arena intelligence JS cache key is outdated.');
   if (!arena.includes('function copyText(value, onSuccess)')) throw new Error('Arena invite copy fallback is missing.');
   if (!arena.includes('var share=actionButton(\'Share invite\'')) throw new Error('Arena share action is not always rendered.');
   if (!arena.includes('navigator.share')) throw new Error('Native share action is missing.');
@@ -764,6 +764,13 @@ try {
   if (!arena.includes("S.hostSpectate=true")) throw new Error('Host spectate mode is not activated from the host-only control.');
   if (!arena.includes("S.result=null;")) throw new Error('Host spectate must not create a player result before opening the board.');
   if (!arena.includes("if(hostSpectating)")) throw new Error('Result screen is missing the host spectate presentation.');
+  if (!arena.includes('var hasOwnAttempt=!!previousAttempt(m.code);')) throw new Error('Pre-attempt leaderboard lock is missing.');
+  if (!arena.includes('if(!hostSpectating && !hasOwnAttempt)')) throw new Error('Pre-attempt result lock is missing.');
+  if (!arena.includes('if(!S.hostSpectate && !previousAttempt(m.code))')) throw new Error('Host answer-key context gate is missing.');
+  if (!arena.includes('Leaderboard after attempt')) throw new Error('Fair-play lock copy is missing.');
+  if (!readFileSync('data/pyq/cds-2009-II.js','utf8').includes('from behind a curtain (P) he held it in such a manner (Q) bringing the light (R) that it fell slantwise on her face. (S)')) throw new Error('CDS 2009-II Q73 P/Q/R/S source correction is missing.');
+  const fairPlayInfo=readFileSync('js/vaani-info-center.js','utf8');
+  if (!fairPlayInfo.includes("version:'20261004-arena-fairplay1'")) throw new Error('Arena fair-play release entry is missing.');
   if (!arena.includes("clearRunRecovery();")) throw new Error('Arena recovery state is not cleared after official submission.');
   if (!arena.includes("if(!r.practiceMode)saveRunRecovery();")) throw new Error('Arena recovery is not persisted during active official runs.');
   if (!arena.includes("practiceMode:!!options.practice")) throw new Error('Mistake-drill practice mode is missing.');

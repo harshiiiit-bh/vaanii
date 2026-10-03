@@ -975,3 +975,37 @@ body[data-theme="dark"] #view-games .vx-arena-intel-card{background:rgba(255,255
   #view-games .vx-arena-intel-section>b{grid-column:2}
   #view-games .vx-arena-intel-bar{grid-column:1}
 }
+
+
+/* ============================================================
+   FAIR-PLAY LOCK — normal players cannot inspect the board
+   before their official attempt. Host Spectate remains exempt.
+============================================================ */
+#view-games .vx-preattempt-lock{
+  margin:0 0 15px;
+  padding:22px;
+  border:1px solid rgba(197,157,68,.28);
+  border-radius:20px;
+  background:
+    radial-gradient(circle at 100% 0,rgba(197,157,68,.1),transparent 34%),
+    linear-gradient(145deg,var(--vx-card),rgba(197,157,68,.045));
+  text-align:left;
+}
+#view-games .vx-preattempt-lock h2{
+  margin:7px 0 7px;
+  color:var(--vx-ink);
+  font:900 clamp(1.15rem,2.7vw,1.65rem)/1.08 var(--vx-font-display);
+}
+#view-games .vx-preattempt-lock p{
+  max-width:62ch;
+  margin:0 0 14px;
+  color:var(--vx-muted);
+  font-size:.68rem;
+  line-height:1.6;
+}
+#view-games .vx-preattempt-lock .vx-btn{min-height:42px}
+#view-games .vx-host-action-secondary:disabled{
+  cursor:not-allowed;
+  opacity:.55;
+  filter:saturate(.45);
+}
