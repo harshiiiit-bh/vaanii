@@ -65,5 +65,5 @@ const css=readFileSync(resolve(root,'vaani-vocab90.css'),'utf8');
 assert.ok(css.includes('.v90-entry-table-wrap'));
 assert.ok(css.includes('.v90-entry-grid'));
 const sw=readFileSync(resolve(root,'sw.js'),'utf8');
-assert.match(sw,/vaani-shell-v8/);assert.ok(sw.includes('mjs|json|svg'),'Service worker must cache JSON assets.');
+assert.match(sw,/vaani-shell-v9/);assert.ok(sw.includes('mjs|json|svg'),'Service worker must cache JSON assets.');
 console.log('Vocab90 integrity passed: 90 days, 324 unique source pages, native reader, account progress, XP and JSON caching.');
