@@ -2899,6 +2899,11 @@
     }
     search.addEventListener('input', drawBoard);
     drawBoard();
+    loadBoard().then(function () {
+      if (S.screen === 'result' && S.match && S.match.code === m.code) drawBoard();
+    }).catch(function () {
+      if (S.screen === 'result' && S.match && S.match.code === m.code) drawBoard();
+    });
     scheduleResultExpiry(m);
 
     if (isHost(m.code)) {
