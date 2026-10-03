@@ -162,8 +162,16 @@
     if(typeof State==='undefined')return;
     if(State.infoTourVersion===INFO_TOUR_VERSION)return;
     featureBriefingPending=true;
+    if(typeof window.VAANI_IS_ASSESSMENT_ACTIVE==='function'&&window.VAANI_IS_ASSESSMENT_ACTIVE()){
+      featureBriefingPending=false;
+      return;
+    }
     let attempts=0;
     const tryOfficer=()=>{
+      if(typeof window.VAANI_IS_ASSESSMENT_ACTIVE==='function'&&window.VAANI_IS_ASSESSMENT_ACTIVE()){
+        featureBriefingPending=false;
+        return;
+      }
       if(launchLatestOfficerBrief()){
         featureBriefingPending=false;
         return;
