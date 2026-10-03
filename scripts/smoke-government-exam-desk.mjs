@@ -213,10 +213,22 @@ await page.goto(baseURL + '?v=notifications', { waitUntil: 'domcontentloaded' })
   await page.waitForSelector('#serviceForcePicker[data-mode="onboarding"]', { state: 'visible', timeout: 15000 });
   await page.locator('#serviceForcePicker .service-force-option[data-force="army"]').click();
   await page.waitForFunction(() => document.getElementById('gate')?.classList.contains('hide'), null, { timeout: 15000 });
-  // The first-visit briefing is intentionally modal; dismiss it so the smoke test can exercise the page beneath it.
-  await page.waitForFunction(() => document.getElementById('viTour')?.classList.contains('open'), null, { timeout: 5000 });
-  await page.keyboard.press('Escape');
-  await page.waitForFunction(() => !document.getElementById('viTour')?.classList.contains('open'), null, { timeout: 5000 });
+  // The first-visit briefing may be the legacy modal tour or the current
+  // Officer VAANI floating mentor. Accept either implementation.
+  await page.waitForFunction(() => {
+    const tourOpen = document.getElementById('viTour')?.classList.contains('open');
+    const mentorOpen = document.getElementById('vaaniMentor')?.classList.contains('open');
+    const latest = window.VAANI_LATEST_FEATURE_RELEASE?.version;
+    const seen = typeof State !== 'undefined' && latest && State.infoTourVersion === latest;
+    return Boolean(tourOpen || mentorOpen || seen);
+  }, null, { timeout: 8000 });
+  if (await page.locator('#viTour.open').count() || await page.locator('#vaaniMentor.open').count()) {
+    await page.keyboard.press('Escape');
+    await page.waitForFunction(() => (
+      !document.getElementById('viTour')?.classList.contains('open') &&
+      !document.getElementById('vaaniMentor')?.classList.contains('open')
+    ), null, { timeout: 5000 });
+  }
   await page.locator('#vxSyncStamp').waitFor();
   await page.waitForFunction(() => {
     const text = document.querySelector('#vxSyncStamp')?.textContent || '';
