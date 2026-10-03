@@ -3220,31 +3220,55 @@
       };
     }
 
-    if (!row.answers) return null;
-    var qs = Array.isArray(row.qSnapshots)&&row.qSnapshots.length ? row.qSnapshots : matchQuestions();
-    if (!qs.length) return null;
+    if (row.answers) {
+      var qs = Array.isArray(row.qSnapshots)&&row.qSnapshots.length ? row.qSnapshots : matchQuestions();
+      if (qs.length) {
+        // For legacy perfect attempts, the official score proves every question
+        // earned its full mark even if the current question bank has since changed.
+        if (Number(row.score) === Number(row.total) && Number(row.total) === qs.length) {
+          return {correct:qs.length,incorrect:0,skipped:0};
+        }
 
-    // For legacy perfect attempts, the official score proves every question
-    // earned its full mark even if the current question bank has since changed.
-    if (Number(row.score) === Number(row.total) && Number(row.total) === qs.length) {
-      return {correct:qs.length,incorrect:0,skipped:0};
+        var correct = 0, incorrect = 0, skipped = 0;
+        qs.forEach(function (q) {
+          var given = row.answers[q._id];
+          if (given === undefined) skipped++;
+          else if (answerMatches(given, q.ans)) correct++;
+          else incorrect++;
+        });
+        return { correct: correct, incorrect: incorrect, skipped: skipped };
+      }
     }
 
-    var correct = 0, incorrect = 0, skipped = 0;
-    qs.forEach(function (q) {
-      var given = row.answers[q._id];
-      if (given === undefined) skipped++;
-      else if (answerMatches(given, q.ans)) correct++;
-      else incorrect++;
-    });
-    return { correct: correct, incorrect: incorrect, skipped: skipped };
+    // Legacy shared rows created before aggregate counts were stored may have
+    // only score/total on the public board. Infer counts when the negative
+    // marking equation has exactly one integer solution.
+    var total = Math.max(0, Math.round(Number(row.total) || 0));
+    var score = Math.round(Number(row.score) * 100) / 100;
+    var negIndex = S.match ? Number(S.match.negMark) : -1;
+    var negFrac = (negIndex >= 0 && negIndex < NEG_MARKS.length) ? NEG_MARKS[negIndex] : 0;
+    if (total > 0 && Number.isFinite(score) && negFrac < 0) {
+      var candidates = [];
+      for (var wrong = 0; wrong <= total; wrong++) {
+        var exactCorrect = score - negFrac * wrong;
+        var wholeCorrect = Math.round(exactCorrect);
+        if (Math.abs(exactCorrect - wholeCorrect) > 0.005) continue;
+        var skip = total - wholeCorrect - wrong;
+        if (wholeCorrect < 0 || skip < 0) continue;
+        var checkScore = Math.round((wholeCorrect + negFrac * wrong) * 100) / 100;
+        if (Math.abs(checkScore - score) <= 0.005) {
+          candidates.push({correct:wholeCorrect, incorrect:wrong, skipped:skip});
+        }
+      }
+      if (candidates.length === 1) return candidates[0];
+    }
+    return null;
   }
   /* ---------------------------------------------------------
      PLAYER DETAIL SHEET
-     Any attempter tapping a name gets a time + correct/incorrect/
-     skipped summary. Whoever hosted the match (this device only —
-     see isHost) additionally gets the full question-by-question
-     breakdown for that person, same colouring as "View answers".
+     Any attempter tapping a name gets a public time + correct/
+     incorrect/skipped summary. The question-by-question answer
+     breakdown is intentionally kept out of leaderboard taps.
      --------------------------------------------------------- */
   function openPlayerSheet(row, rank) {
     var scrim = el('div', 'vx-scrim');
