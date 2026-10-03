@@ -1341,7 +1341,7 @@ function pyqLabeledBlocks(q){
     }
   }
 
-  const labelRe=/(?:^|[\\n|/]\\s*)(S\\d+|[PQRS])\\s*[:.,]\\s*/gi;
+  const labelRe=/\\b(S\\d+|[PQRS])\\s*[:.,]\\s*/gi;
   const labels=[...source.matchAll(labelRe)];
   if(labels.length>=3){
     const blocks=[];
