@@ -151,7 +151,7 @@ for (const file of files) {
     assert.equal(q12.ans, 3, 'NDA II 2017 Q12 answer key regression');
     assert.equal(q12.sec, 'Antonyms', 'NDA II 2017 Q12 section regression');
     assert.ok(String(q21.passage || '').includes('I had 21. ______ taken 22. ______ my clothes'), 'NDA II 2017 cloze passage regression');
-    assert.deepEqual(q31.parts, [
+    assert.deepEqual(JSON.parse(JSON.stringify(q31.parts)), [
       'has slowly and painfully surmounted',
       'and his growing intelligence',
       'all the obstacles that have come in his way',
