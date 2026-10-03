@@ -815,6 +815,7 @@ var PYQ_CDS_2020_II = [
     "y": 2020,
     "s": "II",
     "n": 41,
+    "parts": ["He has been one","the most revered member","of the committee of enquiry."],
     "sec": "Spotting Errors",
     "q": "He has been one the most revered member of the committee of enquiry. No error",
     "o": [
@@ -836,7 +837,7 @@ var PYQ_CDS_2020_II = [
     "y": 2020,
     "s": "II",
     "n": 42,
-    "parts": ["He has been one","the most revered member","of the committee of enquiry."],
+    "parts": ["Rahul asked me","whether I was interested to joining","the group for the trip."],
     "sec": "Spotting Errors",
     "q": "Rahul asked me whether I was interested to joining the group for the trip. No error",
     "o": [
@@ -858,7 +859,7 @@ var PYQ_CDS_2020_II = [
     "y": 2020,
     "s": "II",
     "n": 43,
-    "parts": ["Rahul asked me","whether I was interested to joining","the group for the trip."],
+    "parts": ["‘Where there is a will","then there is a way’","is an old epithet."],
     "sec": "Spotting Errors",
     "q": "‘Where there is a will then there is a way’ is an old epithet. No error",
     "o": [
@@ -880,7 +881,7 @@ var PYQ_CDS_2020_II = [
     "y": 2020,
     "s": "II",
     "n": 44,
-    "parts": ["‘Where there is a will","then there is a way’","is an old epithet."],
+    "parts": ["Indian feminism grew out of the women’s movements","of the late nineteenth century reached full maturity","in the early twentieth century"],
     "sec": "Spotting Errors",
     "q": "Indian feminism grew out of the women’s movements of the late nineteenth century reached full maturity in the early twentieth century No error.",
     "o": [
@@ -902,7 +903,7 @@ var PYQ_CDS_2020_II = [
     "y": 2020,
     "s": "II",
     "n": 45,
-    "parts": ["Indian feminism grew out of the women’s movements","of the late nineteenth century reached full maturity","in the early twentieth century"],
+    "parts": ["The greatest merit of democracy","is that everyone feels free and can pursues","his/her interest."],
     "sec": "Spotting Errors",
     "q": "The greatest merit of democracy is that everyone feels free and can pursues his/her interest. No error",
     "o": [
@@ -924,7 +925,7 @@ var PYQ_CDS_2020_II = [
     "y": 2020,
     "s": "II",
     "n": 46,
-    "parts": ["The greatest merit of democracy","is that everyone feels free and can pursues","his/her interest."],
+    "parts": ["All stake holders of education","have the right to ask for accountability in every aspects","of its implementation."],
     "sec": "Spotting Errors",
     "q": "All stake holders of education have the right to ask for accountability in every aspects of its implementation. No error",
     "o": [
@@ -946,7 +947,7 @@ var PYQ_CDS_2020_II = [
     "y": 2020,
     "s": "II",
     "n": 47,
-    "parts": ["All stake holders of education","have the right to ask for accountability in every aspects","of its implementation."],
+    "parts": ["Learning many languages promotes linguistic, cultural","and harmonies","Among people speaking different languages."],
     "sec": "Spotting Errors",
     "q": "Learning many languages promotes linguistic, cultural and harmonies Among people speaking different languages. No error",
     "o": [
@@ -968,7 +969,7 @@ var PYQ_CDS_2020_II = [
     "y": 2020,
     "s": "II",
     "n": 48,
-    "parts": ["Learning many languages promotes linguistic, cultural","and harmonies","Among people speaking different languages."],
+    "parts": ["One should not act according to one’s whims","and fancies on public","places."],
     "sec": "Spotting Errors",
     "q": "One should not act according to one’s whims and fancies on public places. No error",
     "o": [
@@ -990,7 +991,7 @@ var PYQ_CDS_2020_II = [
     "y": 2020,
     "s": "II",
     "n": 49,
-    "parts": ["One should not act according to one’s whims","and fancies on public","places."],
+    "parts": ["Economists believe that India had taken a new turn in 1990","with the liberalization to","her economy."],
     "sec": "Spotting Errors",
     "q": "Economists believe that India had taken a new turn in 1990 with the liberalization to her economy. No error",
     "o": [
@@ -1012,7 +1013,7 @@ var PYQ_CDS_2020_II = [
     "y": 2020,
     "s": "II",
     "n": 50,
-    "parts": ["Economists believe that India had taken a new turn in 1990","with the liberalization to","her economy."],
+    "parts": ["Irrigation works have a special importance","in an agricultural countries like India","Where rainfall is unequally distributed throughout the seasons."],
     "sec": "Spotting Errors",
     "q": "Irrigation works have a special importance in an agricultural countries like India, Where rainfall is unequally distributed throughout the seasons. No error",
     "o": [
@@ -1034,7 +1035,6 @@ var PYQ_CDS_2020_II = [
     "y": 2020,
     "s": "II",
     "n": 51,
-    "parts": ["Irrigation works have a special importance","in an agricultural countries like India","Where rainfall is unequally distributed throughout the seasons."],
     "sec": "Parts of Speech & Word Classes",
     "q": "All the pilgrims rested for a while under the banyan tree.",
     "o": [
