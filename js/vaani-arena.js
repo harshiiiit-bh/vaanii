@@ -1266,7 +1266,7 @@
         var hay=(String(q.q||'')+' '+String(q.sec||'')+' '+String(q.keyword||'')).toLowerCase();
         if(query && hay.indexOf(query)<0)return;
         var card=el('article','vx-host-answer-card');
-        var prompt=(typeof pyqHi==='function'?pyqHi(q):esc(q.q));
+        var prompt=questionPromptHtml(q);
         card.innerHTML='<div class="vx-host-answer-meta"><span>Q'+(i+1)+'</span><span>'+esc(q.sec||'Mixed')+'</span><span>'+esc((q._exam||'')+' '+(q.s||'')+' '+(q.y||''))+'</span></div>' +
           (q.passage?'<div class="pv-passage"><div class="pv-passage-label">Passage</div><div class="pv-passage-text">'+esc(q.passage)+'</div></div>':'') +
           '<div class="vx-host-answer-prompt">'+prompt+'</div>';
@@ -1900,6 +1900,21 @@
     return wrap;
   }
 
+  function questionPromptHtml(q){
+    if(Array.isArray(q.parts)&&q.parts.length){
+      var labels = (q.sec||'').indexOf('Ordering of Words')>=0 ? ['P','Q','R','S'] : ['a','b','c','d'];
+      var title = (q.sec||'').indexOf('Ordering of Words')>=0
+        ? '<div class="vx-question-parts-kicker">ARRANGE THESE PARTS</div>'
+        : '<div class="vx-question-parts-kicker">SPOTTING ERROR · PARTS</div>';
+      var rows=q.parts.map(function(part,i){
+        var label=labels[i]||String(i+1);
+        return '<div class="vx-question-part-row"><span>'+esc(label)+'</span><p>'+esc(part)+'</p></div>';
+      }).join('');
+      return title+'<div class="vx-question-parts">'+rows+'</div>';
+    }
+    return (q.keyword ? '<b>' + esc(q.keyword) + '</b> — ' : '') + esc(q.q);
+  }
+
   function screenRun(w) {
     var r = S.run, m = S.match;
     if (!r) return go('home');
@@ -1935,8 +1950,7 @@
     card.style.cursor = 'default';
     var body =
       (q.passage ? '<div class="pv-passage"><div class="pv-passage-label">Passage</div><div class="pv-passage-text">' + esc(q.passage) + '</div></div>' : '') +
-      '<p style="font-size:1rem;line-height:1.65;color:var(--vx-ink);margin:0 0 18px">' +
-      (q.keyword ? '<b>' + esc(q.keyword) + '</b> — ' : '') + esc(q.q) + '</p>';
+      '<div class="vx-question-prompt">' + questionPromptHtml(q) + '</div>';
     card.innerHTML = body;
 
     var opts = el('div', 'vx-seg');
