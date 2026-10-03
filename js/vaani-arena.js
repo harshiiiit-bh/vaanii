@@ -523,7 +523,11 @@
   function go(screen) {
     S.screen=screen;
     if(typeof global.VAANI_SET_ASSESSMENT_ACTIVE==='function')global.VAANI_SET_ASSESSMENT_ACTIVE(screen==='run');
-    render({scroll:true});
+    // On phones, keep the user's current scroll position stable. The old mobile
+    // room/touch layer already caused unwanted upward motion; Arena navigation
+    // must not reintroduce it.
+    var isMobileViewport = !!(window.matchMedia && window.matchMedia('(max-width:767px)').matches);
+    render({scroll:!isMobileViewport});
   }
 
   function backBtn(parent, label, screen) {
@@ -2395,12 +2399,19 @@
     recordAttempt(m.code,entry);
     if(typeof global.addXP==='function')global.addXP(score*2,'Arena match');
 
-    A.sync.submit(m.code,entry).then(loadBoard).then(function(){go('result');},
-      function(){
-        S._boardError=true;
-        S.rows=reconcileLocalAttempt([]);
-        go('result');
-      });
+    // Put the just-finished attempt into the local board immediately. The shared
+    // fetch can then fill in the other players without leaving the result page blank.
+    S._boardError=false;
+    S.rows=reconcileLocalAttempt((Array.isArray(S.rows)?S.rows:[]).concat([entry]));
+
+    A.sync.submit(m.code,entry).then(function(){
+      go('result');
+    },function(){
+      S._boardError=true;
+      // Keep the local result visible even when the network is temporarily down.
+      S.rows=reconcileLocalAttempt(S.rows);
+      go('result');
+    });
   }
   /* ---------------------------------------------------------
      RESULT + BOARD
