@@ -5,6 +5,7 @@ var PYQ_2017_II = [
     "y": 2017,
     "s": "II",
     "n": 1,
+    "keyword": "wound up",
     "sec": "Synonyms",
     "q": "The discussion was wound up after a long and fruitful exchange of views.",
     "o": [
@@ -19,6 +20,7 @@ var PYQ_2017_II = [
     "y": 2017,
     "s": "II",
     "n": 2,
+    "keyword": "alive",
     "sec": "Synonyms",
     "q": "He was fully alive to the need for making adjustments.",
     "o": [
@@ -153,6 +155,7 @@ var PYQ_2017_II = [
     "y": 2017,
     "s": "II",
     "n": 11,
+    "keyword": "run down",
     "sec": "Antonyms",
     "q": "My mother has been working hard for the last two weeks and she feels run down.",
     "o": [
@@ -272,6 +275,7 @@ var PYQ_2017_II = [
     "y": 2017,
     "s": "II",
     "n": 19,
+    "keyword": "carried on",
     "sec": "Antonyms",
     "q": "We carried on the search for the missing person.",
     "o": [
