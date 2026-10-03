@@ -781,7 +781,7 @@ try {
   if (!arena.includes("S.practiceSummary=")) throw new Error('Mistake-drill completion state is missing.');
   if (!arena.includes("window.dispatchEvent(new CustomEvent('vaani:arena-analysis'")) throw new Error('Arena analytics event is missing.');
   if (!officerSource.includes('window.VAANI_ARENA_ANALYSIS_BRIEFING=function(insights)')) throw new Error('Officer Arena debrief bridge is missing.');
-  if (!pageSource.includes('js/vaani-info-center.js?v=20261003-release5')) throw new Error('Feature release cache key is outdated.');
+  if (!pageSource.includes('js/vaani-info-center.js?v=20261004-release7')) throw new Error('Feature release cache key is outdated.');
   if (!pageSource.includes('js/vaani-character-elite.js?v=20261003-release4')) throw new Error('Officer debrief cache key is outdated.');
   console.log('Arena intelligence audit: recovery, analytics, mistake drill, contextual Officer debrief and cache keys validated');
   console.log('Arena multi-bank audit: v3 source matrix, v2 decode compatibility, combined pool generation, multi-select UI, responsive styling and cache keys validated');
