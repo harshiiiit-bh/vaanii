@@ -592,39 +592,69 @@
     return '';
   }
 
-  function hydrateMatch(m, hostName) {
+  function profileAvatarSnapshot() {
+    try {
+      var p = (typeof State !== 'undefined' && State.profilePhoto) ? State.profilePhoto : null;
+      if (!p || !p.src) return null;
+      var src = String(p.src || '');
+      if (!/^(?:https?:\\/\\/|data:image\\/)/i.test(src)) return null;
+      if (src.length > 18000) return null;
+      return { src: src, x: Number(p.x) || 50, y: Number(p.y) || 50, zoom: Number(p.zoom) || 1 };
+    } catch (e) { return null; }
+  }
+  function hostAvatarSnapshot(m) {
+    if (m && m.hostAvatar && m.hostAvatar.src) return m.hostAvatar;
+    return isHost(m && m.code) ? profileAvatarSnapshot() : null;
+  }
+  function arenaAvatarHtml(photo, name, cls) {
+    var safe = photo && photo.src && /^(?:https?:\\/\\/|data:image\\/)/i.test(String(photo.src)) ? String(photo.src) : '';
+    var n = String(name || 'Cadet').trim() || 'Cadet';
+    var initial = n.slice(0, 1).toUpperCase() || 'C';
+    var x = photo && Number.isFinite(Number(photo.x)) ? Number(photo.x) : 50;
+    var y = photo && Number.isFinite(Number(photo.y)) ? Number(photo.y) : 50;
+    var zoom = photo && Number.isFinite(Number(photo.zoom)) ? Number(photo.zoom) : 1;
+    return '<span class="' + cls + (safe ? ' has-photo' : '') + '">' +
+      (safe ? '<img src="' + esc(safe) + '" alt="" loading="eager" decoding="async" style="object-position:' + x + '% ' + y + '%;transform:scale(' + zoom + ')">' : esc(initial)) +
+      '</span>';
+  }
+  function hydrateMatch(m, hostName, hostAvatar) {
     if (!m) return m;
     var known = hostName || matchHostName(m);
     if (known) m.hostName = String(known).slice(0, 40);
+    if (hostAvatar && hostAvatar.src) m.hostAvatar = hostAvatar;
     return m;
   }
 
   function arenaInviteUrl(m) {
     var hostName = matchHostName(m);
+    var avatar = hostAvatarSnapshot(m);
     var url = location.origin + location.pathname + '?arena=' + encodeURIComponent(m.code);
     if (hostName) url += '&host=' + encodeURIComponent(hostName);
+    if (avatar && avatar.src) {
+      url += '&av=' + encodeURIComponent(avatar.src) + '&ax=' + encodeURIComponent(avatar.x) + '&ay=' + encodeURIComponent(avatar.y) + '&az=' + encodeURIComponent(avatar.zoom);
+    }
     return url;
   }
 
   function parseArenaInvite(raw) {
     var value = String(raw || '').trim();
-    var code = value;
-    var hostName = '';
+    var code = value, hostName = '', avatarSrc = '';
+    var avatar = null;
     try {
       var u = new URL(value, location.href);
       if (u.searchParams.get('arena')) {
         code = u.searchParams.get('arena') || '';
         hostName = u.searchParams.get('host') || '';
+        avatarSrc = u.searchParams.get('av') || '';
+        if (avatarSrc) avatar = {src: avatarSrc, x:Number(u.searchParams.get('ax'))||50, y:Number(u.searchParams.get('ay'))||50, zoom:Number(u.searchParams.get('az'))||1};
       }
     } catch (e) {}
     if (!hostName) {
       var mHost = value.match(/[?&]host=([^&#\s]+)/i);
-      if (mHost) {
-        try { hostName = decodeURIComponent(mHost[1]); } catch (e2) { hostName = mHost[1]; }
-      }
+      if (mHost) { try { hostName = decodeURIComponent(mHost[1]); } catch (e2) { hostName = mHost[1]; } }
     }
     var m = A.decode(code);
-    return { match: hydrateMatch(m, hostName), hostName: hostName };
+    return { match: hydrateMatch(m, hostName, avatar), hostName: hostName, hostAvatar: avatar };
   }
 
   function setupSection(kicker, title, copy, cls) {
@@ -913,12 +943,13 @@
           source:d.source,count:d.count,seconds:seconds,cap:Math.min(d.cap,MAX_PLAYERS),
           shuffleOrder:d.shuffleOrder,seed:Math.floor(Math.random()*2176782335),expiresAt:expiresAt,
           type:d.type,paperKey:d.paperKey,perQSeconds:d.perQOn?d.perQSeconds:0,negMark:d.negMark,
-          hostName:playerName()
+          hostName:playerName(),hostAvatar:profileAvatarSnapshot()
         };
         match.code=A.encode(match);
         var parsed=A.decode(match.code);
         if(!parsed){say('Could not build a code from those settings.');return;}
         parsed.hostName=match.hostName;
+        parsed.hostAvatar=match.hostAvatar;
         S.match=parsed;
         S.hostName=match.hostName;
         markHost(parsed.code);
@@ -949,7 +980,7 @@
       '<p>' + (ownHost ? 'The invite is locked. You can enter the test yourself or open the host board and answer key.' : 'Use the invite link or code below to enter the same locked question set.') + '</p>';
     if(hostName){
       var hostLine=el('div','vx-host-identity');
-      hostLine.innerHTML='<span class="vx-host-avatar">' + esc(hostName.trim().slice(0,1).toUpperCase()||'H') + '</span><span><small>HOSTED BY</small><strong>' + esc(hostName) + '</strong></span>';
+      hostLine.innerHTML=arenaAvatarHtml(hostAvatarSnapshot(m),hostName,'vx-host-avatar')+'<span><small>HOSTED BY</small><strong>'+esc(hostName)+'</strong></span>';
       hero.appendChild(hostLine);
     }
     shell.appendChild(hero);
@@ -1453,7 +1484,7 @@
     hero.appendChild(intro);
     var hostLine = el('div', 'vx-host-identity vx-briefing-host');
     var hostName = matchHostName(m);
-    hostLine.innerHTML = '<span class="vx-host-avatar">' + esc((hostName || 'H').trim().slice(0,1).toUpperCase()) + '</span><span><small>HOSTED BY</small><strong>' + esc(hostName || 'Host name shared by invite') + '</strong></span>';
+    hostLine.innerHTML = arenaAvatarHtml(hostAvatarSnapshot(m),hostName || 'Host','vx-host-avatar')+'<span><small>HOSTED BY</small><strong>'+esc(hostName || 'Host name shared by invite')+'</strong></span>';
     hero.appendChild(hostLine);
     panel.appendChild(hero);
 
@@ -1674,7 +1705,7 @@
     var seconds = Math.min(m.seconds, Math.round((Date.now() - r.startedAt) / 1000));
     var entry = {
       pid: playerId(), name: playerName(), score: score,
-      seconds: seconds, total: r.questions.length,
+      avatar: profileAvatarSnapshot(), seconds: seconds, total: r.questions.length,
       at: Date.now(), auto: !!auto,
       qids: r.questions.map(function (q) { return q._id; }),
       answers: r.answers,
@@ -2005,7 +2036,7 @@
         card.innerHTML =
           '<span class="vx-podium-medal" aria-hidden="true">' + medals[entry.rank] + '</span>' +
           '<span class="vx-podium-rank">RANK ' + entry.rank + '</span>' +
-          '<span class="vx-championship-podium-avatar">' + esc(initials) + '</span>' +
+          arenaAvatarHtml(entry.row.avatar || (entry.row.pid === playerId() ? profileAvatarSnapshot() : null),podiumName,'vx-championship-podium-avatar') +
           '<strong class="vx-podium-name">' + esc(podiumName) + '</strong>' +
           '<span class="vx-podium-score">' + esc(String(entry.row.score)) + ' / ' + esc(String(entry.row.total)) + '</span>' +
           '<span class="vx-championship-podium-time">' + esc(fmtClock(entry.row.seconds)) + ' · FINISH</span>';
@@ -2029,7 +2060,7 @@
           tr.innerHTML =
             '<span class="vx-rank"><span class="vx-championship-rank-pill">' + rank + '</span></span>' +
             '<span class="vx-championship-player">' +
-              '<span class="vx-championship-avatar" aria-hidden="true">' + esc(rowInitial) + '</span>' +
+              arenaAvatarHtml(row.avatar || (row.pid === playerId() ? profileAvatarSnapshot() : null),rowName,'vx-championship-avatar') +
               '<span class="vx-championship-player-copy"><strong class="vx-player-name">' + esc(rowName) + '</strong>' +
               (row.pid === playerId() ? '<small class="vx-championship-you">YOUR RESULT</small>' : '<small class="vx-championship-player-label">CADET</small>') +
               '</span></span>' +
@@ -2308,10 +2339,12 @@
     var qs = new URLSearchParams(location.search);
     var code = qs.get('arena');
     var inviteHost = qs.get('host') || '';
+    var inviteAvatarSrc = qs.get('av') || '';
+    var inviteAvatar = inviteAvatarSrc ? {src:inviteAvatarSrc,x:Number(qs.get('ax'))||50,y:Number(qs.get('ay'))||50,zoom:Number(qs.get('az'))||1} : null;
     if (code) {
       var m = A.decode(code);
       if (m) {
-        m.hostName = inviteHost ? String(inviteHost).slice(0, 40) : matchHostName(m);
+        m = hydrateMatch(m, inviteHost, inviteAvatar);
         S.match = m; S.screen = 'briefing'; rememberMatch(m);
       }
     }
