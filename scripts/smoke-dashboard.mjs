@@ -670,7 +670,7 @@ try {
     window.fetch=(url,options={})=>{
       request={url:String(url),method:String(options.method||'GET'),body:options.body||null,
         contentType:options.headers?.['Content-Type']||options.headers?.['content-type']||''};
-      const isLeaderboard=String(url).includes('/functions/v1/arena-leaderboard');
+      const isLeaderboard=String(url).includes('/rest/v1/rpc/arena_get_leaderboard');
       return Promise.resolve({ok:true,json:()=>Promise.resolve(isLeaderboard
         ? {rows:[{code:boardKey,pid:'remote-player',name:'Remote Cadet',score:7,seconds:45,total:8,at:2}],verified:false,source:'historical'}
         : {ok:true,duplicate:false,source:'shared'})});
@@ -702,7 +702,7 @@ try {
   assert.equal(arenaSecurity.live,true,'Shared Arena adapter should expose its live network state');
   assert.equal(arenaSecurity.shared,true,'Arena must identify its shared read-only board');
   assert.equal(arenaSecurity.request.method,'POST','Shared Arena endpoint must use POST');
-  assert.ok(arenaSecurity.request.url.includes('/functions/v1/arena-leaderboard'),'Shared Arena read did not use the Edge Function');
+  assert.ok(arenaSecurity.request.url.includes('/rest/v1/rpc/arena_get_leaderboard'),'Shared Arena read did not use the Edge Function');
   assert.equal(JSON.parse(arenaSecurity.request.body).code,arenaSecurity.code,'Shared Arena read sent the wrong match code');
   assert.ok(arenaSecurity.request.contentType.toLowerCase().includes('application/json'),'Shared Arena read must send JSON');
   assert.equal(arenaSecurity.remoteAdapter,'undefined','Browser score writes must not expose the removed Supabase adapter');
