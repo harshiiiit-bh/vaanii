@@ -230,7 +230,9 @@
     const label=index===0?'Replay latest brief':'Replay Officer brief';
     const replay='<button type="button" class="btn ghost vi-release-brief-btn" data-release-version="'+escapeHtmlInfo(release.version)+'">'+label+'</button>';
     if(index!==0)return replay;
-    const read='<button type="button" class="btn ghost vi-release-read-btn">Mark update read</button>';
+    const read=featureUpdateIsUnread()
+      ? '<button type="button" class="btn ghost vi-release-read-btn">Mark update read</button>'
+      : '<button type="button" class="btn ghost vi-release-read-btn" disabled>Update marked read</button>';
     return replay+read;
   }
   function renderReleaseHistoryHTML(){
@@ -245,7 +247,7 @@
           '<h3>'+escapeHtmlInfo(latest.title)+'<span class="vi-release-new">LATEST</span>'+(featureUpdateIsUnread()?'<span class="vi-release-unread">UNREAD</span>':'')+'</h3>'+
           '<p>'+escapeHtmlInfo(latest.summary)+'</p>'+
           '<div class="vi-release-meta"><span><b>AREA</b>'+escapeHtmlInfo(latest.scope||'VAANI')+'</span><span><b>IMPACT</b>'+escapeHtmlInfo(latest.impact||'Platform improvement')+'</span></div>'+
-          '<div class="vi-release-actions">'+releaseActionHTML(latest,0)+'<span class="vi-release-status">First-login briefing · one time per account</span></div>'+
+          '<div class="vi-release-actions">'+releaseActionHTML(latest,0)+'<span class="vi-release-status">'+(featureUpdateIsUnread()?'NEW UPDATE · Officer briefing pending':'UPDATE SEEN · replay anytime')+'</span></div>'+
         '</div>'+
       '</div>'+
       '<div class="vi-release-list">'+FEATURE_RELEASES.map(function(release,index){
