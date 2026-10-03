@@ -1350,35 +1350,92 @@
   }
 
   /* ==========================================================
-     17 — VERY NARROW PHONES
+     17 — PHONE ENDCAP
      ========================================================== */
-  @media(max-width:380px){
-    main{
-      padding-inline:8px!important;
-    }
-    #view-dashboard .vd-qa{
-      grid-template-columns:1fr 1fr!important;
-    }
-    #view-dashboard .vd-hero .btn-row{
-      grid-template-columns:1fr!important;
-    }
-    #view-profile .vp-overview{
-      grid-template-columns:1fr!important;
-    }
-    #view-games .vx-championship-podium{
-      grid-template-columns:1fr!important;
-      grid-template-areas:"first" "second" "third"!important;
-    }
-    #view-games .vx-deploy-summary-grid{
-      grid-template-columns:1fr!important;
-    }
-    #view-vocab .singles-strip{
-      grid-template-columns:1fr!important;
-    }
-    #view-vocab90 .v90-day-grid{
-      grid-template-columns:repeat(5,minmax(0,1fr))!important;
-    }
-  }
 }
+/* Very narrow phones get a final density pass. */
+@media(max-width:380px){
+  main{padding-inline:8px!important;}
+  #view-dashboard .vd-qa{grid-template-columns:1fr 1fr!important;}
+  #view-dashboard .vd-hero .btn-row{grid-template-columns:1fr!important;}
+  #view-profile .vp-overview{grid-template-columns:1fr!important;}
+  #view-games .vx-championship-podium{
+    grid-template-columns:1fr!important;
+    grid-template-areas:"first" "second" "third"!important;
+  }
+  #view-games .vx-deploy-summary-grid{grid-template-columns:1fr!important;}
+  #view-vocab .singles-strip{grid-template-columns:1fr!important;}
+  #view-vocab90 .v90-day-grid{grid-template-columns:repeat(5,minmax(0,1fr))!important;}
+}}
 
 /* On non-mobile widths, this file intentionally does nothing. */
+
+
+/* ==============================================================
+   MOBILE ENTRY GATE — compact identification flow
+   ============================================================== */
+@media(max-width:767px){
+  #gate{
+    min-height:100dvh!important;
+    overflow:hidden!important;
+    padding:18px 12px!important;
+  }
+  #gate .gate-content{
+    width:100%!important;
+    max-width:430px!important;
+    padding:14px 0 28px!important;
+  }
+  #gate .gate-logo-wrap{
+    width:68px!important;
+    height:68px!important;
+    margin-bottom:10px!important;
+  }
+  #gate .gate-emblem-image{
+    width:68px!important;
+    height:68px!important;
+  }
+  #gate .eyebrow{
+    max-width:100%!important;
+    font-size:.5rem!important;
+    letter-spacing:.11em!important;
+  }
+  #gate h1{
+    margin:7px 0 2px!important;
+    font-size:2.45rem!important;
+  }
+  #gate .gate-tagline{
+    font-size:.58rem!important;
+    gap:7px!important;
+  }
+  #gate .gate-divider{
+    margin:12px auto!important;
+  }
+  #gate .gate-card{
+    width:100%!important;
+    padding:16px!important;
+    border-radius:17px!important;
+  }
+  #gate .gate-panel{
+    padding:0!important;
+  }
+  #gate .gate-field input,
+  #gate .gate-code-input{
+    width:100%!important;
+    min-height:50px!important;
+    font-size:18px!important;
+  }
+  #gate .gate-btn{
+    min-height:49px!important;
+    width:100%!important;
+    margin-top:10px!important;
+  }
+  #gate .gate-jets img{
+    max-width:84%!important;
+    right:-12%!important;
+    opacity:.28!important;
+  }
+  #gate .gate-credit{
+    margin-top:12px!important;
+    font-size:.7rem!important;
+  }
+}
