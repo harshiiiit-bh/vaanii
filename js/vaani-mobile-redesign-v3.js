@@ -72,11 +72,8 @@
 
   function openView(view){
     closeMore();
-    if(view==='books'){
-      callGlobal('switchView','books',{preserveScroll:false});
-    }else{
-      callGlobal('switchView',view,{preserveScroll:false});
-    }
+    // More-menu navigation must not trigger the global mobile auto-scroll system.
+    callGlobal('switchView',view,{preserveScroll:true});
   }
 
   function renderMore(){
@@ -369,63 +366,24 @@
   }
 
   function setupMobileRooms(name){
-    if(!mobile()) return;
-    const rooms=buildRooms(name);
-    if(!rooms.length){
-      removeRoomSwitcher();
-      return;
-    }
+    /*
+     * MOBILE ROOM SWITCHER RETIRED.
+     * The old room layer hid nested content (for example .vx-arena containing
+     * .vx-championship) and installed a global touchend handler that could
+     * smooth-scroll the whole page during ordinary swipes. That was the source
+     * of intermittent missing/double Arena boards and the "automatic slide up"
+     * bug. Mobile now uses the normal document flow everywhere.
+     */
+    roomState.name=name||null;
+    roomState.rooms=[];
+    roomState.index=0;
 
-    roomState.name=name;
-    roomState.rooms=rooms;
-    const saved=Number(localStorage.getItem(roomStorageKey(name)));
-    roomState.index=Number.isInteger(saved)&&saved>=0&&saved<rooms.length?saved:0;
-
-    const viewbar=qs('.mobile-viewbar');
-    const sectionBtn=qs('.mobile-viewbar-btn',viewbar||document);
-    if(sectionBtn){
-      sectionBtn.style.display='none';
-      sectionBtn.setAttribute('aria-hidden','true');
-    }
-
-    if(rooms.length<2){
-      roomSwitcher()?.remove();
-      rooms[0].elements.forEach(el=>{
-        el.classList.remove('mobile-room-hidden');
-        el.removeAttribute('aria-hidden');
-      });
-      document.body.classList.remove('mobile-rooms-mode');
-      return;
-    }
-
-    document.body.classList.add('mobile-rooms-mode');
-    ensureRoomSwitcher(name,rooms);
-    setMobileRoom(roomState.index,false);
-
-    const main=qs('#mainContent');
-    if(main && main.dataset.mobileRoomTouch!=='1'){
-      main.dataset.mobileRoomTouch='1';
-      main.addEventListener('touchstart',e=>{
-        if(!mobile()||!roomState.rooms.length)return;
-        const t=e.changedTouches?.[0];
-        if(!t)return;
-        roomState.touchX=t.clientX;
-        roomState.touchY=t.clientY;
-      },{passive:true});
-      main.addEventListener('touchend',e=>{
-        if(!mobile()||!roomState.rooms.length)return;
-        const target=e.target;
-        if(target?.closest?.('button,a,input,textarea,select,[contenteditable="true"],[data-no-room-swipe]')) return;
-        const t=e.changedTouches?.[0];
-        if(!t)return;
-        const dx=t.clientX-roomState.touchX;
-        const dy=t.clientY-roomState.touchY;
-        if(Math.abs(dx)<55 || Math.abs(dx)<Math.abs(dy)*1.35)return;
-        const scrollBox=target?.closest?.('.scroll-x,.horizontal-scroll');
-        if(scrollBox && scrollBox.scrollWidth>scrollBox.clientWidth+8) return;
-        setMobileRoom(roomState.index+(dx<0?1:-1),true);
-      },{passive:true});
-    }
+    roomSwitcher()?.remove();
+    document.body.classList.remove('mobile-rooms-mode');
+    qsa('.mobile-room-hidden').forEach(el=>{
+      el.classList.remove('mobile-room-hidden');
+      el.removeAttribute('aria-hidden');
+    });
   }
 
   function hideLegacyQuickNav(){
