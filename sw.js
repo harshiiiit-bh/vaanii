@@ -1,6 +1,6 @@
 /* VAANI's service-worker cache is namespaced to this app. */
 const CACHE_PREFIX = 'vaani-shell-';
-const CACHE = 'vaani-shell-v10';
+const CACHE = 'vaani-shell-v11';
 
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll([
@@ -9,7 +9,9 @@ self.addEventListener('install', event => {
     './vaani-upgrade-core.css',
     './js/vaani-upgrade-core.js',
     './vaani-vocab90.css?v=20261003-structured2',
-    './js/vaani-vocab90.js?v=20261003-structured1'
+    './js/vaani-vocab90.js?v=20261004-structured3',
+    './js/library.js?v=20261004-loginfix1',
+    './js/app.js?v=20261004-loginfix3'
   ])));
   self.skipWaiting();
 });
