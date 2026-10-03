@@ -367,7 +367,7 @@
      - reads come from the narrow leaderboard RPC
      - local storage remains only as an offline recovery/display cache */
   var SHARED_BOARD_ENDPOINT = 'https://pccavdwwhykwyeitxixc.supabase.co/rest/v1/rpc/arena_get_leaderboard';
-  var SHARED_SUBMIT_ENDPOINT = 'https://pccavdwwhykwyeitxixc.supabase.co/rest/v1/rpc/arena_submit_attempt';
+  var SHARED_SUBMIT_ENDPOINT = 'https://pccavdwwhykwyeitxixc.supabase.co/rest/v1/rpc/arena_submit_attempt_v2';
   var SHARED_REGISTER_MATCH_ENDPOINT = 'https://pccavdwwhykwyeitxixc.supabase.co/rest/v1/rpc/arena_register_match';
   var SHARED_GET_MATCH_ENDPOINT = 'https://pccavdwwhykwyeitxixc.supabase.co/rest/v1/rpc/arena_get_match';
   var SHARED_BOARD_API_KEY = 'sb_publishable_VfRmr2xFvu4Iv8sfSJReQQ_qzr5z_MI';
