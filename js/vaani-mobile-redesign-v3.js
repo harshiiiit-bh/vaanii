@@ -217,6 +217,11 @@
       {id:'drill',icon:'↗',label:'Drill',selectors:['#view-vocab .singles-strip','#view-vocab .vocab-toolbar']},
       {id:'library',icon:'▦',label:'Library',selectors:['#view-vocab .vv-word-grid']}
     ],
+    vocab90:[
+      {id:'briefing',icon:'◎',label:'Briefing',selectors:['#view-vocab90 .v90-hero','#view-vocab90 .v90-toolbar']},
+      {id:'days',icon:'01',label:'Days',selectors:['#view-vocab90 .v90-daywise-view']},
+      {id:'course',icon:'▦',label:'Full Course',selectors:['#view-vocab90 .v90-all-view','#view-vocab90 .v90-search-results']}
+    ],
     books:[
       {id:'reader',icon:'▤',label:'Reader',selectors:['#view-books .vbv-scope']},
       {id:'companion',icon:'⌕',label:'Companion',selectors:['#view-books .bc-global-link']}
