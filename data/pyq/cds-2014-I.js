@@ -1164,7 +1164,7 @@ var PYQ_CDS_2014_I = [
     "s": "I",
     "n": 82,
     "sec": "Ordering of Sentences",
-    "q": "S1: The woman who lives a normal life is able to check the swelling conceit and egotism of her menfolk simply because her outlook is so different. S6: It is more personal and yet more impersonal. P: And both ranges of interest make her what only fools deny her to be, namely, essentially practical; her eye is steadily fixed on the concrete thing... Q: The first are personal and particular; whereas the second, those enormous facts about life... R: Her interests are at once narrower and wider than those of men. S: She is primarily concerned with little ordinary things... ",
+    "q": "S1: The woman who lives a normal life is able to check the swelling conceit and egotism of her menfolk simply because her outlook is so different. S6: It is more personal and yet more impersonal. P: And both ranges of interest make her what only fools deny her to be, namely, essentially practical; her eye is steadily fixed on the concrete thing... Q: The first are personal and particular; whereas the second, those enormous facts about life... R: Her interests are at once narrower and wider than those of men. S: She is primarily concerned with little ordinary things...",
     "o": [
       "PQSR",
       "PRSQ",
