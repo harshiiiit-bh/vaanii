@@ -483,7 +483,7 @@
           var shareBtn = el('button', 'vx-btn ghost', 'Share');
           shareBtn.type = 'button';
           shareBtn.addEventListener('click', function () {
-            var sm = A.decode(r.code);
+            var sm = hydrateMatch(A.decode(r.code), r.hostName, r.hostAvatar);
             if (!sm) { say('That code could not be read.'); return; }
             S.match = sm;
             go('share');
@@ -493,7 +493,7 @@
         var b = el('button', 'vx-btn ghost', expired ? 'Board' : 'Open');
         b.type = 'button';
         b.addEventListener('click', function () {
-          var m = A.decode(r.code);
+          var m = hydrateMatch(A.decode(r.code), r.hostName, r.hostAvatar);
           if (!m) { say('That code could not be read.'); return; }
           S.match = m;
           if (expired) { S.result = null; S.rows = []; go('result'); }
@@ -2307,7 +2307,7 @@
   }
   function rememberMatch(m) {
     var list = loadRecent().filter(function (r) { return r.code !== m.code; });
-    list.unshift({ code: m.code, count: m.count, source: m.source, expiresAt: m.expiresAt, hostName: matchHostName(m), myScore: null });
+    list.unshift({ code: m.code, count: m.count, source: m.source, expiresAt: m.expiresAt, hostName: matchHostName(m), hostAvatar: m.hostAvatar || null, myScore: null });
     saveRecent(list);
   }
   function recordAttempt(code, entry) {
