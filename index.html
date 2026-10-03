@@ -1142,11 +1142,11 @@
 <!-- ============ PROFILE ============ -->
 <section class="view vd-profile" id="view-profile">
   <div class="vp-profile-hero">
-    <div class="vp-profile-avatar" id="vpProfileAvatar" aria-hidden="true">HC</div>
+    <button type="button" class="vp-profile-avatar" id="vpProfileAvatar" onclick="openProfilePhotoEditor()" aria-label="Change profile picture">HC</button>
     <div class="vp-profile-copy">
       <span class="vp-profile-kicker">Personal learning dossier</span>
       <h2 id="profName">Cadet</h2>
-      <p>One account. Your real progress. Every milestone earned.</p>
+      <p>One account. Your real progress. Every milestone earned.</p><button type="button" class="vp-profile-photo-edit btn ghost" onclick="openProfilePhotoEditor()">Change profile picture</button>
     </div>
     <span class="vp-profile-rank" id="vpProfileRank">Recruit</span>
     <button type="button" class="vp-logout-btn" onclick="if(confirm(&quot;Log out of VAANI? Your saved progress will remain linked to your account code.&quot;)) logout()" aria-label="Log out of VAANI">↪ <span>Log out</span></button>
