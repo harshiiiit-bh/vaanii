@@ -58,3 +58,34 @@
   animation:viOfficerBob 2.7s ease-in-out 1.4s infinite;
 }
 @media(max-width:640px){.vi-officer-model{width:120px;height:132px}}
+
+/* ============================================================
+   FEATURE RELEASE / WHAT'S NEW
+   Shared by the release manifest and first-login Officer briefing.
+   ============================================================ */
+#view-info .vi-whats-new{position:relative}
+#view-info .vi-section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:14px}
+#view-info .vi-release-current{flex:0 0 auto;padding:6px 9px;border:1px solid rgba(197,157,68,.25);border-radius:999px;background:rgba(197,157,68,.07);color:var(--gold);font:800 .52rem var(--mono);letter-spacing:.08em}
+#view-info .vi-release-list{display:grid;gap:11px}
+#view-info .vi-release-card{
+  position:relative;padding:16px;border:1px solid var(--line);border-radius:15px;background:var(--panel);
+  box-shadow:0 7px 18px rgba(18,31,43,.045);
+}
+#view-info .vi-release-card.is-latest{
+  border-color:rgba(197,157,68,.42);
+  background:linear-gradient(135deg,rgba(197,157,68,.095),var(--panel) 54%);
+  box-shadow:0 10px 24px rgba(145,105,37,.08);
+}
+#view-info .vi-release-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:7px}
+#view-info .vi-release-tag{color:var(--gold);font:800 .52rem var(--mono);letter-spacing:.13em}
+#view-info .vi-release-date{color:var(--muted);font:600 .57rem var(--mono)}
+#view-info .vi-release-card h3{margin:0;color:var(--text);font-family:var(--serif);font-size:1.02rem}
+#view-info .vi-release-card>p{margin:6px 0 9px;color:var(--muted);font-size:.74rem;line-height:1.5}
+#view-info .vi-release-card ul{margin:0;padding-left:18px;display:grid;gap:5px}
+#view-info .vi-release-card li{color:var(--text);font-size:.69rem;line-height:1.45}
+#view-info .vi-release-new{display:inline-flex;align-items:center;margin-left:7px;padding:3px 6px;border-radius:999px;background:var(--gold);color:#15202a;font:900 .45rem var(--mono);letter-spacing:.08em;vertical-align:middle}
+@media(max-width:620px){
+  #view-info .vi-section-head{align-items:flex-start;flex-direction:column}
+  #view-info .vi-release-current{align-self:flex-start}
+  #view-info .vi-release-card{padding:13px}
+}
