@@ -279,6 +279,17 @@ try {
         throw new Error('Invalid question or answer index: ' + at);
       }
       if (typeof q.sec !== 'string' || !q.sec.trim()) throw new Error('Missing topic tag: ' + at);
+      if (/^ordering of sentences$/i.test(String(q.sec||'').trim())) {
+        if (!Array.isArray(q.parts) || q.parts.length !== 4 || q.parts.some(part => typeof part !== 'string' || !part.trim())) {
+          throw new Error('Ordering of Sentences must expose four P/Q/R/S parts: ' + at);
+        }
+        if (!/^S1\s*:/i.test(q.q) || !/\bS6\s*:/i.test(q.q) || !/\bP\s*:/i.test(q.q) || !/\bQ\s*:/i.test(q.q) || !/\bR\s*:/i.test(q.q) || !/\bS\s*:/i.test(q.q)) {
+          throw new Error('Ordering of Sentences prompt is missing S1/S6/P/Q/R/S labels: ' + at);
+        }
+        if (q.o.length !== 4 || q.o.some(option => !/^[PQRS]{4}$/.test(String(option).trim()))) {
+          throw new Error('Ordering of Sentences must expose four PQRS sequence options: ' + at);
+        }
+      }
       if (String(q.sec).trim().toLowerCase() === 'spotting errors') {
         if (q.o.length !== 4) throw new Error('Spotting Errors must expose four choices (a–d): ' + at);
         const explicitParts = Array.isArray(q.parts) && q.parts.length === 3 &&
