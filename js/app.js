@@ -1372,7 +1372,7 @@ function pyqLabeledBlocksHTML(q){
     '<span class="pv-structured-text">'+pyqHighlightText(block.text,keyword)+'</span>'+
   '</div>';
 
-  const fixed=blocks.filter(b=>/^S\\d+$/.test(String(b.label||'')));
+  const fixed=blocks.filter(b=>/^S\d+$/.test(String(b.label||'')));
   const jumbled=blocks.filter(b=>/^[PQRS]$/.test(String(b.label||'')));
   const other=blocks.filter(b=>fixed.indexOf(b)<0&&jumbled.indexOf(b)<0);
 
