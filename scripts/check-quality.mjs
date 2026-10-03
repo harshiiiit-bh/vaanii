@@ -729,7 +729,7 @@ try {
     '.vx-host-spectate',
     '.vx-invite-action',
     '.vx-invite-copy-row',
-    '.vx-invite-share',
+    '.vx-invite-action',
     'ARENA_RECOVERY_KEY',
     'function arenaAnalysis',
     'function startMistakeDrill',
