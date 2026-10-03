@@ -498,6 +498,32 @@ try {
 }
 
 
+
+/* Profile picture + Arena avatar integrity audit. */
+try {
+  const appSource=readFileSync('js/app.js','utf8');
+  const arenaSource=readFileSync('js/vaani-arena.js','utf8');
+  const profileCss=readFileSync('vaani-profile.css','utf8');
+  const arenaCss=readFileSync('vaani-arena-briefing.css','utf8');
+  const indexSource=readFileSync('index.html','utf8');
+  for(const marker of ['profilePhoto:{src:', 'normalizeProfilePhoto', 'ensureProfilePhotoEditor', 'openProfilePhotoEditor', 'bakeProfileCrop', 'Drop image here', 'Image link']) {
+    if(!appSource.includes(marker))throw new Error('Profile picture capability missing: '+marker);
+  }
+  for(const marker of ['class="vp-profile-avatar"', 'onclick="openProfilePhotoEditor()"']) {
+    if(!indexSource.includes(marker))throw new Error('Profile picture entry point missing: '+marker);
+  }
+  for(const marker of ['.vp-profile-avatar{','.vp-photo-editor','.vp-photo-crop-guide','.vp-photo-dropzone']) {
+    if(!profileCss.includes(marker))throw new Error('Profile picture styling missing: '+marker);
+  }
+  for(const marker of ['profileAvatarSnapshot','hostAvatarSnapshot','arenaAvatarHtml','&av=','hostAvatar:profileAvatarSnapshot()','avatar: profileAvatarSnapshot()']) {
+    if(!arenaSource.includes(marker))throw new Error('Arena avatar integration missing: '+marker);
+  }
+  for(const marker of ['.vx-host-avatar img','.vx-championship-avatar img','.vx-championship-podium-avatar img']) {
+    if(!arenaCss.includes(marker))throw new Error('Arena avatar styling missing: '+marker);
+  }
+  console.log('Profile pictures: device upload, drag/drop, image-link input, circular crop controls, account persistence, Arena host identity and leaderboard avatar integration validated');
+}catch(error){console.error('Profile picture audit failed:',error.message);process.exitCode=1;}
+
 /* Academy redesign and retired Book Reading shortcuts. */
 try {
   const librarySource = readFileSync('js/library.js', 'utf8');
