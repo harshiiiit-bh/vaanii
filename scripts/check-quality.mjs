@@ -499,6 +499,28 @@ try {
 
 
 
+
+/* Feature release briefing + Information Centre sync audit. */
+try {
+  const infoSource=readFileSync('js/vaani-info-center.js','utf8');
+  const officerSource=readFileSync('js/vaani-character-elite.js','utf8');
+  const infoCss=readFileSync('vaani-info-center.css','utf8');
+  const pageSource=readFileSync('index.html','utf8');
+  for(const marker of ['FEATURE_RELEASES','INFO_TOUR_VERSION=FEATURE_RELEASES[0].version','LATEST_RELEASE','renderReleaseHistoryHTML','VAANI_FEATURE_RELEASES','VAANI_LATEST_FEATURE_RELEASE']) {
+    if(!infoSource.includes(marker))throw new Error('Feature release manifest integration missing: '+marker);
+  }
+  if(!infoSource.includes('VAANI_FEATURE_UPDATE_BRIEFING'))throw new Error('First-login briefing bridge is missing.');
+  if(!officerSource.includes('window.VAANI_FEATURE_UPDATE_BRIEFING=function(release)'))throw new Error('Officer VAANI feature-briefing handler is missing.');
+  if(!officerSource.includes("new CustomEvent('vaani:feature-update'"))throw new Error('Feature update briefing event is missing.');
+  for(const marker of ['.vi-release-card','.vi-release-card.is-latest','.vi-release-new']) {
+    if(!infoCss.includes(marker))throw new Error('Information Centre release-note styling missing: '+marker);
+  }
+  if(!pageSource.includes('js/vaani-info-center.js?v=20261003-release1')||!pageSource.includes('js/vaani-character-elite.js?v=20261003-release1')) {
+    throw new Error('Feature briefing asset cache keys were not refreshed.');
+  }
+  console.log('Feature updates: one release manifest drives per-account first-login Officer VAANI briefing and Information Centre What\'s New history');
+}catch(error){console.error('Feature release audit failed:',error.message);process.exitCode=1;}
+
 /* Profile picture + Arena avatar integrity audit. */
 try {
   const appSource=readFileSync('js/app.js','utf8');
