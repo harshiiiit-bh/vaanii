@@ -253,10 +253,15 @@ function switchGatePanel(target){
    existed) to migrate, and only then shows the name/code entry screen. */
 async function initGateSession(){
   showGateStage('checking');
-  const sessionCode = getSessionCode();
+  try{
+    const sessionCode = getSessionCode();
   if(sessionCode){
-    const res = await loginWithCode(sessionCode);
-    if(res.ok){ finishGateEntry(); return; }
+    const res = await Promise.race([
+      loginWithCode(sessionCode),
+      new Promise(resolve=>setTimeout(()=>resolve({ok:false,msg:'Session restore timed out'}),5000))
+    ]);
+    if(res&&res.ok){ finishGateEntry(); return; }
+    clearSessionCode();
   }
   const migratedCode = await tryMigrateLegacyData();
   if(migratedCode){
@@ -270,7 +275,15 @@ async function initGateSession(){
   if(typeof resetStateForAccount==='function') resetStateForAccount();
   showGateStage('start');
   const inp = document.getElementById('cadetName');
-  if(inp) inp.value = '';
+    if(inp) inp.value = '';
+  }catch(err){
+    console.warn('[VAANI] Gate restore failed; opening the account screen instead:',err);
+    try{ clearSessionCode(); }catch(e){}
+    if(typeof resetStateForAccount==='function') resetStateForAccount();
+    showGateStage('start');
+    const inp = document.getElementById('cadetName');
+    if(inp) inp.value = '';
+  }
 }
 async function handleGateLogin(){
   const btn = document.getElementById('gate-login-btn');
