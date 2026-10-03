@@ -1121,7 +1121,13 @@ try {
   });
   const mobileNavJourney = ['grammar','vocab','pyq','notifications'];
   for (const view of mobileNavJourney) {
-    await navPage.locator('#bottomNav button[data-view="' + view + '"]').click();
+    if (view === 'notifications') {
+      await navPage.locator('#bottomNav button').filter({hasText:'More'}).click();
+      await navPage.waitForFunction(() => document.getElementById('moreSheet')?.classList.contains('show'));
+      await navPage.locator('#sheetBody .mobile-more-item').filter({hasText:'Notifications'}).click();
+    } else {
+      await navPage.locator('#bottomNav button[data-view="' + view + '"]').click();
+    }
     await navPage.waitForFunction(v => document.getElementById('view-' + v)?.classList.contains('active'), view);
   }
   const journeyState = await navPage.evaluate(() => ({
