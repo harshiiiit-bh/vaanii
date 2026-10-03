@@ -656,7 +656,10 @@ function switchView(name, options={}){
   // (especially on mobile, where a harmless rebuild can otherwise feel like the page is
   // constantly jumping upward).
   const viewChanged = fromName !== name;
-  if(!options.preserveScroll && viewChanged) window.scrollTo({top:0,behavior:'smooth'});
+  const isMobileViewport = !!(window.matchMedia && window.matchMedia('(max-width:767px)').matches);
+  // Mobile navigation must never pull the user upward automatically. Keep scroll ownership
+  // with the user; desktop retains the existing top-of-view navigation behavior.
+  if(!options.preserveScroll && viewChanged && !isMobileViewport) window.scrollTo({top:0,behavior:'smooth'});
   setTimeout(()=>{
     if(typeof initTilt==='function') safeCall(initTilt,'initTilt');
     if(typeof initReveal==='function') safeCall(initReveal,'initReveal');
@@ -1807,7 +1810,8 @@ function pvRender(){
   }
   document.body.classList.toggle('pv-session-active', PV.screen==='session');
   if(typeof window.VAANI_SET_ASSESSMENT_ACTIVE==='function')window.VAANI_SET_ASSESSMENT_ACTIVE(PV.screen==='session'||PV.screen==='summary');
-  window.scrollTo({top:0,behavior:'smooth'});
+  const isMobileViewport = !!(window.matchMedia && window.matchMedia('(max-width:767px)').matches);
+  if(!isMobileViewport) window.scrollTo({top:0,behavior:'smooth'});
   if((PV.screen==='session'||PV.screen==='summary')&&typeof window.vaaniCharacterHide==='function')window.vaaniCharacterHide();
   setTimeout(()=>{ if(typeof initReveal==='function') initReveal(); },30);
 }
@@ -3827,7 +3831,8 @@ function openTopic(id){
   switchView('topic');
   logActivity('Opened topic', currentTopic.title);
   initReveal(); initTilt();
-  document.querySelector('main').scrollTo&&window.scrollTo({top:0,behavior:'smooth'});
+  const isMobileViewport = !!(window.matchMedia && window.matchMedia('(max-width:767px)').matches);
+  if(!isMobileViewport && document.querySelector('main').scrollTo) window.scrollTo({top:0,behavior:'smooth'});
 }
 function jumpFlow(step,btn){
   const tabMap={concept:'learn',rule:'learn',exception:'learn',trick:'tricks',example:'examples',practice:'quiz',pyq:'tricks',summary:'summary'};
