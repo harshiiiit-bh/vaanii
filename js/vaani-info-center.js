@@ -13,6 +13,23 @@
   */
   const FEATURE_RELEASES=[
     {
+      version:'20261003-arena-spectate1',
+      date:'03 OCT 2026',
+      tag:'ARENA UPDATE',
+      category:'HOST CONTROL',
+      scope:'Arena · Spectate · Answers · Performance',
+      impact:'Hosts can supervise a live match without consuming a player attempt.',
+      title:'Host Spectate mode is live',
+      summary:'Choose Participate for the normal test, or Spectate to watch answers, standings and submitted player performance without attempting the match.',
+      bullets:[
+        'Two explicit host choices now appear when the match is deployed: Participate or Spectate.',
+        'Spectate opens the existing live leaderboard without creating a score or attempt.',
+        'Hosts can open the exact answer key before attempting the test.',
+        'Clicking a submitted player shows correct, incorrect and skipped questions.',
+        'Normal players keep the standard participate flow and do not receive host answer access.'
+      ]
+    },
+    {
       version:'20261003-profile-avatar-arena1',
       date:'03 OCT 2026',
       tag:'FEATURE UPDATE',
