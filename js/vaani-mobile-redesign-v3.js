@@ -442,7 +442,6 @@
       item.el.classList.add('mdeck-target');
       item.el.style.setProperty('--mdeck-index',String(index));
     }
-    if(prev){} // kept deliberately empty; buttons are queried below for safe dynamic rerenders
     const p=qs('#mdeckPrev',deck),n=qs('#mdeckNext',deck);
     if(p)p.disabled=index===0;
     if(n)n.disabled=index===items.length-1;
@@ -533,6 +532,14 @@
     // Escape closes the V3 sheet cleanly.
     document.addEventListener('keydown',e=>{
       if(e.key==='Escape' && document.body.classList.contains('mobile-more-open')) closeMore();
+    });
+    window.addEventListener('resize',()=>{
+      if(mobile()){
+        replaceMobileDashboardShortcut();
+        setupMobileMissionDeck(document.querySelector('.view.active')?.id?.replace(/^view-/,'')||'dashboard');
+      }else{
+        removeMissionDeck();
+      }
     });
   }
 
