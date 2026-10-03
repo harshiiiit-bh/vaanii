@@ -379,7 +379,8 @@ var PYQ_2025_II = [
       "Overview means general analysis and review means go through",
       "Overview means summary and review means evaluation"
     ],
-    "ans": 2
+    "ans": 2,
+    "keyword": "Overview"
   },
   {
     "y": 2025,
@@ -393,7 +394,8 @@ var PYQ_2025_II = [
       "Overcome means to be successful and succeed means to achieve something",
       "Overcome means winning and succeed means to rise above"
     ],
-    "ans": 3
+    "ans": 3,
+    "keyword": "Overcome"
   },
   {
     "y": 2025,
@@ -407,7 +409,8 @@ var PYQ_2025_II = [
       "Embed means accept and imbue means detest",
       "Embed means include and imbue means accept"
     ],
-    "ans": 0
+    "ans": 0,
+    "keyword": "Embed"
   },
   {
     "y": 2025,
@@ -421,7 +424,8 @@ var PYQ_2025_II = [
       "Emancipate means liberal and empower means authorisation",
       "Emancipate means freedom and empower means encounter"
     ],
-    "ans": 2
+    "ans": 2,
+    "keyword": "Emancipate"
   },
   {
     "y": 2025,
@@ -435,7 +439,8 @@ var PYQ_2025_II = [
       "eradicate",
       "unlike"
     ],
-    "ans": 0
+    "ans": 0,
+    "keyword": "instil"
   },
   {
     "y": 2025,
@@ -449,7 +454,8 @@ var PYQ_2025_II = [
       "understanding",
       "unlikely"
     ],
-    "ans": 0
+    "ans": 0,
+    "keyword": "allegiance"
   },
   {
     "y": 2025,
@@ -463,7 +469,8 @@ var PYQ_2025_II = [
       "seriousness",
       "mystery"
     ],
-    "ans": 0
+    "ans": 0,
+    "keyword": "inscrutability"
   },
   {
     "y": 2025,
@@ -477,7 +484,8 @@ var PYQ_2025_II = [
       "dishonest",
       "painful"
     ],
-    "ans": 1
+    "ans": 1,
+    "keyword": "dodgy"
   },
   {
     "y": 2025,
@@ -491,7 +499,8 @@ var PYQ_2025_II = [
       "pleasant",
       "indigent"
     ],
-    "ans": 0
+    "ans": 0,
+    "keyword": "inclement"
   },
   {
     "y": 2025,
@@ -505,7 +514,8 @@ var PYQ_2025_II = [
       "To kill or destroy",
       "To touch or push gently"
     ],
-    "ans": 1
+    "ans": 1,
+    "keyword": "Infelicity"
   },
   {
     "y": 2025,
@@ -519,7 +529,8 @@ var PYQ_2025_II = [
       "Something that naturally follows",
       "Something resembling a coal mine"
     ],
-    "ans": 2
+    "ans": 2,
+    "keyword": "Corollary"
   },
   {
     "y": 2025,
@@ -533,7 +544,8 @@ var PYQ_2025_II = [
       "Situation in which no progress can be made",
       "Situation in which a relationship becomes friendlier"
     ],
-    "ans": 0
+    "ans": 0,
+    "keyword": "Quandary"
   },
   {
     "y": 2025,
@@ -547,7 +559,8 @@ var PYQ_2025_II = [
       "Decision based on facts",
       "Opinion formed before having all the facts"
     ],
-    "ans": 3
+    "ans": 3,
+    "keyword": "Presumption"
   },
   {
     "y": 2025,
@@ -561,7 +574,8 @@ var PYQ_2025_II = [
       "Too emotional or dramatic",
       "Too eager to bottle up conflicts"
     ],
-    "ans": 0
+    "ans": 0,
+    "keyword": "Smug"
   },
   {
     "y": 2025,
@@ -705,6 +719,7 @@ var PYQ_2025_II = [
       "Seldom means never and often means not at all",
       "Seldom means frequently and often means time and again"
     ],
-    "ans": 2
+    "ans": 2,
+    "keyword": "Seldom"
   }
 ];
