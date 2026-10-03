@@ -192,6 +192,7 @@
   }
   function maybeShowInfoTour(){
     if(featureBriefingPending)return;
+    syncInfoUpdateIndicator();
     if(typeof ACTIVE_CODE==='undefined'||!ACTIVE_CODE)return;
     if(typeof State==='undefined')return;
     if(State.infoTourVersion===INFO_TOUR_VERSION)return;
