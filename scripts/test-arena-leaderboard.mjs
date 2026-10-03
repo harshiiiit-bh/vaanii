@@ -10,9 +10,9 @@ assert.equal(normalizeArenaMatchCode(validCode.slice(0, 31) + "00"), null, "Bad 
 assert.equal(normalizeArenaMatchCode("123456"), null, "Short codes should be rejected");
 
 const rows = sanitizeArenaRows([
-  { code: validCode, pid: "cadet-a", name: "  Cadet\u0000 Alpha  ", score: 14, seconds: 61, total: 15, at: 1000, answers: { q1: 3 } },
-  { code: validCode, pid: "cadet-b", name: "Cadet Beta", score: 15, seconds: 70, total: 15, at: 1001, answers: { q2: 1 } },
-  { code: validCode, pid: "cadet-a", name: "Cadet Alpha", score: 14.5, seconds: 60, total: 15, at: 1002, answers: { secret: true } },
+  { code: validCode, pid: "cadet-a", name: "  Cadet\u0000 Alpha  ", score: 14, seconds: 61, total: 15, correct: 10, incorrect: 4, skipped: 1, at: 1000, answers: { q1: 3 } },
+  { code: validCode, pid: "cadet-b", name: "Cadet Beta", score: 15, seconds: 70, total: 15, correct: 15, incorrect: 0, skipped: 0, at: 1001, answers: { q2: 1 } },
+  { code: validCode, pid: "cadet-a", name: "Cadet Alpha", score: 14.5, seconds: 60, total: 15, correct: 11, incorrect: 3, skipped: 1, at: 1002, answers: { secret: true } },
   { code: "another-match", pid: "other", name: "Other", score: 15, seconds: 30, total: 15, at: 1003 },
   { code: validCode, pid: "bad-score", name: "Bad", score: 999, seconds: 30, total: 15, at: 1004 },
   { code: validCode, pid: "bad-time", name: "Bad", score: 10, seconds: -1, total: 15, at: 1005 },
@@ -23,6 +23,6 @@ assert.equal(rows.length, 2, "Only valid rows for the requested match should rem
 assert.equal(rows[0].pid, "cadet-b", "Rows should sort by score descending");
 assert.equal(rows[1].score, 14.5, "The latest attempt per player should be retained");
 assert.equal(rows[1].name, "Cadet Alpha", "Names should be sanitized");
-assert.deepEqual(Object.keys(rows[0]).sort(), ["at", "code", "name", "pid", "score", "seconds", "total"],
-  "Public rows must omit answer data and any unexpected database fields");
+assert.deepEqual(Object.keys(rows[0]).sort(), ["at", "code", "correct", "incorrect", "name", "pid", "score", "seconds", "skipped", "total"],
+  "Public rows must expose only aggregate attempt statistics and omit answer data");
 console.log("PASS Arena leaderboard endpoint contract: code validation, match scoping, sanitization, dedupe and ranking");
