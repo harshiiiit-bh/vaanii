@@ -2212,7 +2212,7 @@
         var intelActions=el('div','vx-arena-intelligence-actions');
         var drill=el('button','vx-btn primary','Retry '+insights.mistakeCount+' mistake'+(insights.mistakeCount===1?'':'s'));
         drill.type='button';
-        drill.disabled=!insights.mistakes.length;
+        drill.disabled=!insights.mistakeCount;
         drill.addEventListener('click',startMistakeDrill);
         intelActions.appendChild(drill);
         if(typeof window.VAANI_ARENA_ANALYSIS_BRIEFING==='function'){
@@ -2227,7 +2227,7 @@
         var intelGrid=el('div','vx-arena-intel-grid');
         [
           ['ACCURACY',insights.accuracy+'%','overall question accuracy'],
-          ['FOCUS ITEMS',String(insights.mistakes.length),'incorrect + skipped'],
+          ['FOCUS ITEMS',String(insights.mistakeCount),'incorrect + skipped'],
           ['STRONGEST',insights.strongest?insights.strongest.name:'—',insights.strongest?insights.strongest.accuracy+'% accuracy':'not enough data'],
           ['FOCUS AREA',insights.weakest?insights.weakest.name:'—',insights.weakest?insights.weakest.accuracy+'% accuracy':'not enough data']
         ].forEach(function(item){
