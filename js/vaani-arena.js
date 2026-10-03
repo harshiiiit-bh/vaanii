@@ -333,6 +333,8 @@
      - local storage remains only as an offline recovery/display cache */
   var SHARED_BOARD_ENDPOINT = 'https://pccavdwwhykwyeitxixc.supabase.co/functions/v1/arena-leaderboard';
   var SHARED_SUBMIT_ENDPOINT = 'https://pccavdwwhykwyeitxixc.supabase.co/rest/v1/rpc/arena_submit_attempt';
+  var SHARED_REGISTER_MATCH_ENDPOINT = 'https://pccavdwwhykwyeitxixc.supabase.co/rest/v1/rpc/arena_register_match';
+  var SHARED_GET_MATCH_ENDPOINT = 'https://pccavdwwhykwyeitxixc.supabase.co/rest/v1/rpc/arena_get_match';
   var SHARED_BOARD_API_KEY = 'sb_publishable_VfRmr2xFvu4Iv8sfSJReQQ_qzr5z_MI';
 
   var SharedReadAdapter = {
@@ -370,6 +372,47 @@
           throw new Error((result && result.error) || 'Shared leaderboard submission was rejected');
         }
         return true;
+      });
+    },
+    registerMatch: function (match) {
+      if (typeof global.fetch !== 'function') return Promise.reject(new Error('Shared match registry is unavailable'));
+      var body = {
+        p_code: String(match.code || ''),
+        p_host_pid: playerId(),
+        p_host_name: String(match.hostName || playerName() || 'Cadet'),
+        p_host_avatar: match.hostAvatar && typeof match.hostAvatar === 'object' ? match.hostAvatar : null,
+        p_expires_at: Number(match.expiresAt) || 0
+      };
+      return global.fetch(SHARED_REGISTER_MATCH_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SHARED_BOARD_API_KEY
+        },
+        body: JSON.stringify(body)
+      }).then(function (response) {
+        if (!response.ok) throw new Error('Shared match registry returned HTTP ' + response.status);
+        return response.json();
+      }).then(function (payload) {
+        if (!payload || payload.ok !== true) throw new Error((payload && payload.error) || 'Shared match registry rejected');
+        return payload;
+      });
+    },
+    getMatchMetadata: function (code) {
+      if (typeof global.fetch !== 'function') return Promise.reject(new Error('Shared match registry is unavailable'));
+      return global.fetch(SHARED_GET_MATCH_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SHARED_BOARD_API_KEY
+        },
+        body: JSON.stringify({ p_code: String(code || '') })
+      }).then(function (response) {
+        if (!response.ok) throw new Error('Shared match registry returned HTTP ' + response.status);
+        return response.json();
+      }).then(function (payload) {
+        if (!payload || payload.ok !== true) return null;
+        return payload;
       });
     },
     fetch: function (code) {
@@ -711,6 +754,41 @@
     if (known) m.hostName = String(known).slice(0, 40);
     if (hostAvatar && hostAvatar.src) m.hostAvatar = hostAvatar;
     return m;
+  }
+
+  function applySharedMatchMetadata(m, meta) {
+    if (!m || !meta) return m;
+    if (meta.host_name) m.hostName = String(meta.host_name).slice(0, 40);
+    if (meta.host_pid) m.hostPid = String(meta.host_pid).slice(0, 80);
+    if (meta.host_avatar && typeof meta.host_avatar === 'object' && meta.host_avatar.src) {
+      m.hostAvatar = meta.host_avatar;
+    }
+    if (meta.expires_at) m.expiresAt = Number(meta.expires_at) || m.expiresAt;
+    rememberMatch(m);
+    return m;
+  }
+
+  function registerSharedMatchMetadata(m) {
+    if (!m || !m.code || !isHost(m.code) || !A.sync || typeof A.sync.registerMatch !== 'function') {
+      return Promise.resolve(null);
+    }
+    return A.sync.registerMatch(m).then(function(payload) {
+      return applySharedMatchMetadata(m, payload);
+    }).catch(function() {
+      return null;
+    });
+  }
+
+  function fetchSharedMatchMetadata(m) {
+    if (!m || !m.code || !A.sync || typeof A.sync.getMatchMetadata !== 'function') {
+      return Promise.resolve(m);
+    }
+    return A.sync.getMatchMetadata(m.code).then(function(meta) {
+      if (meta) applySharedMatchMetadata(m, meta);
+      return m;
+    }).catch(function() {
+      return m;
+    });
   }
 
   function arenaInviteUrl(m) {
@@ -1090,6 +1168,7 @@
         S.hostName=match.hostName;
         markHost(parsed.code);
         rememberMatch(parsed);
+        registerSharedMatchMetadata(parsed);
         go('share');
       });
       actionButtons.appendChild(cancel);actionButtons.appendChild(make);actionBar.appendChild(actionButtons);
@@ -1100,6 +1179,7 @@
 
   function screenShareV2(w) {
     var m = hydrateMatch(S.match);
+    registerSharedMatchMetadata(m);
     S.match = m;
     var hostName = matchHostName(m);
     var ownHost = isHost(m.code);
@@ -1687,7 +1767,15 @@
         err.textContent = 'This code closed on ' + new Date(m.expiresAt).toLocaleString() + '. Ask the host for a new one.';
         return;
       }
-      S.match = m; rememberMatch(m); go('briefing');
+      S.match = m;
+      fetchSharedMatchMetadata(m).then(function() {
+        if (S.match && S.match.code === m.code) {
+          S.match = m;
+          render();
+        }
+      });
+      rememberMatch(m);
+      go('briefing');
     }
     go2.addEventListener('click', attempt);
     input.addEventListener('keydown', function (e) { if (e.key === 'Enter') attempt(); });
@@ -1790,6 +1878,7 @@
      --------------------------------------------------------- */
   function screenBriefing(w) {
     var m = S.match;
+    if (m && !m.hostName && !m.hostAvatar) fetchSharedMatchMetadata(m);
     var panel = el('section', 'vx-briefing');
     backBtn(panel, 'Back to Arena', 'home');
 
@@ -2145,6 +2234,11 @@
       return A.sync.fetch(S.match.code);
     }).then(function (rows) {
       S.rows = reconcileLocalAttempt(rows);
+      if (S.match && S.match.hostPid && S.match.hostAvatar) {
+        S.rows.forEach(function(row) {
+          if (row && row.pid === S.match.hostPid && !row.avatar) row.avatar = S.match.hostAvatar;
+        });
+      }
       return S.rows;
     }, function () {
       S.rows = reconcileLocalAttempt([]);
@@ -2897,6 +2991,9 @@
       if (m) {
         m = hydrateMatch(m, inviteHost, inviteAvatar);
         S.match = m; S.screen = 'briefing'; rememberMatch(m);
+        fetchSharedMatchMetadata(m).then(function() {
+          if (S.match && S.match.code === m.code) render();
+        });
       }
     } else {
       var recovery=readRunRecovery();
