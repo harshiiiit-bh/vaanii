@@ -291,7 +291,6 @@
         ['#view-dashboard .pyq-stat-mini','PYQ summary',true]
       ],
       grammar:[
-        ['#view-grammar .gt-sidebar','Progress & exam data',true],
         ['#view-grammar .ga-catalog','Grammar Academy',true]
       ],
       compare:[
