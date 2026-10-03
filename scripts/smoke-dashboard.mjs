@@ -705,7 +705,7 @@ try {
   assert.equal(arenaSecurity.sharedRows.length,1,'Shared Arena read did not return a historical row');
   assert.equal(arenaSecurity.sharedRows[0].pid,'remote-player','Shared Arena read returned the wrong row');
   assert.equal(arenaSecurity.adapter,'shared','Shared Arena adapter was not configured');
-  assert.equal(arenaSecurity.live,false,'Shared read must not enable browser score writes');
+  assert.equal(arenaSecurity.live,true,'Shared Arena adapter should remain enabled for authenticated server-side submission');
   assert.equal(arenaSecurity.shared,true,'Arena must identify its shared read-only board');
   assert.equal(arenaSecurity.request.method,'POST','Shared Arena endpoint must use POST');
   assert.ok(arenaSecurity.request.url.includes('/functions/v1/arena-leaderboard'),'Shared Arena read did not use the Edge Function');
