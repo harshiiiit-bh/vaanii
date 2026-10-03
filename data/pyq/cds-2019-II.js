@@ -10,7 +10,7 @@ var PYQ_CDS_2019_II = [
     "o": [
       "Accommodate",
       "Acomodate",
-      "Accommodate",
+      "Accomdate",
       "Acomodait"
     ],
     "ans": 0,
@@ -50,7 +50,7 @@ var PYQ_CDS_2019_II = [
     "o": [
       "Argyument",
       "Argument",
-      "Argument",
+      "Arguement",
       "Argyooment"
     ],
     "ans": 1,
@@ -90,7 +90,7 @@ var PYQ_CDS_2019_II = [
     "o": [
       "Aggressive",
       "Agresive",
-      "Aggressive",
+      "Agressive",
       "Aggresive"
     ],
     "ans": 0,

@@ -1,71 +1,725 @@
+// NDA English PYQ: 2025-II
+// Source-aligned rebuild for the NDA/NA General Ability Test held 14 September 2025.
+// Answer indices use Set-A answer-key mapping.
 var PYQ_2025_II = [
-  // Sentence Arrangement (PQRS) (1-5)
-  { y: 2025, s: 'II', n: 1, sec: 'Sentence Arrangement (PQRS)', q: 'P: participate in the function / Q: many of the people who had come to / R: the auditorium was over-crowded / S: could not find a seat because', o: ['PRQS','PQRS','QPSR','SPRQ'], ans: 2 },
-  { y: 2025, s: 'II', n: 2, sec: 'Sentence Arrangement (PQRS)', q: 'P: lay outside her existing life / Q: she knew that the answer / R: somewhere in the back of her mind / S: to her question about life', o: ['R P Q S','Q S P R','Q P S R','R Q S P'], ans: 1 },
-  { y: 2025, s: 'II', n: 3, sec: 'Sentence Arrangement (PQRS)', q: 'P: works of literature / Q: inside the pages of all good / R: lies the truth about some of / S: the more challenging question posed by humanity', o: ['P R Q S','Q P R S','Q P S R','R P S Q'], ans: 1 },
-  { y: 2025, s: 'II', n: 4, sec: 'Sentence Arrangement (PQRS)', q: 'P: takes on account of its economic successes / Q: to address continuing social inequality / R: for every stride of progress any nation / S: it takes two back if it is unable', o: ['P R Q S','Q P R S','R P S Q','R P Q S'], ans: 2 },
-  { y: 2025, s: 'II', n: 5, sec: 'Sentence Arrangement (PQRS)', q: 'P: the book value of a loan or / Q: an intangible asset over a set period of time / R: used to periodically lower / S: amortisation is an accounting technique', o: ['S R P Q','R S P Q','S R Q P','R P S Q'], ans: 0 },
-
-  // Fill in the Blanks (6-10)
-  { y: 2025, s: 'II', n: 6, sec: 'Fill in the Blanks', q: 'There is more than _____ to get the job done.', o: ['one way','one ways','any ways','any way'], ans: 0 },
-  { y: 2025, s: 'II', n: 7, sec: 'Fill in the Blanks', q: 'The class decided to organise _____', o: ['picnic','a picnic','picnics','the picnic'], ans: 1 },
-  { y: 2025, s: 'II', n: 8, sec: 'Fill in the Blanks', q: 'The accused _____ before the judge.', o: ['tried','was trial','sat trial','stood trial'], ans: 3 },
-  { y: 2025, s: 'II', n: 9, sec: 'Fill in the Blanks', q: 'The manner in which the demolitions have been carried out _____ scrutiny by the High Court.', o: ['was under','under','is under','however under'], ans: 2 },
-  { y: 2025, s: 'II', n: 10, sec: 'Fill in the Blanks', q: 'I _____ consider the opinions of all stakeholders before taking a final decision.', o: ['will not','have','will','shall'], ans: 3 },
-
-  // Discourse Markers (11-20)
-  { y: 2025, s: 'II', n: 11, sec: 'Discourse Markers', q: "_____ your transfer request is concerned, we'll be discussing it at the next meeting.", o: ['As far as','To begin','By the way','Talking about'], ans: 0 },
-  { y: 2025, s: 'II', n: 12, sec: 'Discourse Markers', q: '_____ did you know Ravi has a new job?', o: ['For one thing','By the way','In the first place','As a result'], ans: 1 },
-  { y: 2025, s: 'II', n: 13, sec: 'Discourse Markers', q: '_____ the wind, it was getting stronger, and I was getting colder.', o: ['To begin with','By the way','First of all','Speaking of'], ans: 3 },
-  { y: 2025, s: 'II', n: 14, sec: 'Discourse Markers', q: '_____ what are you doing in my room?', o: ['On the other hand','Excuse me','Look there','Eventually'], ans: 1 },
-  { y: 2025, s: 'II', n: 15, sec: 'Discourse Markers', q: '_____ an happy childhood leads to criminal behaviour.', o: ['Still if','Even somewhat','In some cases','In progression'], ans: 2 },
-  { y: 2025, s: 'II', n: 16, sec: 'Discourse Markers', q: '_____ the problem is nothing but a wrong assumption about processes.', o: ['In the meanwhile','Somewhat','Engagingly','In other words'], ans: 3 },
-  { y: 2025, s: 'II', n: 17, sec: 'Discourse Markers', q: 'Many, _____, hesitate to publicly broach such questions for fear of nurturing discrimination.', o: ['understandably','despite','until','of course'], ans: 0 },
-  { y: 2025, s: 'II', n: 18, sec: 'Discourse Markers', q: '_____ one notes that in the nineteenth century an important development of reflection and questioning gained momentum.', o: ['Particularly speaking','Generally speaking','Otherwise','Of course'], ans: 1 },
-  { y: 2025, s: 'II', n: 19, sec: 'Discourse Markers', q: '_____ the situation has completely transformed over the past few years.', o: ['Somewhat','Believably','Thus','Predominantly'], ans: 2 },
-  { y: 2025, s: 'II', n: 20, sec: 'Discourse Markers', q: '_____ the committee is of the opinion that all academic matters will be discussed in the Executive Body Meeting.', o: ['Hence','But','Later','Although'], ans: 0 },
-
-  // Vocabulary — word meanings (21-25)
-  { y: 2025, s: 'II', n: 21, sec: 'Vocabulary', keyword: 'Cynosure', q: 'Cynosure :', o: ['Person or thing that causes a change.','Person or thing that attracts a lot of attention.','Person or thing regarded as exact copy.','Person or animal that lives in a particular place.'], ans: 1 },
-  { y: 2025, s: 'II', n: 22, sec: 'Vocabulary', keyword: 'Coeval', q: 'Coeval :', o: ['Person of roughly the same age.','Person or organisation that cooperates with others.','Person employed to drive a private car.','Person employed in taking.'], ans: 0 },
-  { y: 2025, s: 'II', n: 23, sec: 'Vocabulary', keyword: 'Retrogression', q: 'Retrogression :', o: ['Sudden sharp drop in price.','Reverse pressure.','Return to earlier state.','Sudden occurrence of a past event.'], ans: 2 },
-  { y: 2025, s: 'II', n: 24, sec: 'Vocabulary', keyword: 'Imprest', q: 'Imprest :', o: ['Surprise attack by people.','Money used to manage small expense.','Sudden occurrence of laughter.','Sudden increase in activity.'], ans: 1 },
-  { y: 2025, s: 'II', n: 25, sec: 'Vocabulary', keyword: 'Turgid', q: 'Turgid :', o: ['Determined or loyal','Dirty or untidy','Swollen or distended','Excited or upset'], ans: 2 },
-
-  // Synonyms (26-30)
-  { y: 2025, s: 'II', n: 26, sec: 'Synonyms', keyword: 'proportionate', q: 'The Constitution of India ensures proportionate representation from all regions.', o: ['balanced','partial','unlikely','suffragette'], ans: 1 },
-  { y: 2025, s: 'II', n: 27, sec: 'Synonyms', keyword: 'disenchantment', q: 'There is a feeling of disenchantment among the members of the group.', o: ['delight','disappointment','idealism','unrelenting'], ans: 1 },
-  { y: 2025, s: 'II', n: 28, sec: 'Synonyms', keyword: 'imminent', q: 'She believed that it was imminent that he would be chosen as the leader of the group.', o: ['timely','distant','unlikely','inevitable'], ans: 3 },
-  { y: 2025, s: 'II', n: 29, sec: 'Synonyms', keyword: 'indelible', q: 'The brave soldiers left an indelible impression on the people of the land.', o: ['permanent','fleeting','hilarious','eradicable'], ans: 0 },
-  { y: 2025, s: 'II', n: 30, sec: 'Synonyms', keyword: 'instantaneous', q: 'The manager always provides instantaneous replied to all queries.', o: ['immediate','delayed','deliberate','unwanted'], ans: 0 },
-
-  // Sentence Arrangement (PQRS) — S1/S6 type (31-35)
-  { y: 2025, s: 'II', n: 31, sec: 'Sentence Arrangement (PQRS)', q: 'S1 : Although all sources of energy ultimately come from natural processes, non-renewable resources cannot be replaced naturally at the rate they are being used.\nS6: The sustainable use of natural resources in a manner that provides the maximum benefit of these resources to humans over a period of time can be termed as conservation.\nP : This will increases the time and cost of mining and once these resources are used up they cannot be replaced.\nQ : Hence, we must remember that though our country is rich in mineral deposits. these resources are short-lived.\nR : Extraction of these ores through the process of mining will soon become difficult and very expensive because these minerals have to be mined from greater depth over time.\nS : Mineral resources can be said to be finite and non-renewable.', o: ['Q P R S','S P Q R','S Q R P','S Q P R'], ans: 2 },
-  { y: 2025, s: 'II', n: 32, sec: 'Sentence Arrangement (PQRS)', q: 'S1 : India, at present, has one of the largest road networks in the world.\nS6 : It passes through Howrah, Delhi and Amritsar and terminates in Kabul (Afghanistan).\nP : The importance of roads has been recognised in India since the ancient times.\nQ : The Grand Trunk Road was built by Sher Shah Suri across the Indo-Gangetic plain, from Chittagong (Bangladesh) to Peshawar (Pakistan).\nR : Kings such as Ashoka and Chandragupta built roads for easy transportation of goods and people.\nS : Construction of roads continued as an important activity in the late medieval period.', o: ['Q P R S','S P Q R','P Q R S','P R S Q'], ans: 3 },
-  { y: 2025, s: 'II', n: 33, sec: 'Sentence Arrangement (PQRS)', q: 'S1 : National highways connect one state with another and are of national importance.\nS6 : These road system are also known as primary road systems and are laid and operated under the supervision of the National Highways Authority of India.\nP : They are important because, whereas they constitute merely two per cent of the total road networks, yet they carry 40 per cent of the total road traffic.\nQ : The road infrastructure of the country is therefore crucial, and their construction and maintenance is of critical importance.\nR : They bear the load of traffic because these roads connect long distance and pass through major cities and towns.\nS : Since they cover the length and breadth of the nation and connect cities and towns, these highways are the primary facilitators of trade and connectivity.', o: ['P R S Q','S P Q R','P R Q S','S Q R S'], ans: 0 },
-  { y: 2025, s: 'II', n: 34, sec: 'Sentence Arrangement (PQRS)', q: 'S1 : The South African Constitution was inaugurated in December 1996.\nS6 : A special constitutional court enforces the rights enshrined in the Constitution.\nP : Its creation and promulgation took place at a time when South Africa still faced the threat of a civil war after the dissolution of the Apartheid Government.\nQ : The South African Constitution says that its "Bill of Rights is a cornerstone of democracy in South Africa".\nR : Apropos, it forbids discrimination on the grounds of "race, gender, pregnancy, marital status, ethnic or social origin, colour, age, disability, religion, conscience, belief, culture, language and birth".\nS : The Bill of Rights grants perhaps the most extensive range of rights to the citizens.', o: ['Q S R P','S P Q R','P Q R S','P Q S R'], ans: 3 },
-  { y: 2025, s: 'II', n: 35, sec: 'Sentence Arrangement (PQRS)', q: 'S1 : Our Constitution reminds us of the necessity of representation in a large democracy.\nS6 : Elections have today become the most visible symbol of the democratic process.\nP : This is why election become important.\nQ : Therefore, representatives are elected by the people.\nR : Whenever we think of India as a democracy, our mind invariably turns to our successful election.\nS : All citizens cannot participate in taking every decision.', o: ['Q S R P','S P Q R','P Q S R','S Q P R'], ans: 3 },
-
-  // Direct/Indirect Speech (36-38)
-  { y: 2025, s: 'II', n: 36, sec: 'Direct/Indirect Speech', q: 'Convert from direct speech to indirect speech :\nCharu said to her friend, "I want you to be here at 6:00 p.m. tomorrow for the meeting".', o: ['Chrau told her friend that she wanted her to be there at 6:00 p.m. the next day for the meeting.','Charu told her friend that she wanted her to be there at 6:00 p.m. tomorrow for the meeting.','Charu requested her friend that she wanted her to be there at 6:00 p.m. tomorrow for the meeting.','Charu told her friend that she will want her to be here at 6:00 p.m. the next day for the meeting.'], ans: 0 },
-  { y: 2025, s: 'II', n: 37, sec: 'Direct/Indirect Speech', q: 'Convert from direct speech to indirect speech :\nNitin said to his brother, "What a beautiful painting it is"?', o: ['Nitin wondered to his brother that what a beautiful painting it was.','Nitin wondered before his brother that it was a beautiful painting.','Nitin exclaimed that it is a beautiful painting.','Nitin asked his brother whether it was beautiful painting.'], ans: 1 },
-  { y: 2025, s: 'II', n: 38, sec: 'Direct/Indirect Speech', q: 'Convert from indirect speech to direct speech :\nThe teacher asked her students why they had been quiet in the previous class.', o: ['The teacher asked her students, "Why were they keeping quiet in the previous class"?','The teacher said to her students, "Why were you quiet in the previous class"?','The teacher said to her students, "Why had you been quiet in the previous class"?','The teacher said to her students, "Why were you quiet in the previous class"?'], ans: 1 },
-
-  // Grammar (39-40)
-  { y: 2025, s: 'II', n: 39, sec: 'Grammar', q: 'Which one of the following sentences is correct?', o: ['He is considered as the brightest intellectual in the country.','He is considered as one among the brightest intellectual in the country.','He is considered as one among the brighter intellectual in the country.','He is considered as one of the intellectual in the country.'], ans: 0 },
-  { y: 2025, s: 'II', n: 40, sec: 'Grammar', q: 'Which one of following sentence is correct?', o: ['No other mountain is taller than the Himalayas.','No other mountain is tall than the Himalayas.','No other mountains taller than the Himalayas.','No other mountain is taller then the Himalayas.'], ans: 0 },
-
-  // Usage of Paired Words (41-45)
-  { y: 2025, s: 'II', n: 41, sec: 'Usage of Paired Words', q: 'Confident and Confidant', o: ['Confident means certain and confidant means close friend.','Confidant means certain and confident means close friend.','Confident means belief and confidant means an emissary.','Confident means assurance and confidant means intimate person.'], ans: 0 },
-  { y: 2025, s: 'II', n: 42, sec: 'Usage of Paired Words', q: 'Broke and Brook', o: ['Broke means abundance and brook means a flowing water body.','Broke means bankrupt and brook means a stream.','Broke means fractured and brook means nonsense.','Broke means negotiate and brook means a stream.'], ans: 1 },
-  { y: 2025, s: 'II', n: 43, sec: 'Usage of Paired Words', q: 'Accept and Except', o: ['Accept means apart from and expect means recognise.','Accept means recognise and except means include.','Accept means consent and except means apart from.','Accept means allude and except means apart form.'], ans: 2 },
-  { y: 2025, s: 'II', n: 44, sec: 'Usage of Paired Words', q: 'Accord and Accrued', o: ['Accord means collected and accrued means agreement.','Accord means agreement and accrued means arrived.','Accord means accepted and accrued means received.','Accord means agreement and accrued means accumulated.'], ans: 3 },
-  { y: 2025, s: 'II', n: 45, sec: 'Usage of Paired Words', q: 'Guarantee and Warranty', o: ['Guarantee is an agreement and warranty is a service contract.','Guarantee is a business agreement and warranty is a service contract.','Guarantee is a promise and warranty is a service contract.','Guarantee is acceptance and warranty is a service contract.'], ans: 2 },
-
-  // Reading Comprehension (46-50)
-  { y: 2025, s: 'II', n: 46, sec: 'Reading Comprehension', q: 'Which one of the following is NOT the reason for the difficulty in estimating the number of language of the world ?', o: ['New language continue to be discovered.','There are still unexplored regions.','New language are considered a dialect of a known language.','People who speak the language do not claim their language.'], ans: 3, passage: "An attempt to determine the number of languages in the world is affected by other factors. A new language do continue to be discovered even these days, as unexplored regions of the world begin to be opened up. The discovery does not usually take place straight away. Often there are similarities with an already known language which makes the investigators assume that what they have found is just a dialect of that language. Only after a considerable period of contact does it transpire that the speech is so different that it has to be considered a different language. It takes a language survey to establish the facts, and there are still many countries where such surveys are incomplete or have not even begun. The people may be known, but the identity of their language may not be. Because many such people are bilingual or multilingual, and converse with outsides in lingua franca, it may take a while before linguists come to realise that there is an ethnic language there at all." },
-  { y: 2025, s: 'II', n: 47, sec: 'Reading Comprehension', q: 'Which one of following is a way to establish the discovery of a new language?', o: ['By establishing contact over a period of time with speakers of the language.','By finding the similarities of the language with other languages.','By comparing with the lingua franca of the region.','By conducting a survey of all languages of the region.'], ans: 0, passage: "An attempt to determine the number of languages in the world is affected by other factors. A new language do continue to be discovered even these days, as unexplored regions of the world begin to be opened up. The discovery does not usually take place straight away. Often there are similarities with an already known language which makes the investigators assume that what they have found is just a dialect of that language. Only after a considerable period of contact does it transpire that the speech is so different that it has to be considered a different language. It takes a language survey to establish the facts, and there are still many countries where such surveys are incomplete or have not even begun. The people may be known, but the identity of their language may not be. Because many such people are bilingual or multilingual, and converse with outsides in lingua franca, it may take a while before linguists come to realise that there is an ethnic language there at all." },
-  { y: 2025, s: 'II', n: 48, sec: 'Reading Comprehension', q: 'Which one of the following statements is correct ?', o: ['Language surveys have been conducted by all nations.','There is hardly any language to be discovered in the world.','All the languages are either complete language or dialects of other major languages.','No new language needs to be discovered since all languages are known to the world.'], ans: 2, passage: "An attempt to determine the number of languages in the world is affected by other factors. A new language do continue to be discovered even these days, as unexplored regions of the world begin to be opened up. The discovery does not usually take place straight away. Often there are similarities with an already known language which makes the investigators assume that what they have found is just a dialect of that language. Only after a considerable period of contact does it transpire that the speech is so different that it has to be considered a different language. It takes a language survey to establish the facts, and there are still many countries where such surveys are incomplete or have not even begun. The people may be known, but the identity of their language may not be. Because many such people are bilingual or multilingual, and converse with outsides in lingua franca, it may take a while before linguists come to realise that there is an ethnic language there at all." },
-  { y: 2025, s: 'II', n: 49, sec: 'Reading Comprehension', q: '"The people may be known, but the identity of their language may not be", means', o: ['People are recognised as different ethnic group but not necessarily their language.','People are recognised as different ethnic group and their language is recognised.','People are not recognised as different ethnic group, and so are their languages.','Because the people are not from different ethnic groups and their language is recognised.'], ans: 0, passage: "An attempt to determine the number of languages in the world is affected by other factors. A new language do continue to be discovered even these days, as unexplored regions of the world begin to be opened up. The discovery does not usually take place straight away. Often there are similarities with an already known language which makes the investigators assume that what they have found is just a dialect of that language. Only after a considerable period of contact does it transpire that the speech is so different that it has to be considered a different language. It takes a language survey to establish the facts, and there are still many countries where such surveys are incomplete or have not even begun. The people may be known, but the identity of their language may not be. Because many such people are bilingual or multilingual, and converse with outsides in lingua franca, it may take a while before linguists come to realise that there is an ethnic language there at all." },
-  { y: 2025, s: 'II', n: 50, sec: 'Reading Comprehension', q: "Which one of the following words from passage means 'come to be known' ?", o: ['transpire','lingua franca','straight','variant'], ans: 0, passage: "An attempt to determine the number of languages in the world is affected by other factors. A new language do continue to be discovered even these days, as unexplored regions of the world begin to be opened up. The discovery does not usually take place straight away. Often there are similarities with an already known language which makes the investigators assume that what they have found is just a dialect of that language. Only after a considerable period of contact does it transpire that the speech is so different that it has to be considered a different language. It takes a language survey to establish the facts, and there are still many countries where such surveys are incomplete or have not even begun. The people may be known, but the identity of their language may not be. Because many such people are bilingual or multilingual, and converse with outsides in lingua franca, it may take a while before linguists come to realise that there is an ethnic language there at all." }
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 1,
+    "sec": "Sentence Arrangement",
+    "q": "S1: Sufism is an English word coined in the Nineteenth Century\nS6 : It may also have been suffa, the platform outside a place of Islamic worship\nP. Historians have understood this term in several ways\nQ. According to some scholars, it is derived from suf, meaning wool\nR. Others derive it from safa, meaning purity\nS. The word used for Sufism in Islamic texts is tasawwuf",
+    "o": [
+      "QRSP",
+      "SPQR",
+      "PQSR",
+      "RPSQ"
+    ],
+    "ans": 1
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 2,
+    "sec": "Sentence Arrangement",
+    "q": "S1: Al-Biruni was born in 973, in Khwarizm in _ present-day Uzbekistan\nS6 : He arrived in Ghazni as a hostage, but gradually developed a liking for the city\nP. In 1017, when Sultan Mahmud invaded Khwarizm, he _ took several scholars back to his capital, Ghazni : Al-Biruni was one among them\nQ. He was well versed in several languages; Syriac, Arabic, Persian, Hebrew, and Sanskrit\nR. Khwarizm was an important centre of learning, and Al-Biruni received the best education available at the time\nS. However he did not know Greek, although he was familiar with the works of Plato and other Greek philosophers",
+    "o": [
+      "QSRP",
+      "RQSP",
+      "PQSR",
+      "RPSQ"
+    ],
+    "ans": 0
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 3,
+    "sec": "Sentence Arrangement",
+    "q": "S1: Vijayanagara or ‘city of victory’ was the name of both a city and an empire\nS6 : They remembered it as Hampi, a name derived from that of the local mother goddess, Pampadevi\nP. In its heyday it stretched from the river Krishna in the north to the extreme south of the Indian peninsula\nQ. Although it fell into ruin in the seventeenth-eighteenth centuries, it continued to live in the memories of the people who inhabited the Krishna-Tungabhadra doab\nR. In 1565 the city was sacked and subsequently deserted\nS. The Empire was founded in the fourteenth century",
+    "o": [
+      "SPRQ",
+      "SQPR",
+      "PQSR",
+      "PQRS"
+    ],
+    "ans": 3
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 4,
+    "sec": "Sentence Arrangement",
+    "q": "S1: Liberalisation and _ globalisation freed India’s economy from the low GDP trap that had impeded India’s progress\nS6 : Today India has transformed into one of the largest economies of the world\nP. India’s 3 pe rate of growth and a set of emergent circumstances led to a balance of payment crisis in the early 1990s\nQ. Ease of business was ensured, and the requirement for import licences, and production quotas, were removed\nR. Apart from these measures India also took a loan from the IMF to tide over the crisis, but after 1993, India has not taken another loan from the IMF\nS. In a landmark budget in 1991, responding to the emergent crisis, India delicenced many industries and liberalised its economic policies",
+    "o": [
+      "QSRP",
+      "SQPR",
+      "RQSP",
+      "PSQR"
+    ],
+    "ans": 0
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 5,
+    "sec": "Sentence Arrangement",
+    "q": "S1: In many countries, there are millions of people who are underprivileged and deprived\nS6 : In the past forced labour was imposed by landlords, moneylenders, and other wealthy persons\nP. Both of these are prohibited under the Constitution of India\nQ. One such form of exploitation in our country has been begar or forced labour without payment\nR. The marginalised are often subjected to exploitation by their fellow human beings\nS. Another closely related form of exploitation is buying and selling of human beings and using them as slaves",
+    "o": [
+      "QSRP",
+      "RQSP",
+      "PQSR",
+      "QSPR"
+    ],
+    "ans": 0
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 6,
+    "sec": "Ordering of Words in a Sentence",
+    "q": "of children they also contain deeply embedded (P) / whereas traditional fairy tales (Q) / moral lessons that are relevant-even for adults (R) / were designed for the entertainment (S).",
+    "o": [
+      "RPQS",
+      "QSRP",
+      "RPSQ",
+      "QSPR"
+    ],
+    "ans": 0
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 7,
+    "sec": "Ordering of Words in a Sentence",
+    "q": "of school education is an ineluctable truth (P) / that sporting activities are an integral part (Q) / meaningfully towards the overall growth of a student (R) / that underscores the learning process and contributes (S).",
+    "o": [
+      "QPSR",
+      "QSRP",
+      "RPSQ",
+      "QSPR"
+    ],
+    "ans": 0
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 8,
+    "sec": "Ordering of Words in a Sentence",
+    "q": "and contentment on account of a life lived (P) / the beneficial outcome of (Q) / well without retribution or rebuke (R) / a virtuous life is peace of mind (S).",
+    "o": [
+      "SRQP",
+      "SPQR",
+      "QSPR",
+      "QSRP"
+    ],
+    "ans": 1
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 9,
+    "sec": "Ordering of Words in a Sentence",
+    "q": "more representative than the latter (P) / from a non-parliamentary system (Q) / in as much as the former is (R) / it is widely believed that the parliamentary system differs (S).",
+    "o": [
+      "SQRP",
+      "SPQR",
+      "RSPQ",
+      "PSRQ"
+    ],
+    "ans": 0
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 10,
+    "sec": "Ordering of Words in a Sentence",
+    "q": "crushes the spirit behind the service (P) / it stunts the person offering the same and (Q) / exhibition or for fear of public opinion (R) / when service is done for (S).",
+    "o": [
+      "SQRP",
+      "SPQR",
+      "RSPQ",
+      "SRQP"
+    ],
+    "ans": 0
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 11,
+    "sec": "Discourse Markers",
+    "q": "________ the Government of India has followed the policy of trying to improve relations with its neighbours.",
+    "o": [
+      "Particular",
+      "Knowingly",
+      "Otherwise",
+      "In general"
+    ],
+    "ans": 0
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 12,
+    "sec": "Discourse Markers",
+    "q": "________ this issue is likely to be discussed when the Council meets next.",
+    "o": [
+      "As per reports",
+      "Accordingly",
+      "Likewise",
+      "Briefly"
+    ],
+    "ans": 1
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 13,
+    "sec": "Discourse Markers",
+    "q": "________ you needed to consult a physician to have a clear idea of what the disease is about.",
+    "o": [
+      "In that case",
+      "In these case",
+      "Likewise",
+      "Henceforth"
+    ],
+    "ans": 0
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 14,
+    "sec": "Discourse Markers",
+    "q": "________ in the year-ago period the current account deficit stood at $1-3 billion or 0-2% of the GDP.",
+    "o": [
+      "Particularly",
+      "Notably",
+      "Seriously",
+      "Unknowingly"
+    ],
+    "ans": 1
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 15,
+    "sec": "Discourse Markers",
+    "q": "________ the records have been completely undermined by shoddy book-keeping.",
+    "o": [
+      "Because of",
+      "As such",
+      "Forever",
+      "Hence"
+    ],
+    "ans": 1
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 16,
+    "sec": "Discourse Markers",
+    "q": "I can’t be bothered to tell him what I think;______ he would not listen to me.",
+    "o": [
+      "meanwhile",
+      "in any case",
+      "in the meantime",
+      "somehow"
+    ],
+    "ans": 0
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 17,
+    "sec": "Discourse Markers",
+    "q": "______ if the referee points his fingers, this indicates that someone has done something wrong.",
+    "o": [
+      "On the contrary",
+      "Whatever more",
+      "Briefly",
+      "As regards"
+    ],
+    "ans": 0
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 18,
+    "sec": "Discourse Markers",
+    "q": "________ have you been to’ the local library yet ?",
+    "o": [
+      "Sort of",
+      "Frankly",
+      "All the same",
+      "Incidentally"
+    ],
+    "ans": 3
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 19,
+    "sec": "Discourse Markers",
+    "q": "________ women are healthier and are living longer than ever before: indeed on an average, they can expect to live five years longer than men.",
+    "o": [
+      "To a large extent",
+      "As regards",
+      "As far as",
+      "Turning now"
+    ],
+    "ans": 1
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 20,
+    "sec": "Discourse Markers",
+    "q": "The difference is that I have been fortunate to find a career that I love and, ______, | am getting paid reasonably for it.",
+    "o": [
+      "briefly",
+      "broadly speaking",
+      "what is more",
+      "in conclusion"
+    ],
+    "ans": 0
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 21,
+    "sec": "Fill in the Blanks",
+    "q": "It does not look like he is going ________ in his studies than what was predicted by his school principal.",
+    "o": [
+      "any further",
+      "further",
+      "farther",
+      "any farther"
+    ],
+    "ans": 2
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 22,
+    "sec": "Fill in the Blanks",
+    "q": "________ all the confusion the thief made a quiet getaway.",
+    "o": [
+      "Among",
+      "Amongst",
+      "Amidst",
+      "Amid"
+    ],
+    "ans": 1
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 23,
+    "sec": "Fill in the Blanks",
+    "q": "The intricate operation on the patient required the expertise of a/an ______ surgeon.",
+    "o": [
+      "special",
+      "especial",
+      "specialist",
+      "specialised"
+    ],
+    "ans": 0
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 24,
+    "sec": "Fill in the Blanks",
+    "q": "There are ______ thirty students inside the classroom at any time.",
+    "o": [
+      "less than",
+      "fewer than",
+      "less then",
+      "fewer then"
+    ],
+    "ans": 3
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 25,
+    "sec": "Fill in the Blanks",
+    "q": "There are many _______ vehicles on the highway due to a sudden landslide.",
+    "o": [
+      "stationery",
+      "stationed",
+      "stranded",
+      "straggle"
+    ],
+    "ans": 1
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 26,
+    "sec": "Synonyms",
+    "q": "Which one of the following words means 'incursion'?",
+    "o": [
+      "invasion",
+      "intensive",
+      "severe",
+      "intervention"
+    ],
+    "ans": 1,
+    "passage": "Directions: Read the following passage carefully and answer the items that follow the passage. Your answers to these items should be based solely on the passage.\nCan agricultural productivity meet human needs in the long run? Since twentieth century advances, given increasing costs, do not seem sustainable, further increases in output will not be achieved easily. Global population growth, while showing signs of slowing down, has pushed farmers and herders into areas unsuited to intensive agriculture, accelerating worldwide ecological disruptions. Reserves of arable land and fresh water have diminished alarmingly. Chemical runoffs have compounded pollution problems. Invasion of natural habitats have hastened species extinction. Desertification has been severe in the last hundred years, especially in North Africa, southern portions of Africa, Australia, northern Mexico, and the American Southwest. Tropical forests have shrunk by one-half since World War II, with agricultural pressures causing three-quarters of that loss. Government inter- vention has produced its share of catastrophes, ranging from a terrible famine in China between 1958-1961 that may have killed 30 million people and destroyed the Aral Sea. Taking everything into consideration, we may remain hopeful about humankind's agricultural prospects, but we can scarcely look forward optimistically at the end of the first quarter of the twenty-first century."
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 27,
+    "sec": "Synonyms",
+    "q": "Overview and Review",
+    "o": [
+      "Overview means assessment and review means general idea",
+      "Overview means generai idea and review means assessment",
+      "Overview means general analysis and review means go through",
+      "Overview means summary and review means evaluation"
+    ],
+    "ans": 2,
+    "keyword": "Overview"
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 28,
+    "sec": "Synonyms",
+    "q": "Overcome and Succeed",
+    "o": [
+      "Overcome means triumph over and succeed means to achieve something",
+      "Overcome means achieve something and succeed means to triumph over",
+      "Overcome means to be successful and succeed means to achieve something",
+      "Overcome means winning and succeed means to rise above"
+    ],
+    "ans": 3,
+    "keyword": "Overcome"
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 29,
+    "sec": "Synonyms",
+    "q": "Embed and Imbue",
+    "o": [
+      "Embed means instil and imbue means implant",
+      "Embed means implant and imbue means instil",
+      "Embed means accept and imbue means detest",
+      "Embed means include and imbue means accept"
+    ],
+    "ans": 0,
+    "keyword": "Embed"
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 30,
+    "sec": "Synonyms",
+    "q": "Emancipate and Empower",
+    "o": [
+      "Emancipate means authorize and empower means liberate",
+      "Emancipate means liberate and empower means authorise",
+      "Emancipate means liberal and empower means authorisation",
+      "Emancipate means freedom and empower means encounter"
+    ],
+    "ans": 2,
+    "keyword": "Emancipate"
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 31,
+    "sec": "Synonyms",
+    "q": "The Professor has been able to instil confidence in her students",
+    "o": [
+      "inculcate",
+      "infer",
+      "eradicate",
+      "unlike"
+    ],
+    "ans": 0,
+    "keyword": "instil"
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 32,
+    "sec": "Synonyms",
+    "q": "The members of the group expressed their allegiance to their leader",
+    "o": [
+      "commitment",
+      "disloyalty",
+      "understanding",
+      "unlikely"
+    ],
+    "ans": 0,
+    "keyword": "allegiance"
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 33,
+    "sec": "Synonyms",
+    "q": "The inscrutability surrounding the incident remains unresolved until the end of the movie",
+    "o": [
+      "clearness",
+      "comprehensibility",
+      "seriousness",
+      "mystery"
+    ],
+    "ans": 0,
+    "keyword": "inscrutability"
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 34,
+    "sec": "Synonyms",
+    "q": "The dodgy behaviour of the leader led to her fall",
+    "o": [
+      "principled",
+      "dubious",
+      "dishonest",
+      "painful"
+    ],
+    "ans": 1,
+    "keyword": "dodgy"
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 35,
+    "sec": "Synonyms",
+    "q": "People have been advised not to venture into sea as the weather is likely to be inclement",
+    "o": [
+      "squally",
+      "calm",
+      "pleasant",
+      "indigent"
+    ],
+    "ans": 0,
+    "keyword": "inclement"
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 36,
+    "sec": "Synonyms",
+    "q": "Infelicity :",
+    "o": [
+      "Disloyalty towards one’s nation",
+      "An inappropriate remark",
+      "To kill or destroy",
+      "To touch or push gently"
+    ],
+    "ans": 1,
+    "keyword": "Infelicity"
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 37,
+    "sec": "Synonyms",
+    "q": "Corollary",
+    "o": [
+      "Something that is too expensive",
+      "Something that looks real but does not really exist",
+      "Something that naturally follows",
+      "Something resembling a coal mine"
+    ],
+    "ans": 2,
+    "keyword": "Corollary"
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 38,
+    "sec": "Synonyms",
+    "q": "Quandary",
+    "o": [
+      "Situation in which you are confused about what to do",
+      "Situation in which two people or group argue",
+      "Situation in which no progress can be made",
+      "Situation in which a relationship becomes friendlier"
+    ],
+    "ans": 0,
+    "keyword": "Quandary"
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 39,
+    "sec": "Synonyms",
+    "q": "Presumption :",
+    "o": [
+      "Prediction based on past experiences",
+      "Judgement made with certainty",
+      "Decision based on facts",
+      "Opinion formed before having all the facts"
+    ],
+    "ans": 3,
+    "keyword": "Presumption"
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 40,
+    "sec": "Synonyms",
+    "q": "Smug:",
+    "o": [
+      "Too confident about one’s own achievements",
+      "Too eager to help or obey someone important",
+      "Too emotional or dramatic",
+      "Too eager to bottle up conflicts"
+    ],
+    "ans": 0,
+    "keyword": "Smug"
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 41,
+    "sec": "Reading Comprehension",
+    "q": "Why do twentieth century advances not seem sustainable?",
+    "o": [
+      "They do not meet the human needs",
+      "Due to the increased cost of agricultural production",
+      "Because they are outdated for the current times",
+      "They are useful, but intensive"
+    ],
+    "ans": 2,
+    "passage": "Directions: Read the following passage carefully and answer the items that follow the passage. Your answers to these items should be based solely on the passage.\nCan agricultural productivity meet human needs in the long run? Since twentieth century advances, given increasing costs, do not seem sustainable, further increases in output will not be achieved easily. Global population growth, while showing signs of slowing down, has pushed farmers and herders into areas unsuited to intensive agriculture, accelerating worldwide ecological disruptions. Reserves of arable land and fresh water have diminished alarmingly. Chemical runoffs have compounded pollution problems. Invasion of natural habitats have hastened species extinction. Desertification has been severe in the last hundred years, especially in North Africa, southern portions of Africa, Australia, northern Mexico, and the American Southwest. Tropical forests have shrunk by one-half since World War II, with agricultural pressures causing three-quarters of that loss. Government inter- vention has produced its share of catastrophes, ranging from a terrible famine in China between 1958-1961 that may have killed 30 million people and destroyed the Aral Sea. Taking everything into consideration, we may remain hopeful about humankind's agricultural prospects, but we can scarcely look forward optimistically at the end of the first quarter of the twenty-first century."
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 42,
+    "sec": "Reading Comprehension",
+    "q": "What pushes farmers into places unsuited for agriculture?",
+    "o": [
+      "Population growth",
+      "Industrialisation",
+      "Water scarcity",
+      "Desertification"
+    ],
+    "ans": 0,
+    "passage": "Directions: Read the following passage carefully and answer the items that follow the passage. Your answers to these items should be based solely on the passage.\nCan agricultural productivity meet human needs in the long run? Since twentieth century advances, given increasing costs, do not seem sustainable, further increases in output will not be achieved easily. Global population growth, while showing signs of slowing down, has pushed farmers and herders into areas unsuited to intensive agriculture, accelerating worldwide ecological disruptions. Reserves of arable land and fresh water have diminished alarmingly. Chemical runoffs have compounded pollution problems. Invasion of natural habitats have hastened species extinction. Desertification has been severe in the last hundred years, especially in North Africa, southern portions of Africa, Australia, northern Mexico, and the American Southwest. Tropical forests have shrunk by one-half since World War II, with agricultural pressures causing three-quarters of that loss. Government inter- vention has produced its share of catastrophes, ranging from a terrible famine in China between 1958-1961 that may have killed 30 million people and destroyed the Aral Sea. Taking everything into consideration, we may remain hopeful about humankind's agricultural prospects, but we can scarcely look forward optimistically at the end of the first quarter of the twenty-first century."
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 43,
+    "sec": "Reading Comprehension",
+    "q": "Which one of the following is NOT true, according to the passage, for ecological degradation?",
+    "o": [
+      "Global population growth",
+      "Excess use of chemicals",
+      "Desertification",
+      "World War II"
+    ],
+    "ans": 2,
+    "passage": "Directions: Read the following passage carefully and answer the items that follow the passage. Your answers to these items should be based solely on the passage.\nCan agricultural productivity meet human needs in the long run? Since twentieth century advances, given increasing costs, do not seem sustainable, further increases in output will not be achieved easily. Global population growth, while showing signs of slowing down, has pushed farmers and herders into areas unsuited to intensive agriculture, accelerating worldwide ecological disruptions. Reserves of arable land and fresh water have diminished alarmingly. Chemical runoffs have compounded pollution problems. Invasion of natural habitats have hastened species extinction. Desertification has been severe in the last hundred years, especially in North Africa, southern portions of Africa, Australia, northern Mexico, and the American Southwest. Tropical forests have shrunk by one-half since World War II, with agricultural pressures causing three-quarters of that loss. Government inter- vention has produced its share of catastrophes, ranging from a terrible famine in China between 1958-1961 that may have killed 30 million people and destroyed the Aral Sea. Taking everything into consideration, we may remain hopeful about humankind's agricultural prospects, but we can scarcely look forward optimistically at the end of the first quarter of the twenty-first century."
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 44,
+    "sec": "Reading Comprehension",
+    "q": "What is the conclusion of the author in the passage about the prospects of agriculture in the world?",
+    "o": [
+      "The author is both hopeful and sceptical of the prospects of agriculture",
+      "The author is very hopeful of the prospects of agriculture",
+      "The author is sceptical of the prospects of agriculture",
+      "The author is neither hopeful nor sceptical of the prospects of agriculture"
+    ],
+    "ans": 0,
+    "passage": "Directions: Read the following passage carefully and answer the items that follow the passage. Your answers to these items should be based solely on the passage.\nCan agricultural productivity meet human needs in the long run? Since twentieth century advances, given increasing costs, do not seem sustainable, further increases in output will not be achieved easily. Global population growth, while showing signs of slowing down, has pushed farmers and herders into areas unsuited to intensive agriculture, accelerating worldwide ecological disruptions. Reserves of arable land and fresh water have diminished alarmingly. Chemical runoffs have compounded pollution problems. Invasion of natural habitats have hastened species extinction. Desertification has been severe in the last hundred years, especially in North Africa, southern portions of Africa, Australia, northern Mexico, and the American Southwest. Tropical forests have shrunk by one-half since World War II, with agricultural pressures causing three-quarters of that loss. Government inter- vention has produced its share of catastrophes, ranging from a terrible famine in China between 1958-1961 that may have killed 30 million people and destroyed the Aral Sea. Taking everything into consideration, we may remain hopeful about humankind's agricultural prospects, but we can scarcely look forward optimistically at the end of the first quarter of the twenty-first century."
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 45,
+    "sec": "Direct/Indirect Speech",
+    "q": "Convert from direct into indirect speech.\nAyushi said to the group, \"We have had enough of suffering today. It is time to march forward.\"",
+    "o": [
+      "Ayushi told the group that they had had enough of suffering that day and it was time to march forward",
+      "Ayushi asked the group that they had had enough of suffering this day and it was time to march forward",
+      "Ayushi told the group that they had enough of suffering and that it is time to march forward",
+      "Ayushi told the group that we had had enough of suffering this day and it was time to march forward"
+    ],
+    "ans": 3
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 46,
+    "sec": "Direct/Indirect Speech",
+    "q": "Convert from direct speech into indirect speech.\n\"Alas! We lost the match by one point,\" said the Captain",
+    "o": [
+      "The Captain regretted that they had lost the match by one point",
+      "The Captain regretted that they lost the match by one point",
+      "The Captain exclaimed that they had lost the match by one point",
+      "The Captain told the team that they had lost the match by one point"
+    ],
+    "ans": 0
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 47,
+    "sec": "Direct/Indirect Speech",
+    "q": "Convert from direct speech into indirect speech.\n\"Where were you last week?\" Alok asked Sheela",
+    "o": [
+      "Alok told Sheela where she had been the week before",
+      "Alok asked Sheela where she had been the week before",
+      "Alok asked Sheela where she was the week before",
+      "Alok asked Sheela where she had been the last week"
+    ],
+    "ans": 1
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 48,
+    "sec": "Active/Passive Voice",
+    "q": "The king who the people loved built the castle five centuries ago",
+    "o": [
+      "The castle was built five centuries ago by the king who was loved by the people",
+      "The castle was built five centuries ago by the king who loved the people",
+      "The castle built five centuries ago by the king loved by the people",
+      "The castle was built five centuries ago by the people who were loved by the king"
+    ],
+    "ans": 2
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 49,
+    "sec": "Active/Passive Voice",
+    "q": "The company has recruited four hundred engineers who will have to complete an internship for three weeks",
+    "o": [
+      "Four hundred engineers have been recruited by the company and an internship of three weeks will have to be completed by them",
+      "Four hundred engineers have been recruited by the company and they will have to complete an internship of three weeks",
+      "The company has been recruited by four hundred engineers and an internship of three week will have to be completed by them",
+      "Four hundred engineers have been recruited by the company. Internship of three weeks will have had to be completed by them"
+    ],
+    "ans": 1
+  },
+  {
+    "y": 2025,
+    "s": "II",
+    "n": 50,
+    "sec": "Antonyms",
+    "q": "Seldom and Often",
+    "o": [
+      "Seldom means hardly ever and often means time and again",
+      "Seldom means time and again and often means hardly ever",
+      "Seldom means never and often means not at all",
+      "Seldom means frequently and often means time and again"
+    ],
+    "ans": 2,
+    "keyword": "Seldom"
+  }
 ];

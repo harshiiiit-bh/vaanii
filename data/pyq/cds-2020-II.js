@@ -1,5 +1,5 @@
 // CDS English PYQ: 2020-II
-// Extracted from the supplied CDS year-wise solved-paper PDF; answer indices are zero-based.
+// Source: CDS II 2020 English paper; answer indices are zero-based.
 var PYQ_CDS_2020_II = [
   {
     "y": 2020,
@@ -8,9 +8,9 @@ var PYQ_CDS_2020_II = [
     "sec": "Spellings",
     "q": "Which one of the following alternatives has the correct spelling?",
     "o": [
-      "Mountaineous",
+      "Mountaneous",
       "Mountenous",
-      "Mountaineus",
+      "Mountaineous",
       "Mountainous"
     ],
     "ans": 3,
@@ -48,7 +48,7 @@ var PYQ_CDS_2020_II = [
     "sec": "Spellings",
     "q": "Which one of the following alternatives has the correct spelling?",
     "o": [
-      "Curriculum",
+      "Curriculam",
       "Curiculum",
       "Curiculeum",
       "Curriculum"
@@ -108,7 +108,7 @@ var PYQ_CDS_2020_II = [
     "sec": "Spellings",
     "q": "Which one of the following alternatives has the correct spelling?",
     "o": [
-      "Twelfth",
+      "Twelth",
       "Twelfth",
       "Tweluth",
       "Twelthe"
@@ -815,13 +815,13 @@ var PYQ_CDS_2020_II = [
     "y": 2020,
     "s": "II",
     "n": 41,
-    "sec": "Reading Comprehension",
-    "q": "one the most revered member of the committee of enquiry. No error (d)",
+    "sec": "Spotting Errors",
+    "q": "He has been one the most revered member of the committee of enquiry. No error",
     "o": [
-      "(a)",
-      "(b)",
-      "(c)",
-      "(d)"
+      "Error in part (a)",
+      "Error in part (b)",
+      "Error in part (c)",
+      "No error"
     ],
     "ans": 1,
     "tags": [
@@ -830,76 +830,19 @@ var PYQ_CDS_2020_II = [
       "Reading Comprehension"
     ],
     "topic": "Reading Comprehension",
-    "parts": [
-      "one the most revered member",
-      "of the committee of enquiry.",
-      "No error (d)"
-    ],
     "passage": "Post-colonial cultural analysis has been concerned with the elaboration of theoretical structures that contest the previous dominant western ways of seeing things. A simple analogy would be with feminism, which has involved a comparable kind of project: there was a time when any book you might read, any speech you might hear, any film that you saw, was always told from the point of view of male. The woman was there, but she was always an object, never a subject. From what you would read, or the films you would see, the woman was always the one who was looked at. She was never the observing eye. For centuries it was assumed that women were less intelligent than men and that they did not merit the same degree of education. They were not allowed a vote in the political system. By the same token, any kind of knowledge developed by women was regarded as non- serious, trivial, gossip or alternatively as knowledge that had been discredited by science, such as superstition or traditional practices of childbirth or healing. All these attitudes were part of a larger system in which women were dominated, exploited, and physically abused by men. Slowly, but increasingly, from the end of 18th century, feminists began to contest this situation. The more they contested it, the more it became increasingly obvious that these attitudes extended into the whole of the culture; social relations, politics, law, medicine, the arts, popular and academic knowledge."
   },
   {
     "y": 2020,
     "s": "II",
     "n": 42,
-    "sec": "Reading Comprehension",
-    "q": "whether I was interested to joining the group for the trip. No error (d)",
+    "sec": "Spotting Errors",
+    "q": "Rahul asked me whether I was interested to joining the group for the trip. No error",
     "o": [
-      "(a)",
-      "(b)",
-      "(c)",
-      "(d)"
-    ],
-    "ans": 2,
-    "tags": [
-      "CDS",
-      "English",
-      "Reading Comprehension"
-    ],
-    "topic": "Reading Comprehension",
-    "parts": [
-      "whether I was interested",
-      "to joining the group for the trip.",
-      "No error (d)"
-    ],
-    "passage": "Post-colonial cultural analysis has been concerned with the elaboration of theoretical structures that contest the previous dominant western ways of seeing things. A simple analogy would be with feminism, which has involved a comparable kind of project: there was a time when any book you might read, any speech you might hear, any film that you saw, was always told from the point of view of male. The woman was there, but she was always an object, never a subject. From what you would read, or the films you would see, the woman was always the one who was looked at. She was never the observing eye. For centuries it was assumed that women were less intelligent than men and that they did not merit the same degree of education. They were not allowed a vote in the political system. By the same token, any kind of knowledge developed by women was regarded as non- serious, trivial, gossip or alternatively as knowledge that had been discredited by science, such as superstition or traditional practices of childbirth or healing. All these attitudes were part of a larger system in which women were dominated, exploited, and physically abused by men. Slowly, but increasingly, from the end of 18th century, feminists began to contest this situation. The more they contested it, the more it became increasingly obvious that these attitudes extended into the whole of the culture; social relations, politics, law, medicine, the arts, popular and academic knowledge."
-  },
-  {
-    "y": 2020,
-    "s": "II",
-    "n": 43,
-    "sec": "Reading Comprehension",
-    "q": "(d)",
-    "o": [
-      "(a)",
-      "(b)",
-      "(c)",
-      "(d)"
-    ],
-    "ans": 1,
-    "tags": [
-      "CDS",
-      "English",
-      "Reading Comprehension"
-    ],
-    "topic": "Reading Comprehension",
-    "parts": [
-      "",
-      "",
-      "(d)"
-    ],
-    "passage": "Post-colonial cultural analysis has been concerned with the elaboration of theoretical structures that contest the previous dominant western ways of seeing things. A simple analogy would be with feminism, which has involved a comparable kind of project: there was a time when any book you might read, any speech you might hear, any film that you saw, was always told from the point of view of male. The woman was there, but she was always an object, never a subject. From what you would read, or the films you would see, the woman was always the one who was looked at. She was never the observing eye. For centuries it was assumed that women were less intelligent than men and that they did not merit the same degree of education. They were not allowed a vote in the political system. By the same token, any kind of knowledge developed by women was regarded as non- serious, trivial, gossip or alternatively as knowledge that had been discredited by science, such as superstition or traditional practices of childbirth or healing. All these attitudes were part of a larger system in which women were dominated, exploited, and physically abused by men. Slowly, but increasingly, from the end of 18th century, feminists began to contest this situation. The more they contested it, the more it became increasingly obvious that these attitudes extended into the whole of the culture; social relations, politics, law, medicine, the arts, popular and academic knowledge."
-  },
-  {
-    "y": 2020,
-    "s": "II",
-    "n": 44,
-    "sec": "Reading Comprehension",
-    "q": "/ of the late nineteenth century / reached full maturity in the early twentieth century / No error (d).",
-    "o": [
-      "(a)",
-      "(b)",
-      "(c)",
-      "(d)"
+      "Error in part (a)",
+      "Error in part (b)",
+      "Error in part (c)",
+      "No error"
     ],
     "ans": 0,
     "tags": [
@@ -908,154 +851,124 @@ var PYQ_CDS_2020_II = [
       "Reading Comprehension"
     ],
     "topic": "Reading Comprehension",
-    "parts": [
-      "/ of the late nineteenth century",
-      "/ reached full maturity in the early twentieth century",
-      "/ No error (d)."
+    "passage": "Post-colonial cultural analysis has been concerned with the elaboration of theoretical structures that contest the previous dominant western ways of seeing things. A simple analogy would be with feminism, which has involved a comparable kind of project: there was a time when any book you might read, any speech you might hear, any film that you saw, was always told from the point of view of male. The woman was there, but she was always an object, never a subject. From what you would read, or the films you would see, the woman was always the one who was looked at. She was never the observing eye. For centuries it was assumed that women were less intelligent than men and that they did not merit the same degree of education. They were not allowed a vote in the political system. By the same token, any kind of knowledge developed by women was regarded as non- serious, trivial, gossip or alternatively as knowledge that had been discredited by science, such as superstition or traditional practices of childbirth or healing. All these attitudes were part of a larger system in which women were dominated, exploited, and physically abused by men. Slowly, but increasingly, from the end of 18th century, feminists began to contest this situation. The more they contested it, the more it became increasingly obvious that these attitudes extended into the whole of the culture; social relations, politics, law, medicine, the arts, popular and academic knowledge."
+  },
+  {
+    "y": 2020,
+    "s": "II",
+    "n": 43,
+    "sec": "Spotting Errors",
+    "q": "‘Where there is a will then there is a way’ is an old epithet. No error",
+    "o": [
+      "Error in part (a)",
+      "Error in part (b)",
+      "Error in part (c)",
+      "No error"
     ],
+    "ans": 3,
+    "tags": [
+      "CDS",
+      "English",
+      "Reading Comprehension"
+    ],
+    "topic": "Reading Comprehension",
+    "passage": "Post-colonial cultural analysis has been concerned with the elaboration of theoretical structures that contest the previous dominant western ways of seeing things. A simple analogy would be with feminism, which has involved a comparable kind of project: there was a time when any book you might read, any speech you might hear, any film that you saw, was always told from the point of view of male. The woman was there, but she was always an object, never a subject. From what you would read, or the films you would see, the woman was always the one who was looked at. She was never the observing eye. For centuries it was assumed that women were less intelligent than men and that they did not merit the same degree of education. They were not allowed a vote in the political system. By the same token, any kind of knowledge developed by women was regarded as non- serious, trivial, gossip or alternatively as knowledge that had been discredited by science, such as superstition or traditional practices of childbirth or healing. All these attitudes were part of a larger system in which women were dominated, exploited, and physically abused by men. Slowly, but increasingly, from the end of 18th century, feminists began to contest this situation. The more they contested it, the more it became increasingly obvious that these attitudes extended into the whole of the culture; social relations, politics, law, medicine, the arts, popular and academic knowledge."
+  },
+  {
+    "y": 2020,
+    "s": "II",
+    "n": 44,
+    "sec": "Spotting Errors",
+    "q": "Indian feminism grew out of the women’s movements of the late nineteenth century reached full maturity in the early twentieth century No error.",
+    "o": [
+      "Error in part (a)",
+      "Error in part (b)",
+      "Error in part (c)",
+      "No error"
+    ],
+    "ans": 2,
+    "tags": [
+      "CDS",
+      "English",
+      "Reading Comprehension"
+    ],
+    "topic": "Reading Comprehension",
     "passage": "Post-colonial cultural analysis has been concerned with the elaboration of theoretical structures that contest the previous dominant western ways of seeing things. A simple analogy would be with feminism, which has involved a comparable kind of project: there was a time when any book you might read, any speech you might hear, any film that you saw, was always told from the point of view of male. The woman was there, but she was always an object, never a subject. From what you would read, or the films you would see, the woman was always the one who was looked at. She was never the observing eye. For centuries it was assumed that women were less intelligent than men and that they did not merit the same degree of education. They were not allowed a vote in the political system. By the same token, any kind of knowledge developed by women was regarded as non- serious, trivial, gossip or alternatively as knowledge that had been discredited by science, such as superstition or traditional practices of childbirth or healing. All these attitudes were part of a larger system in which women were dominated, exploited, and physically abused by men. Slowly, but increasingly, from the end of 18th century, feminists began to contest this situation. The more they contested it, the more it became increasingly obvious that these attitudes extended into the whole of the culture; social relations, politics, law, medicine, the arts, popular and academic knowledge."
   },
   {
     "y": 2020,
     "s": "II",
     "n": 45,
-    "sec": "Reading Comprehension",
-    "q": "and can pursues his/her interest. No error (d)",
+    "sec": "Spotting Errors",
+    "q": "The greatest merit of democracy is that everyone feels free and can pursues his/her interest. No error",
     "o": [
-      "(a)",
-      "(b)",
-      "(c)",
-      "(d)"
+      "Error in part (a)",
+      "Error in part (b)",
+      "Error in part (c)",
+      "No error"
     ],
-    "ans": 2,
+    "ans": 0,
     "tags": [
       "CDS",
       "English",
       "Reading Comprehension"
     ],
     "topic": "Reading Comprehension",
-    "parts": [
-      "",
-      "and can pursues his/her interest. No error",
-      "(d)"
-    ],
     "passage": "Post-colonial cultural analysis has been concerned with the elaboration of theoretical structures that contest the previous dominant western ways of seeing things. A simple analogy would be with feminism, which has involved a comparable kind of project: there was a time when any book you might read, any speech you might hear, any film that you saw, was always told from the point of view of male. The woman was there, but she was always an object, never a subject. From what you would read, or the films you would see, the woman was always the one who was looked at. She was never the observing eye. For centuries it was assumed that women were less intelligent than men and that they did not merit the same degree of education. They were not allowed a vote in the political system. By the same token, any kind of knowledge developed by women was regarded as non- serious, trivial, gossip or alternatively as knowledge that had been discredited by science, such as superstition or traditional practices of childbirth or healing. All these attitudes were part of a larger system in which women were dominated, exploited, and physically abused by men. Slowly, but increasingly, from the end of 18th century, feminists began to contest this situation. The more they contested it, the more it became increasingly obvious that these attitudes extended into the whole of the culture; social relations, politics, law, medicine, the arts, popular and academic knowledge."
   },
   {
     "y": 2020,
     "s": "II",
     "n": 46,
-    "sec": "Reading Comprehension",
-    "q": "in every aspects of its implementation. No error (d)",
+    "sec": "Spotting Errors",
+    "q": "All stake holders of education have the right to ask for accountability in every aspects of its implementation. No error",
     "o": [
-      "(a)",
-      "(b)",
-      "(c)",
-      "(d)"
+      "Error in part (a)",
+      "Error in part (b)",
+      "Error in part (c)",
+      "No error"
     ],
-    "ans": 2,
+    "ans": 3,
     "tags": [
       "CDS",
       "English",
       "Reading Comprehension"
     ],
     "topic": "Reading Comprehension",
-    "parts": [
-      "",
-      "in every aspects of its implementation. No error",
-      "(d)"
-    ],
     "passage": "Post-colonial cultural analysis has been concerned with the elaboration of theoretical structures that contest the previous dominant western ways of seeing things. A simple analogy would be with feminism, which has involved a comparable kind of project: there was a time when any book you might read, any speech you might hear, any film that you saw, was always told from the point of view of male. The woman was there, but she was always an object, never a subject. From what you would read, or the films you would see, the woman was always the one who was looked at. She was never the observing eye. For centuries it was assumed that women were less intelligent than men and that they did not merit the same degree of education. They were not allowed a vote in the political system. By the same token, any kind of knowledge developed by women was regarded as non- serious, trivial, gossip or alternatively as knowledge that had been discredited by science, such as superstition or traditional practices of childbirth or healing. All these attitudes were part of a larger system in which women were dominated, exploited, and physically abused by men. Slowly, but increasingly, from the end of 18th century, feminists began to contest this situation. The more they contested it, the more it became increasingly obvious that these attitudes extended into the whole of the culture; social relations, politics, law, medicine, the arts, popular and academic knowledge."
   },
   {
     "y": 2020,
     "s": "II",
     "n": 47,
-    "sec": "Reading Comprehension",
-    "q": "Among people speaking different languages. No error (d)",
+    "sec": "Spotting Errors",
+    "q": "Learning many languages promotes linguistic, cultural and harmonies Among people speaking different languages. No error",
     "o": [
-      "(a)",
-      "(b)",
-      "(c)",
-      "(d)"
+      "Error in part (a)",
+      "Error in part (b)",
+      "Error in part (c)",
+      "No error"
     ],
-    "ans": 1,
+    "ans": 2,
     "tags": [
       "CDS",
       "English",
       "Reading Comprehension"
     ],
     "topic": "Reading Comprehension",
-    "parts": [
-      "",
-      "Among people speaking different languages. No error",
-      "(d)"
-    ],
     "passage": "Post-colonial cultural analysis has been concerned with the elaboration of theoretical structures that contest the previous dominant western ways of seeing things. A simple analogy would be with feminism, which has involved a comparable kind of project: there was a time when any book you might read, any speech you might hear, any film that you saw, was always told from the point of view of male. The woman was there, but she was always an object, never a subject. From what you would read, or the films you would see, the woman was always the one who was looked at. She was never the observing eye. For centuries it was assumed that women were less intelligent than men and that they did not merit the same degree of education. They were not allowed a vote in the political system. By the same token, any kind of knowledge developed by women was regarded as non- serious, trivial, gossip or alternatively as knowledge that had been discredited by science, such as superstition or traditional practices of childbirth or healing. All these attitudes were part of a larger system in which women were dominated, exploited, and physically abused by men. Slowly, but increasingly, from the end of 18th century, feminists began to contest this situation. The more they contested it, the more it became increasingly obvious that these attitudes extended into the whole of the culture; social relations, politics, law, medicine, the arts, popular and academic knowledge."
   },
   {
     "y": 2020,
     "s": "II",
     "n": 48,
-    "sec": "Reading Comprehension",
-    "q": "whims and fancies on public places. No error (d)",
+    "sec": "Spotting Errors",
+    "q": "One should not act according to one’s whims and fancies on public places. No error",
     "o": [
-      "(a)",
-      "(b)",
-      "(c)",
-      "(d)"
-    ],
-    "ans": 2,
-    "tags": [
-      "CDS",
-      "English",
-      "Reading Comprehension"
-    ],
-    "topic": "Reading Comprehension",
-    "parts": [
-      "",
-      "whims and fancies on public places. No error",
-      "(d)"
-    ],
-    "passage": "Post-colonial cultural analysis has been concerned with the elaboration of theoretical structures that contest the previous dominant western ways of seeing things. A simple analogy would be with feminism, which has involved a comparable kind of project: there was a time when any book you might read, any speech you might hear, any film that you saw, was always told from the point of view of male. The woman was there, but she was always an object, never a subject. From what you would read, or the films you would see, the woman was always the one who was looked at. She was never the observing eye. For centuries it was assumed that women were less intelligent than men and that they did not merit the same degree of education. They were not allowed a vote in the political system. By the same token, any kind of knowledge developed by women was regarded as non- serious, trivial, gossip or alternatively as knowledge that had been discredited by science, such as superstition or traditional practices of childbirth or healing. All these attitudes were part of a larger system in which women were dominated, exploited, and physically abused by men. Slowly, but increasingly, from the end of 18th century, feminists began to contest this situation. The more they contested it, the more it became increasingly obvious that these attitudes extended into the whole of the culture; social relations, politics, law, medicine, the arts, popular and academic knowledge."
-  },
-  {
-    "y": 2020,
-    "s": "II",
-    "n": 49,
-    "sec": "Reading Comprehension",
-    "q": "with the liberalization to her economy. No error (d)",
-    "o": [
-      "(a)",
-      "(b)",
-      "(c)",
-      "(d)"
-    ],
-    "ans": 2,
-    "tags": [
-      "CDS",
-      "English",
-      "Reading Comprehension"
-    ],
-    "topic": "Reading Comprehension",
-    "parts": [
-      "",
-      "with the liberalization to her economy. No error",
-      "(d)"
-    ],
-    "passage": "Post-colonial cultural analysis has been concerned with the elaboration of theoretical structures that contest the previous dominant western ways of seeing things. A simple analogy would be with feminism, which has involved a comparable kind of project: there was a time when any book you might read, any speech you might hear, any film that you saw, was always told from the point of view of male. The woman was there, but she was always an object, never a subject. From what you would read, or the films you would see, the woman was always the one who was looked at. She was never the observing eye. For centuries it was assumed that women were less intelligent than men and that they did not merit the same degree of education. They were not allowed a vote in the political system. By the same token, any kind of knowledge developed by women was regarded as non- serious, trivial, gossip or alternatively as knowledge that had been discredited by science, such as superstition or traditional practices of childbirth or healing. All these attitudes were part of a larger system in which women were dominated, exploited, and physically abused by men. Slowly, but increasingly, from the end of 18th century, feminists began to contest this situation. The more they contested it, the more it became increasingly obvious that these attitudes extended into the whole of the culture; social relations, politics, law, medicine, the arts, popular and academic knowledge."
-  },
-  {
-    "y": 2020,
-    "s": "II",
-    "n": 50,
-    "sec": "Reading Comprehension",
-    "q": "Where rainfall is unequally distributed throughout the seasons. No error (d)",
-    "o": [
-      "(a)",
-      "(b)",
-      "(c)",
-      "(d)"
+      "Error in part (a)",
+      "Error in part (b)",
+      "Error in part (c)",
+      "No error"
     ],
     "ans": 1,
     "tags": [
@@ -1064,11 +977,48 @@ var PYQ_CDS_2020_II = [
       "Reading Comprehension"
     ],
     "topic": "Reading Comprehension",
-    "parts": [
-      "",
-      "Where rainfall is unequally distributed throughout the seasons. No error",
-      "(d)"
+    "passage": "Post-colonial cultural analysis has been concerned with the elaboration of theoretical structures that contest the previous dominant western ways of seeing things. A simple analogy would be with feminism, which has involved a comparable kind of project: there was a time when any book you might read, any speech you might hear, any film that you saw, was always told from the point of view of male. The woman was there, but she was always an object, never a subject. From what you would read, or the films you would see, the woman was always the one who was looked at. She was never the observing eye. For centuries it was assumed that women were less intelligent than men and that they did not merit the same degree of education. They were not allowed a vote in the political system. By the same token, any kind of knowledge developed by women was regarded as non- serious, trivial, gossip or alternatively as knowledge that had been discredited by science, such as superstition or traditional practices of childbirth or healing. All these attitudes were part of a larger system in which women were dominated, exploited, and physically abused by men. Slowly, but increasingly, from the end of 18th century, feminists began to contest this situation. The more they contested it, the more it became increasingly obvious that these attitudes extended into the whole of the culture; social relations, politics, law, medicine, the arts, popular and academic knowledge."
+  },
+  {
+    "y": 2020,
+    "s": "II",
+    "n": 49,
+    "sec": "Spotting Errors",
+    "q": "Economists believe that India had taken a new turn in 1990 with the liberalization to her economy. No error",
+    "o": [
+      "Error in part (a)",
+      "Error in part (b)",
+      "Error in part (c)",
+      "No error"
     ],
+    "ans": 0,
+    "tags": [
+      "CDS",
+      "English",
+      "Reading Comprehension"
+    ],
+    "topic": "Reading Comprehension",
+    "passage": "Post-colonial cultural analysis has been concerned with the elaboration of theoretical structures that contest the previous dominant western ways of seeing things. A simple analogy would be with feminism, which has involved a comparable kind of project: there was a time when any book you might read, any speech you might hear, any film that you saw, was always told from the point of view of male. The woman was there, but she was always an object, never a subject. From what you would read, or the films you would see, the woman was always the one who was looked at. She was never the observing eye. For centuries it was assumed that women were less intelligent than men and that they did not merit the same degree of education. They were not allowed a vote in the political system. By the same token, any kind of knowledge developed by women was regarded as non- serious, trivial, gossip or alternatively as knowledge that had been discredited by science, such as superstition or traditional practices of childbirth or healing. All these attitudes were part of a larger system in which women were dominated, exploited, and physically abused by men. Slowly, but increasingly, from the end of 18th century, feminists began to contest this situation. The more they contested it, the more it became increasingly obvious that these attitudes extended into the whole of the culture; social relations, politics, law, medicine, the arts, popular and academic knowledge."
+  },
+  {
+    "y": 2020,
+    "s": "II",
+    "n": 50,
+    "sec": "Spotting Errors",
+    "q": "Irrigation works have a special importance in an agricultural countries like India, Where rainfall is unequally distributed throughout the seasons. No error",
+    "o": [
+      "Error in part (a)",
+      "Error in part (b)",
+      "Error in part (c)",
+      "No error"
+    ],
+    "ans": 2,
+    "tags": [
+      "CDS",
+      "English",
+      "Reading Comprehension"
+    ],
+    "topic": "Reading Comprehension",
     "passage": "Post-colonial cultural analysis has been concerned with the elaboration of theoretical structures that contest the previous dominant western ways of seeing things. A simple analogy would be with feminism, which has involved a comparable kind of project: there was a time when any book you might read, any speech you might hear, any film that you saw, was always told from the point of view of male. The woman was there, but she was always an object, never a subject. From what you would read, or the films you would see, the woman was always the one who was looked at. She was never the observing eye. For centuries it was assumed that women were less intelligent than men and that they did not merit the same degree of education. They were not allowed a vote in the political system. By the same token, any kind of knowledge developed by women was regarded as non- serious, trivial, gossip or alternatively as knowledge that had been discredited by science, such as superstition or traditional practices of childbirth or healing. All these attitudes were part of a larger system in which women were dominated, exploited, and physically abused by men. Slowly, but increasingly, from the end of 18th century, feminists began to contest this situation. The more they contested it, the more it became increasingly obvious that these attitudes extended into the whole of the culture; social relations, politics, law, medicine, the arts, popular and academic knowledge."
   },
   {
