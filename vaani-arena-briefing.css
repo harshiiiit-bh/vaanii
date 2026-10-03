@@ -616,3 +616,103 @@ body[data-theme="dark"] #view-games .vx-arena-inline-row{background:rgba(255,255
   #view-games .vx-arena-source-grid{grid-template-columns:1fr}
   #view-games .vx-arena-source-card{min-height:82px}
 }
+
+
+/* ============================================================
+   HOST PARTICIPATE / SPECTATE CONTROL
+============================================================ */
+#view-games .vx-arena-host-actions.is-host-choice{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:11px;
+}
+#view-games .vx-arena-host-actions.is-host-choice .vx-host-action-main,
+#view-games .vx-arena-host-actions.is-host-choice .vx-host-action-secondary{
+  min-height:98px;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  grid-template-rows:auto 1fr auto;
+  align-items:center;
+  text-align:left;
+  padding:13px 14px;
+  border-radius:16px;
+}
+#view-games .vx-host-action-main.vx-host-participate{
+  color:#152330;
+  background:linear-gradient(145deg,#e9c977,#c99637);
+  border:1px solid rgba(255,231,157,.55);
+  box-shadow:0 10px 25px rgba(162,114,32,.16);
+}
+#view-games .vx-host-action-secondary.vx-host-spectate{
+  color:#eef6fb;
+  background:
+    radial-gradient(circle at 100% 0,rgba(88,190,214,.14),transparent 42%),
+    linear-gradient(145deg,#13283a,#0d1c2a);
+  border:1px solid rgba(108,184,210,.28);
+  box-shadow:0 10px 25px rgba(3,16,28,.16);
+}
+#view-games .vx-host-choice-kicker{
+  grid-column:1/-1;
+  color:currentColor;
+  opacity:.68;
+  font:900 .49rem/1.2 var(--vx-font-mono);
+  letter-spacing:.15em;
+}
+#view-games .vx-host-action-main strong,
+#view-games .vx-host-action-secondary strong{
+  display:block;
+  font:900 1rem/1.1 var(--vx-font-display);
+}
+#view-games .vx-host-action-main small,
+#view-games .vx-host-action-secondary small{
+  display:block;
+  max-width:34ch;
+  color:currentColor;
+  opacity:.72;
+  font-size:.61rem;
+  line-height:1.4;
+}
+#view-games .vx-host-action-main b,
+#view-games .vx-host-action-secondary b{
+  grid-column:2;
+  grid-row:2/4;
+  font:900 1.3rem var(--vx-font-mono);
+  opacity:.7;
+}
+#view-games .vx-host-spectate-panel{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:14px;
+  align-items:center;
+  margin:0 0 14px;
+  padding:16px;
+  border:1px solid rgba(72,177,202,.24);
+  border-radius:18px;
+  background:
+    radial-gradient(circle at 100% 0,rgba(83,190,215,.1),transparent 32%),
+    linear-gradient(145deg,#112234,#0c1824);
+  color:#f2f7fb;
+}
+#view-games .vx-host-spectate-panel h2{
+  margin:6px 0 4px;
+  color:#f7fafc;
+  font:900 clamp(1.15rem,3vw,1.7rem)/1.05 var(--vx-font-display);
+}
+#view-games .vx-host-spectate-panel p{
+  margin:0;
+  max-width:72ch;
+  color:#94aabd;
+  font-size:.68rem;
+  line-height:1.55;
+}
+#view-games .vx-host-spectate-panel-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  justify-content:flex-end;
+}
+#view-games .vx-host-spectate-panel-actions .vx-btn{min-height:40px}
+@media(max-width:680px){
+  #view-games .vx-arena-host-actions.is-host-choice{grid-template-columns:1fr}
+  #view-games .vx-host-spectate-panel{grid-template-columns:1fr}
+  #view-games .vx-host-spectate-panel-actions{justify-content:flex-start}
+}
