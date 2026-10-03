@@ -3153,6 +3153,7 @@
         });
       }
       status.textContent = visible.length + ' player' + (visible.length === 1 ? '' : 's') + ' shown';
+      drawMobileBoard();
     }
     search.addEventListener('input', drawBoard);
     drawBoard();
