@@ -72,16 +72,20 @@ async function assertVisibleText(selector, label) {
   assert.ok(value && value !== '—' && !/^loading/i.test(value), label + ' was blank: ' + JSON.stringify(value));
 }
 async function dismissInfoTour() {
-  // Wait for the scheduled first-visit tour to either open or already be marked seen.
+  // Current builds may present either the legacy modal tour or the Officer VAANI mentor.
   await page.waitForFunction(() => {
-    const tour = document.getElementById('viTour');
-    return Boolean(tour?.classList.contains('open')) ||
-      (typeof State !== 'undefined' && State.infoTourVersion === '20261002-info-center1');
-  }, null, { timeout: 5000 });
-  if (await page.locator('#viTour.open').count()) {
+    const tourOpen = document.getElementById('viTour')?.classList.contains('open');
+    const mentorOpen = document.getElementById('vaaniMentor')?.classList.contains('open');
+    const latest = window.VAANI_LATEST_FEATURE_RELEASE?.version;
+    const seen = typeof State !== 'undefined' && latest && State.infoTourVersion === latest;
+    return Boolean(tourOpen || mentorOpen || seen);
+  }, null, { timeout: 8000 });
+  if (await page.locator('#viTour.open').count() || await page.locator('#vaaniMentor.open').count()) {
     await page.keyboard.press('Escape');
-    await page.waitForFunction(() => !document.getElementById('viTour')?.classList.contains('open'),
-      null, { timeout: 5000 });
+    await page.waitForFunction(() => (
+      !document.getElementById('viTour')?.classList.contains('open') &&
+      !document.getElementById('vaaniMentor')?.classList.contains('open')
+    ), null, { timeout: 5000 });
   }
 }
 async function clickMainView(name) {
@@ -96,8 +100,12 @@ async function clickMainView(name) {
     const moreLabels = { books:'Book Reading', profile:'Profile', leaderboard:'Statistics', games:'Achievements', compare:'Comparisons' };
     const moreLabel = moreLabels[name];
     if (moreLabel && await moreButton.isVisible()) {
+      if (await page.locator('#moreSheet.show').count()) await page.evaluate(() => closeMoreSheet());
       await moreButton.click();
-      await page.locator('#sheetBody .sheet-menu-item').filter({ hasText: moreLabel }).click();
+      await page.waitForSelector('#moreSheet.show');
+      const modern=page.locator('#sheetBody .mobile-more-item').filter({hasText:moreLabel});
+      if (await modern.count()) await modern.first().click();
+      else await page.locator('#sheetBody .sheet-menu-item').filter({ hasText: moreLabel }).click();
     } else {
       throw new Error('No mobile navigation entry is available for ' + name);
     }
@@ -1097,7 +1105,15 @@ try {
   });
   const mobileNavJourney = ['grammar','vocab','pyq','notifications'];
   for (const view of mobileNavJourney) {
-    await navPage.locator('#bottomNav button[data-view="' + view + '"]').click();
+    if (view === 'notifications') {
+      await navPage.locator('#bottomNav button').filter({hasText:'More'}).click();
+      await navPage.waitForSelector('#moreSheet.show');
+      const item=navPage.locator('#sheetBody .mobile-more-item').filter({hasText:'Notifications'}).first();
+      if (await item.count()) await item.click();
+      else await navPage.locator('#sheetBody .sheet-menu-item').filter({hasText:'Notifications'}).click();
+    } else {
+      await navPage.locator('#bottomNav button[data-view="' + view + '"]').click();
+    }
     await navPage.waitForFunction(v => document.getElementById('view-' + v)?.classList.contains('active'), view);
   }
   const journeyState = await navPage.evaluate(() => ({

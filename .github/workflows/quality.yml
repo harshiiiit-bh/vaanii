@@ -102,3 +102,20 @@ jobs:
           name: vaani-browser-smoke-failure
           path: vaani-browser-smoke-failure.png
           if-no-files-found: ignore
+
+  mobile-browser-smoke:
+    name: Mobile browser smoke test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Install Playwright
+        run: npm install --no-save --no-package-lock playwright
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Exercise mobile command rooms and navigation
+        run: node scripts/smoke-mobile.mjs
