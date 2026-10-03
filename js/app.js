@@ -6228,7 +6228,8 @@ document.addEventListener('keydown',(e)=>{
     if(key==='Escape' && target && typeof target.blur==='function') target.blur();
     return;
   }
-  const map={'1':'dashboard','2':'grammar','3':'compare','4':'vocab','5':'practice','6':'reading','7':'tests','8':'games','9':'pyq'};
+  // Keyboard shortcuts follow the real top-level views exposed by the current UI.
+  const map={'1':'dashboard','2':'grammar','3':'compare','4':'vocab','5':'books','6':'pyq','7':'games','8':'leaderboard','9':'profile'};
   if(map[key]) switchView(map[key]);
   if(key.toLowerCase()==='f') setDisplayMode(document.body.classList.contains('mode-focus')?'normal':'focus');
   if(key==='Escape') setDisplayMode('normal');
@@ -6292,7 +6293,8 @@ function showSheetBookmarks(){
     const qid = b.startsWith('pyq:') ? b.slice(4) : b;
     const q = PYQ_BY_ID[qid];
     if(!q) return '';
-    return `<div class="sheet-bm-item" onclick="closeMoreSheet();switchView('pyq');">
+    return `<div class="sheet-bm-item" role="button" tabindex="0" aria-label="Open bookmarked question ${q.y} ${q.s}" onclick="closeMoreSheet();pvOpenSearchResult('${qid}')"
+      onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();closeMoreSheet();pvOpenSearchResult('${qid}')}"`>
       <b>${q.y} · ${q.s}</b> — ${(q.q||'').slice(0,70)}${(q.q||'').length>70?'…':''}
     </div>`;
   }).join('') || `<div class="sheet-empty">No bookmarks yet.</div>`;
