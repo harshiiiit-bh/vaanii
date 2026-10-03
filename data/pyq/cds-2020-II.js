@@ -830,6 +830,11 @@ var PYQ_CDS_2020_II = [
       "Spotting Errors"
     ],
     "topic": "Spotting Errors",
+    "parts": [
+      "He has been one",
+      "the most revered member",
+      "of the committee of enquiry."
+    ],
     "passage": "Post-colonial cultural analysis has been concerned with the elaboration of theoretical structures that contest the previous dominant western ways of seeing things. A simple analogy would be with feminism, which has involved a comparable kind of project: there was a time when any book you might read, any speech you might hear, any film that you saw, was always told from the point of view of male. The woman was there, but she was always an object, never a subject. From what you would read, or the films you would see, the woman was always the one who was looked at. She was never the observing eye. For centuries it was assumed that women were less intelligent than men and that they did not merit the same degree of education. They were not allowed a vote in the political system. By the same token, any kind of knowledge developed by women was regarded as non- serious, trivial, gossip or alternatively as knowledge that had been discredited by science, such as superstition or traditional practices of childbirth or healing. All these attitudes were part of a larger system in which women were dominated, exploited, and physically abused by men. Slowly, but increasingly, from the end of 18th century, feminists began to contest this situation. The more they contested it, the more it became increasingly obvious that these attitudes extended into the whole of the culture; social relations, politics, law, medicine, the arts, popular and academic knowledge."
   },
   {
@@ -844,13 +849,18 @@ var PYQ_CDS_2020_II = [
       "Error in part (c)",
       "No error"
     ],
-    "ans": 0,
+    "ans": 2,
     "tags": [
       "CDS",
       "English",
       "Spotting Errors"
     ],
     "topic": "Spotting Errors",
+    "parts": [
+      "Rahul asked me",
+      "whether I was interested",
+      "to joining the group for the trip."
+    ],
     "passage": "Post-colonial cultural analysis has been concerned with the elaboration of theoretical structures that contest the previous dominant western ways of seeing things. A simple analogy would be with feminism, which has involved a comparable kind of project: there was a time when any book you might read, any speech you might hear, any film that you saw, was always told from the point of view of male. The woman was there, but she was always an object, never a subject. From what you would read, or the films you would see, the woman was always the one who was looked at. She was never the observing eye. For centuries it was assumed that women were less intelligent than men and that they did not merit the same degree of education. They were not allowed a vote in the political system. By the same token, any kind of knowledge developed by women was regarded as non- serious, trivial, gossip or alternatively as knowledge that had been discredited by science, such as superstition or traditional practices of childbirth or healing. All these attitudes were part of a larger system in which women were dominated, exploited, and physically abused by men. Slowly, but increasingly, from the end of 18th century, feminists began to contest this situation. The more they contested it, the more it became increasingly obvious that these attitudes extended into the whole of the culture; social relations, politics, law, medicine, the arts, popular and academic knowledge."
   },
   {
@@ -865,13 +875,18 @@ var PYQ_CDS_2020_II = [
       "Error in part (c)",
       "No error"
     ],
-    "ans": 3,
+    "ans": 1,
     "tags": [
       "CDS",
       "English",
       "Spotting Errors"
     ],
     "topic": "Spotting Errors",
+    "parts": [
+      "Where there is a will",
+      "then there is a way",
+      "is an old epithet."
+    ],
     "passage": "Post-colonial cultural analysis has been concerned with the elaboration of theoretical structures that contest the previous dominant western ways of seeing things. A simple analogy would be with feminism, which has involved a comparable kind of project: there was a time when any book you might read, any speech you might hear, any film that you saw, was always told from the point of view of male. The woman was there, but she was always an object, never a subject. From what you would read, or the films you would see, the woman was always the one who was looked at. She was never the observing eye. For centuries it was assumed that women were less intelligent than men and that they did not merit the same degree of education. They were not allowed a vote in the political system. By the same token, any kind of knowledge developed by women was regarded as non- serious, trivial, gossip or alternatively as knowledge that had been discredited by science, such as superstition or traditional practices of childbirth or healing. All these attitudes were part of a larger system in which women were dominated, exploited, and physically abused by men. Slowly, but increasingly, from the end of 18th century, feminists began to contest this situation. The more they contested it, the more it became increasingly obvious that these attitudes extended into the whole of the culture; social relations, politics, law, medicine, the arts, popular and academic knowledge."
   },
   {
@@ -893,6 +908,11 @@ var PYQ_CDS_2020_II = [
       "Spotting Errors"
     ],
     "topic": "Spotting Errors",
+    "parts": [
+      "Indian feminism grew out of the women's movements of the late nineteenth century,",
+      "reached full maturity in the early twentieth century",
+      "No error"
+    ],
     "passage": "Post-colonial cultural analysis has been concerned with the elaboration of theoretical structures that contest the previous dominant western ways of seeing things. A simple analogy would be with feminism, which has involved a comparable kind of project: there was a time when any book you might read, any speech you might hear, any film that you saw, was always told from the point of view of male. The woman was there, but she was always an object, never a subject. From what you would read, or the films you would see, the woman was always the one who was looked at. She was never the observing eye. For centuries it was assumed that women were less intelligent than men and that they did not merit the same degree of education. They were not allowed a vote in the political system. By the same token, any kind of knowledge developed by women was regarded as non- serious, trivial, gossip or alternatively as knowledge that had been discredited by science, such as superstition or traditional practices of childbirth or healing. All these attitudes were part of a larger system in which women were dominated, exploited, and physically abused by men. Slowly, but increasingly, from the end of 18th century, feminists began to contest this situation. The more they contested it, the more it became increasingly obvious that these attitudes extended into the whole of the culture; social relations, politics, law, medicine, the arts, popular and academic knowledge."
   },
   {
@@ -907,13 +927,18 @@ var PYQ_CDS_2020_II = [
       "Error in part (c)",
       "No error"
     ],
-    "ans": 0,
+    "ans": 2,
     "tags": [
       "CDS",
       "English",
       "Spotting Errors"
     ],
     "topic": "Spotting Errors",
+    "parts": [
+      "The greatest merit of democracy",
+      "is that everyone feels free",
+      "and can pursues his/her interest."
+    ],
     "passage": "Post-colonial cultural analysis has been concerned with the elaboration of theoretical structures that contest the previous dominant western ways of seeing things. A simple analogy would be with feminism, which has involved a comparable kind of project: there was a time when any book you might read, any speech you might hear, any film that you saw, was always told from the point of view of male. The woman was there, but she was always an object, never a subject. From what you would read, or the films you would see, the woman was always the one who was looked at. She was never the observing eye. For centuries it was assumed that women were less intelligent than men and that they did not merit the same degree of education. They were not allowed a vote in the political system. By the same token, any kind of knowledge developed by women was regarded as non- serious, trivial, gossip or alternatively as knowledge that had been discredited by science, such as superstition or traditional practices of childbirth or healing. All these attitudes were part of a larger system in which women were dominated, exploited, and physically abused by men. Slowly, but increasingly, from the end of 18th century, feminists began to contest this situation. The more they contested it, the more it became increasingly obvious that these attitudes extended into the whole of the culture; social relations, politics, law, medicine, the arts, popular and academic knowledge."
   },
   {
@@ -928,13 +953,18 @@ var PYQ_CDS_2020_II = [
       "Error in part (c)",
       "No error"
     ],
-    "ans": 3,
+    "ans": 2,
     "tags": [
       "CDS",
       "English",
       "Spotting Errors"
     ],
     "topic": "Spotting Errors",
+    "parts": [
+      "All stake holders of education",
+      "have the right to ask for accountability",
+      "in every aspects of its implementation."
+    ],
     "passage": "Post-colonial cultural analysis has been concerned with the elaboration of theoretical structures that contest the previous dominant western ways of seeing things. A simple analogy would be with feminism, which has involved a comparable kind of project: there was a time when any book you might read, any speech you might hear, any film that you saw, was always told from the point of view of male. The woman was there, but she was always an object, never a subject. From what you would read, or the films you would see, the woman was always the one who was looked at. She was never the observing eye. For centuries it was assumed that women were less intelligent than men and that they did not merit the same degree of education. They were not allowed a vote in the political system. By the same token, any kind of knowledge developed by women was regarded as non- serious, trivial, gossip or alternatively as knowledge that had been discredited by science, such as superstition or traditional practices of childbirth or healing. All these attitudes were part of a larger system in which women were dominated, exploited, and physically abused by men. Slowly, but increasingly, from the end of 18th century, feminists began to contest this situation. The more they contested it, the more it became increasingly obvious that these attitudes extended into the whole of the culture; social relations, politics, law, medicine, the arts, popular and academic knowledge."
   },
   {
@@ -949,13 +979,18 @@ var PYQ_CDS_2020_II = [
       "Error in part (c)",
       "No error"
     ],
-    "ans": 2,
+    "ans": 1,
     "tags": [
       "CDS",
       "English",
       "Spotting Errors"
     ],
     "topic": "Spotting Errors",
+    "parts": [
+      "Learning many languages promotes",
+      "linguistic, cultural and social harmonies",
+      "among people speaking different languages."
+    ],
     "passage": "Post-colonial cultural analysis has been concerned with the elaboration of theoretical structures that contest the previous dominant western ways of seeing things. A simple analogy would be with feminism, which has involved a comparable kind of project: there was a time when any book you might read, any speech you might hear, any film that you saw, was always told from the point of view of male. The woman was there, but she was always an object, never a subject. From what you would read, or the films you would see, the woman was always the one who was looked at. She was never the observing eye. For centuries it was assumed that women were less intelligent than men and that they did not merit the same degree of education. They were not allowed a vote in the political system. By the same token, any kind of knowledge developed by women was regarded as non- serious, trivial, gossip or alternatively as knowledge that had been discredited by science, such as superstition or traditional practices of childbirth or healing. All these attitudes were part of a larger system in which women were dominated, exploited, and physically abused by men. Slowly, but increasingly, from the end of 18th century, feminists began to contest this situation. The more they contested it, the more it became increasingly obvious that these attitudes extended into the whole of the culture; social relations, politics, law, medicine, the arts, popular and academic knowledge."
   },
   {
@@ -970,13 +1005,18 @@ var PYQ_CDS_2020_II = [
       "Error in part (c)",
       "No error"
     ],
-    "ans": 1,
+    "ans": 2,
     "tags": [
       "CDS",
       "English",
       "Spotting Errors"
     ],
     "topic": "Spotting Errors",
+    "parts": [
+      "One should not act",
+      "according to one’s",
+      "whims and fancies on public places."
+    ],
     "passage": "Post-colonial cultural analysis has been concerned with the elaboration of theoretical structures that contest the previous dominant western ways of seeing things. A simple analogy would be with feminism, which has involved a comparable kind of project: there was a time when any book you might read, any speech you might hear, any film that you saw, was always told from the point of view of male. The woman was there, but she was always an object, never a subject. From what you would read, or the films you would see, the woman was always the one who was looked at. She was never the observing eye. For centuries it was assumed that women were less intelligent than men and that they did not merit the same degree of education. They were not allowed a vote in the political system. By the same token, any kind of knowledge developed by women was regarded as non- serious, trivial, gossip or alternatively as knowledge that had been discredited by science, such as superstition or traditional practices of childbirth or healing. All these attitudes were part of a larger system in which women were dominated, exploited, and physically abused by men. Slowly, but increasingly, from the end of 18th century, feminists began to contest this situation. The more they contested it, the more it became increasingly obvious that these attitudes extended into the whole of the culture; social relations, politics, law, medicine, the arts, popular and academic knowledge."
   },
   {
@@ -991,13 +1031,18 @@ var PYQ_CDS_2020_II = [
       "Error in part (c)",
       "No error"
     ],
-    "ans": 0,
+    "ans": 2,
     "tags": [
       "CDS",
       "English",
       "Spotting Errors"
     ],
     "topic": "Spotting Errors",
+    "parts": [
+      "Economists believe that",
+      "India had taken a new turn in 1990",
+      "with the liberalization to her economy."
+    ],
     "passage": "Post-colonial cultural analysis has been concerned with the elaboration of theoretical structures that contest the previous dominant western ways of seeing things. A simple analogy would be with feminism, which has involved a comparable kind of project: there was a time when any book you might read, any speech you might hear, any film that you saw, was always told from the point of view of male. The woman was there, but she was always an object, never a subject. From what you would read, or the films you would see, the woman was always the one who was looked at. She was never the observing eye. For centuries it was assumed that women were less intelligent than men and that they did not merit the same degree of education. They were not allowed a vote in the political system. By the same token, any kind of knowledge developed by women was regarded as non- serious, trivial, gossip or alternatively as knowledge that had been discredited by science, such as superstition or traditional practices of childbirth or healing. All these attitudes were part of a larger system in which women were dominated, exploited, and physically abused by men. Slowly, but increasingly, from the end of 18th century, feminists began to contest this situation. The more they contested it, the more it became increasingly obvious that these attitudes extended into the whole of the culture; social relations, politics, law, medicine, the arts, popular and academic knowledge."
   },
   {
@@ -1012,13 +1057,18 @@ var PYQ_CDS_2020_II = [
       "Error in part (c)",
       "No error"
     ],
-    "ans": 2,
+    "ans": 1,
     "tags": [
       "CDS",
       "English",
       "Spotting Errors"
     ],
     "topic": "Spotting Errors",
+    "parts": [
+      "Irrigation works have a special importance",
+      "in an agricultural countries like India,",
+      "where rainfall is unequally distributed throughout the seasons."
+    ],
     "passage": "Post-colonial cultural analysis has been concerned with the elaboration of theoretical structures that contest the previous dominant western ways of seeing things. A simple analogy would be with feminism, which has involved a comparable kind of project: there was a time when any book you might read, any speech you might hear, any film that you saw, was always told from the point of view of male. The woman was there, but she was always an object, never a subject. From what you would read, or the films you would see, the woman was always the one who was looked at. She was never the observing eye. For centuries it was assumed that women were less intelligent than men and that they did not merit the same degree of education. They were not allowed a vote in the political system. By the same token, any kind of knowledge developed by women was regarded as non- serious, trivial, gossip or alternatively as knowledge that had been discredited by science, such as superstition or traditional practices of childbirth or healing. All these attitudes were part of a larger system in which women were dominated, exploited, and physically abused by men. Slowly, but increasingly, from the end of 18th century, feminists began to contest this situation. The more they contested it, the more it became increasingly obvious that these attitudes extended into the whole of the culture; social relations, politics, law, medicine, the arts, popular and academic knowledge."
   },
   {
