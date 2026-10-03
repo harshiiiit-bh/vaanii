@@ -1289,6 +1289,19 @@ function pyqOptionLabels(q){
     const explicit=String(q.spottingFormat||'').trim().toLowerCase();
     const hasDChoice=q.o.some(value=>/error\s+in\s+part\s*\(?d\)?/i.test(String(value)));
     const hasNoError=q.o.some(value=>/\bno\s+error\b/i.test(String(value)));
+    // Some legacy Spotting Errors papers put the sentence fragments directly
+    // in the four answer options. Those options are already the printed
+    // (a)/(b)/(c)/(No error) choices and must never be rewritten into generic
+    // "Error in part (a)" labels.
+    const optionParts=q.o.slice(0,3).map(value=>String(value||'').trim());
+    let optionCursor=0, optionsAreSentenceFragments=optionParts.length===3 && optionParts.every(phrase=>{
+      if(!phrase||phrase.length<=2)return false;
+      const index=String(q.q||'').toLocaleLowerCase().indexOf(phrase.toLocaleLowerCase(),optionCursor);
+      if(index<0)return false;
+      optionCursor=index+phrase.length;
+      return true;
+    }) && hasNoError;
+    if(optionsAreSentenceFragments)return q.o;
     if(!parts&&!explicit&&q.spottingNoError===undefined&&!hasDChoice&&!hasNoError)return q.o;
     const count=format==='four-part'?4:format==='three-part-no-error'?3:parts&&parts.length===4?4:3;
     const labels=Array.from({length:count},(_,i)=>'Error in part ('+String.fromCharCode(97+i)+')');
