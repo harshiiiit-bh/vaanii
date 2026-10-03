@@ -704,6 +704,9 @@ try {
     'var CODE_VERSION = 3',
     'var LEGACY_SRC_CODES',
     'ARENA_RECOVERY_KEY',
+    'function arenaAnalysis',
+    'function startMistakeDrill',
+    'SESSION RECOVERED',
     'NDA+CDS',
     'NDA+AFCAT',
     'CDS+AFCAT',
@@ -731,9 +734,6 @@ try {
     '.vx-invite-action',
     '.vx-invite-copy-row',
     '.vx-invite-action',
-    'function arenaAnalysis',
-    'function startMistakeDrill',
-    'SESSION RECOVERED',
     'vx-arena-intelligence',
     'vx-arena-practice-complete'
   ]) {
