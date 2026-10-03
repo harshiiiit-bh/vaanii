@@ -920,7 +920,7 @@ var PYQ_CDS_2020_II = [
     "s": "II",
     "n": 45,
     "sec": "Ordering of Sentences",
-    "q": "S1: All living things affect the living and non-living things around them. This interdependability needs to be understood when we, humans consume much more than required and abuse nature. S6: Rabbit’s fleas carry the virus which causes myxomatosis, so they can affect the size of the rabbit population.",
+    "q": "S1: All living things affect the living and non-living things around them. S6: This interdependability needs to be understood when we, humans consume much more than required and abuse nature.",
     "o": [
       "RSQP",
       "PSRQ",
@@ -1013,7 +1013,7 @@ var PYQ_CDS_2020_II = [
     ],
     "topic": "Ordering of Sentences",
     "parts": [
-      "It can improve your strength; make your body more flexible and less likely to suffer from sprain. It can also improve your endurance.",
+      "It can improve your strength; make your body more flexible and less likely to suffer from sprain.",
       "It can also improve your endurance.",
       "It also uses up energy and helps to prevent large amounts of fat building up in the body.",
       "Exercise can increase your fitness in three ways."
@@ -1070,7 +1070,7 @@ var PYQ_CDS_2020_II = [
       "And that is without taking into account the effects of earth's rotation on its own axis, its orbiting around the sun and sun’s journey around the Milky Way.",
       "As you read this sentence, perhaps sitting in a comfortable chair in your study, you would probably consider yourself at rest."
     ]
-  }
+  },
   {
     "y": 2020,
     "s": "II",
