@@ -94,7 +94,7 @@ Deno.serve(async (request: Request) => {
 
   try {
     const url = new URL("/rest/v1/arena_scores", supabaseUrl);
-    url.searchParams.set("select", "code,pid,name,score,seconds,total,at");
+    url.searchParams.set("select", "code,pid,name,score,seconds,total,correct,incorrect,skipped,at");
     url.searchParams.set("code", "eq." + code);
     url.searchParams.set("order", "score.desc,seconds.asc,at.asc");
     url.searchParams.set("limit", "100");
