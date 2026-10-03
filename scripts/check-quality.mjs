@@ -571,9 +571,9 @@ try {
     if(!officerCss.includes(marker))throw new Error('Officer feature-briefing styling missing: '+marker);
   }
   if(!pageSource.includes('vaani-info-center.css?v=20261003-release3'))throw new Error('Info Centre cache key was not refreshed.');
-  if(!pageSource.includes('js/vaani-info-center.js?v=20261003-release3'))throw new Error('Info Centre script cache key was not refreshed.');
+  if(!pageSource.includes('js/vaani-info-center.js?v=20261003-release5'))throw new Error('Info Centre script cache key was not refreshed.');
   if(!pageSource.includes('vaani-character-elite.css?v=20261003-release3'))throw new Error('Officer elite CSS cache key was not refreshed.');
-  if(!pageSource.includes('js/vaani-character-elite.js?v=20261003-release3'))throw new Error('Officer elite script cache key was not refreshed.');
+  if(!pageSource.includes('js/vaani-character-elite.js?v=20261003-release4'))throw new Error('Officer elite script cache key was not refreshed.');
   console.log('Feature updates: shared manifest, duplicate/version audit, bounded Officer retry, replay controls, release metadata, elevated briefing UI and cache keys validated');
 }catch(error){console.error('Feature release audit failed:',error.message);process.exitCode=1;}
 
@@ -695,6 +695,7 @@ try{
 try {
   const arena = readFileSync('js/vaani-arena.js','utf8');
   const arenaCss = readFileSync('vaani-arena-briefing.css','utf8');
+  const officerSource = readFileSync('js/vaani-character-elite.js','utf8');
   const pageSource = readFileSync('index.html','utf8');
   for (const marker of [
     'screenCreateV2','screenShareV2','screenHostAnswers',
@@ -728,7 +729,13 @@ try {
     '.vx-host-spectate',
     '.vx-invite-action',
     '.vx-invite-copy-code',
-    '.vx-invite-share'
+    '.vx-invite-share',
+    'ARENA_RECOVERY_KEY',
+    'function arenaAnalysis',
+    'function startMistakeDrill',
+    'SESSION RECOVERED',
+    'vx-arena-intelligence',
+    'vx-arena-practice-complete'
   ]) {
     if (!arenaCss.includes(marker)) throw new Error('Arena redesign style is missing: ' + marker);
   }
@@ -748,8 +755,8 @@ try {
   }
   if (!/v !== 2 && v !== CODE_VERSION/.test(arena)) throw new Error('Arena match-code decoder is not backward compatible with v2 invites.');
   if (!arena.includes('codeVersion: v')) throw new Error('Arena decoded matches do not retain the code version.');
-  if (!pageSource.includes('vaani-arena-briefing.css?v=20261003-sharefix1')) throw new Error('Arena share CSS cache key is outdated.');
-  if (!pageSource.includes('js/vaani-arena.js?v=20261003-sharefix1')) throw new Error('Arena share JS cache key is outdated.');
+  if (!pageSource.includes('vaani-arena-briefing.css?v=20261003-intel1')) throw new Error('Arena intelligence CSS cache key is outdated.');
+  if (!pageSource.includes('js/vaani-arena.js?v=20261003-intel1')) throw new Error('Arena intelligence JS cache key is outdated.');
   if (!arena.includes('function copyText(value, onSuccess)')) throw new Error('Arena invite copy fallback is missing.');
   if (!arena.includes('var share=actionButton(\'Share invite\'')) throw new Error('Arena share action is not always rendered.');
   if (!arena.includes('navigator.share')) throw new Error('Native share action is missing.');
@@ -757,6 +764,15 @@ try {
   if (!arena.includes("S.hostSpectate=true")) throw new Error('Host spectate mode is not activated from the host-only control.');
   if (!arena.includes("S.result=null;")) throw new Error('Host spectate must not create a player result before opening the board.');
   if (!arena.includes("if(hostSpectating)")) throw new Error('Result screen is missing the host spectate presentation.');
+  if (!arena.includes("clearRunRecovery();")) throw new Error('Arena recovery state is not cleared after official submission.');
+  if (!arena.includes("if(!r.practiceMode)saveRunRecovery();")) throw new Error('Arena recovery is not persisted during active official runs.');
+  if (!arena.includes("practiceMode:!!options.practice")) throw new Error('Mistake-drill practice mode is missing.');
+  if (!arena.includes("S.practiceSummary=")) throw new Error('Mistake-drill completion state is missing.');
+  if (!arena.includes("window.dispatchEvent(new CustomEvent('vaani:arena-analysis'")) throw new Error('Arena analytics event is missing.');
+  if (!officerSource.includes('window.VAANI_ARENA_ANALYSIS_BRIEFING=function(insights)')) throw new Error('Officer Arena debrief bridge is missing.');
+  if (!pageSource.includes('js/vaani-info-center.js?v=20261003-release5')) throw new Error('Feature release cache key is outdated.');
+  if (!pageSource.includes('js/vaani-character-elite.js?v=20261003-release4')) throw new Error('Officer debrief cache key is outdated.');
+  console.log('Arena intelligence audit: recovery, analytics, mistake drill, contextual Officer debrief and cache keys validated');
   console.log('Arena multi-bank audit: v3 source matrix, v2 decode compatibility, combined pool generation, multi-select UI, responsive styling and cache keys validated');
   console.log('Arena: redesigned question-selection console, host controls, shared host identity and answer-key route validated');
 }catch(error){console.error('Arena audit failed:',error.message);process.exitCode=1;}
