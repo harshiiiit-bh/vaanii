@@ -203,7 +203,7 @@
   const MOBILE_ROOMS={
     dashboard:[
       {id:'mission',icon:'◎',label:'Mission',selectors:['#view-dashboard .vd-hero','#view-dashboard #reviewWidgetCard','#view-dashboard .vd-briefing']},
-      {id:'progress',icon:'◈',label:'Progress',selectors:['#view-dashboard .vd-roadmap']},
+      {id:'progress',icon:'◈',label:'Progress',selectors:['#view-dashboard .vd-roadmap','#view-dashboard .grid-2']},
       {id:'practice',icon:'△',label:'Practice',selectors:['#view-dashboard [aria-label="XP Arcade"]','#view-dashboard .vd-focus-sprint','#view-dashboard .pyq-stat-mini']},
       {id:'rewards',icon:'★',label:'Rewards',selectors:['#view-dashboard .quote-panel','#view-dashboard .vd-badge-grid','#view-dashboard .spin-card','#view-dashboard #mysteryBoxWrap']}
     ],
