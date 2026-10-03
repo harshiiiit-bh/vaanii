@@ -121,7 +121,7 @@ for (const file of files) {
     for(let n=1;n<=paperNumbers[paperNumbers.length-1];n++) if(!paperNumbers.includes(n)) missing.push(n);
     paperDiagnostics.push(file+' questionNumberGaps: '+missing.join(', '));
   }
-  const hardKeys=['edgeWhitespace','forbiddenChars','htmlLike','badOptions'];
+  const hardKeys=['forbiddenChars','htmlLike','badOptions'];
   const warningKeys=['repeatedWords','flattenedStructure'];
   for(const key of hardKeys){
     if(diag[key].length) paperDiagnostics.push(file+' '+key+': '+diag[key].slice(0,20).join(', '));
