@@ -50,6 +50,8 @@ for (const file of files) {
   vm.runInContext(source + '\n;globalThis.__pyqTestData = ' + variable + ';', paperSandbox, { filename: filePath });
   const data = paperSandbox.__pyqTestData;
   assert.ok(Array.isArray(data) && data.length > 0, 'Paper did not expose a non-empty array: ' + file);
+  const expectedQuestionCount = exam === 'NDA' ? 50 : exam === 'CDS' ? 120 : 30;
+  assert.equal(data.length, expectedQuestionCount, file + ': expected exactly ' + expectedQuestionCount + ' questions, got ' + data.length);
   const paperIds = new Set();
   const paperNumbers = [];
   const diag = { repeatedSpaces: [], repeatedWords: [], optionDuplicates: [], flattenedStructure: [], partMismatches: [], forbiddenChars: [], htmlLike: [], badOptions: [] };
@@ -68,6 +70,20 @@ for (const file of files) {
     if(hasRepeatedWord(q.q)) diag.repeatedWords.push(q.n);
     if(/<\/?(?:div|span|p|br|script|style)\b/i.test(q.q)) diag.htmlLike.push(q.n);
 
+    for (const [fieldName, value] of [['question', q.q], ['passage', q.passage]]) {
+      if (value == null) continue;
+      assert.ok(typeof value === 'string', file + ': ' + fieldName + ' must be text at Q' + q.n);
+      assert.ok(!hasForbiddenText(value), file + ': forbidden/invisible/replacement character in ' + fieldName + ' at Q' + q.n);
+      if(/<\/?(?:div|span|p|br|script|style)\b/i.test(value)) diag.htmlLike.push(q.n + ':' + fieldName);
+    }
+    if (Array.isArray(q.parts)) {
+      q.parts.forEach((part, partIndex) => {
+        assert.ok(typeof part === 'string' && part.trim(), file + ': empty part at Q' + q.n + ' part ' + (partIndex + 1));
+        assert.equal(part, part.trim(), file + ': leading/trailing whitespace in part at Q' + q.n + ' part ' + (partIndex + 1));
+        assert.ok(!hasForbiddenText(part), file + ': forbidden/invisible/replacement character in part at Q' + q.n + ' part ' + (partIndex + 1));
+      });
+    }
+
     assert.ok(Array.isArray(q.o) && q.o.length >= 2, file + ': invalid options at Q' + q.n);
     const canonicalOptions=q.o.map(canonicalSpace);
     if(new Set(canonicalOptions).size!==canonicalOptions.length) diag.optionDuplicates.push(q.n);
@@ -77,7 +93,6 @@ for (const file of files) {
       assert.ok(!hasForbiddenText(option), file + ': forbidden/invisible/replacement character in option at Q' + q.n + ' option ' + (optionIndex + 1));
       if(/<\/?(?:div|span|p|br|script|style)\b/i.test(option)) diag.htmlLike.push(q.n+':'+optionIndex);
     });
-    if(new Set(canonicalOptions).size!==canonicalOptions.length) diag.optionDuplicates.push(q.n);
 
     assert.ok(Number.isInteger(q.ans) && q.ans >= 0 && q.ans < q.o.length, file + ': invalid answer index at Q' + q.n);
     assert.ok(typeof q.sec === 'string' && q.sec.trim(), file + ': missing source section at Q' + q.n);
@@ -128,6 +143,20 @@ for (const file of files) {
   }
   for(const key of warningKeys){
     if(diag[key].length) console.warn('PYQ structure warning: '+file+' '+key+': '+diag[key].slice(0,20).join(', '));
+  }
+  if (file === '2017-II' && exam === 'NDA') {
+    const q12 = data.find(q => Number(q.n) === 12);
+    const q21 = data.find(q => Number(q.n) === 21);
+    const q31 = data.find(q => Number(q.n) === 31);
+    assert.equal(q12.ans, 3, 'NDA II 2017 Q12 answer key regression');
+    assert.equal(q12.sec, 'Antonyms', 'NDA II 2017 Q12 section regression');
+    assert.ok(String(q21.passage || '').includes('I had 21. ______ taken 22. ______ my clothes'), 'NDA II 2017 cloze passage regression');
+    assert.deepEqual(q31.parts, [
+      'has slowly and painfully surmounted',
+      'and his growing intelligence',
+      'all the obstacles that have come in his way',
+      'has faced all kinds of dangers'
+    ], 'NDA II 2017 Q31 part transcription regression');
   }
   papers++;
 }
