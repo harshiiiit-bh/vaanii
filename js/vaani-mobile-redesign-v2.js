@@ -114,7 +114,11 @@
     title.textContent=meta.title;
     sub.textContent=meta.meta;
     const btn=q('.mobile-viewbar-btn',bar);
-    btn.style.display=(SECTION_MAP[name]||[]).length ? '' : 'none';
+    // Book Reading and PYQ have their own dense internal command bars.
+    // Avoid stacking another mobile toolbar above them.
+    const internalChrome=(name==='books'||name==='pyq');
+    bar.style.display=internalChrome?'none':'';
+    btn.style.display=(!internalChrome && (SECTION_MAP[name]||[]).length) ? '' : 'none';
   }
 
   function ensureSectionSheet(){
