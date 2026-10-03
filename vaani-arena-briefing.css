@@ -554,3 +554,16 @@ body[data-theme="dark"] #view-games .vx-arena-inline-row{background:rgba(255,255
   #view-games .vx-arena-choice{font-size:.6rem}
   #view-games .vx-invite-code code{font-size:1.02rem}
 }
+
+/* Arena profile-picture integration */
+#view-games .vx-host-avatar{position:relative;overflow:hidden;flex:0 0 37px;width:37px;height:37px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#f1d17f,#9b6b24);color:#15202a;font:900 .78rem var(--vx-font-display);border:1px solid rgba(255,235,174,.72)}
+#view-games .vx-host-avatar.has-photo{background:#142230;color:transparent}
+#view-games .vx-host-avatar img,
+#view-games .vx-championship-avatar img,
+#view-games .vx-championship-podium-avatar img{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 50%;transform-origin:center center;display:block;
+}
+#view-games .vx-championship-avatar,
+#view-games .vx-championship-podium-avatar{overflow:hidden;position:relative}
+#view-games .vx-championship-avatar.has-photo,
+#view-games .vx-championship-podium-avatar.has-photo{color:transparent}
