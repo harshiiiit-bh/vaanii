@@ -327,20 +327,22 @@
     fetch: function (code) { return Promise.resolve(this.read(code)); }
   };
 
-  /* Shared historical reads are served by a narrow Edge Function. The
-     browser key is publishable; score submissions remain device-local until
-     a trusted validation endpoint is implemented. */
-  var SHARED_BOARD_ENDPOINT = 'https://pccavdwwhykwyeitxixc.supabase.co/functions/v1/arena-leaderboard';
-  var SHARED_BOARD_API_KEY = 'sb_publishable_VfRmr2xFvu4Iv8sfSJReQQ_qzr5z_MI';
+  /* Shared Arena board:
+     - submissions go to Supabase via the public RPC
+     - reads come from the narrow Edge Function
+     - local storage remains only as an offline recovery/display cache */
   var SHARED_BOARD_ENDPOINT = 'https://pccavdwwhykwyeitxixc.supabase.co/functions/v1/arena-leaderboard';
   var SHARED_SUBMIT_ENDPOINT = 'https://pccavdwwhykwyeitxixc.supabase.co/rest/v1/rpc/arena_submit_attempt';
-  var SHARED_BOARD_API_KEY = 'sb_publishable_VfRmr2xFvu4Iv8sfJRReQQ_qzr5z_MI';
+  var SHARED_BOARD_API_KEY = 'sb_publishable_VfRmr2xFvu4Iv8sfSJReQQ_qzr5z_MI';
+
   var SharedReadAdapter = {
     name: 'shared',
     live: true,
     shared: true,
     submit: function (code, entry) {
-      if (typeof global.fetch !== 'function') return Promise.reject(new Error('Shared leaderboard submission is unavailable'));
+      if (typeof global.fetch !== 'function') {
+        return Promise.reject(new Error('Shared leaderboard submission is unavailable'));
+      }
       var payload = {
         p_code: code,
         p_pid: String(entry.pid || ''),
@@ -359,17 +361,21 @@
         },
         body: JSON.stringify(payload)
       }).then(function (response) {
-        if (!response.ok) throw new Error('Shared leaderboard submission returned HTTP ' + response.status);
+        if (!response.ok) {
+          throw new Error('Shared leaderboard submission returned HTTP ' + response.status);
+        }
         return response.json();
-      }).then(function (payload) {
-        if (!payload || payload.ok !== true) {
-          throw new Error((payload && payload.error) || 'Shared leaderboard submission was rejected');
+      }).then(function (result) {
+        if (!result || result.ok !== true) {
+          throw new Error((result && result.error) || 'Shared leaderboard submission was rejected');
         }
         return true;
       });
     },
     fetch: function (code) {
-      if (typeof global.fetch !== 'function') return Promise.reject(new Error('Shared leaderboard fetch is unavailable'));
+      if (typeof global.fetch !== 'function') {
+        return Promise.reject(new Error('Shared leaderboard fetch is unavailable'));
+      }
       return global.fetch(SHARED_BOARD_ENDPOINT, {
         method: 'POST',
         headers: {
@@ -378,10 +384,14 @@
         },
         body: JSON.stringify({ code: code })
       }).then(function (response) {
-        if (!response.ok) throw new Error('Shared leaderboard returned HTTP ' + response.status);
+        if (!response.ok) {
+          throw new Error('Shared leaderboard returned HTTP ' + response.status);
+        }
         return response.json();
       }).then(function (payload) {
-        if (!payload || !Array.isArray(payload.rows)) throw new Error('Shared leaderboard response is invalid');
+        if (!payload || !Array.isArray(payload.rows)) {
+          throw new Error('Shared leaderboard response is invalid');
+        }
         return payload.rows;
       });
     }
