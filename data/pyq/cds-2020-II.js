@@ -8,9 +8,9 @@ var PYQ_CDS_2020_II = [
     "sec": "Spellings",
     "q": "Which one of the following alternatives has the correct spelling?",
     "o": [
-      "Mountaineous",
+      "Mountaneous",
       "Mountenous",
-      "Mountaineus",
+      "Mountaineous",
       "Mountainous"
     ],
     "ans": 3,
@@ -108,7 +108,7 @@ var PYQ_CDS_2020_II = [
     "sec": "Spellings",
     "q": "Which one of the following alternatives has the correct spelling?",
     "o": [
-      "Twelfth",
+      "Twelth",
       "Twelfth",
       "Tweluth",
       "Twelthe"
