@@ -465,7 +465,7 @@ var PYQ_2017_II = [
       "R P Q S",
       "P R Q S"
     ],
-    "ans": 0
+    "ans": 1
   },
   {
     "y": 2017,
