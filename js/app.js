@@ -4790,7 +4790,7 @@ function bakeProfileCrop(src,x,y,zoom,size){
 function ensureProfilePhotoEditor(){
   let modal=document.getElementById('vpProfilePhotoEditor');if(modal)return modal;
   modal=document.createElement('div');modal.id='vpProfilePhotoEditor';modal.className='vp-photo-editor';modal.hidden=true;
-  modal.innerHTML=\`
+  modal.innerHTML=`
     <div class="vp-photo-editor-scrim" data-photo-close>
       <section class="vp-photo-editor-dialog" role="dialog" aria-modal="true" aria-labelledby="vpPhotoEditorTitle">
         <div class="vp-photo-editor-head"><div><span class="vp-profile-kicker">PROFILE PICTURE</span><h3 id="vpPhotoEditorTitle">Choose your picture</h3><p>Upload, drop an image, or paste an image link. Then drag and zoom to frame the circular crop.</p></div><button type="button" class="vp-photo-editor-close" data-photo-close aria-label="Close profile picture editor">×</button></div>
@@ -4806,7 +4806,7 @@ function ensureProfilePhotoEditor(){
           </div>
         </div>
       </section>
-    </div>\`;
+    </div>`;
   document.body.appendChild(modal);
   const stage=modal.querySelector('#vpPhotoEditorStage'),img=modal.querySelector('#vpPhotoCropImage'),empty=modal.querySelector('#vpPhotoEmpty'),zoom=modal.querySelector('#vpPhotoZoom'),zoomValue=modal.querySelector('#vpPhotoZoomValue'),status=modal.querySelector('#vpPhotoStatus');
   let draft={src:'',kind:'',x:50,y:50,zoom:1},drag=null;
