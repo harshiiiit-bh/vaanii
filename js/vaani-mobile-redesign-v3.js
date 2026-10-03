@@ -193,302 +193,221 @@
     window.closeMoreSheet=function(){closeMore();};
   }
 
-  function setupDashboardMaster(){
+  /* ----------------------------------------------------------
+     MOBILE COMMAND ROOMS
+     The mobile experience is a set of finite rooms rather than
+     one endlessly stacked dashboard. Rooms switch in-place and
+     also respond to horizontal swipe gestures.
+  ---------------------------------------------------------- */
+
+  const MOBILE_ROOMS={
+    dashboard:[
+      {id:'mission',icon:'◎',label:'Mission',selectors:['#view-dashboard .vd-hero','#view-dashboard #reviewWidgetCard','#view-dashboard .vd-briefing']},
+      {id:'progress',icon:'◈',label:'Progress',selectors:['#view-dashboard .vd-roadmap']},
+      {id:'practice',icon:'△',label:'Practice',selectors:['#view-dashboard [aria-label="XP Arcade"]','#view-dashboard .vd-focus-sprint','#view-dashboard .pyq-stat-mini']},
+      {id:'rewards',icon:'★',label:'Rewards',selectors:['#view-dashboard .quote-panel','#view-dashboard .vd-badge-grid','#view-dashboard .spin-card','#view-dashboard #mysteryBoxWrap']}
+    ],
+    grammar:[
+      {id:'map',icon:'◎',label:'Map',selectors:['#view-grammar .gt-tree-wrap']},
+      {id:'progress',icon:'◈',label:'Progress',selectors:['#view-grammar .gt-sidebar']},
+      {id:'academy',icon:'▣',label:'Academy',selectors:['#view-grammar .ga-catalog']}
+    ],
+    vocab:[
+      {id:'word',icon:'A',label:'Word',selectors:['#view-vocab .word-of-day']},
+      {id:'drill',icon:'↗',label:'Drill',selectors:['#view-vocab .singles-strip','#view-vocab .vocab-toolbar']},
+      {id:'library',icon:'▦',label:'Library',selectors:['#view-vocab .vv-word-grid']}
+    ],
+    books:[
+      {id:'reader',icon:'▤',label:'Reader',selectors:['#view-books .vbv-scope']},
+      {id:'companion',icon:'⌕',label:'Companion',selectors:['#view-books .bc-global-link']}
+    ],
+    games:[
+      {id:'briefing',icon:'◎',label:'Briefing',selectors:['#view-games .vx-briefing']},
+      {id:'arena',icon:'△',label:'Arena',selectors:['#view-games .vx-arena']},
+      {id:'championship',icon:'★',label:'Championship',selectors:['#view-games .vx-championship']}
+    ],
+    compare:[
+      {id:'library',icon:'▦',label:'Library',selectors:['#view-compare .cmp-library-strip']},
+      {id:'pairs',icon:'⇄',label:'Pairs',selectors:['#view-compare .cmp-spotlight']}
+    ],
+    profile:[
+      {id:'profile',icon:'◎',label:'Profile',selectors:['#view-profile .vp-profile-hero']},
+      {id:'path',icon:'↗',label:'Path',selectors:['#view-profile .vp-path-card']},
+      {id:'rank',icon:'★',label:'Rank',selectors:['#view-profile .vp-rank-card']},
+      {id:'record',icon:'▤',label:'Record',selectors:['#view-profile .vp-activity-card','#view-profile .vp-achievements']}
+    ],
+    leaderboard:[
+      {id:'record',icon:'◎',label:'Record',selectors:['#view-leaderboard .service-hero','#view-leaderboard .service-grid']},
+      {id:'signals',icon:'△',label:'Signals',selectors:['#view-leaderboard .service-signal-grid']},
+      {id:'activity',icon:'◷',label:'Activity',selectors:['#view-leaderboard .service-week']},
+      {id:'field',icon:'▤',label:'Field Log',selectors:['#view-leaderboard .service-fieldlog']}
+    ],
+    notifications:[
+      {id:'updates',icon:'◎',label:'Updates',selectors:['#view-notifications .notification-grid']},
+      {id:'exams',icon:'▦',label:'Exam Desk',selectors:['#view-notifications .nc-directory']}
+    ],
+    info:[
+      {id:'featured',icon:'◎',label:'Featured',selectors:['#view-info .nc-featured']},
+      {id:'directory',icon:'▦',label:'Directory',selectors:['#view-info .nc-directory']},
+      {id:'calendar',icon:'◷',label:'Calendar',selectors:['#view-info .nc-accordion']}
+    ]
+  };
+
+  const roomState={name:null,rooms:[],index:0,touchX:0,touchY:0};
+
+  function uniqueElements(selectors){
+    const found=[];
+    (selectors||[]).forEach(sel=>{
+      const el=qs(sel);
+      if(el && !found.includes(el)) found.push(el);
+    });
+    return found;
+  }
+
+  function buildRooms(name){
+    return (MOBILE_ROOMS[name]||[])
+      .map(room=>({...room,elements:uniqueElements(room.selectors)}))
+      .filter(room=>room.elements.length);
+  }
+
+  function roomStorageKey(name){
+    return 'vaani.mobile.room.'+name;
+  }
+
+  function roomSwitcher(){
+    return qs('#mobileRoomSwitcher');
+  }
+
+  function removeRoomSwitcher(){
+    roomSwitcher()?.remove();
+    document.body.classList.remove('mobile-rooms-mode');
+    roomState.name=null;
+    roomState.rooms=[];
+    roomState.index=0;
+  }
+
+  function ensureRoomSwitcher(name,rooms){
+    let bar=roomSwitcher();
+    if(!bar){
+      bar=document.createElement('nav');
+      bar.id='mobileRoomSwitcher';
+      bar.className='mobile-room-switcher';
+      bar.setAttribute('aria-label','Mobile sections');
+      const viewbar=qs('.mobile-viewbar');
+      (viewbar||qs('#mainContent'))?.insertAdjacentElement(viewbar?'afterend':'afterbegin',bar);
+    }
+    bar.innerHTML=
+      '<div class="mrs-track">'+
+      rooms.map((room,i)=>
+        '<button type="button" class="mrs-tab'+(i===roomState.index?' active':'')+'" data-room-index="'+i+'">'+
+          '<span class="mrs-icon" aria-hidden="true">'+escapeHtml(room.icon)+'</span>'+
+          '<span class="mrs-label">'+escapeHtml(room.label)+'</span>'+
+        '</button>'
+      ).join('')+
+      '</div>'+
+      '<div class="mrs-progress" aria-hidden="true"><i></i></div>';
+
+    qsa('.mrs-tab',bar).forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        setMobileRoom(Number(btn.dataset.roomIndex),true);
+      });
+    });
+  }
+
+  function setMobileRoom(index,scrollTop){
+    if(!mobile() || !roomState.rooms.length) return;
+    const safe=Math.max(0,Math.min(roomState.rooms.length-1,index));
+    roomState.index=safe;
+    const room=roomState.rooms[safe];
+
+    roomState.rooms.forEach((candidate,i)=>{
+      const active=i===safe;
+      candidate.elements.forEach(el=>{
+        el.classList.toggle('mobile-room-hidden',!active);
+        el.setAttribute('aria-hidden',active?'false':'true');
+      });
+    });
+
+    const bar=roomSwitcher();
+    qsa('.mrs-tab',bar||document).forEach(btn=>{
+      const active=Number(btn.dataset.roomIndex)===safe;
+      btn.classList.toggle('active',active);
+      btn.setAttribute('aria-selected',active?'true':'false');
+    });
+    if(bar){
+      const pct=roomState.rooms.length===1?100:((safe+1)/roomState.rooms.length)*100;
+      const line=qs('.mrs-progress i',bar);
+      if(line) line.style.width=pct+'%';
+      qs('.mrs-tab.active',bar)?.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+    }
+
+    localStorage.setItem(roomStorageKey(roomState.name),String(safe));
+    if(scrollTop){
+      const view=qs('#view-'+roomState.name);
+      if(view){
+        const top=Math.max(0,(view.getBoundingClientRect().top+window.scrollY)-8);
+        window.scrollTo({top,behavior:'smooth'});
+      }
+    }
+  }
+
+  function setupMobileRooms(name){
     if(!mobile()) return;
-    const view=qs('#view-dashboard');
-    if(!view || view.dataset.mobileV3Dashboard==='1') return;
-
-    const briefing=qs('.vd-briefing',view);
-    const focus=qs('.vd-focus-sprint',view);
-    if(!briefing || !focus) return;
-
-    const more=qs('.mobile-dashboard-more');
-    if(more){
-      view.dataset.mobileV3Dashboard='1';
+    const rooms=buildRooms(name);
+    if(!rooms.length){
+      removeRoomSwitcher();
       return;
     }
 
-    const roadmap=qs('.vd-roadmap',view)?.closest('.card');
-    const activity=qs('#activityFeed',view)?.closest('.grid-2');
-    const arcade=qs('[aria-label="XP Arcade"]',view);
-    const quote=qs('.quote-panel',view);
-    const achievements=qs('.vd-badge-grid',view)?.closest('.card');
-    const spin=qs('.spin-card',view);
-    const mystery=qs('#mysteryBoxWrap',view);
-    const pyq=qs('.pyq-stat-mini',view)?.closest('.card');
+    roomState.name=name;
+    roomState.rooms=rooms;
+    const saved=Number(localStorage.getItem(roomStorageKey(name)));
+    roomState.index=Number.isInteger(saved)&&saved>=0&&saved<rooms.length?saved:0;
 
-    const nodes=[roadmap,activity,arcade,quote,achievements,spin,mystery,pyq].filter(Boolean);
-    if(!nodes.length) return;
+    const viewbar=qs('.mobile-viewbar');
+    const sectionBtn=qs('.mobile-viewbar-btn',viewbar||document);
+    if(sectionBtn) sectionBtn.style.display='none';
 
-    const shell=document.createElement('section');
-    shell.className='mobile-dashboard-more is-collapsed';
-    shell.setAttribute('aria-label','More dashboard modules');
-
-    const head=document.createElement('button');
-    head.type='button';
-    head.className='mobile-dashboard-more-head';
-    head.innerHTML=
-      '<span class="m3-more-mark">≡</span>'+
-      '<span class="m3-more-copy"><strong>More on your dashboard</strong><small>Roadmap · activity · XP · achievements · PYQ insights</small></span>'+
-      '<span class="m3-more-plus" aria-hidden="true"></span>';
-
-    const body=document.createElement('div');
-    body.className='mobile-dashboard-more-body';
-
-    nodes.forEach(n=>body.appendChild(n));
-    shell.appendChild(head);
-    shell.appendChild(body);
-
-    // Put Focus Sprint before the long analytics drawer.
-    briefing.insertAdjacentElement('afterend',focus);
-    focus.insertAdjacentElement('afterend',shell);
-
-    head.addEventListener('click',()=>{
-      const collapsed=shell.classList.toggle('is-collapsed');
-      localStorage.setItem('vaani.mobile.dashboard.more',collapsed?'1':'0');
-      head.setAttribute('aria-expanded',collapsed?'false':'true');
-      if(!collapsed) body.scrollIntoView({behavior:'smooth',block:'start'});
-    });
-
-    const saved=localStorage.getItem('vaani.mobile.dashboard.more');
-    const collapsed=saved===null ? true : saved==='1';
-    shell.classList.toggle('is-collapsed',collapsed);
-    head.setAttribute('aria-expanded',collapsed?'false':'true');
-
-    view.dataset.mobileV3Dashboard='1';
-  }
-
-  function enhanceDashboardSectionMap(){
-    const view=qs('#view-dashboard');
-    const shell=qs('.mobile-dashboard-more',view);
-    if(!view||!shell) return;
-
-    // Section jumps should open the master drawer when the target lives inside it.
-    window.VAANI_MOBILE_V3_DASHBOARD_SHELL=shell;
-  }
-
-  function patchSectionJump(){
-    const open=window.VAANI_MOBILE_V2?.openSectionSheet;
-    if(typeof open!=='function' || open.__v3patched) return;
-    // Leave the existing sheet builder intact; only make dashboard jumps reveal the drawer.
-    // This is handled through capture on section-link clicks because V2 creates them dynamically.
-    const observer=new MutationObserver(()=>{
-      qsa('#mobileSectionSheet .mobile-section-link').forEach(btn=>{
-        if(btn.dataset.v3Bound==='1') return;
-        btn.dataset.v3Bound='1';
-        btn.addEventListener('click',()=>{
-          const shell=window.VAANI_MOBILE_V3_DASHBOARD_SHELL;
-          if(shell){
-            const text=(btn.textContent||'').toLowerCase();
-            if(/roadmap|activity|xp|achievement|lucky|pyq|word|focus/.test(text)){
-              shell.classList.remove('is-collapsed');
-              shell.querySelector('.mobile-dashboard-more-head')?.setAttribute('aria-expanded','true');
-              localStorage.setItem('vaani.mobile.dashboard.more','0');
-            }
-          }
-        },true);
+    if(rooms.length<2){
+      roomSwitcher()?.remove();
+      rooms[0].elements.forEach(el=>{
+        el.classList.remove('mobile-room-hidden');
+        el.removeAttribute('aria-hidden');
       });
-    });
-    observer.observe(document.body,{subtree:true,childList:true});
-    open.__v3patched=true;
+      document.body.classList.remove('mobile-rooms-mode');
+      return;
+    }
+
+    document.body.classList.add('mobile-rooms-mode');
+    ensureRoomSwitcher(name,rooms);
+    setMobileRoom(roomState.index,false);
+
+    const main=qs('#mainContent');
+    if(main && main.dataset.mobileRoomTouch!=='1'){
+      main.dataset.mobileRoomTouch='1';
+      main.addEventListener('touchstart',e=>{
+        if(!mobile()||!roomState.rooms.length)return;
+        const t=e.changedTouches?.[0];
+        if(!t)return;
+        roomState.touchX=t.clientX;
+        roomState.touchY=t.clientY;
+      },{passive:true});
+      main.addEventListener('touchend',e=>{
+        if(!mobile()||!roomState.rooms.length)return;
+        const t=e.changedTouches?.[0];
+        if(!t)return;
+        const dx=t.clientX-roomState.touchX;
+        const dy=t.clientY-roomState.touchY;
+        if(Math.abs(dx)<55 || Math.abs(dx)<Math.abs(dy)*1.35)return;
+        setMobileRoom(roomState.index+(dx<0?1:-1),true);
+      },{passive:true});
+    }
   }
 
   function hideLegacyQuickNav(){
     const fab=qs('#quickNavBtn'),menu=qs('#quickNavMenu');
     if(fab) fab.setAttribute('aria-hidden','true');
     if(menu) menu.setAttribute('aria-hidden','true');
-  }
-
-
-  /* ----------------------------------------------------------
-     MOBILE COMMAND DECK
-     Long mobile pages are now navigated as finite mission chapters.
-     It does not alter desktop scrolling or the underlying view logic.
-  ---------------------------------------------------------- */
-  const CHAPTERS={
-    dashboard:[
-      ['Mission briefing','#view-dashboard .vd-hero'],
-      ["Today's focus",'#view-dashboard .vd-briefing'],
-      ['Focus sprint','#view-dashboard .vd-focus-sprint'],
-      ['More modules','#view-dashboard .mobile-dashboard-more'],
-      ['Practice','#view-dashboard .ga-catalog']
-    ],
-    grammar:[
-      ['Grammar map','#view-grammar .gt-tree-wrap'],
-      ['Progress','#view-grammar .gt-sidebar'],
-      ['Quick actions','#view-grammar .gt-quickactions'],
-      ['Academy','#view-grammar .ga-catalog']
-    ],
-    vocab:[
-      ['Word of the day','#view-vocab .word-of-day'],
-      ['Daily words','#view-vocab .singles-strip'],
-      ['Tools','#view-vocab .vocab-toolbar'],
-      ['Word library','#view-vocab .vv-word-grid']
-    ],
-    vocab90:[
-      ['Daily mission','#view-vocab90'],
-      ['Today','#view-vocab90 .v90-day'],
-      ['Vocabulary deck','#view-vocab90 .v90-section']
-    ],
-    books:[
-      ['Reading desk','#view-books .vbv-scope'],
-      ['Book companion','#view-books .bc-global-link']
-    ],
-    pyq:[
-      ['Command vault','#view-pyq #pvApp']
-    ],
-    games:[
-      ['Briefing','#view-games .vx-briefing'],
-      ['Arena','#view-games .vx-arena'],
-      ['Championship','#view-games .vx-championship']
-    ],
-    compare:[
-      ['Comparison library','#view-compare .cmp-library-strip'],
-      ['Precision pairs','#view-compare .cmp-spotlight']
-    ],
-    profile:[
-      ['Profile','#view-profile .vp-profile-hero'],
-      ['Learning path','#view-profile .vp-path-card'],
-      ['Rank','#view-profile .vp-rank-card'],
-      ['Activity','#view-profile .vp-activity-card'],
-      ['Achievements','#view-profile .vp-achievements']
-    ],
-    leaderboard:[
-      ['Service record','#view-leaderboard .service-hero'],
-      ['Personal bests','#view-leaderboard .service-grid'],
-      ['Performance','#view-leaderboard .service-signal-grid'],
-      ['Activity','#view-leaderboard .service-week'],
-      ['Field log','#view-leaderboard .service-fieldlog']
-    ],
-    notifications:[
-      ['Updates','#view-notifications .notification-grid'],
-      ['Exam desk','#view-notifications .nc-directory']
-    ],
-    info:[
-      ['Featured','#view-info .nc-featured'],
-      ['Exam directory','#view-info .nc-directory'],
-      ['Calendar','#view-info .nc-accordion']
-    ]
-  };
-
-  let missionDeck={name:null,items:[],index:0};
-
-  function getMissionItems(name){
-    const defs=CHAPTERS[name]||[];
-    return defs.map(([label,selector])=>{
-      const el=qs(selector);
-      return el?{label,el}:null;
-    }).filter(Boolean);
-  }
-
-  function removeMissionDeck(){
-    qs('#mobileMissionDeck')?.remove();
-    missionDeck={name:null,items:[],index:0};
-  }
-
-  function renderMissionDeck(name){
-    if(!mobile()) return;
-    const view=qs('#view-'+name);
-    if(!view) return;
-    const items=getMissionItems(name);
-    if(items.length<2){
-      removeMissionDeck();
-      return;
-    }
-
-    let deck=qs('#mobileMissionDeck');
-    if(!deck){
-      deck=document.createElement('aside');
-      deck.id='mobileMissionDeck';
-      deck.setAttribute('aria-label','Mobile mission navigator');
-      document.body.appendChild(deck);
-    }
-
-    missionDeck={name,items,index:0};
-
-    deck.innerHTML=
-      '<div class="mdeck-top">'+
-        '<span class="mdeck-kicker">MOBILE MISSION</span>'+
-        '<span class="mdeck-count" id="mdeckCount"></span>'+
-      '</div>'+
-      '<div class="mdeck-main">'+
-        '<button type="button" class="mdeck-btn" id="mdeckPrev" aria-label="Previous section">‹</button>'+
-        '<div class="mdeck-current">'+
-          '<strong id="mdeckTitle"></strong>'+
-          '<div class="mdeck-dots" id="mdeckDots" aria-hidden="true"></div>'+
-        '</div>'+
-        '<button type="button" class="mdeck-btn" id="mdeckNext" aria-label="Next section">›</button>'+
-      '</div>';
-
-    const prev=qs('#mdeckPrev',deck),next=qs('#mdeckNext',deck);
-    prev?.addEventListener('click',()=>moveMission(-1));
-    next?.addEventListener('click',()=>moveMission(1));
-
-    updateMissionDeck();
-  }
-
-  function updateMissionDeck(){
-    const deck=qs('#mobileMissionDeck');
-    if(!deck||!missionDeck.items.length)return;
-    const {items,index}=missionDeck;
-    const item=items[index];
-    const title=qs('#mdeckTitle',deck);
-    const count=qs('#mdeckCount',deck);
-    const dots=qs('#mdeckDots',deck);
-    if(title)title.textContent=item.label;
-    if(count)count.textContent=String(index+1).padStart(2,'0')+' / '+String(items.length).padStart(2,'0');
-    if(dots)dots.innerHTML=items.map((_,i)=>'<i class="'+(i===index?'active':'')+'"></i>').join('');
-    if(item.el){
-      item.el.classList.add('mdeck-target');
-      item.el.style.setProperty('--mdeck-index',String(index));
-    }
-    const p=qs('#mdeckPrev',deck),n=qs('#mdeckNext',deck);
-    if(p)p.disabled=index===0;
-    if(n)n.disabled=index===items.length-1;
-  }
-
-  function moveMission(delta){
-    if(!mobile()||!missionDeck.items.length)return;
-    const next=Math.max(0,Math.min(missionDeck.items.length-1,missionDeck.index+delta));
-    if(next===missionDeck.index)return;
-    missionDeck.index=next;
-    updateMissionDeck();
-    missionDeck.items[next].el.scrollIntoView({behavior:'smooth',block:'start'});
-  }
-
-  function setupMobileMissionDeck(name){
-    if(!mobile())return;
-    renderMissionDeck(name);
-  }
-
-  function patchMobileViewRouting(){
-    if(window.__VAANI_MOBILE_MISSION_ROUTING__)return;
-    window.__VAANI_MOBILE_MISSION_ROUTING__=true;
-
-    const original=window.switchView;
-    if(typeof original!=='function')return;
-    window.switchView=function(name){
-      const result=original.apply(this,arguments);
-      window.setTimeout(()=>{
-        if(mobile())setupMobileMissionDeck(name);
-        else removeMissionDeck();
-      },80);
-      return result;
-    };
-
-    window.addEventListener('scroll',()=>{
-      if(!mobile()||!missionDeck.items.length)return;
-      const threshold=window.scrollY+Math.max(90,window.innerHeight*.28);
-      let closest=0,best=Infinity;
-      missionDeck.items.forEach((item,i)=>{
-        const top=Math.abs(item.el.getBoundingClientRect().top+window.scrollY-threshold);
-        if(top<best){best=top;closest=i;}
-      });
-      if(closest!==missionDeck.index){
-        missionDeck.index=closest;
-        updateMissionDeck();
-      }
-    },{passive:true});
   }
 
   function replaceMobileDashboardShortcut(){
@@ -515,16 +434,48 @@
     qa.dataset.mobileBooksShortcut='1';
   }
 
+  function replaceMobileDashboardShortcut(){
+    if(!mobile())return;
+    const qa=qs('#view-dashboard .vd-qa');
+    if(!qa||qa.dataset.mobileBooksShortcut==='1')return;
+
+    const vocab=Array.from(qa.querySelectorAll('button')).find(
+      b=>(b.textContent||'').trim().toLowerCase()==='vocab'
+    );
+    if(!vocab)return;
+
+    vocab.setAttribute('onclick',"switchView('books')");
+    vocab.setAttribute('aria-label','Open Book Reading');
+    vocab.dataset.mobileOriginalShortcut='vocab';
+    vocab.innerHTML=
+      '<span class="vd-qa-ico" aria-hidden="true">'+
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">'+
+          '<path d="M5 4.5h10.8A3.2 3.2 0 0 1 19 7.7V19H8.2A3.2 3.2 0 0 1 5 15.8V4.5Z"/>'+
+          '<path d="M8 19V7.7A3.2 3.2 0 0 1 11.2 4.5"/>'+
+          '<path d="M9.5 9h6.5M9.5 12h6.5"/>'+
+        '</svg>'+
+      '</span><span>Books</span>';
+    qa.dataset.mobileBooksShortcut='1';
+  }
+
+  if(!window.__VAANI_MOBILE_ROOMS_ROUTING__ && typeof window.switchView==='function'){
+    window.__VAANI_MOBILE_ROOMS_ROUTING__=true;
+    const originalSwitchView=window.switchView;
+    window.switchView=function(name){
+      const result=originalSwitchView.apply(this,arguments);
+      window.setTimeout(()=>{
+        if(mobile()) setupMobileRooms(name);
+      },100);
+      return result;
+    };
+  }
+
   function init(){
     if(!mobile()) return;
     overrideMoreGlobals();
     hideLegacyQuickNav();
-    setupDashboardMaster();
-    enhanceDashboardSectionMap();
-    patchSectionJump();
     replaceMobileDashboardShortcut();
-    patchMobileViewRouting();
-    setupMobileMissionDeck(document.querySelector('.view.active')?.id?.replace(/^view-/,'')||'dashboard');
+    setupMobileRooms(document.querySelector('.view.active')?.id?.replace(/^view-/,'')||'dashboard');
 
     // Defensive: a More-sheet open must never leave an invisible blocker behind.
     qs('#moreSheetBackdrop')?.addEventListener('click',closeMore,{passive:true});
@@ -533,12 +484,17 @@
     document.addEventListener('keydown',e=>{
       if(e.key==='Escape' && document.body.classList.contains('mobile-more-open')) closeMore();
     });
+
     window.addEventListener('resize',()=>{
       if(mobile()){
         replaceMobileDashboardShortcut();
-        setupMobileMissionDeck(document.querySelector('.view.active')?.id?.replace(/^view-/,'')||'dashboard');
+        setupMobileRooms(document.querySelector('.view.active')?.id?.replace(/^view-/,'')||'dashboard');
       }else{
-        removeMissionDeck();
+        qsa('.mobile-room-hidden').forEach(el=>{
+          el.classList.remove('mobile-room-hidden');
+          el.removeAttribute('aria-hidden');
+        });
+        removeRoomSwitcher();
       }
     });
   }
