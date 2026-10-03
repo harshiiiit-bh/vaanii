@@ -165,6 +165,27 @@
     }
   }
 
+  window.VAANI_ARENA_ANALYSIS_BRIEFING=function(insights){
+    if(!insights||assessmentActive())return false;
+    if(typeof window.vaaniCharacterEnsure==='function')window.vaaniCharacterEnsure();
+    const prefs=getDockPreferences();
+    if(prefs.hidden)setDockHidden(false,false);
+    const strongest=insights.strongest?insights.strongest.name+' at '+insights.strongest.accuracy+'%':'not enough data';
+    const weakest=insights.weakest?insights.weakest.name+' at '+insights.weakest.accuracy+'%':'not enough data';
+    const detail=[
+      'Accuracy: '+String(insights.accuracy||0)+'%.',
+      'Strongest area: '+strongest+'.',
+      'Focus area: '+weakest+'.',
+      'Mistake drill: '+String(insights.mistakes?insights.mistakes.length:0)+' question(s) ready.'
+    ].join(' ');
+    setText('ARENA DEBRIEF','Your performance is mapped.',detail,'p2','point','ARENA DEBRIEF');
+    const m=mentor();
+    if(m)m.classList.add('feature-update');
+    open(10000);
+    window.dispatchEvent(new CustomEvent('vaani:arena-debrief',{detail:insights}));
+    return true;
+  };
+
   window.VAANI_FEATURE_UPDATE_BRIEFING=function(release){
     if(!release||assessmentActive())return false;
     if(typeof window.vaaniCharacterEnsure==='function')window.vaaniCharacterEnsure();
