@@ -362,7 +362,7 @@
   /* =========================================================
      VIEW STATE
      ========================================================= */
-  var S = { screen: 'home', match: null, draft: null, run: null, result: null, rows: [] };
+  var S = { screen: 'home', match: null, draft: null, run: null, result: null, rows: [], hostSpectate: false };
 
   function host() { return document.getElementById('view-games'); }
 
@@ -373,7 +373,6 @@
   function render() {
     clearQTimer(); // any per-question countdown belongs to the screen being replaced
     if (S._expiryTimer) { clearTimeout(S._expiryTimer); S._expiryTimer = null; }
-    if (S._spectateTimer) { clearInterval(S._spectateTimer); S._spectateTimer = null; }
     var h = host();
     if (!h) return;
     h.innerHTML = '';
@@ -382,8 +381,7 @@
     ({
       home: screenHome, create: screenCreateV2, share: screenShareV2,
       join: screenJoin, briefing: screenBriefing, run: screenRun,
-      result: screenResult, review: screenReview, spectate: screenSpectate,
-      hostAnswers: screenHostAnswers, help: screenHelp
+      result: screenResult, review: screenReview, hostAnswers: screenHostAnswers, help: screenHelp
     }[S.screen] || screenHome)(wrap);
     // guarded: scrollIntoView is universal in real browsers, but costs
     // nothing to check first rather than assume
@@ -1088,19 +1086,24 @@
       var participate=el('button','vx-btn primary vx-host-action-main vx-host-participate');
       participate.type='button';
       participate.innerHTML='<span class="vx-host-choice-kicker">PARTICIPATE</span><strong>Enter Arena</strong><small>Take the test under normal player rules.</small><b aria-hidden="true">→</b>';
-      participate.addEventListener('click',function(){go('briefing');});
+      participate.addEventListener('click',function(){S.hostSpectate=false;go('briefing');});
       actions.appendChild(participate);
 
       var spectate=el('button','vx-btn vx-host-action-secondary vx-host-spectate');
       spectate.type='button';
       spectate.innerHTML='<span class="vx-host-choice-kicker">HOST CONTROL</span><strong>Spectate</strong><small>See answers, leaderboard and question-level performance without attempting.</small><b aria-hidden="true">◉</b>';
-      spectate.addEventListener('click',function(){go('spectate');});
+      spectate.addEventListener('click',function(){
+        if(!isHost(m.code)){say('Host spectate is only available on the host device.');return;}
+        S.hostSpectate=true;
+        S.result=null;
+        loadBoard().then(function(){go('result');}).catch(function(){go('result');});
+      });
       actions.appendChild(spectate);
     }else{
       var enter=el('button','vx-btn primary vx-host-action-main');
       enter.type='button';
       enter.innerHTML='Join Arena <span>→</span>';
-      enter.addEventListener('click',function(){go('briefing');});
+      enter.addEventListener('click',function(){S.hostSpectate=false;go('briefing');});
       actions.appendChild(enter);
 
       var boardBtn=el('button','vx-btn ghost vx-host-action-secondary');
@@ -1874,13 +1877,36 @@
   function screenResult(w) {
     var m = S.match, res = S.result;
     backBtn(w, 'Arena', 'home');
-    w.appendChild(el('h3', null, 'Match result'));
+    var hostSpectating = !!(S.hostSpectate && m && isHost(m.code));
+    w.appendChild(el('h3', null, hostSpectating ? 'Host spectate' : 'Match result'));
     if (!m) {
       w.appendChild(el('div', 'vx-empty', 'No active match was found. Return to the Arena to start or join a match.'));
       return;
     }
 
     var closed = Date.now() >= Number(m.expiresAt);
+
+    if(hostSpectating){
+      var control=el('section','vx-host-spectate-panel');
+      control.innerHTML=
+        '<div><span class="vx-arena-setup-kicker">HOST CONTROL · SPECTATE MODE</span>' +
+        '<h2>Observe without attempting.</h2>' +
+        '<p>The leaderboard below is live. Click any submitted player to inspect correct, incorrect and skipped questions. The answer key is available without starting the test.</p></div>';
+      var controlActions=el('div','vx-host-spectate-panel-actions');
+
+      var keyBtn=el('button','vx-btn primary','Open answer key');
+      keyBtn.type='button';
+      keyBtn.addEventListener('click',function(){go('hostAnswers');});
+      controlActions.appendChild(keyBtn);
+
+      var participateBtn=el('button','vx-btn ghost','Participate instead');
+      participateBtn.type='button';
+      participateBtn.addEventListener('click',function(){S.hostSpectate=false;go('briefing');});
+      controlActions.appendChild(participateBtn);
+
+      control.appendChild(controlActions);
+      w.appendChild(control);
+    }
     if (res) {
       var total = Math.max(0, Number(res.total) || 0);
       var stats = gradeRow(res);
