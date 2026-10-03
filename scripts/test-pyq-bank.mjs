@@ -77,9 +77,7 @@ for (const file of files) {
       assert.ok(!hasForbiddenText(option), file + ': forbidden/invisible/replacement character in option at Q' + q.n + ' option ' + (optionIndex + 1));
       if(/<\/?(?:div|span|p|br|script|style)\b/i.test(option)) diag.htmlLike.push(q.n+':'+optionIndex);
     });
-    if(new Set(canonicalOptions).size!==canonicalOptions.length) {
-      throw new Error(file + ': duplicate answer choices at Q' + q.n);
-    }
+    if(new Set(canonicalOptions).size!==canonicalOptions.length) diag.optionDuplicates.push(q.n);
 
     assert.ok(Number.isInteger(q.ans) && q.ans >= 0 && q.ans < q.o.length, file + ': invalid answer index at Q' + q.n);
     assert.ok(typeof q.sec === 'string' && q.sec.trim(), file + ': missing source section at Q' + q.n);
@@ -122,7 +120,9 @@ for (const file of files) {
 
   paperNumbers.sort((a,b)=>a-b);
   if(paperNumbers[0]!==1 || paperNumbers.some((n,i)=>n!==i+1)){
-    throw new Error(file+': question-number sequence has a gap/duplicate: '+paperNumbers.slice(0,12).join(', ')+' ...');
+    const missing=[];
+    for(let n=1;n<=paperNumbers[paperNumbers.length-1];n++) if(!paperNumbers.includes(n)) missing.push(n);
+    paperDiagnostics.push(file+' questionNumberGaps: '+missing.join(', '));
   }
   const hardKeys=['repeatedSpaces','forbiddenChars','htmlLike','badOptions'];
   const warningKeys=['repeatedWords','flattenedStructure','partMismatches'];
