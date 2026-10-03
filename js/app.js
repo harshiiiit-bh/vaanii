@@ -1315,6 +1315,10 @@ function pyqLabeledBlocks(q){
     const text=source.slice(startAt,endAt).replace(/\s*\/\s*$/,'').trim();
     if(text)blocks.push({label,text});
   }
+  const order={S1:0,P:1,Q:2,R:3,S:4,S6:5};
+  if(/ordering of sentences/i.test(sourceSec)){
+    blocks.sort((a,b)=>(order[a.label]??50)-(order[b.label]??50));
+  }
   return blocks.length>=3?blocks:null;
 }
 function pyqLabeledBlocksHTML(q){
