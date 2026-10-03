@@ -756,7 +756,7 @@ try {
   if (!/v !== 2 && v !== CODE_VERSION/.test(arena)) throw new Error('Arena match-code decoder is not backward compatible with v2 invites.');
   if (!arena.includes('codeVersion: v')) throw new Error('Arena decoded matches do not retain the code version.');
   if (!pageSource.includes('vaani-arena-briefing.css?v=20261004-qparts1')) throw new Error('Arena question-parts CSS cache key is outdated.');
-  if (!pageSource.includes('js/vaani-arena.js?v=20261004-qparts1')) throw new Error('Arena question-parts JS cache key is outdated.');
+  if (!pageSource.includes('js/vaani-arena.js?v=20261004-sharedidentity1')) throw new Error('Arena question-parts JS cache key is outdated.');
   if (!arena.includes('function copyText(value, onSuccess)')) throw new Error('Arena invite copy fallback is missing.');
   if (!arena.includes('var share=actionButton(\'Share invite\'')) throw new Error('Arena share action is not always rendered.');
   if (!arena.includes('navigator.share')) throw new Error('Native share action is missing.');
