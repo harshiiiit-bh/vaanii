@@ -1288,7 +1288,7 @@ body.mode-sepia main{line-height:1.8}
 .sheet-stat-box .ssn{font-family:var(--serif);font-size:1.3rem;color:var(--gold)}
 .sheet-stat-box .ssl{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
 .sheet-bm-item{padding:12px 10px;border-bottom:1px solid var(--line);font-size:.85rem;color:var(--text);cursor:pointer}
-.sheet-bm-item:hover{color:var(--gold)}
+.sheet-bm-item:hover{color:var(--gold)}.sheet-bm-item:focus-visible{outline:2px solid var(--gold);outline-offset:2px;color:var(--gold)}
 .sheet-empty{text-align:center;color:var(--muted);padding:36px 10px;font-size:.88rem}
 .sheet-about p{color:var(--muted);line-height:1.75;font-size:.88rem;margin-bottom:12px}
 
