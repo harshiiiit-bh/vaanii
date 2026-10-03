@@ -50,7 +50,7 @@ var PYQ_CDS_2019_II = [
     "o": [
       "Argyument",
       "Argument",
-      "Argument",
+      "Arguement",
       "Argyooment"
     ],
     "ans": 1,
