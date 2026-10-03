@@ -105,7 +105,7 @@ async function clickMainView(name) {
     await bottomButton.click();
   } else {
     const moreButton = page.locator('#bottomNav button').filter({ hasText: 'More' });
-    const moreLabels = { books:'Book Reading', profile:'Profile', leaderboard:'Statistics', games:'Achievements', compare:'Comparisons' };
+    const moreLabels = { books:'Book Reading', profile:'Profile', leaderboard:'Statistics', games:'Achievements', compare:'Comparisons', notifications:'Notifications' };
     const moreLabel = moreLabels[name];
     if (moreLabel && await moreButton.isVisible()) {
       await moreButton.click();
@@ -1115,7 +1115,13 @@ try {
   });
   const mobileNavJourney = ['grammar','vocab','pyq','notifications'];
   for (const view of mobileNavJourney) {
-    await navPage.locator('#bottomNav button[data-view="' + view + '"]').click();
+    const direct=navPage.locator('#bottomNav button[data-view="' + view + '"]');
+    if (await direct.count()) {
+      await direct.click();
+    } else {
+      await navPage.locator('#bottomNav button').filter({hasText:'More'}).click();
+      await navPage.locator('#sheetBody .sheet-menu-item').filter({hasText:'Notifications'}).click();
+    }
     await navPage.waitForFunction(v => document.getElementById('view-' + v)?.classList.contains('active'), view);
   }
   const journeyState = await navPage.evaluate(() => ({
