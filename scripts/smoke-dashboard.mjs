@@ -72,16 +72,22 @@ async function assertVisibleText(selector, label) {
   assert.ok(value && value !== '—' && !/^loading/i.test(value), label + ' was blank: ' + JSON.stringify(value));
 }
 async function dismissInfoTour() {
-  // Wait for the scheduled first-visit tour to either open or already be marked seen.
+  // The first-visit update may render as the legacy modal tour or the current
+  // Officer VAANI floating briefing. Accept either path and wait until it is
+  // either visible or marked read for the latest release.
   await page.waitForFunction(() => {
-    const tour = document.getElementById('viTour');
-    return Boolean(tour?.classList.contains('open')) ||
-      (typeof State !== 'undefined' && State.infoTourVersion === '20261002-info-center1');
-  }, null, { timeout: 5000 });
-  if (await page.locator('#viTour.open').count()) {
+    const tourOpen = document.getElementById('viTour')?.classList.contains('open');
+    const mentorOpen = document.getElementById('vaaniMentor')?.classList.contains('open');
+    const latest = window.VAANI_LATEST_FEATURE_RELEASE?.version;
+    const markedSeen = typeof State !== 'undefined' && latest && State.infoTourVersion === latest;
+    return Boolean(tourOpen || mentorOpen || markedSeen);
+  }, null, { timeout: 8000 });
+  if (await page.locator('#viTour.open').count() || await page.locator('#vaaniMentor.open').count()) {
     await page.keyboard.press('Escape');
-    await page.waitForFunction(() => !document.getElementById('viTour')?.classList.contains('open'),
-      null, { timeout: 5000 });
+    await page.waitForFunction(() => (
+      !document.getElementById('viTour')?.classList.contains('open') &&
+      !document.getElementById('vaaniMentor')?.classList.contains('open')
+    ), null, { timeout: 5000 });
   }
 }
 async function clickMainView(name) {
