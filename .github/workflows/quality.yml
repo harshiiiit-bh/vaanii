@@ -91,6 +91,8 @@ jobs:
         run: node scripts/smoke-government-exam-desk.mjs
       - name: Exercise dashboard and learning flows
         run: node scripts/smoke-dashboard.mjs
+      - name: Exercise mobile navigation and layout
+        run: node scripts/smoke-mobile.mjs
       - name: Exercise account isolation
         run: node scripts/smoke-account-isolation.mjs
       - name: Exercise legacy account migration
