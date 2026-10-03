@@ -102,6 +102,7 @@ async function clickMainView(name) {
     const moreLabels = { books:'Book Reading', profile:'Profile', leaderboard:'Statistics', games:'Achievements', compare:'Comparisons' };
     const moreLabel = moreLabels[name];
     if (moreLabel && await moreButton.isVisible()) {
+      await page.evaluate(() => { if (document.getElementById('moreSheet')?.classList.contains('show')) closeMoreSheet(); });
       await moreButton.click();
       await page.waitForSelector('#moreSheet.show');
       const modernItem=page.locator('#sheetBody .mobile-more-item').filter({hasText:moreLabel});
