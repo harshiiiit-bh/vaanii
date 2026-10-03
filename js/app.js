@@ -569,6 +569,10 @@ document.querySelectorAll('#vaaniMainNav button').forEach(b=>{
 });
 
 function switchView(name, options={}){
+  // Any route change must close the mobile More sheet first. Otherwise the
+  // sheet remains above the new view and intercepts taps (especially after
+  // browser-back), making the bottom navigation appear frozen.
+  if(typeof closeMoreSheet==='function') closeMoreSheet();
   const target = document.getElementById('view-'+name);
   if(!target) return; // unknown view name — nothing to switch to, avoid throwing
 
