@@ -3530,7 +3530,7 @@
     });
 
     if(legacyPid){
-      var pidTarget=arenaAccountKey('vx_player_id_'+account);
+      var pidTarget=arenaAccountKey('vx_player_id');
       try{
         if(!localStorage.getItem(pidTarget)){
           localStorage.setItem(pidTarget,legacyPid);
