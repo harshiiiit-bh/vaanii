@@ -210,6 +210,13 @@ function applyLoadedAccount(code, parsed){
   if(typeof DATA.cadetName!=='string') DATA.cadetName='';
   if(typeof DATA.createdAt!=='string'||!DATA.createdAt) DATA.createdAt = new Date().toISOString();
   dataLoaded = true;
+  // Account switches happen without a full page reload. Tell subsystems such as
+  // Arena to discard the previous account's in-memory view immediately.
+  try{
+    window.dispatchEvent(new CustomEvent('vaani:account-changed',{detail:{code:String(code)}}));
+  }catch(e){
+    try{ window.dispatchEvent(new Event('vaani:account-changed')); }catch(_e){}
+  }
 }
 
 /* Account data is saved with shared:true. Inside Claude that makes it
