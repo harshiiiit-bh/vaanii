@@ -3499,7 +3499,7 @@
           S.screen='briefing';
           rememberMatch(recoveredMatch);
         }else{
-          try{localStorage.removeItem(ARENA_RECOVERY_KEY);}catch(e){}
+          try{localStorage.removeItem(arenaRecoveryKey());}catch(e){}
         }
       }
     }
