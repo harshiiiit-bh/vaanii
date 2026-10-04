@@ -313,6 +313,15 @@
     var s; try { s = (typeof State !== 'undefined') ? State : {}; } catch (e) { s = {}; }
     return String(s.name || s.cadetName || 'Cadet').trim() || 'Cadet';
   }
+
+  /* Account-scoped storage namespace. Every Arena cache, identity, host flag,
+     attempt and recovery snapshot uses the currently authenticated VAANI
+     account code. This function must be declared before any Arena renderer
+     calls loadRecent(), including the home screen. */
+  function arenaAccountKey(base){
+    var account=arenaActiveCode();
+    return account ? (String(base)+'_'+account) : String(base)+'_anonymous';
+  }
   function playerId() {
     // Bind the Arena identity to the active VAANI account. A different
     // account on the same browser must never inherit the previous account's
