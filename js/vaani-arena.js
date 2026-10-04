@@ -308,9 +308,10 @@
      Who is playing
      --------------------------------------------------------- */
   function playerName() {
-    // State is also `const`-declared in app.js — same bare-identifier read.
+    // The active VAANI account is the sole source of identity. Never fall back
+    // to a device-wide `vaani_name` key because that leaks names across accounts.
     var s; try { s = (typeof State !== 'undefined') ? State : {}; } catch (e) { s = {}; }
-    return s.name || s.cadetName || (localStorage.getItem('vaani_name') || '').trim() || 'Cadet';
+    return String(s.name || s.cadetName || 'Cadet').trim() || 'Cadet';
   }
   function playerId() {
     // Bind the Arena identity to the active VAANI account. A different
@@ -495,6 +496,32 @@
      VIEW STATE
      ========================================================= */
   var S = { screen: 'home', match: null, draft: null, run: null, result: null, rows: [], hostSpectate: false, recoverySnapshot: null, practiceSummary: null, _metadataRequests: Object.create(null), _metadataLoaded: Object.create(null) };
+
+  function resetArenaForAccountChange(){
+    clearQTimer();
+    if(S._expiryTimer){ clearTimeout(S._expiryTimer); S._expiryTimer=null; }
+    if(VX.timer && typeof VX.timer.stop==='function') VX.timer.stop();
+    S.screen='home';
+    S.match=null;
+    S.draft=null;
+    S.run=null;
+    S.result=null;
+    S.rows=[];
+    S.hostSpectate=false;
+    S.recoverySnapshot=null;
+    S.practiceSummary=null;
+    S._metadataRequests=Object.create(null);
+    S._metadataLoaded=Object.create(null);
+    if(typeof global.VAANI_SET_ASSESSMENT_ACTIVE==='function')global.VAANI_SET_ASSESSMENT_ACTIVE(false);
+    var h=host();
+    if(h && h.offsetParent!==null){
+      try{ render(); }catch(e){ console.error('[Arena] account reset render failed:',e); }
+    }
+  }
+
+  global.addEventListener('vaani:account-changed',function(){
+    resetArenaForAccountChange();
+  });
 
   function host() { return document.getElementById('view-games'); }
 
@@ -1891,6 +1918,7 @@
      --------------------------------------------------------- */
   function arenaRecoveryKey(){ return arenaAccountKey('vx_arena_active_recovery_v1'); }
   var ARENA_RECOVERY_KEY = 'vx_arena_active_recovery_v1';
+  var ARENA_ACCOUNT_SCOPE_VERSION = 3;
 
   function saveRunRecovery(){
     var r=S.run,m=S.match;
@@ -3427,109 +3455,151 @@
   }
 
   /* ---------------------------------------------------------
-     local records + one-time legacy migration
+     local records + safe legacy migration
      --------------------------------------------------------- */
   /*
-   * Before the account split, Arena kept these records in device-wide keys.
-   * The first account-scoping patch intentionally stopped reading those keys,
-   * which made the old owner's history look deleted. We now recover the legacy
-   * data only when it can be positively associated with the active account.
-   * A newly-created account therefore does NOT inherit the previous account's
-   * Arena history.
+   * Arena originally used device-wide localStorage keys. The first account
+   * isolation patch stopped reading those keys, which made the old owner's
+   * history appear to vanish. V3 migrates only records that can be attributed
+   * to the active account without guessing.
+   *
+   * Strong ownership signal:
+   *   - attempt timestamp >= this account's creation timestamp
+   *
+   * Fallback only for genuinely old account records that lack a creation date:
+   *   - exact stored attempt name match
+   *
+   * A freshly-created account therefore cannot inherit an older account's
+   * attempted Arena history just because both accounts use the same device.
    */
   function arenaActiveCode(){
     try { return (typeof ACTIVE_CODE !== 'undefined' && ACTIVE_CODE) ? String(ACTIVE_CODE) : ''; }
     catch(e){ return ''; }
   }
-  function arenaNameKey(value){ return String(value||'').trim().toLowerCase(); }
+  function arenaNameKey(value){ return String(value||'').trim().replace(/\s+/g,' ').toLowerCase(); }
   function safeJsonStorageGet(key){
     try{
       var raw=localStorage.getItem(key);
       return raw ? JSON.parse(raw) : null;
     }catch(e){ return null; }
   }
-  function legacyArenaBelongsToActiveAccount(){
-    var name=arenaNameKey(playerName());
-    var legacyPid='';
-    try{ legacyPid=String(localStorage.getItem('vx_player_id')||''); }catch(e){}
-    if(!name && !legacyPid) return false;
-
-    var recent=safeJsonStorageGet('vx_arena_recent');
-    if(Array.isArray(recent)){
-      for(var i=0;i<recent.length;i++){
-        var item=recent[i]||{};
-        if(name && arenaNameKey(item.hostName)===name) return true;
-        if(item.code){
-          var done=safeJsonStorageGet('vx_arena_done_'+item.code);
-          if(done && ((legacyPid && String(done.pid||'')===legacyPid) || (name && arenaNameKey(done.name)===name))) return true;
-        }
-      }
-    }
-
-    // There can be an old attempt record even if the match was already
-    // removed from recent history. Check the legacy done keys directly.
+  function accountCreatedAtMs(){
+    var candidates=[];
     try{
-      var keys=Object.keys(localStorage);
-      for(var k=0;k<keys.length;k++){
-        var key=keys[k];
-        if(key.indexOf('vx_arena_done_')!==0) continue;
-        var entry=safeJsonStorageGet(key);
-        if(entry && ((legacyPid && String(entry.pid||'')===legacyPid) || (name && arenaNameKey(entry.name)===name))) return true;
-      }
+      if(typeof DATA!=='undefined' && DATA && DATA.createdAt)candidates.push(DATA.createdAt);
     }catch(e){}
+    try{
+      if(typeof State!=='undefined' && State && State.accountCreatedAt)candidates.push(State.accountCreatedAt);
+    }catch(e){}
+    for(var i=0;i<candidates.length;i++){
+      var ms=new Date(candidates[i]).getTime();
+      if(Number.isFinite(ms) && ms>0)return ms;
+    }
+    return 0;
+  }
+  function legacyAttemptBelongsToActiveAccount(entry){
+    if(!entry || typeof entry!=='object')return false;
+    var created=accountCreatedAtMs();
+    var at=Number(entry.at);
+    if(created && Number.isFinite(at) && at>0){
+      // Allow a small clock-skew margin around account creation.
+      return at >= created - 5*60*1000 && at <= Date.now()+5*60*1000;
+    }
+    // Existing pre-account records may lack createdAt. Only use an exact name
+    // fallback in that case; new accounts always receive a createdAt.
+    if(!created){
+      var name=arenaNameKey(playerName());
+      return !!name && arenaNameKey(entry.name)===name;
+    }
     return false;
+  }
+  function migrationMarkerKey(){
+    return 'vx_arena_legacy_migrated_v3_' + arenaActiveCode();
   }
   function migrateLegacyArenaStorage(){
     var account=arenaActiveCode();
-    if(!account) return false;
-    var marker='vx_arena_legacy_migrated_'+account;
-    try{ if(localStorage.getItem(marker)==='1') return false; }catch(e){}
+    if(!account)return false;
+    var marker=migrationMarkerKey();
+    try{ if(localStorage.getItem(marker)==='1')return false; }catch(e){}
 
-    // Nothing to recover.
     var legacyRecent=safeJsonStorageGet('vx_arena_recent');
+    if(!Array.isArray(legacyRecent))legacyRecent=[];
     var legacyPid='';
     try{ legacyPid=String(localStorage.getItem('vx_player_id')||''); }catch(e){}
-    if(!Array.isArray(legacyRecent) && !legacyPid) return false;
-    if(!legacyArenaBelongsToActiveAccount()) return false;
 
-    var did=false;
-    var scopedRecentKey=arenaAccountKey('vx_arena_recent');
-    var scopedRecent=safeJsonStorageGet(scopedRecentKey);
-    if(!Array.isArray(scopedRecent) && Array.isArray(legacyRecent)){
-      try{ localStorage.setItem(scopedRecentKey,JSON.stringify(legacyRecent.slice(0,20))); did=true; }catch(e){}
-    }
-
-    // Recover every legacy attempt/cache belonging to a match in the old history.
-    var codes=[];
-    (Array.isArray(legacyRecent)?legacyRecent:[]).forEach(function(item){ if(item&&item.code)codes.push(String(item.code)); });
+    var ownedCodes={};
+    var ownedEntries={};
     try{
       Object.keys(localStorage).forEach(function(key){
-        if(key.indexOf('vx_arena_done_')===0) codes.push(key.slice('vx_arena_done_'.length));
+        if(key.indexOf('vx_arena_done_')!==0)return;
+        var code=key.slice('vx_arena_done_'.length);
+        var entry=safeJsonStorageGet(key);
+        if(entry && legacyAttemptBelongsToActiveAccount(entry)){
+          ownedCodes[code]=true;
+          ownedEntries[code]=entry;
+        }
       });
     }catch(e){}
-    codes=Array.from(new Set(codes));
-    codes.forEach(function(code){
-      var oldDone=safeJsonStorageGet('vx_arena_done_'+code);
-      if(oldDone && (!legacyPid || String(oldDone.pid||'')===legacyPid || arenaNameKey(oldDone.name)===arenaNameKey(playerName()))){
-        var target=arenaAccountKey('vx_arena_done_'+code);
-        if(!safeJsonStorageGet(target)){
-          try{localStorage.setItem(target,JSON.stringify(oldDone));did=true;}catch(e){}
-        }
+
+    // Also inspect done records referenced by recent history, including records
+    // that were not present in the key scan for any reason.
+    legacyRecent.forEach(function(item){
+      if(!item || !item.code)return;
+      var code=String(item.code);
+      if(ownedCodes[code])return;
+      var done=safeJsonStorageGet('vx_arena_done_'+code);
+      if(done && legacyAttemptBelongsToActiveAccount(done)){
+        ownedCodes[code]=true;
+        ownedEntries[code]=done;
       }
-      var oldBoard=safeJsonStorageGet('vx_arena_board_'+code);
-      var boardTarget=arenaAccountKey('vx_arena_board_'+code);
-      if(Array.isArray(oldBoard) && !safeJsonStorageGet(boardTarget)){
-        try{localStorage.setItem(boardTarget,JSON.stringify(oldBoard));did=true;}catch(e){}
-      }
-      try{
-        if(localStorage.getItem('vx_arena_host_'+code)==='1' && !localStorage.getItem(arenaAccountKey('vx_arena_host_'+code))){
-          localStorage.setItem(arenaAccountKey('vx_arena_host_'+code),'1');
-          did=true;
-        }
-      }catch(e){}
     });
 
-    if(legacyPid){
+    // Nothing can be safely attributed to this account.
+    if(!Object.keys(ownedCodes).length && !legacyPid){
+      try{ localStorage.setItem(marker,'1'); }catch(e){}
+      return false;
+    }
+
+    var did=false;
+
+    // Recover only recent-match rows tied to an owned attempt. This preserves
+    // the old user's visible history without copying unrelated host/join records.
+    var ownedRecent=legacyRecent.filter(function(item){
+      return item && item.code && !!ownedCodes[String(item.code)];
+    }).slice(0,20);
+
+    var scopedRecentKey=arenaAccountKey('vx_arena_recent');
+    var existingRecent=safeJsonStorageGet(scopedRecentKey);
+    if(!Array.isArray(existingRecent) && ownedRecent.length){
+      try{
+        localStorage.setItem(scopedRecentKey,JSON.stringify(ownedRecent));
+        did=true;
+      }catch(e){}
+    }
+
+    Object.keys(ownedCodes).forEach(function(code){
+      var oldDone=ownedEntries[code] || safeJsonStorageGet('vx_arena_done_'+code);
+      if(oldDone){
+        var target=arenaAccountKey('vx_arena_done_'+code);
+        if(!safeJsonStorageGet(target)){
+          try{ localStorage.setItem(target,JSON.stringify(oldDone)); did=true; }catch(e){}
+        }
+      }
+
+      // A board cache is safe to migrate only alongside an owned attempt.
+      var oldBoard=safeJsonStorageGet('vx_arena_board_'+code);
+      if(Array.isArray(oldBoard)){
+        var boardTarget=arenaAccountKey('vx_arena_board_'+code);
+        if(!safeJsonStorageGet(boardTarget)){
+          try{ localStorage.setItem(boardTarget,JSON.stringify(oldBoard)); did=true; }catch(e){}
+        }
+      }
+    });
+
+    // Preserve the legacy player id for the account that actually owns the
+    // recovered attempt. This keeps existing Supabase leaderboard rows tied to
+    // the same player instead of silently creating a second identity.
+    if(legacyPid && Object.keys(ownedCodes).length){
       var pidTarget=arenaAccountKey('vx_player_id');
       try{
         if(!localStorage.getItem(pidTarget)){
@@ -3539,13 +3609,11 @@
       }catch(e){}
     }
 
-    // An interrupted run can only belong to the same account when its match
-    // is present in that account's recovered history.
+    // Recover an interrupted run only when the same account owns its finished
+    // historical record for that match, avoiding cross-account resume leaks.
     try{
       var recovery=safeJsonStorageGet('vx_arena_active_recovery_v1');
-      var recentForRecovery=Array.isArray(legacyRecent)?legacyRecent:[];
-      var recoveryIsRelevant=recovery && recovery.code && recentForRecovery.some(function(item){return item&&String(item.code)===String(recovery.code);});
-      if(recoveryIsRelevant && !safeJsonStorageGet(arenaRecoveryKey())){
+      if(recovery && recovery.code && ownedCodes[String(recovery.code)] && !safeJsonStorageGet(arenaRecoveryKey())){
         localStorage.setItem(arenaRecoveryKey(),JSON.stringify(recovery));
         did=true;
       }
