@@ -3240,27 +3240,41 @@
       }
     }
 
-    // Legacy shared rows created before aggregate counts were stored may have
-    // only score/total on the public board. Infer counts when the negative
-    // marking equation has exactly one integer solution.
+    // Legacy shared rows can lack aggregate counts. First infer using
+    // the match's configured negative-marking rule; when that metadata is
+    // unavailable, try the supported negative-marking rules and only accept
+    // a result when the solution is unambiguous.
     var total = Math.max(0, Math.round(Number(row.total) || 0));
     var score = Math.round(Number(row.score) * 100) / 100;
-    var negIndex = S.match ? Number(S.match.negMark) : -1;
-    var negFrac = (negIndex >= 0 && negIndex < NEG_MARKS.length) ? NEG_MARKS[negIndex] : 0;
-    if (total > 0 && Number.isFinite(score) && negFrac < 0) {
-      var candidates = [];
-      for (var wrong = 0; wrong <= total; wrong++) {
-        var exactCorrect = score - negFrac * wrong;
-        var wholeCorrect = Math.round(exactCorrect);
-        if (Math.abs(exactCorrect - wholeCorrect) > 0.005) continue;
-        var skip = total - wholeCorrect - wrong;
-        if (wholeCorrect < 0 || skip < 0) continue;
-        var checkScore = Math.round((wholeCorrect + negFrac * wrong) * 100) / 100;
-        if (Math.abs(checkScore - score) <= 0.005) {
-          candidates.push({correct:wholeCorrect, incorrect:wrong, skipped:skip});
-        }
+    if (total > 0 && Number.isFinite(score)) {
+      var negFracs = [];
+      var configured = S.match ? Number(S.match.negMark) : -1;
+      if (configured >= 0 && configured < NEG_MARKS.length && NEG_MARKS[configured] < 0) {
+        negFracs.push(NEG_MARKS[configured]);
+      } else {
+        negFracs = NEG_MARKS.filter(function(frac){ return frac < 0; });
       }
-      if (candidates.length === 1) return candidates[0];
+
+      var solutions = [];
+      negFracs.forEach(function(negFrac){
+        for (var wrong = 0; wrong <= total; wrong++) {
+          var exactCorrect = score - negFrac * wrong;
+          var wholeCorrect = Math.round(exactCorrect);
+          if (Math.abs(exactCorrect - wholeCorrect) > 0.005) continue;
+          var skip = total - wholeCorrect - wrong;
+          if (wholeCorrect < 0 || skip < 0) continue;
+          var checkScore = Math.round((wholeCorrect + negFrac * wrong) * 100) / 100;
+          if (Math.abs(checkScore - score) <= 0.005) {
+            var candidate = {correct:wholeCorrect, incorrect:wrong, skipped:skip};
+            if (!solutions.some(function(item){
+              return item.correct === candidate.correct &&
+                     item.incorrect === candidate.incorrect &&
+                     item.skipped === candidate.skipped;
+            })) solutions.push(candidate);
+          }
+        }
+      });
+      if (solutions.length === 1) return solutions[0];
     }
     return null;
   }
