@@ -319,6 +319,7 @@
     var account = '';
     try { account = (typeof ACTIVE_CODE !== 'undefined' && ACTIVE_CODE) ? String(ACTIVE_CODE) : ''; }
     catch (e) { account = ''; }
+    migrateLegacyArenaStorage();
     var k = account ? ('vx_player_id_' + account) : 'vx_player_id';
     var v = localStorage.getItem(k);
     if (!v) {
@@ -333,10 +334,10 @@
      code." Anyone determined could set the same flag by hand; that's
      an acceptable trust level for a study-group tool like this one. */
   function markHost(code) {
-    try { localStorage.setItem('vx_arena_host_' + code, '1'); } catch (e) {}
+    try { localStorage.setItem(arenaAccountKey('vx_arena_host_' + code), '1'); } catch (e) {}
   }
   function isHost(code) {
-    try { return localStorage.getItem('vx_arena_host_' + code) === '1'; }
+    try { return localStorage.getItem(arenaAccountKey('vx_arena_host_' + code)) === '1'; }
     catch (e) { return false; }
   }
 
@@ -347,7 +348,7 @@
   var LocalAdapter = {
     name: 'local',
     live: false,
-    key: function (code) { return 'vx_arena_board_' + code; },
+    key: function (code) { return arenaAccountKey('vx_arena_board_' + code); },
     read: function (code) {
       try { return JSON.parse(localStorage.getItem(this.key(code)) || '[]'); }
       catch (e) { return []; }
@@ -3426,18 +3427,136 @@
   }
 
   /* ---------------------------------------------------------
-     local records
+     local records + one-time legacy migration
      --------------------------------------------------------- */
-  /* Arena local history is account-scoped. The old single device-wide
-     key could make a freshly created account inherit another account's
-     match history and even display an old score as "your" attempt. */
-  function arenaAccountKey(base) {
-    var account = '';
-    try { account = (typeof ACTIVE_CODE !== 'undefined' && ACTIVE_CODE) ? String(ACTIVE_CODE) : ''; }
-    catch (e) { account = ''; }
-    return account ? (base + '_' + account) : base + '_anonymous';
+  /*
+   * Before the account split, Arena kept these records in device-wide keys.
+   * The first account-scoping patch intentionally stopped reading those keys,
+   * which made the old owner's history look deleted. We now recover the legacy
+   * data only when it can be positively associated with the active account.
+   * A newly-created account therefore does NOT inherit the previous account's
+   * Arena history.
+   */
+  function arenaActiveCode(){
+    try { return (typeof ACTIVE_CODE !== 'undefined' && ACTIVE_CODE) ? String(ACTIVE_CODE) : ''; }
+    catch(e){ return ''; }
   }
+  function arenaNameKey(value){ return String(value||'').trim().toLowerCase(); }
+  function safeJsonStorageGet(key){
+    try{
+      var raw=localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : null;
+    }catch(e){ return null; }
+  }
+  function legacyArenaBelongsToActiveAccount(){
+    var name=arenaNameKey(playerName());
+    var legacyPid='';
+    try{ legacyPid=String(localStorage.getItem('vx_player_id')||''); }catch(e){}
+    if(!name && !legacyPid) return false;
+
+    var recent=safeJsonStorageGet('vx_arena_recent');
+    if(Array.isArray(recent)){
+      for(var i=0;i<recent.length;i++){
+        var item=recent[i]||{};
+        if(name && arenaNameKey(item.hostName)===name) return true;
+        if(item.code){
+          var done=safeJsonStorageGet('vx_arena_done_'+item.code);
+          if(done && ((legacyPid && String(done.pid||'')===legacyPid) || (name && arenaNameKey(done.name)===name))) return true;
+        }
+      }
+    }
+
+    // There can be an old attempt record even if the match was already
+    // removed from recent history. Check the legacy done keys directly.
+    try{
+      var keys=Object.keys(localStorage);
+      for(var k=0;k<keys.length;k++){
+        var key=keys[k];
+        if(key.indexOf('vx_arena_done_')!==0) continue;
+        var entry=safeJsonStorageGet(key);
+        if(entry && ((legacyPid && String(entry.pid||'')===legacyPid) || (name && arenaNameKey(entry.name)===name))) return true;
+      }
+    }catch(e){}
+    return false;
+  }
+  function migrateLegacyArenaStorage(){
+    var account=arenaActiveCode();
+    if(!account) return false;
+    var marker='vx_arena_legacy_migrated_'+account;
+    try{ if(localStorage.getItem(marker)==='1') return false; }catch(e){}
+
+    // Nothing to recover.
+    var legacyRecent=safeJsonStorageGet('vx_arena_recent');
+    var legacyPid='';
+    try{ legacyPid=String(localStorage.getItem('vx_player_id')||''); }catch(e){}
+    if(!Array.isArray(legacyRecent) && !legacyPid) return false;
+    if(!legacyArenaBelongsToActiveAccount()) return false;
+
+    var did=false;
+    var scopedRecentKey=arenaAccountKey('vx_arena_recent');
+    var scopedRecent=safeJsonStorageGet(scopedRecentKey);
+    if(!Array.isArray(scopedRecent) && Array.isArray(legacyRecent)){
+      try{ localStorage.setItem(scopedRecentKey,JSON.stringify(legacyRecent.slice(0,20))); did=true; }catch(e){}
+    }
+
+    // Recover every legacy attempt/cache belonging to a match in the old history.
+    var codes=[];
+    (Array.isArray(legacyRecent)?legacyRecent:[]).forEach(function(item){ if(item&&item.code)codes.push(String(item.code)); });
+    try{
+      Object.keys(localStorage).forEach(function(key){
+        if(key.indexOf('vx_arena_done_')===0) codes.push(key.slice('vx_arena_done_'.length));
+      });
+    }catch(e){}
+    codes=Array.from(new Set(codes));
+    codes.forEach(function(code){
+      var oldDone=safeJsonStorageGet('vx_arena_done_'+code);
+      if(oldDone && (!legacyPid || String(oldDone.pid||'')===legacyPid || arenaNameKey(oldDone.name)===arenaNameKey(playerName()))){
+        var target=arenaAccountKey('vx_arena_done_'+code);
+        if(!safeJsonStorageGet(target)){
+          try{localStorage.setItem(target,JSON.stringify(oldDone));did=true;}catch(e){}
+        }
+      }
+      var oldBoard=safeJsonStorageGet('vx_arena_board_'+code);
+      var boardTarget=arenaAccountKey('vx_arena_board_'+code);
+      if(Array.isArray(oldBoard) && !safeJsonStorageGet(boardTarget)){
+        try{localStorage.setItem(boardTarget,JSON.stringify(oldBoard));did=true;}catch(e){}
+      }
+      try{
+        if(localStorage.getItem('vx_arena_host_'+code)==='1' && !localStorage.getItem(arenaAccountKey('vx_arena_host_'+code))){
+          localStorage.setItem(arenaAccountKey('vx_arena_host_'+code),'1');
+          did=true;
+        }
+      }catch(e){}
+    });
+
+    if(legacyPid){
+      var pidTarget=arenaAccountKey('vx_player_id_'+account);
+      try{
+        if(!localStorage.getItem(pidTarget)){
+          localStorage.setItem(pidTarget,legacyPid);
+          did=true;
+        }
+      }catch(e){}
+    }
+
+    // An interrupted run can only belong to the same account when its match
+    // is present in that account's recovered history.
+    try{
+      var recovery=safeJsonStorageGet('vx_arena_active_recovery_v1');
+      var recentForRecovery=Array.isArray(legacyRecent)?legacyRecent:[];
+      var recoveryIsRelevant=recovery && recovery.code && recentForRecovery.some(function(item){return item&&String(item.code)===String(recovery.code);});
+      if(recoveryIsRelevant && !safeJsonStorageGet(arenaRecoveryKey())){
+        localStorage.setItem(arenaRecoveryKey(),JSON.stringify(recovery));
+        did=true;
+      }
+    }catch(e){}
+
+    try{ localStorage.setItem(marker,'1'); }catch(e){}
+    return did;
+  }
+
   function loadRecent() {
+    migrateLegacyArenaStorage();
     try { return JSON.parse(localStorage.getItem(arenaAccountKey('vx_arena_recent')) || '[]'); }
     catch (e) { return []; }
   }
@@ -3453,10 +3572,11 @@
     var list = loadRecent();
     var hit = list.filter(function (r) { return r.code === code; })[0];
     if (hit) { hit.myScore = entry.score; hit.mySeconds = entry.seconds; saveRecent(list); }
-    try { localStorage.setItem('vx_arena_done_' + code, JSON.stringify(entry)); } catch (e) {}
+    try { localStorage.setItem(arenaAccountKey('vx_arena_done_' + code), JSON.stringify(entry)); } catch (e) {}
   }
   function previousAttempt(code) {
-    try { return JSON.parse(localStorage.getItem('vx_arena_done_' + code) || 'null'); }
+    migrateLegacyArenaStorage();
+    try { return JSON.parse(localStorage.getItem(arenaAccountKey('vx_arena_done_' + code)) || 'null'); }
     catch (e) { return null; }
   }
 
