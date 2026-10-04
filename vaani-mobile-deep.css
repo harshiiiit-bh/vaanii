@@ -1418,7 +1418,12 @@
   #gate .gate-panel{
     padding:0!important;
   }
-  #gate .gate-field input,
+  #gate .gate-field input{
+    width:100%!important;
+    min-height:58px!important;
+    font-size:clamp(1.75rem,8vw,2.35rem)!important;
+    line-height:1.15!important;
+  }
   #gate .gate-code-input{
     width:100%!important;
     min-height:50px!important;
