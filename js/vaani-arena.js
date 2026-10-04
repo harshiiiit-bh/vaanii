@@ -3497,8 +3497,42 @@
     }
     return 0;
   }
+
+  function legacyPrimaryAccountCode(){
+    /*
+     * The very first account created by the old migration path is the safest
+     * owner for the old device-wide Arena store. New accounts created later
+     * must never claim that history. Use the oldest persisted account record
+     * rather than the active name, which avoids same-name account collisions.
+     */
+    var migrationDone=false;
+    try{ migrationDone=localStorage.getItem('vaani_account_migration_v1')==='done'; }catch(e){}
+    if(!migrationDone)return '';
+    var active=arenaActiveCode();
+    if(!active)return '';
+    var oldestCode='', oldestAt=Infinity, count=0;
+    try{
+      Object.keys(localStorage).forEach(function(key){
+        var prefix='vbv_veer_bhogya_account_';
+        if(key.indexOf(prefix)!==0)return;
+        var code=key.slice(prefix.length);
+        var account=safeJsonStorageGet(key);
+        if(!account || typeof account!=='object')return;
+        count++;
+        var raw=account.vbv && account.vbv.createdAt;
+        var at=new Date(raw||0).getTime();
+        if(!Number.isFinite(at)||at<=0)at=Infinity;
+        if(at<oldestAt){
+          oldestAt=at;
+          oldestCode=code;
+        }
+      });
+    }catch(e){}
+    return count===1 ? active : (oldestCode||'')===active ? active : '';
+  }
   function legacyAttemptBelongsToActiveAccount(entry){
     if(!entry || typeof entry!=='object')return false;
+    if(legacyPrimaryAccountCode())return true;
     var created=accountCreatedAtMs();
     var at=Number(entry.at);
     if(created && Number.isFinite(at) && at>0){
@@ -3514,7 +3548,7 @@
     return false;
   }
   function migrationMarkerKey(){
-    return 'vx_arena_legacy_migrated_v3_' + arenaActiveCode();
+    return 'vx_arena_legacy_migrated_v4_' + arenaActiveCode();
   }
   function migrateLegacyArenaStorage(){
     var account=arenaActiveCode();
@@ -3529,6 +3563,7 @@
 
     var ownedCodes={};
     var ownedEntries={};
+    var legacyPrimary=!!legacyPrimaryAccountCode();
     try{
       Object.keys(localStorage).forEach(function(key){
         if(key.indexOf('vx_arena_done_')!==0)return;
@@ -3541,18 +3576,25 @@
       });
     }catch(e){}
 
-    // Also inspect done records referenced by recent history, including records
-    // that were not present in the key scan for any reason.
-    legacyRecent.forEach(function(item){
-      if(!item || !item.code)return;
-      var code=String(item.code);
-      if(ownedCodes[code])return;
-      var done=safeJsonStorageGet('vx_arena_done_'+code);
-      if(done && legacyAttemptBelongsToActiveAccount(done)){
-        ownedCodes[code]=true;
-        ownedEntries[code]=done;
-      }
-    });
+    // The primary legacy account is allowed to recover old match history even
+    // when no attempt was made on a particular match (host-only history).
+    if(legacyPrimary){
+      legacyRecent.forEach(function(item){
+        if(item && item.code)ownedCodes[String(item.code)]=true;
+      });
+    }else{
+      // Also inspect done records referenced by recent history.
+      legacyRecent.forEach(function(item){
+        if(!item || !item.code)return;
+        var code=String(item.code);
+        if(ownedCodes[code])return;
+        var done=safeJsonStorageGet('vx_arena_done_'+code);
+        if(done && legacyAttemptBelongsToActiveAccount(done)){
+          ownedCodes[code]=true;
+          ownedEntries[code]=done;
+        }
+      });
+    }
 
     // Nothing can be safely attributed to this account.
     if(!Object.keys(ownedCodes).length && !legacyPid){
