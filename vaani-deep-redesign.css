@@ -106,7 +106,13 @@ button{touch-action:manipulation}
   backdrop-filter:blur(16px);
 }
 #gate .gate-card-label{letter-spacing:.16em}
-#gate .gate-field input,#gate .gate-code-input{
+#gate .gate-field input{
+  border-radius:10px;background:rgba(255,255,255,.055);
+  font-size:clamp(2rem,3vw,2.65rem);
+  line-height:1.15;
+  min-height:58px;
+}
+#gate .gate-code-input{
   border-radius:10px;background:rgba(255,255,255,.055);font-size:16px;
 }
 /* Mobile/WebKit safety: never make the live name input transparent. The base
