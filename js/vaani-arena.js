@@ -590,9 +590,9 @@
     var attemptedCount = recentAll.filter(function (r) { return r.myScore != null; }).length;
     var homeMetrics = el('div', 'vx-home-metrics');
     [
-      { label: 'Recent matches', value: recentAll.length, detail: 'On this device' },
+      { label: 'Recent matches', value: recentAll.length, detail: 'On this account' },
       { label: 'Open codes', value: openCount, detail: 'Still available' },
-      { label: 'Your submissions', value: attemptedCount, detail: 'First attempts only' }
+      { label: 'Your submissions', value: attemptedCount, detail: 'This account' }
     ].forEach(function (item) {
       var metric = el('div', 'vx-home-metric');
       metric.innerHTML = '<span>' + esc(item.label) + '</span><strong>' + esc(String(item.value)) + '</strong><small>' + esc(item.detail) + '</small>';
@@ -639,7 +639,7 @@
 
     var recentSection = el('section', 'vx-recent-section');
     var recentHeading = el('div', 'vx-section-heading');
-    recentHeading.innerHTML = '<div><span class="vx-section-kicker">MATCH HISTORY</span><h3>Your recent matches</h3><p>Quick access to codes you created or joined on this device.</p></div><span class="vx-section-count">' + recent.length + ' shown</span>';
+    recentHeading.innerHTML = '<div><span class="vx-section-kicker">MATCH HISTORY</span><h3>Your recent matches</h3><p>Quick access to codes you created or joined with this account.</p></div><span class="vx-section-count">' + recent.length + ' shown</span>';
     recentSection.appendChild(recentHeading);
     if (recent.length) {
       var board = el('div', 'vx-board vx-recent-board');
@@ -1888,6 +1888,7 @@
   /* ---------------------------------------------------------
      SESSION RECOVERY
      --------------------------------------------------------- */
+  function arenaRecoveryKey(){ return arenaAccountKey('vx_arena_active_recovery_v1'); }
   var ARENA_RECOVERY_KEY = 'vx_arena_active_recovery_v1';
 
   function saveRunRecovery(){
@@ -1904,17 +1905,17 @@
       skipped:r.skipped||{},
       savedAt:Date.now()
     };
-    try{localStorage.setItem(ARENA_RECOVERY_KEY,JSON.stringify(snapshot));}catch(e){}
+    try{localStorage.setItem(arenaRecoveryKey(),JSON.stringify(snapshot));}catch(e){}
   }
 
   function clearRunRecovery(){
     S.recoverySnapshot=null;
-    try{localStorage.removeItem(ARENA_RECOVERY_KEY);}catch(e){}
+    try{localStorage.removeItem(arenaRecoveryKey());}catch(e){}
   }
 
   function readRunRecovery(){
     try{
-      var snapshot=JSON.parse(localStorage.getItem(ARENA_RECOVERY_KEY)||'null');
+      var snapshot=JSON.parse(localStorage.getItem(arenaRecoveryKey())||'null');
       if(!snapshot||snapshot.version!==1||!snapshot.code||!Array.isArray(snapshot.qids)||!snapshot.qids.length)return null;
       if(Date.now()-Number(snapshot.savedAt||0)>7*24*60*60*1000)return null;
       return snapshot;
@@ -3427,12 +3428,21 @@
   /* ---------------------------------------------------------
      local records
      --------------------------------------------------------- */
+  /* Arena local history is account-scoped. The old single device-wide
+     key could make a freshly created account inherit another account's
+     match history and even display an old score as "your" attempt. */
+  function arenaAccountKey(base) {
+    var account = '';
+    try { account = (typeof ACTIVE_CODE !== 'undefined' && ACTIVE_CODE) ? String(ACTIVE_CODE) : ''; }
+    catch (e) { account = ''; }
+    return account ? (base + '_' + account) : base + '_anonymous';
+  }
   function loadRecent() {
-    try { return JSON.parse(localStorage.getItem('vx_arena_recent') || '[]'); }
+    try { return JSON.parse(localStorage.getItem(arenaAccountKey('vx_arena_recent')) || '[]'); }
     catch (e) { return []; }
   }
   function saveRecent(list) {
-    try { localStorage.setItem('vx_arena_recent', JSON.stringify(list.slice(0, 20))); } catch (e) {}
+    try { localStorage.setItem(arenaAccountKey('vx_arena_recent'), JSON.stringify(list.slice(0, 20))); } catch (e) {}
   }
   function rememberMatch(m) {
     var list = loadRecent().filter(function (r) { return r.code !== m.code; });
