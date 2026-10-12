@@ -94,6 +94,11 @@ assert.equal(desk.qualificationMatches(['postgraduate'], 'ba'), false,
   'postgraduate requirements must not be mistaken for bachelor-level eligibility');
 assert.equal(desk.sectorFor({ category: 'unclassified' }), 'other',
   'unknown sectors must not be mislabeled as insurance');
+assert.ok(desk.SECTORS.some(option => option.id === 'central'), 'filter must offer the central government and postal sector');
+assert.equal(desk.sectorFor({ organization: 'India Post', title: 'Gramin Dak Sevak recruitment' }), 'central', 'postal and GDS notifications must use the central government sector');
+assert.equal(desk.sectorFor({ organization: 'Indian Army', title: 'Relation Bharti 2026' }), 'defence', 'relation bharti notices must remain in the defence sector');
+assert.equal(desk.sectorFor({ organization: 'Territorial Army', title: 'Recruitment notification' }), 'defence', 'Territorial Army notices must remain in the defence sector');
+assert.equal(desk.sectorFor({ organization: 'Haryana Staff Selection Commission', title: 'Group D recruitment' }), 'state', 'state selection board notifications must use the state sector');
 assert.equal(desk.sectorFor({ category: 'digital technology', title: 'software developer' }), 'digital');
 assert.equal(desk.sectorFor({ category: 'agriculture', title: 'agricultural officer' }), 'agriculture');
 assert.equal(desk.sectorFor({ category: 'design', title: 'graphic designer' }), 'creative');
@@ -110,5 +115,12 @@ const sorted = [
   { id: 'invalid', examDate: 'bad date' }
 ].sort(desk.compareExamDates).map(item => item.id);
 assert.deepEqual(sorted, ['early', 'late', 'invalid'], 'exam dates must sort chronologically with invalid dates last');
+
+const updater = readFileSync('scripts/update-defence-notifications.mjs', 'utf8');
+for (const sourceName of ['Territorial Army — Official Recruitment', 'CISF — Recruitment Portal', 'India Post — GDS Engagement', 'National Career Service — Government Job Directory', 'NIELIT — Recruitments']) {
+  assert.ok(updater.includes(sourceName), 'notification crawler must include ' + sourceName);
+}
+assert.match(updater, /relation bharti/i, 'notification crawler must recognize relation-bharti notices');
+assert.match(updater, /rally bharti/i, 'notification crawler must recognize rally-bharti notices');
 
 console.log('Government Exam Desk data tests: ' + cases.length + ' classification cases and qualification/date integrity checks passed');

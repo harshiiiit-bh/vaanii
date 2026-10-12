@@ -4,6 +4,7 @@
   var sectorLabels = {
     defence: 'Defence',
     upsc: 'UPSC',
+    central: 'Central govt / postal',
     ssc: 'SSC',
     railways: 'Railways',
     banking: 'Banking',

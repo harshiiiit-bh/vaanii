@@ -37,6 +37,7 @@
   const SECTORS = Object.freeze([
     { id: 'defence', label: 'Defence & uniformed' },
     { id: 'upsc', label: 'UPSC & central' },
+    { id: 'central', label: 'Central government & postal' },
     { id: 'ssc', label: 'SSC' },
     { id: 'railways', label: 'Railways' },
     { id: 'banking', label: 'Banking & finance' },
@@ -267,7 +268,9 @@
   function sectorFor(item) {
     if (!isRecord(item)) return 'other';
     const text = [item.category, item.organization, item.title].filter(Boolean).join(' ').toLowerCase();
-    if (/nda|cds|agniveer|army|navy|air force|afcat|coast guard|bsf|crpf|itbp|cisf|capf|assam rifles|rpf|paramilitary|police/.test(text)) return 'defence';
+    if (/india post|grameen dak sevak|gramin dak sevak|postal service|\bgds\b|national career service|\bncs\b|central_govt|central government/.test(text)) return 'central';
+    if (/hssc|rssb|rsmssb|mpesb|employees selection board|upsssc|\bbssc\b|state staff selection|state public service|\bbpsc\b|uppsc|mppsc|\brpsc\b|\bjpsc\b/.test(text)) return 'state';
+    if (/nda|cds|agniveer|army|navy|air force|afcat|coast guard|bsf|crpf|itbp|cisf|capf|assam rifles|rpf|paramilitary|police|relation bharti|relation rally|recruitment rally|territorial army|unit headquarters quota|\baro\b|\bzro\b/.test(text)) return 'defence';
     if (/agricultur|horticulture|fisheries|dairy|forestry|wildlife|soil science|agribusiness|nabard/.test(text)) return 'agriculture';
     if (/software|cyber ?security|data analyst|data science|artificial intelligence|\bai\b|cloud computing|web developer|information technology|\bit\b|nielit|nic scientist/.test(text)) return 'digital';
     if (/chartered account|\bca foundation\b|company secretary|\bcseet\b|\bcma\b|accounting|taxation|gst practitioner|financial analyst|nism|business analyst|entrepreneur/.test(text)) return 'commerce';

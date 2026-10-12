@@ -35,10 +35,34 @@ const sources = [
   { name:'UGC NET — Official Notices', url:'https://ugcnet.nta.nic.in/', categories:['ENTRANCE'] },
   { name:'CSBC Bihar — Police Recruitment', url:'https://csbc.bihar.gov.in/', categories:['POLICE'] },
   { name:'BPSSC Bihar — Police Recruitment', url:'https://bpssc.bihar.gov.in/', categories:['POLICE'] },
-  { name:'UPPRPB — Police Recruitment', url:'https://uppbpb.gov.in/', categories:['POLICE'] }
+  { name:'UPPRPB — Police Recruitment', url:'https://uppbpb.gov.in/', categories:['POLICE'] },
+  { name:'UPSC — Recruitment Advertisements', url:'https://www.upsc.gov.in/recruitment/recruitment-advertisement', categories:['UPSC'] },
+  { name:'Territorial Army — Official Recruitment', url:'https://territorialarmy.in/', categories:['TERRITORIAL_ARMY'] },
+  { name:'CISF — Recruitment Portal', url:'https://cisfrectt.cisf.gov.in/', categories:['CISF'] },
+  { name:'ITBP — Recruitment Portal', url:'https://recruitment.itbpolice.nic.in/', categories:['ITBP'] },
+  { name:'SSB — Recruitment Portal', url:'https://recruitment.ssb.gov.in/', categories:['SSB'] },
+  { name:'Assam Rifles — Official Recruitment', url:'https://www.assamrifles.gov.in/', categories:['ASSAM_RIFLES'] },
+  { name:'Indian Coast Guard — Recruitment Portal', url:'https://joinindiancoastguard.cdac.in/', categories:['COAST_GUARD'] },
+  { name:'Indian Coast Guard — Official Website', url:'https://www.indiancoastguard.gov.in/', categories:['COAST_GUARD'] },
+  { name:'India Post — Vacancies', url:'https://www.indiapost.gov.in/vacancies', categories:['CENTRAL_GOVT'] },
+  { name:'India Post — GDS Engagement', url:'https://www.indiapost.gov.in/gdsonlineengagement', categories:['CENTRAL_GOVT'] },
+  { name:'National Career Service — Government Job Directory', url:'https://www.ncs.gov.in/pages/govt-job-vacancies.aspx', categories:['CENTRAL_GOVT'] },
+  { name:'Haryana Staff Selection Commission — Advertisements', url:'https://www.hssc.gov.in/advertisement', categories:['STATE_PSC'] },
+  { name:'Madhya Pradesh Employees Selection Board', url:'https://esb.mp.gov.in/', categories:['STATE_PSC'] },
+  { name:'Rajasthan Staff Selection Board', url:'https://rssb.rajasthan.gov.in/', categories:['STATE_PSC'] },
+  { name:'UPSSSC — Official Recruitment', url:'https://upsssc.gov.in/', categories:['STATE_PSC'] },
+  { name:'Bihar Staff Selection Commission', url:'https://bssc.bihar.gov.in/', categories:['STATE_PSC'] },
+  { name:'NIELIT — Recruitments', url:'https://www.nielit.gov.in/recruitments', categories:['TECHNICAL'] },
+  { name:'CSIR — Career Opportunities', url:'https://www.csir.res.in/career-opportunities', categories:['TECHNICAL'] },
+  { name:'RRB Ajmer — Official Notices', url:'https://www.rrbajmer.gov.in/', categories:['RAILWAYS'] },
+  { name:'RBI — Opportunities', url:'https://opportunities.rbi.org.in/', categories:['BANKING'] },
+  { name:'NABARD — Career Notices', url:'https://www.nabard.org/careers-notices1.aspx', categories:['BANKING'] },
+  { name:'SEBI — Opportunities', url:'https://www.sebi.gov.in/department/human-resources-department-37/opportunity.html', categories:['BANKING'] },
+  { name:'JEE Advanced — Official Portal', url:'https://jeeadv.ac.in/', categories:['ENTRANCE'] },
+  { name:'Common Law Admission Test — Official Portal', url:'https://consortiumofnlus.ac.in/', categories:['ENTRANCE'] }
 ];
 
-const relevant = /(nda|national defence academy|naval academy|cds|combined defence services|afcat|air force common admission|capf|central armed police|agniveer|agniveervayu|agniveer vayu|recruitment rally|rally bharti|army recruitment|indian army|indian navy|navy recruitment|bsf|border security force|crpf|central reserve police|cisf|itbp|indo tibetan|ssb|assam rifles|coast guard|ssc|staff selection|cgl|chsl|mts|stenographer|selection post|junior engineer|railway|rrb|ntpc|group[- ]?d|loco pilot|technician|ibps|sbi|rbi|bank|probationary officer|customer service associate|clerical cadre|ctet|kvs|navodaya|nvs|teacher|bpsc|uppsc|mppsc|rpsc|jpsc|state public service|isro|drdo|barc|airports authority|iocl|aiims|esic|admit card|notification|advertisement|recruitment)/i;
+const relevant = /(nda|national defence academy|naval academy|cds|combined defence services|afcat|air force common admission|capf|central armed police|agniveer|agniveervayu|agniveer vayu|recruitment rally|rally bharti|relation bharti|relation rally|relation candidates?|unit headquarters quota|unit hq quota|territorial army|army recruitment|indian army|indian navy|navy recruitment|bsf|border security force|crpf|central reserve police|cisf|itbp|indo tibetan|ssb|assam rifles|coast guard|ssc|staff selection|cgl|chsl|mts|stenographer|selection post|junior engineer|railway|rrb|ntpc|group[- ]?d|loco pilot|technician|ibps|sbi|rbi|bank|probationary officer|customer service associate|clerical cadre|ctet|kvs|navodaya|nvs|teacher|bpsc|uppsc|mppsc|rpsc|jpsc|state public service|isro|drdo|barc|airports authority|iocl|aiims|esic|india post|grameen dak sevak|\bgds\b|national career service|\bncs\b|nielit|\bcsir\b|nabard|sebi|hssc|rssb|rsmssb|mpesb|upsssc|\bbssc\b|government job vacancies|admit card|notification|advertisement|recruitment)/i;
 const dateRx = /\b(?:0?[1-9]|[12]\d|3[01])[./-](?:0?[1-9]|1[0-2])[./-](?:20\d{2})\b|\b(?:20\d{2})-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\d|3[01])\b/g;
 
 function stripHtml(html){
@@ -69,7 +93,11 @@ function normalizeUrl(href, base){
 function categoryFor(text, fallback){
   const s = text.toLowerCase();
   const family = fallback[0] || '';
-  if (['SSC','RAILWAYS','BANKING','TEACHING','STATE_PSC','TECHNICAL','UPSC','ENTRANCE','POLICE'].includes(family)) return family;
+  if (['SSC','RAILWAYS','BANKING','TEACHING','STATE_PSC','TECHNICAL','UPSC','ENTRANCE','POLICE','CENTRAL_GOVT'].includes(family)) return family;
+  if (/relation bharti|relation rally|relation candidates?|unit headquarters quota|unit hq quota/.test(s)) return 'ARMY_RELATION';
+  if (/recruitment rally|rally bharti|army rally|\baro\b|\bzro\b/.test(s)) return 'ARMY_RALLY';
+  if (/territorial army/.test(s)) return 'TERRITORIAL_ARMY';
+  if (/india post|grameen dak sevak|\bgds\b|postal service|national career service|\bncs\b|government job vacancies/.test(s)) return 'CENTRAL_GOVT';
   if (/afcat|air force common admission/.test(s)) return 'AFCAT';
   if (/combined defence services|\bcds\b/.test(s)) return 'CDS';
   if (/national defence academy|\bnda\b/.test(s)) return 'NDA';
@@ -537,7 +565,7 @@ function isNoticeTitle(value, href = '') {
   if (/^(?:home|about|contact|login|dashboard|administration|promotion|manual|faq|more)\b/i.test(title)) return false;
   if (/^(?:notifications?\s*\/\s*recruitment|results?\s*\/\s*misc|recruitment rules|direct recruitment)$/i.test(title)) return false;
   if (/\b(?:copyright|privacy policy|terms of use|sitemap|site map|feedback|user manual|website policy)\b/i.test(title)) return false;
-  const noticeSignal = /\b(?:advt\.?|advertisement|notification|recruitment|vacanc(?:y|ies)|employment notice|admit cards?|e-?admit cards?|hall tickets?|answer keys?|results?|merit lists?|extension of (?:the )?(?:last )?date|inviting online applications?|apply online|examination|written exam(?:ination)?|interview|corrigendum|provisional|city intimation|application form|shortlist(?:ed)?)\b|calendar schedule/i;
+  const noticeSignal = /\b(?:advt\.?|advertisement|notification|recruitment|vacanc(?:y|ies)|employment notice|admit cards?|e-?admit cards?|hall tickets?|answer keys?|results?|merit lists?|extension of (?:the )?(?:last )?date|inviting online applications?|apply online|examination|written exam(?:ination)?|interview|corrigendum|provisional|city intimation|application form|rallies?|relation bharti|unit headquarters quota|territorial army|shortlist(?:ed)?)\b|calendar schedule/i;
   if (noticeSignal.test(title)) return true;
   return /\.(?:pdf|html?)($|\?)/i.test(href) && /(?:notice|advt|advert|recruit|vacan|exam|result|admit|answer)/i.test(href);
 }
