@@ -22,7 +22,13 @@
       routes: [
         { title: 'NDA & NA', note: 'Officer entry after Class 12; stream rules vary by wing.', quals: ['12th'], url: 'https://www.upsc.gov.in/examinations' },
         { title: 'CDS', note: 'Officer entry after graduation; academy rules differ.', quals: ['graduate'], url: 'https://www.upsc.gov.in/examinations' },
-        { title: 'Agniveer', note: 'GD, Technical, Office Assistant and Tradesmen routes; criteria vary by trade.', quals: ['10th', '12th', 'iti', 'diploma'], url: 'https://joinindianarmy.nic.in/' },
+        { title: 'Agniveer', note: 'GD, Technical, Office Assistant and Tradesmen routes; criteria vary by trade and intake.', quals: ['10th', '12th', 'iti', 'diploma'], url: 'https://joinindianarmy.nic.in/' },
+        { title: 'Agniveer GD / Women Military Police', note: 'Recruitment cycle, physical standards and education requirements are defined by the current notice.', quals: ['10th'], url: 'https://joinindianarmy.nic.in/' },
+        { title: 'Agniveer Technical / Office Assistant', note: 'Technical and clerical/storekeeper routes; subject, marks and trade rules vary by intake.', quals: ['12th', 'iti', 'diploma'], url: 'https://joinindianarmy.nic.in/' },
+        { title: 'Agniveer Tradesman', note: 'Trade and education criteria differ by advertised post.', quals: ['10th', 'iti'], url: 'https://joinindianarmy.nic.in/' },
+        { title: 'Army Rally Bharti / ARO–ZRO', note: 'Track official rally schedules, CEE stages, physical tests, document checks and medicals. Rally locations and dates are notice-specific.', quals: ['10th', '12th', 'iti', 'diploma'], url: 'https://joinindianarmy.nic.in/' },
+        { title: 'Relation Bharti / Unit Headquarters Quota', note: 'Shown as a pathway only when an official notice advertises it; eligibility, relationship proof and rally dates must be confirmed from that notice.', quals: ['10th', '12th'], url: 'https://joinindianarmy.nic.in/' },
+        { title: 'Sepoy Pharma / JCO / specialist entries', note: 'Pharmacy, religious-teacher and other specialist routes have separate qualification and age rules.', quals: ['12th', 'diploma', 'graduate', 'postgraduate'], url: 'https://joinindianarmy.nic.in/' },
         { title: '10+2 Technical Entry Scheme (TES)', note: 'Technical officer route after Class 12 PCM; shortlisting and medical rules are notice-specific.', quals: ['12th'], url: 'https://joinindianarmy.nic.in/' },
         { title: 'Technical Graduate Course (TGC)', note: 'Engineering-graduate officer entry; eligible disciplines and age limits are notice-specific.', quals: ['btech'], url: 'https://joinindianarmy.nic.in/' },
         { title: 'SSC Technical', note: 'Short Service Commission technical entry for eligible engineering graduates.', quals: ['btech'], url: 'https://joinindianarmy.nic.in/' },
@@ -38,7 +44,10 @@
       routes: [
         { title: 'NDA & NA', note: 'Naval Academy officer route through UPSC; PCM rules apply.', quals: ['12th'], url: 'https://www.upsc.gov.in/examinations' },
         { title: '10+2 B.Tech Cadet Entry', note: 'Class 12 science route; subject, rank and course rules come from the notice.', quals: ['12th'], url: 'https://www.joinindiannavy.gov.in/' },
-        { title: 'Agniveer SSR / MR', note: 'Sailor entries with different educational criteria.', quals: ['10th', '12th'], url: 'https://www.joinindiannavy.gov.in/' },
+        { title: 'Agniveer SSR / MR', note: 'Sailor entries with different educational criteria and intake-specific selection stages.', quals: ['10th', '12th'], url: 'https://www.joinindiannavy.gov.in/' },
+        { title: 'Agniveer SSR — exam pathway', note: 'Check the current notice for written examination pattern, subject rules, physical standards and intake dates.', quals: ['12th'], url: 'https://www.joinindiannavy.gov.in/' },
+        { title: 'Agniveer MR — exam pathway', note: 'Matriculation-level sailor entry; exact subjects, age and selection rules follow the current notice.', quals: ['10th'], url: 'https://www.joinindiannavy.gov.in/' },
+        { title: 'Agniveer SSR Medical Assistant', note: 'Medical-assistant entry when advertised; PCB and other qualification criteria are notice-specific.', quals: ['12th'], url: 'https://www.joinindiannavy.gov.in/' },
         { title: 'SSC Officer entries', note: 'Executive, technical, logistics, education and other branches as advertised.', quals: ['graduate', 'btech', 'postgraduate'], url: 'https://www.joinindiannavy.gov.in/' },
         { title: 'Other notified entries', note: 'Officer, technical and specialist entries are announced separately.', quals: ['12th', 'diploma', 'btech', 'graduate'], url: 'https://www.joinindiannavy.gov.in/' }
       ]
@@ -51,6 +60,7 @@
         { title: 'NDA', note: 'Officer entry after Class 12; subject rules vary by branch.', quals: ['12th'], url: 'https://www.upsc.gov.in/examinations' },
         { title: 'AFCAT', note: 'Graduate entry for eligible branches; branch-specific criteria apply.', quals: ['graduate'], url: 'https://afcat.cdac.in/' },
         { title: 'Agniveervayu', note: 'Class 12, vocational and other routes as listed in each notice.', quals: ['12th', 'diploma'], url: 'https://agnipathvayu.cdac.in/AV/' },
+        { title: 'Agniveervayu Intake / Phase I–II exam', note: 'Application, online test, physical fitness and adaptability stages depend on the current intake notification.', quals: ['12th', 'diploma'], url: 'https://agnipathvayu.cdac.in/AV/' },
         { title: 'NCC Special Entry (Flying)', note: 'Flying-branch route for eligible NCC Air Wing Senior Division candidates with the prescribed certificate.', quals: ['graduate'], url: 'https://careerairforce.gov.in/' },
         { title: 'Other advertised entries', note: 'Officer and specialist branches have separate subject, degree and medical criteria.', quals: ['graduate', 'btech'], url: 'https://careerairforce.gov.in/' }
       ]
@@ -63,6 +73,7 @@
         { title: 'Navik (GD)', note: 'Class 12 route; subject requirements apply.', quals: ['12th'], url: 'https://www.indiancoastguard.gov.in/' },
         { title: 'Navik (DB)', note: 'Class 10 route; check the current recruitment notice.', quals: ['10th'], url: 'https://www.indiancoastguard.gov.in/' },
         { title: 'Yantrik', note: 'Diploma-based technical route; branch rules vary.', quals: ['diploma'], url: 'https://joinindiancoastguard.cdac.in/' },
+        { title: 'CGEPT — Navik / Yantrik examination', note: 'Use the current Coast Guard Enrolled Personnel Test notice for application dates, exam stages and post-specific criteria.', quals: ['10th', '12th', 'diploma'], url: 'https://joinindiancoastguard.cdac.in/' },
         { title: 'Assistant Commandant (GD / Technical)', note: 'Officer recruitment for eligible graduates and engineers; branch rules differ.', quals: ['graduate', 'btech'], url: 'https://joinindiancoastguard.cdac.in/' },
         { title: 'Officer entries', note: 'Officer opportunities and requirements are published by entry and branch.', quals: ['graduate', 'btech'], url: 'https://joinindiancoastguard.cdac.in/' }
       ]
@@ -70,6 +81,10 @@
   ];
 
   const uniformedGroups = [
+    { title: 'Territorial Army', eyebrow: 'TA', description: 'Part-time territorial service and other notified entries; officer and other recruitment notices have distinct conditions.', url: 'https://territorialarmy.in/', routes: [
+      { title: 'Territorial Army Officer recruitment', note: 'Written exam, interview, medical and service conditions are notice-specific.', quals: ['graduate'], url: 'https://territorialarmy.in/' },
+      { title: 'Territorial Army other advertised posts', note: 'Use the official notice for the specific unit, post, eligibility and dates.', quals: ['10th', '12th', 'iti', 'diploma', 'graduate'], url: 'https://territorialarmy.in/' }
+    ] },
     { title: 'Border Security Force', eyebrow: 'BSF', description: 'Border security, technical and specialist recruitments.', url: 'https://rectt.bsf.gov.in/', routes: [
       { title: 'Constable, trades & technical posts', note: 'Post-specific education and trade requirements apply.', quals: ['10th', '12th', 'iti', 'diploma'], url: 'https://rectt.bsf.gov.in/' },
       { title: 'Subordinate & officer entries', note: 'Check the relevant BSF notice for qualifications and selection stages.', quals: ['12th', 'graduate'], url: 'https://rectt.bsf.gov.in/' }
@@ -188,7 +203,23 @@
         { title: 'Bihar Police (BPSSC)', note: 'Sub-Inspector and other notified posts', quals: ['graduate'], url: 'https://bpssc.bihar.gov.in/' },
         { title: 'BSSC Inter Level / CGL', note: 'Bihar subordinate-service recruitment; qualification depends on the post and notice.', quals: ['12th', 'graduate'], url: 'https://bssc.bihar.gov.in/' },
         { title: 'UPSSSC PET & main examinations', note: 'Preliminary eligibility and post-specific main exams for notified Uttar Pradesh vacancies.', quals: ['10th', '12th', 'graduate'], url: 'https://upsssc.gov.in/' },
-        { title: 'State departmental posts', note: 'Clerical, technical and specialist openings', quals: ['10th', '12th', 'diploma', 'graduate'], url: 'https://bpsc.bihar.gov.in/' }
+        { title: 'State departmental posts', note: 'Clerical, technical and specialist openings', quals: ['10th', '12th', 'diploma', 'graduate'], url: 'https://bpsc.bihar.gov.in/' },
+        { title: 'Haryana SSC / CET', note: 'State-level Group C/D and other advertised posts; check the relevant advertisement.', quals: ['10th', '12th', 'graduate'], url: 'https://www.hssc.gov.in/advertisement' },
+        { title: 'Rajasthan Staff Selection Board', note: 'State recruitment and examination notices; eligibility varies by post.', quals: ['10th', '12th', 'iti', 'diploma', 'graduate'], url: 'https://rssb.rajasthan.gov.in/' },
+        { title: 'MP Employees Selection Board', note: 'State recruitment examinations and selection tests.', quals: ['10th', '12th', 'iti', 'diploma', 'graduate'], url: 'https://esb.mp.gov.in/' },
+        { title: 'Bihar Staff Selection Commission', note: 'Inter-level, graduate-level and other subordinate-service recruitment.', quals: ['12th', 'graduate'], url: 'https://bssc.bihar.gov.in/' },
+        { title: 'UPSSSC PET / main examinations', note: 'PET and post-specific main examinations as notified for Uttar Pradesh vacancies.', quals: ['10th', '12th', 'graduate'], url: 'https://upsssc.gov.in/' }
+      ]
+    },
+    {
+      sector: 'central', title: 'Central government & postal recruitment', eyebrow: 'CENTRAL GOVT',
+      description: 'Central department vacancies, India Post/GDS and public job-directory resources. Each notice defines its own terms.',
+      routes: [
+        { title: 'India Post — Gramin Dak Sevak (GDS)', note: 'Postal engagement cycles with schedule-specific dates and conditions; use the official GDS portal.', quals: ['10th'], url: 'https://www.indiapost.gov.in/gdsonlineengagement' },
+        { title: 'India Post — departmental vacancies', note: 'Driver, skilled artisan and other advertised posts; criteria vary by notice.', quals: ['10th', '12th', 'iti', 'diploma', 'graduate'], url: 'https://www.indiapost.gov.in/vacancies' },
+        { title: 'National Career Service — government job directory', note: 'Directory of ministry and department recruitment pages; verify each vacancy at its owning department.', quals: ['10th', '12th', 'iti', 'diploma', 'graduate', 'postgraduate'], url: 'https://www.ncs.gov.in/pages/govt-job-vacancies.aspx' },
+        { title: 'Supreme Court of India recruitment', note: 'Court vacancies and examinations are released through separate official notices.', quals: ['12th', 'graduate', 'law'], url: 'https://www.sci.gov.in/recruitments/' },
+        { title: 'NIELIT recruitment', note: 'Technical, IT, scientific and administrative posts; role-specific eligibility applies.', quals: ['12th', 'diploma', 'btech', 'graduate', 'postgraduate'], url: 'https://www.nielit.gov.in/recruitments' }
       ]
     },
     {
