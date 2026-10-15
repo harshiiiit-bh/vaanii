@@ -1464,16 +1464,35 @@ try {
         if (q.passage && !doc.querySelector('.pv-passage-text')) issues.push(q._id+': passage missing from prompt');
         if (isSpotting) {
           const labels=[...doc.querySelectorAll('.pv-error-segment-label')].map(el=>el.textContent.trim());
+          const rawOptions=Array.isArray(q.o)?q.o.map(value=>String(value||'').trim()):[];
+          let optionCursor=0;
+          const isLegacyFragmentFormat=rawOptions.length===4 &&
+            rawOptions.slice(0,3).every(phrase=>{
+              if(!phrase||phrase.length<=2)return false;
+              const index=String(q.q||'').toLocaleLowerCase().indexOf(phrase.toLocaleLowerCase(),optionCursor);
+              if(index<0)return false;
+              optionCursor=index+phrase.length;
+              return true;
+            }) && rawOptions.some(value=>/^no\\s+error[.!?]?$/i.test(value));
+
           const parts=pyqSpottingParts(q)||[];
-          const expected=parts.map((_,i)=>'('+String.fromCharCode(97+i)+')');
-          if (labels.join('|')!==expected.join('|')) issues.push(q._id+': spotting parts missing or mislabelled: '+labels.join(','));
-          if (parts.length!==3&&parts.length!==4) issues.push(q._id+': unsupported spotting part count '+parts.length);
-          const format=pyqSpottingFormat(q,parts);
           const choices=pyqOptionLabels(q);
-          if (format==='four-part'&&parts.length!==4) issues.push(q._id+': four-part format does not have four segments');
-          if (format==='three-part-no-error'&&parts.length!==3) issues.push(q._id+': three-part-no-error format does not have three segments');
-          if (format==='four-part'&&(choices.length!==4||choices[3]!=='Error in part (d)')) issues.push(q._id+': four-part D choice is not Error in part (d)');
-          if (format==='three-part-no-error'&&(choices.length!==4||choices[3]!=='No error')) issues.push(q._id+': three-part D choice is not No error');
+          if(isLegacyFragmentFormat){
+            // Legacy NDA records intentionally present the sentence fragments
+            // as the response options. Their prompt stays unsegmented to avoid
+            // duplicating the same parts above the option list.
+            if(labels.length)issues.push(q._id+': legacy answer fragments were added to the prompt');
+            if(JSON.stringify(choices)!==JSON.stringify(q.o))issues.push(q._id+': legacy sentence-fragment options were changed');
+          }else{
+            const expected=parts.map((_,i)=>'('+String.fromCharCode(97+i)+')');
+            if(labels.join('|')!==expected.join('|'))issues.push(q._id+': spotting parts missing or mislabelled: '+labels.join(','));
+            if(parts.length!==3&&parts.length!==4)issues.push(q._id+': unsupported spotting part count '+parts.length);
+            const format=pyqSpottingFormat(q,parts);
+            if(format==='four-part'&&parts.length!==4)issues.push(q._id+': four-part format does not have four segments');
+            if(format==='three-part-no-error'&&parts.length!==3)issues.push(q._id+': three-part-no-error format does not have three segments');
+            if(format==='four-part'&&(choices.length!==4||choices[3]!=='Error in part (d)'))issues.push(q._id+': four-part D choice is not Error in part (d)');
+            if(format==='three-part-no-error'&&(choices.length!==4||!/^no\\s+error[.!?]?$/i.test(String(choices[3]||''))))issues.push(q._id+': three-part D choice is not No error');
+          }
         }
         checked++;
         if (issues.length >= 30) break;
