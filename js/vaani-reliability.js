@@ -31,11 +31,6 @@
       if (typeof window.vaaniCharacterEnsure === 'function') {
         window.vaaniCharacterEnsure();
       }
-      // If the elite layer loaded, make sure its restore control is also mounted.
-      if (typeof window.vaaniCharacterOnMount === 'function') {
-        const mentor = document.getElementById('vaaniMentor');
-        if (mentor) window.vaaniCharacterOnMount(mentor);
-      }
     } catch (err) {
       console.warn('[VAANI] Officer recovery could not complete:', err);
     }
