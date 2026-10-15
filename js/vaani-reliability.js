@@ -76,6 +76,7 @@
   const BACKUP_PREFIX = 'vaani_account_backup_v1_';
   const accountKey = function (code) { return ACCOUNT_PREFIX + code; };
   const backupKey = function (code) { return BACKUP_PREFIX + code; };
+  const pendingKey = function (code) { return 'vaani_account_backup_pending_v1_' + code; };
 
   function cleanCode(value) {
     return String(value || '').replace(/\D/g, '').slice(0, 6);
@@ -124,6 +125,10 @@
     try { localStorage.setItem(key, value); return true; } catch (_) { return false; }
   }
 
+  function safeRemove(key) {
+    try { localStorage.removeItem(key); } catch (_) {}
+  }
+
   function notifyRecovered() {
     const message = 'VAANI restored your latest saved progress from its local recovery copy.';
     try {
@@ -134,9 +139,9 @@
     }
   }
 
-  // Keep a recovery copy around every account write. We save the in-memory
-  // snapshot first, so a failed primary write still leaves the latest attempt
-  // recoverable. On success, replace it with the exact primary value.
+  // Mark a backup as pending only after the marker and snapshot both write
+  // successfully. If the primary save then fails or the page closes mid-save,
+  // login can distinguish that recovery copy from a stale backup.
   const nativePersist = window.persistCombinedAccount;
   if (typeof nativePersist === 'function' && !nativePersist.__vaaniRecoveryWrapped) {
     const wrappedPersist = async function () {
@@ -146,8 +151,13 @@
       }
 
       const snapshot = currentSnapshot();
+      let recoveryPending = false;
       if (snapshot && isCombinedAccount(snapshot)) {
-        safeSet(backupKey(code), snapshot);
+        const markerWritten = safeSet(pendingKey(code), '1');
+        if (markerWritten) {
+          recoveryPending = safeSet(backupKey(code), snapshot);
+          if (!recoveryPending) safeRemove(pendingKey(code));
+        }
       }
 
       let ok = false;
@@ -161,6 +171,10 @@
       if (ok) {
         const primary = safeGet(accountKey(code));
         if (isCombinedAccount(primary)) safeSet(backupKey(code), primary);
+        safeRemove(pendingKey(code));
+      } else if (!recoveryPending) {
+        // The primary save failed but no trustworthy new backup was written.
+        safeRemove(pendingKey(code));
       }
       return ok;
     };
@@ -168,9 +182,9 @@
     window.persistCombinedAccount = wrappedPersist;
   }
 
-  // Restore only when the local primary and the recovery copy differ. A
-  // mismatch is expected after a primary write failed; successful saves keep
-  // them aligned. Re-login after restoring so the in-memory State is refreshed.
+  // Only a pending backup represents an interrupted save. Otherwise the
+  // primary is authoritative whenever it remains valid; a stale backup must
+  // never overwrite a newer successful account write.
   const nativeLogin = window.loginWithCode;
   if (typeof nativeLogin === 'function' && !nativeLogin.__vaaniRecoveryWrapped) {
     const wrappedLogin = async function (rawCode) {
@@ -180,30 +194,39 @@
 
       const primaryKey = accountKey(code);
       const recoverKey = backupKey(code);
+      const markKey = pendingKey(code);
       const primary = safeGet(primaryKey);
       const backup = safeGet(recoverKey);
+      const pending = safeGet(markKey) === '1';
+      const primaryValid = isCombinedAccount(primary);
+      const backupValid = isCombinedAccount(backup);
+      const shouldRestore = backupValid &&
+        ((!primaryValid) || (pending && backup !== primary));
 
-      if (isCombinedAccount(backup) && backup !== primary) {
+      if (shouldRestore) {
         // Don't lose the primary if a retry unexpectedly fails.
         if (!safeSet(primaryKey, backup)) return result;
         try {
           const recovered = await nativeLogin.call(this, rawCode);
           if (recovered && recovered.ok) {
+            safeRemove(markKey);
             notifyRecovered();
             return recovered;
           }
         } catch (_) {}
         if (primary === null) {
-          try { localStorage.removeItem(primaryKey); } catch (_) {}
+          safeRemove(primaryKey);
         } else {
           safeSet(primaryKey, primary);
         }
         return result;
       }
 
-      // Seed the recovery copy the first time an existing account is opened.
-      if (result && result.ok && isCombinedAccount(primary) && !isCombinedAccount(backup)) {
-        safeSet(recoverKey, primary);
+      // Once a valid primary was loaded, align the backup best-effort and
+      // clear any stale marker. This prefers good primary data over old backup.
+      if (result && result.ok && primaryValid) {
+        if (!backupValid || backup !== primary || pending) safeSet(recoverKey, primary);
+        safeRemove(markKey);
       }
       return result;
     };
