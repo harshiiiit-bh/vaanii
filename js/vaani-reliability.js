@@ -40,7 +40,18 @@
 
   function ensureOfficer() {
     try {
-      if (typeof window.vaaniCharacterEnsure === 'function') {
+      if (typeof window.vaaniCharacterEnsure !== 'function') return;
+      if (document.getElementById('vaaniMentor')) return;
+
+      // Let the elite dock's normal boot run first. If it did not create the
+      // mentor (for example, after a script hiccup), make one recovery attempt.
+      if (typeof window.vaaniCharacterOnMount === 'function') {
+        window.setTimeout(function () {
+          if (!document.getElementById('vaaniMentor')) {
+            window.vaaniCharacterEnsure();
+          }
+        }, 750);
+      } else {
         window.vaaniCharacterEnsure();
       }
     } catch (err) {
