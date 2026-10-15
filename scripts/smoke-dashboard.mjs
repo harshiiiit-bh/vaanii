@@ -1466,7 +1466,8 @@ try {
           const labels=[...doc.querySelectorAll('.pv-error-segment-label')].map(el=>el.textContent.trim());
           const rawOptions=Array.isArray(q.o)?q.o.map(value=>String(value||'').trim()):[];
           let optionCursor=0;
-          const isLegacyFragmentFormat=rawOptions.length===4 &&
+          const parts=pyqSpottingParts(q)||[];
+          const isLegacyFragmentFormat=parts.length===0 && rawOptions.length===4 &&
             rawOptions.slice(0,3).every(phrase=>{
               if(!phrase||phrase.length<=2)return false;
               const index=String(q.q||'').toLocaleLowerCase().indexOf(phrase.toLocaleLowerCase(),optionCursor);
@@ -1475,7 +1476,6 @@ try {
               return true;
             }) && rawOptions.some(value=>/^no\s+error[.!?]?$/i.test(value));
 
-          const parts=pyqSpottingParts(q)||[];
           const choices=pyqOptionLabels(q);
           if(isLegacyFragmentFormat){
             // Legacy NDA records intentionally present the sentence fragments
