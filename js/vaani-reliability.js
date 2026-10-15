@@ -19,8 +19,17 @@
         if (img.dataset.vaaniFallback === '1') return;
         img.dataset.vaaniFallback = '1';
         img.classList.add('is-local-fallback');
-        img.src = 'assets/officer-vaani.svg';
-        img.alt = 'Officer VAANI';
+        // Keep the approved remote src attribute intact; layer a bundled image
+        // over it instead so diagnostics and existing contracts stay stable.
+        const stage = img.closest('.vd-officer-stage');
+        if (!stage || stage.querySelector('.vd-officer-local-fallback')) return;
+        const fallback = document.createElement('img');
+        fallback.className = 'vd-officer-local-fallback';
+        fallback.src = 'assets/officer-vaani.svg';
+        fallback.alt = 'Officer VAANI';
+        fallback.loading = 'eager';
+        fallback.decoding = 'async';
+        stage.appendChild(fallback);
       }
 
       img.addEventListener('error', useLocalFallback);
