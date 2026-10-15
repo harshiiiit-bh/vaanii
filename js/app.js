@@ -1250,11 +1250,26 @@ function pyqSpottingParts(q){
     return q.parts.map(p=>pyqSpottingCleanPart(p));
   }
   /*
-     IMPORTANT: some error-identification questions deliberately put the
-     sentence fragments themselves in q.o. Those are already answer choices
-     and must remain untouched. We only segment when the QUESTION TEXT itself
-     carries explicit (a)-(d), |, or an explicit parts[] structure.
+     Older NDA questions often store the (a), (b), and (c) sentence fragments
+     in q.o, while q.q contains the unlabelled sentence. If those exact
+     fragments occur in sequence inside the prompt and a No error choice is
+     present, they also provide safe boundaries for the visible prompt.
+     The answer choices themselves are still kept as their original fragments.
   */
+  const options=Array.isArray(q.o)?q.o.map(pyqSpottingCleanPart):[];
+  const hasNoErrorOption=options.some(pyqSpottingIsNoError);
+  const candidateParts=options.slice(0,3);
+  if(candidateParts.length===3&&candidateParts.every(Boolean)&&hasNoErrorOption){
+    const lowerSource=source.toLocaleLowerCase();
+    let cursor=0;
+    const matchInOrder=candidateParts.every(part=>{
+      const index=lowerSource.indexOf(part.toLocaleLowerCase(),cursor);
+      if(index<0)return false;
+      cursor=index+part.length;
+      return true;
+    });
+    if(matchInOrder)return candidateParts;
+  }
   return null;
 }
 function pyqSpottingFormat(q,parts){
@@ -1301,7 +1316,12 @@ function pyqOptionLabels(q){
       optionCursor=index+phrase.length;
       return true;
     }) && hasNoError;
-    if(optionsAreSentenceFragments)return q.o;
+    if(optionsAreSentenceFragments){
+      const preserved=q.o.slice();
+      const noErrorIndex=preserved.findIndex(pyqSpottingIsNoError);
+      if(noErrorIndex>=0)preserved[noErrorIndex]='No error';
+      return preserved;
+    }
     if(!parts&&!explicit&&q.spottingNoError===undefined&&!hasDChoice&&!hasNoError)return q.o;
     const count=format==='four-part'?4:format==='three-part-no-error'?3:parts&&parts.length===4?4:3;
     const labels=Array.from({length:count},(_,i)=>'Error in part ('+String.fromCharCode(97+i)+')');
