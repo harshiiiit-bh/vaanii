@@ -6,9 +6,12 @@
 (function () {
   'use strict';
 
+  const HAS_SHARED_STORAGE =
+    !!(window.storage && typeof window.storage.get === 'function');
   const LOCAL_MODE =
     /(?:^|\.)github\.io$/i.test(location.hostname) ||
-    location.protocol === 'file:';
+    location.protocol === 'file:' ||
+    !HAS_SHARED_STORAGE;
 
   function bindDashboardPortrait() {
     document.querySelectorAll('.vd-officer-image').forEach(function (img) {
