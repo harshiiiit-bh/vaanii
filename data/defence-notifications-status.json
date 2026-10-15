@@ -1,11 +1,11 @@
 {
   "version": 1,
-  "checkedAt": "2026-10-15T07:27:54.127Z",
+  "checkedAt": "2026-10-15T13:27:32.723Z",
   "status": "partial",
   "sourcesTotal": 51,
   "sourcesOk": 19,
   "sourcesFailed": 32,
-  "liveItems": 304,
+  "liveItems": 307,
   "archiveItems": 91,
   "snapshotRetained": false,
   "concurrency": 4,
@@ -14,97 +14,97 @@
       "source": "UPSC — Active Examinations",
       "ok": false,
       "found": 0,
-      "durationMs": 1606,
+      "durationMs": 345,
       "error": "HTTP 403 Forbidden"
     },
     {
       "source": "UPSC — Forthcoming Examinations",
       "ok": false,
       "found": 0,
-      "durationMs": 1409,
+      "durationMs": 298,
       "error": "HTTP 403 Forbidden"
     },
     {
       "source": "UPSC — Examination Notifications",
       "ok": false,
       "found": 0,
-      "durationMs": 1404,
+      "durationMs": 299,
       "error": "HTTP 403 Forbidden"
     },
     {
       "source": "UPSC — Official Home",
       "ok": false,
       "found": 0,
-      "durationMs": 1405,
+      "durationMs": 300,
       "error": "HTTP 403 Forbidden"
     },
     {
       "source": "Indian Air Force — AFCAT",
       "ok": false,
       "found": 0,
-      "durationMs": 1308,
+      "durationMs": 1225,
       "error": "HTTP 403 Forbidden"
     },
     {
       "source": "Indian Army — Join Indian Army",
       "ok": false,
       "found": 0,
-      "durationMs": 31947,
+      "durationMs": 31682,
       "error": "fetch failed"
     },
     {
       "source": "Indian Navy — Join Indian Navy",
       "ok": false,
       "found": 0,
-      "durationMs": 31944,
+      "durationMs": 31679,
       "error": "fetch failed"
     },
     {
       "source": "Agniveervayu",
       "ok": false,
       "found": 0,
-      "durationMs": 31944,
+      "durationMs": 31679,
       "error": "fetch failed"
     },
     {
       "source": "BSF Recruitment",
       "ok": false,
       "found": 0,
-      "durationMs": 1252,
+      "durationMs": 930,
       "error": "HTTP 403 Forbidden"
     },
     {
       "source": "CRPF Recruitment",
       "ok": false,
       "found": 0,
-      "durationMs": 27646,
+      "durationMs": 31526,
       "error": "fetch failed"
     },
     {
       "source": "SSC — Official Notice Board",
       "ok": true,
       "found": 0,
-      "durationMs": 1641
+      "durationMs": 1554
     },
     {
       "source": "Railway Recruitment Boards — Employment Notices",
       "ok": false,
       "found": 0,
-      "durationMs": 31578,
+      "durationMs": 31970,
       "error": "fetch failed"
     },
     {
       "source": "IBPS — CRP Updates",
       "ok": false,
       "found": 0,
-      "durationMs": 3572,
+      "durationMs": 4240,
       "error": "fetch failed"
     },
     {
       "source": "SBI — Current Openings",
       "ok": true,
       "found": 80,
-      "durationMs": 3308
+      "durationMs": 1308
     },
     {
       "source": "CTET — Official Documents",
@@ -117,236 +117,236 @@
       "source": "KVS — Recruitment Notices",
       "ok": false,
       "found": 0,
-      "durationMs": 31662,
+      "durationMs": 31606,
       "error": "fetch failed"
     },
     {
       "source": "BPSC — Official Notices",
       "ok": false,
       "found": 0,
-      "durationMs": 4170,
+      "durationMs": 3996,
       "error": "fetch failed"
     },
     {
       "source": "UPPSC — Official Notices",
       "ok": true,
       "found": 1,
-      "durationMs": 2297
+      "durationMs": 1984
     },
     {
       "source": "ISRO — Current Opportunities",
       "ok": true,
       "found": 0,
-      "durationMs": 2827
+      "durationMs": 1133
     },
     {
       "source": "DRDO — Vacancies",
       "ok": true,
       "found": 1,
-      "durationMs": 2458
+      "durationMs": 2383
     },
     {
       "source": "NTA — Official Exam Directory",
       "ok": true,
       "found": 80,
-      "durationMs": 7001
+      "durationMs": 4148
     },
     {
       "source": "JEE Main — Official Notices",
       "ok": false,
       "found": 0,
-      "durationMs": 2008,
+      "durationMs": 2610,
       "error": "HTTP 403 Forbidden"
     },
     {
       "source": "NEET UG — Official Notices",
       "ok": false,
       "found": 0,
-      "durationMs": 867,
+      "durationMs": 701,
       "error": "HTTP 403 Forbidden"
     },
     {
       "source": "UGC NET — Official Notices",
       "ok": false,
       "found": 0,
-      "durationMs": 496,
+      "durationMs": 442,
       "error": "HTTP 403 Forbidden"
     },
     {
       "source": "CSBC Bihar — Police Recruitment",
       "ok": true,
       "found": 43,
-      "durationMs": 2839
+      "durationMs": 1315
     },
     {
       "source": "BPSSC Bihar — Police Recruitment",
       "ok": true,
       "found": 80,
-      "durationMs": 1931
+      "durationMs": 1638
     },
     {
       "source": "UPPRPB — Police Recruitment",
       "ok": true,
       "found": 0,
-      "durationMs": 2319
+      "durationMs": 1711
     },
     {
       "source": "UPSC — Recruitment Advertisements",
       "ok": false,
       "found": 0,
-      "durationMs": 450,
+      "durationMs": 301,
       "error": "HTTP 403 Forbidden"
     },
     {
       "source": "Territorial Army — Official Recruitment",
       "ok": false,
       "found": 0,
-      "durationMs": 974,
+      "durationMs": 948,
       "error": "fetch failed"
     },
     {
       "source": "CISF — Recruitment Portal",
       "ok": false,
       "found": 0,
-      "durationMs": 31973,
+      "durationMs": 31898,
       "error": "fetch failed"
     },
     {
       "source": "ITBP — Recruitment Portal",
       "ok": false,
       "found": 0,
-      "durationMs": 31663,
+      "durationMs": 31972,
       "error": "fetch failed"
     },
     {
       "source": "SSB — Recruitment Portal",
       "ok": true,
       "found": 2,
-      "durationMs": 1949
+      "durationMs": 1694
     },
     {
       "source": "Assam Rifles — Official Recruitment",
       "ok": false,
       "found": 0,
-      "durationMs": 31599,
+      "durationMs": 31972,
       "error": "fetch failed"
     },
     {
       "source": "Indian Coast Guard — Recruitment Portal",
       "ok": false,
       "found": 0,
-      "durationMs": 5668,
+      "durationMs": 1661,
       "error": "fetch failed"
     },
     {
       "source": "Indian Coast Guard — Official Website",
       "ok": false,
       "found": 0,
-      "durationMs": 3452,
+      "durationMs": 3176,
       "error": "fetch failed"
     },
     {
       "source": "India Post — Vacancies",
       "ok": true,
       "found": 1,
-      "durationMs": 3648
+      "durationMs": 12435
     },
     {
       "source": "India Post — GDS Engagement",
       "ok": true,
       "found": 0,
-      "durationMs": 1182
+      "durationMs": 817
     },
     {
       "source": "National Career Service — Government Job Directory",
       "ok": true,
       "found": 1,
-      "durationMs": 3652
+      "durationMs": 2691
     },
     {
       "source": "Haryana Staff Selection Commission — Advertisements",
       "ok": true,
       "found": 1,
-      "durationMs": 1265
+      "durationMs": 1186
     },
     {
       "source": "Madhya Pradesh Employees Selection Board",
       "ok": false,
       "found": 0,
-      "durationMs": 4172,
+      "durationMs": 3504,
       "error": "fetch failed"
     },
     {
       "source": "Rajasthan Staff Selection Board",
       "ok": false,
       "found": 0,
-      "durationMs": 31926,
+      "durationMs": 31966,
       "error": "fetch failed"
     },
     {
       "source": "UPSSSC — Official Recruitment",
       "ok": false,
       "found": 0,
-      "durationMs": 31984,
+      "durationMs": 31782,
       "error": "fetch failed"
     },
     {
       "source": "Bihar Staff Selection Commission",
       "ok": false,
       "found": 0,
-      "durationMs": 5028,
+      "durationMs": 4382,
       "error": "fetch failed"
     },
     {
       "source": "NIELIT — Recruitments",
       "ok": false,
       "found": 0,
-      "durationMs": 3652,
+      "durationMs": 2817,
       "error": "fetch failed"
     },
     {
       "source": "CSIR — Career Opportunities",
       "ok": true,
       "found": 0,
-      "durationMs": 4775
+      "durationMs": 3558
     },
     {
       "source": "RRB Ajmer — Official Notices",
       "ok": false,
       "found": 0,
-      "durationMs": 2977,
+      "durationMs": 3215,
       "error": "fetch failed"
     },
     {
       "source": "RBI — Opportunities",
       "ok": true,
       "found": 0,
-      "durationMs": 1114
+      "durationMs": 1163
     },
     {
       "source": "NABARD — Career Notices",
       "ok": false,
       "found": 0,
-      "durationMs": 31732,
+      "durationMs": 32036,
       "error": "fetch failed"
     },
     {
       "source": "SEBI — Opportunities",
       "ok": true,
       "found": 0,
-      "durationMs": 1462
+      "durationMs": 1019
     },
     {
       "source": "JEE Advanced — Official Portal",
       "ok": true,
       "found": 0,
-      "durationMs": 471
+      "durationMs": 118
     },
     {
       "source": "Common Law Admission Test — Official Portal",
       "ok": true,
       "found": 0,
-      "durationMs": 729
+      "durationMs": 696
     }
   ]
 }
