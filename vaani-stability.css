@@ -18,9 +18,19 @@
 
 /* A local SVG is the offline-safe identity asset for Officer VAANI. */
 .vd-officer-image.is-local-fallback {
+  display: none !important;
+}
+
+.vd-officer-local-fallback {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
   object-fit: contain !important;
   object-position: center bottom !important;
-  background: transparent !important;
+  pointer-events: none !important;
+  z-index: 2 !important;
 }
 
 /* Keep the restore control recognizable even when the remote sprite CDN fails. */
