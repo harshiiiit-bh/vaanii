@@ -12,6 +12,9 @@
 
   function bindDashboardPortrait() {
     document.querySelectorAll('.vd-officer-image').forEach(function (img) {
+      if (img.dataset.vaaniFallbackBound === '1') return;
+      img.dataset.vaaniFallbackBound = '1';
+
       function useLocalFallback() {
         if (img.dataset.vaaniFallback === '1') return;
         img.dataset.vaaniFallback = '1';
