@@ -1,6 +1,6 @@
 /* VAANI's service-worker cache is namespaced to this app. */
 const CACHE_PREFIX = 'vaani-shell-';
-const CACHE = 'vaani-shell-v14-stability1';
+const CACHE = 'vaani-shell-v13-stability1';
 
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll([
