@@ -20,3 +20,15 @@ id = "generic-api-key"
   paths = ['''js/vaani-character-elite\.js''']
   regexTarget = "line"
   regexes = ['''DOCK_PREF_KEY\s*=\s*['"]vaani-officer-dock-v1['"]''']
+
+# This exact historical commit contains Vaani's legacy public Supabase anon key.
+# Its decoded JWT claims identify role=anon and this project's ref; it is not a
+# service-role/admin key. Scope the exception to that one commit and file only.
+[[rules]]
+id = "jwt"
+
+  [[rules.allowlists]]
+  description = "Known legacy public Supabase anon key, limited to its original commit and file"
+  condition = "AND"
+  commits = ["d4d3f36b0af30c26e2aec9af4a1767dd41be16c7"]
+  paths = ['''index\.html''']
