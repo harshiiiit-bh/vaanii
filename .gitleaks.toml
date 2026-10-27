@@ -1,0 +1,19 @@
+# Narrow allowlists for two verified non-secret values.
+# Do not add whole-file or broad generic key exemptions.
+
+[[rules]]
+id = "generic-api-key"
+
+  [[rules.allowlists]]
+  description = "Supabase publishable browser key used intentionally by the Arena client; not a service-role secret"
+  condition = "AND"
+  paths = ['''js/vaani-arena\.js''']
+  regexTarget = "line"
+  regexes = ['''SHARED_BOARD_API_KEY\s*=\s*['"]sb_publishable_[A-Za-z0-9_-]+['"]''']
+
+  [[rules.allowlists]]
+  description = "LocalStorage preference key, not an authentication credential"
+  condition = "AND"
+  paths = ['''js/vaani-character-elite\.js''']
+  regexTarget = "line"
+  regexes = ['''DOCK_PREF_KEY\s*=\s*['"]vaani-officer-dock-v1['"]''']
