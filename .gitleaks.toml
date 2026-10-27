@@ -1,4 +1,7 @@
-# Narrow allowlists for two verified non-secret values.
+# Extend Gitleaks' built-in rules and add narrow allowlists for two verified non-secret values.
+[extend]
+useDefault = true
+
 # Do not add whole-file or broad generic key exemptions.
 
 [[rules]]
