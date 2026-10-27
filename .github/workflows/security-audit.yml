@@ -55,7 +55,35 @@ jobs:
           sudo install /tmp/gitleaks /usr/local/bin/gitleaks
           gitleaks version
       - name: Scan checked-out files
-        run: gitleaks dir . --redact --exit-code 1
+        shell: bash
+        run: |
+          set +e
+          gitleaks dir . --redact --report-format json --report-path /tmp/gitleaks-report.json --exit-code 1
+          scan_status=$?
+          set -e
+          if [ ! -f /tmp/gitleaks-report.json ]; then
+            echo "Gitleaks did not produce a report; treating the scan as failed."
+            exit 1
+          fi
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(Path("/tmp/gitleaks-report.json").read_text())
+          for item in report:
+              # Do not print Secret, Match, or other credential-bearing fields.
+              rule = item.get("RuleID", "unknown-rule")
+              file = item.get("File", "unknown-file")
+              line = item.get("StartLine", "?")
+              commit = item.get("Commit", "")
+              print(f"Potential secret finding (value withheld): rule={rule}; file={file}; line={line}; commit={commit}")
+          if report:
+              raise SystemExit(1)
+          PY
+          report_status=$?
+          if [ "$scan_status" -ne 0 ] || [ "$report_status" -ne 0 ]; then
+            exit 1
+          fi
 
   codeql:
     name: Static application security analysis
