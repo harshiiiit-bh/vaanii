@@ -34,6 +34,33 @@ jobs:
           GITLEAKS_ENABLE_COMMENTS: "false"
           GITLEAKS_ENABLE_UPLOAD_ARTIFACT: "false"
           GITLEAKS_ENABLE_SUMMARY: "false"
+      - name: Scan all Git history for exposed secrets
+        shell: bash
+        run: |
+          set +e
+          gitleaks git --redact --report-format json --report-path /tmp/gitleaks-history.json --exit-code 1 --log-opts="--all" .
+          scan_status=$?
+          if [ ! -f /tmp/gitleaks-history.json ]; then
+            echo "Gitleaks did not produce a history report; treating the scan as failed."
+            exit 1
+          fi
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path("/tmp/gitleaks-history.json").read_text())
+          for item in report:
+              print("Historical secret-pattern match (value withheld): "
+                    f"rule={item.get('RuleID', 'unknown-rule')}; "
+                    f"file={item.get('File', 'unknown-file')}; "
+                    f"line={item.get('StartLine', '?')}; "
+                    f"commit={item.get('Commit', '')}")
+          raise SystemExit(1 if report else 0)
+          PY
+          report_status=$?
+          if [ "$scan_status" -ne 0 ] || [ "$report_status" -ne 0 ]; then
+            exit 1
+          fi
+
       - name: Scan checked-out files for exposed secrets
         shell: bash
         run: |
