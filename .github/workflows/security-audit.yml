@@ -38,7 +38,7 @@ jobs:
         shell: bash
         run: |
           set +e
-          gitleaks dir . --redact --report-format json --report-path /tmp/gitleaks-working-tree.json --exit-code 1
+          gitleaks dir --config .gitleaks.toml . --redact --report-format json --report-path /tmp/gitleaks-working-tree.json --exit-code 1
           scan_status=$?
           if [ ! -f /tmp/gitleaks-working-tree.json ]; then
             echo "Gitleaks did not produce a report; treating the scan as failed."
@@ -88,7 +88,7 @@ jobs:
         shell: bash
         run: |
           set +e
-          gitleaks dir . --redact --report-format json --report-path /tmp/gitleaks-report.json --exit-code 1
+          gitleaks dir --config .gitleaks.toml . --redact --report-format json --report-path /tmp/gitleaks-report.json --exit-code 1
           scan_status=$?
           set -e
           if [ ! -f /tmp/gitleaks-report.json ]; then
