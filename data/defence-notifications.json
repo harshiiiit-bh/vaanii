@@ -1,345 +1,346 @@
 {
   "version": 1,
-  "generatedAt": "2026-10-27T21:20:57.679Z",
+  "generatedAt": "2026-10-28T01:22:44.349Z",
   "source": "VAANI Government & Defence Notification Engine",
   "checkedSources": [
     {
       "source": "UPSC — Active Examinations",
       "ok": false,
       "found": 0,
-      "durationMs": 1099,
+      "durationMs": 864,
       "error": "HTTP 403 Forbidden"
     },
     {
       "source": "UPSC — Forthcoming Examinations",
       "ok": false,
       "found": 0,
-      "durationMs": 951,
+      "durationMs": 890,
       "error": "HTTP 403 Forbidden"
     },
     {
       "source": "UPSC — Examination Notifications",
       "ok": false,
       "found": 0,
-      "durationMs": 942,
+      "durationMs": 824,
       "error": "HTTP 403 Forbidden"
     },
     {
       "source": "UPSC — Official Home",
       "ok": false,
       "found": 0,
-      "durationMs": 946,
+      "durationMs": 829,
       "error": "HTTP 403 Forbidden"
     },
     {
       "source": "Indian Air Force — AFCAT",
       "ok": false,
       "found": 0,
-      "durationMs": 1404,
+      "durationMs": 1296,
       "error": "HTTP 403 Forbidden"
     },
     {
       "source": "Indian Army — Join Indian Army",
       "ok": false,
       "found": 0,
-      "durationMs": 31530,
+      "durationMs": 31649,
       "error": "fetch failed"
     },
     {
       "source": "Indian Navy — Join Indian Navy",
       "ok": false,
       "found": 0,
-      "durationMs": 31527,
+      "durationMs": 31646,
       "error": "fetch failed"
     },
     {
       "source": "Agniveervayu",
       "ok": false,
       "found": 0,
-      "durationMs": 31526,
+      "durationMs": 31589,
       "error": "fetch failed"
     },
     {
       "source": "BSF Recruitment",
       "ok": false,
       "found": 0,
-      "durationMs": 1088,
+      "durationMs": 1012,
       "error": "HTTP 403 Forbidden"
     },
     {
       "source": "CRPF Recruitment",
       "ok": false,
       "found": 0,
-      "durationMs": 31540,
+      "durationMs": 31843,
       "error": "fetch failed"
     },
     {
       "source": "SSC — Official Notice Board",
       "ok": true,
       "found": 0,
-      "durationMs": 1441
+      "durationMs": 1332
     },
     {
       "source": "Railway Recruitment Boards — Employment Notices",
-      "ok": false,
-      "found": 0,
-      "durationMs": 31978,
-      "error": "fetch failed"
-    },
-    {
-      "source": "IBPS — CRP Updates",
-      "ok": false,
-      "found": 0,
-      "durationMs": 3767,
-      "error": "fetch failed"
-    },
-    {
-      "source": "SBI — Current Openings",
-      "ok": true,
-      "found": 80,
-      "durationMs": 1976
-    },
-    {
-      "source": "CTET — Official Documents",
-      "ok": true,
-      "found": 6,
-      "durationMs": 2092
-    },
-    {
-      "source": "KVS — Recruitment Notices",
-      "ok": true,
-      "found": 1,
-      "durationMs": 3790
-    },
-    {
-      "source": "BPSC — Official Notices",
-      "ok": false,
-      "found": 0,
-      "durationMs": 4043,
-      "error": "fetch failed"
-    },
-    {
-      "source": "UPPSC — Official Notices",
-      "ok": true,
-      "found": 1,
-      "durationMs": 2537
-    },
-    {
-      "source": "ISRO — Current Opportunities",
-      "ok": true,
-      "found": 0,
-      "durationMs": 403
-    },
-    {
-      "source": "DRDO — Vacancies",
-      "ok": false,
-      "found": 0,
-      "durationMs": 31764,
-      "error": "fetch failed"
-    },
-    {
-      "source": "NTA — Official Exam Directory",
-      "ok": false,
-      "found": 0,
-      "durationMs": 4787,
-      "error": "fetch failed"
-    },
-    {
-      "source": "JEE Main — Official Notices",
-      "ok": false,
-      "found": 0,
-      "durationMs": 651,
-      "error": "HTTP 403 Forbidden"
-    },
-    {
-      "source": "NEET UG — Official Notices",
-      "ok": false,
-      "found": 0,
-      "durationMs": 660,
-      "error": "HTTP 403 Forbidden"
-    },
-    {
-      "source": "UGC NET — Official Notices",
-      "ok": false,
-      "found": 0,
-      "durationMs": 404,
-      "error": "HTTP 403 Forbidden"
-    },
-    {
-      "source": "CSBC Bihar — Police Recruitment",
-      "ok": true,
-      "found": 43,
-      "durationMs": 1355
-    },
-    {
-      "source": "BPSSC Bihar — Police Recruitment",
-      "ok": true,
-      "found": 80,
-      "durationMs": 1572
-    },
-    {
-      "source": "UPPRPB — Police Recruitment",
-      "ok": true,
-      "found": 0,
-      "durationMs": 3126
-    },
-    {
-      "source": "UPSC — Recruitment Advertisements",
-      "ok": false,
-      "found": 0,
-      "durationMs": 394,
-      "error": "HTTP 403 Forbidden"
-    },
-    {
-      "source": "Territorial Army — Official Recruitment",
-      "ok": false,
-      "found": 0,
-      "durationMs": 969,
-      "error": "fetch failed"
-    },
-    {
-      "source": "CISF — Recruitment Portal",
-      "ok": false,
-      "found": 0,
-      "durationMs": 31651,
-      "error": "fetch failed"
-    },
-    {
-      "source": "ITBP — Recruitment Portal",
-      "ok": false,
-      "found": 0,
-      "durationMs": 31521,
-      "error": "fetch failed"
-    },
-    {
-      "source": "SSB — Recruitment Portal",
-      "ok": true,
-      "found": 2,
-      "durationMs": 1780
-    },
-    {
-      "source": "Assam Rifles — Official Recruitment",
-      "ok": false,
-      "found": 0,
-      "durationMs": 31696,
-      "error": "fetch failed"
-    },
-    {
-      "source": "Indian Coast Guard — Recruitment Portal",
-      "ok": false,
-      "found": 0,
-      "durationMs": 5504,
-      "error": "fetch failed"
-    },
-    {
-      "source": "Indian Coast Guard — Official Website",
-      "ok": false,
-      "found": 0,
-      "durationMs": 31972,
-      "error": "fetch failed"
-    },
-    {
-      "source": "India Post — Vacancies",
-      "ok": true,
-      "found": 14,
-      "durationMs": 1792
-    },
-    {
-      "source": "India Post — GDS Engagement",
-      "ok": true,
-      "found": 0,
-      "durationMs": 1012
-    },
-    {
-      "source": "National Career Service — Government Job Directory",
-      "ok": true,
-      "found": 1,
-      "durationMs": 2955
-    },
-    {
-      "source": "Haryana Staff Selection Commission — Advertisements",
-      "ok": true,
-      "found": 1,
-      "durationMs": 1326
-    },
-    {
-      "source": "Madhya Pradesh Employees Selection Board",
-      "ok": false,
-      "found": 0,
-      "durationMs": 31639,
-      "error": "fetch failed"
-    },
-    {
-      "source": "Rajasthan Staff Selection Board",
-      "ok": false,
-      "found": 0,
-      "durationMs": 31727,
-      "error": "fetch failed"
-    },
-    {
-      "source": "UPSSSC — Official Recruitment",
-      "ok": false,
-      "found": 0,
-      "durationMs": 31974,
-      "error": "fetch failed"
-    },
-    {
-      "source": "Bihar Staff Selection Commission",
-      "ok": false,
-      "found": 0,
-      "durationMs": 4537,
-      "error": "fetch failed"
-    },
-    {
-      "source": "NIELIT — Recruitments",
-      "ok": false,
-      "found": 0,
-      "durationMs": 3154,
-      "error": "fetch failed"
-    },
-    {
-      "source": "CSIR — Career Opportunities",
-      "ok": true,
-      "found": 0,
-      "durationMs": 3403
-    },
-    {
-      "source": "RRB Ajmer — Official Notices",
       "ok": false,
       "found": 0,
       "durationMs": 31975,
       "error": "fetch failed"
     },
     {
+      "source": "IBPS — CRP Updates",
+      "ok": false,
+      "found": 0,
+      "durationMs": 3818,
+      "error": "fetch failed"
+    },
+    {
+      "source": "SBI — Current Openings",
+      "ok": false,
+      "found": 0,
+      "durationMs": 1683,
+      "error": "fetch failed"
+    },
+    {
+      "source": "CTET — Official Documents",
+      "ok": true,
+      "found": 6,
+      "durationMs": 2216
+    },
+    {
+      "source": "KVS — Recruitment Notices",
+      "ok": true,
+      "found": 1,
+      "durationMs": 3834
+    },
+    {
+      "source": "BPSC — Official Notices",
+      "ok": false,
+      "found": 0,
+      "durationMs": 8157,
+      "error": "fetch failed"
+    },
+    {
+      "source": "UPPSC — Official Notices",
+      "ok": true,
+      "found": 1,
+      "durationMs": 2149
+    },
+    {
+      "source": "ISRO — Current Opportunities",
+      "ok": true,
+      "found": 0,
+      "durationMs": 368
+    },
+    {
+      "source": "DRDO — Vacancies",
+      "ok": false,
+      "found": 0,
+      "durationMs": 31605,
+      "error": "fetch failed"
+    },
+    {
+      "source": "NTA — Official Exam Directory",
+      "ok": false,
+      "found": 0,
+      "durationMs": 5377,
+      "error": "fetch failed"
+    },
+    {
+      "source": "JEE Main — Official Notices",
+      "ok": false,
+      "found": 0,
+      "durationMs": 592,
+      "error": "HTTP 403 Forbidden"
+    },
+    {
+      "source": "NEET UG — Official Notices",
+      "ok": false,
+      "found": 0,
+      "durationMs": 701,
+      "error": "HTTP 403 Forbidden"
+    },
+    {
+      "source": "UGC NET — Official Notices",
+      "ok": false,
+      "found": 0,
+      "durationMs": 334,
+      "error": "HTTP 403 Forbidden"
+    },
+    {
+      "source": "CSBC Bihar — Police Recruitment",
+      "ok": true,
+      "found": 43,
+      "durationMs": 1347
+    },
+    {
+      "source": "BPSSC Bihar — Police Recruitment",
+      "ok": true,
+      "found": 80,
+      "durationMs": 3759
+    },
+    {
+      "source": "UPPRPB — Police Recruitment",
+      "ok": true,
+      "found": 0,
+      "durationMs": 4582
+    },
+    {
+      "source": "UPSC — Recruitment Advertisements",
+      "ok": false,
+      "found": 0,
+      "durationMs": 329,
+      "error": "HTTP 403 Forbidden"
+    },
+    {
+      "source": "Territorial Army — Official Recruitment",
+      "ok": false,
+      "found": 0,
+      "durationMs": 994,
+      "error": "fetch failed"
+    },
+    {
+      "source": "CISF — Recruitment Portal",
+      "ok": false,
+      "found": 0,
+      "durationMs": 31603,
+      "error": "fetch failed"
+    },
+    {
+      "source": "ITBP — Recruitment Portal",
+      "ok": false,
+      "found": 0,
+      "durationMs": 31598,
+      "error": "fetch failed"
+    },
+    {
+      "source": "SSB — Recruitment Portal",
+      "ok": true,
+      "found": 2,
+      "durationMs": 1990
+    },
+    {
+      "source": "Assam Rifles — Official Recruitment",
+      "ok": false,
+      "found": 0,
+      "durationMs": 31477,
+      "error": "fetch failed"
+    },
+    {
+      "source": "Indian Coast Guard — Recruitment Portal",
+      "ok": false,
+      "found": 0,
+      "durationMs": 1827,
+      "error": "fetch failed"
+    },
+    {
+      "source": "Indian Coast Guard — Official Website",
+      "ok": false,
+      "found": 0,
+      "durationMs": 31645,
+      "error": "fetch failed"
+    },
+    {
+      "source": "India Post — Vacancies",
+      "ok": true,
+      "found": 14,
+      "durationMs": 12033
+    },
+    {
+      "source": "India Post — GDS Engagement",
+      "ok": true,
+      "found": 0,
+      "durationMs": 22467
+    },
+    {
+      "source": "National Career Service — Government Job Directory",
+      "ok": true,
+      "found": 1,
+      "durationMs": 2864
+    },
+    {
+      "source": "Haryana Staff Selection Commission — Advertisements",
+      "ok": true,
+      "found": 1,
+      "durationMs": 1229
+    },
+    {
+      "source": "Madhya Pradesh Employees Selection Board",
+      "ok": false,
+      "found": 0,
+      "durationMs": 31976,
+      "error": "fetch failed"
+    },
+    {
+      "source": "Rajasthan Staff Selection Board",
+      "ok": false,
+      "found": 0,
+      "durationMs": 31837,
+      "error": "fetch failed"
+    },
+    {
+      "source": "UPSSSC — Official Recruitment",
+      "ok": false,
+      "found": 0,
+      "durationMs": 31972,
+      "error": "fetch failed"
+    },
+    {
+      "source": "Bihar Staff Selection Commission",
+      "ok": false,
+      "found": 0,
+      "durationMs": 4906,
+      "error": "fetch failed"
+    },
+    {
+      "source": "NIELIT — Recruitments",
+      "ok": false,
+      "found": 0,
+      "durationMs": 3034,
+      "error": "fetch failed"
+    },
+    {
+      "source": "CSIR — Career Opportunities",
+      "ok": true,
+      "found": 0,
+      "durationMs": 2929
+    },
+    {
+      "source": "RRB Ajmer — Official Notices",
+      "ok": false,
+      "found": 0,
+      "durationMs": 31613,
+      "error": "fetch failed"
+    },
+    {
       "source": "RBI — Opportunities",
       "ok": true,
       "found": 0,
-      "durationMs": 1096
+      "durationMs": 1130
     },
     {
       "source": "NABARD — Career Notices",
       "ok": false,
       "found": 0,
-      "durationMs": 31526,
+      "durationMs": 32079,
       "error": "fetch failed"
     },
     {
       "source": "SEBI — Opportunities",
       "ok": true,
       "found": 0,
-      "durationMs": 1019
+      "durationMs": 1348
     },
     {
       "source": "JEE Advanced — Official Portal",
       "ok": true,
       "found": 0,
-      "durationMs": 176
+      "durationMs": 255
     },
     {
       "source": "Common Law Admission Test — Official Portal",
       "ok": true,
       "found": 0,
-      "durationMs": 752
+      "durationMs": 748
     }
   ],
   "pruneIds": [],
@@ -389,7 +390,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -405,7 +406,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:54:55.687Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -421,7 +422,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:54:55.687Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -437,7 +438,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:54:55.687Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -453,7 +454,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:54:55.687Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -469,7 +470,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:54:55.687Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -485,7 +486,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:54:55.687Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -501,7 +502,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:54:55.687Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -517,7 +518,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -533,7 +534,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -549,7 +550,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -565,7 +566,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -581,7 +582,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -597,7 +598,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -613,7 +614,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -629,7 +630,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -645,7 +646,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -661,7 +662,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -677,7 +678,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -693,7 +694,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -709,7 +710,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -725,7 +726,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -741,7 +742,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -757,7 +758,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -773,7 +774,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -789,7 +790,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -805,7 +806,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:54:55.687Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -821,7 +822,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:54:55.687Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -837,7 +838,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:54:55.687Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -853,7 +854,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -869,7 +870,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -885,7 +886,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -901,7 +902,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:54:55.686Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -917,7 +918,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -933,7 +934,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -949,7 +950,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -965,7 +966,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -981,7 +982,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -997,7 +998,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1013,7 +1014,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1029,7 +1030,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1045,7 +1046,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1061,7 +1062,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1077,7 +1078,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1093,7 +1094,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1109,7 +1110,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1125,7 +1126,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1141,7 +1142,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.647Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1157,7 +1158,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.647Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1173,7 +1174,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.647Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1189,7 +1190,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.647Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1205,7 +1206,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.647Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1221,7 +1222,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.647Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1237,7 +1238,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.647Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1253,7 +1254,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.647Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1269,7 +1270,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1285,7 +1286,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1301,7 +1302,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1317,7 +1318,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1333,7 +1334,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1349,7 +1350,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1365,7 +1366,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1381,7 +1382,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1397,7 +1398,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1413,7 +1414,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1429,7 +1430,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1445,7 +1446,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1461,7 +1462,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1477,7 +1478,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1493,7 +1494,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.645Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1509,7 +1510,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.645Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1525,7 +1526,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.645Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1541,7 +1542,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.645Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1557,7 +1558,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.645Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1573,7 +1574,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.645Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1588,7 +1589,7 @@
       "sourceName": "SSB — Recruitment Portal",
       "official": true,
       "firstSeen": "2026-10-12T23:00:44.209Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1603,7 +1604,7 @@
       "sourceName": "SSB — Recruitment Portal",
       "official": true,
       "firstSeen": "2026-10-12T23:00:44.209Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1618,7 +1619,7 @@
       "sourceName": "National Career Service — Government Job Directory",
       "official": true,
       "firstSeen": "2026-10-12T23:00:44.209Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1633,7 +1634,7 @@
       "sourceName": "Haryana Staff Selection Commission — Advertisements",
       "official": true,
       "firstSeen": "2026-10-12T23:00:44.209Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1648,7 +1649,7 @@
       "sourceName": "CTET — Official Documents",
       "official": true,
       "firstSeen": "2026-09-29T00:59:54.852Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1663,7 +1664,7 @@
       "sourceName": "CTET — Official Documents",
       "official": true,
       "firstSeen": "2026-09-29T00:59:54.852Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1678,7 +1679,7 @@
       "sourceName": "CTET — Official Documents",
       "official": true,
       "firstSeen": "2026-09-29T00:59:54.852Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1693,7 +1694,7 @@
       "sourceName": "CTET — Official Documents",
       "official": true,
       "firstSeen": "2026-09-29T00:59:54.852Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1708,7 +1709,7 @@
       "sourceName": "CTET — Official Documents",
       "official": true,
       "firstSeen": "2026-09-29T00:59:54.852Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1723,7 +1724,7 @@
       "sourceName": "CTET — Official Documents",
       "official": true,
       "firstSeen": "2026-09-29T00:59:54.852Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1738,8 +1739,166 @@
       "sourceName": "KVS — Recruitment Notices",
       "official": true,
       "firstSeen": "2026-10-23T22:12:10.669Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "online-gds-recruitment-https-www-indiapost-gov-in-vacancies-online-gds",
+      "title": "Online GDS Recruitment",
+      "organization": "India Post",
+      "category": "CENTRAL_GOVT",
+      "type": "notification",
+      "status": "notification",
+      "url": "https://www.indiapost.gov.in/vacancies/online-gds",
+      "sourceUrl": "https://www.indiapost.gov.in/vacancies",
+      "sourceName": "India Post — Vacancies",
+      "official": true,
+      "firstSeen": "2026-10-12T23:00:44.209Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "recruitment-rules-recruitment-rules-https-www-indiapost-gov-in-documents-recruitmentrules",
+      "title": "Recruitment Rules Recruitment Rules",
+      "organization": "India Post",
+      "category": "CENTRAL_GOVT",
+      "type": "notification",
+      "status": "notification",
+      "url": "https://www.indiapost.gov.in/documents/recruitmentrules",
+      "sourceUrl": "https://www.indiapost.gov.in/vacancies",
+      "sourceName": "India Post — Vacancies",
+      "official": true,
+      "firstSeen": "2026-10-19T06:18:02.710Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "notification-for-filling-up-of-drivers-ordinary-grade-through-deputation-absorption-basis-on-01-08-2026-https-",
+      "title": "Notification for filling up of Drivers (Ordinary Grade) through deputation /absorption basis on 01.08.2026",
+      "organization": "India Post",
+      "category": "CENTRAL_GOVT",
+      "type": "notification",
+      "status": "notification",
+      "notificationDate": "01.08.2026",
+      "url": "https://www.indiapost.gov.in/api/documents/file/1034tw42vyvr3kbvd3e7gy369dy3beji0s5ja0e34b062aa0eiqj0gxg634ume",
+      "sourceUrl": "https://www.indiapost.gov.in/vacancies",
+      "sourceName": "India Post — Vacancies",
+      "official": true,
+      "firstSeen": "2026-10-19T06:18:02.710Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "direct-recruitment-for-the-post-of-manger-mail-motor-service-mms-in-department-of-posts-https-www-indiapost-go",
+      "title": "Direct Recruitment for the post of Manger Mail Motor Service (MMS) in Department of Posts",
+      "organization": "India Post",
+      "category": "CENTRAL_GOVT",
+      "type": "notification",
+      "status": "notification",
+      "notificationDate": "05-06-2026",
+      "url": "https://www.indiapost.gov.in/api/documents/file/103eold2idj70ejh53if443eosm05ma10sj5x3hgln3a0qs048d50fgue3da11",
+      "sourceUrl": "https://www.indiapost.gov.in/vacancies",
+      "sourceName": "India Post — Vacancies",
+      "official": true,
+      "firstSeen": "2026-10-19T06:18:02.710Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "2-notification-for-filling-up-of-drivers-ordinary-grade-through-deputation-absorption-basis-on-01-08-2026-1-mb",
+      "title": "2 Notification for filling up of Drivers (Ordinary Grade) through deputation /absorption basis on 01.08.2026 1 MB PDF 01-08-2026 View Hindi Version",
+      "organization": "India Post",
+      "category": "CENTRAL_GOVT",
+      "type": "notification",
+      "status": "notification",
+      "notificationDate": "01.08.2026",
+      "url": "https://www.indiapost.gov.in/api/documents/file/103pgjk0mj9n00heh09v82063nq0007d0sjth3igcr04nr70fiaj0eiq939zwj",
+      "sourceUrl": "https://www.indiapost.gov.in/vacancies",
+      "sourceName": "India Post — Vacancies",
+      "official": true,
+      "firstSeen": "2026-10-22T07:36:13.702Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "3-notification-for-filling-up-of-drivers-ordinary-grade-through-deputation-absorption-basis-on-01-08-2026-375-",
+      "title": "3 Notification for filling up of Drivers (Ordinary Grade) through deputation /absorption basis on 01.08.2026 375.5 KB PDF 01-08-2026 View English Version",
+      "organization": "India Post",
+      "category": "CENTRAL_GOVT",
+      "type": "notification",
+      "status": "notification",
+      "notificationDate": "01.08.2026",
+      "url": "https://www.indiapost.gov.in/api/documents/file/1034tw42vyvr3kbvd3e7gy369dy3beji0s5ja0e34b062aa0eiqj0gxg634ume",
+      "sourceUrl": "https://www.indiapost.gov.in/vacancies",
+      "sourceName": "India Post — Vacancies",
+      "official": true,
+      "firstSeen": "2026-10-22T07:36:13.702Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "7-direct-recruitment-for-the-post-of-manger-mail-motor-service-mms-in-department-of-posts-2-5-mb-pdf-05-06-202",
+      "title": "7 Direct Recruitment for the post of Manger Mail Motor Service (MMS) in Department of Posts 2.5 MB PDF 05-06-2026 View English Version",
+      "organization": "India Post",
+      "category": "CENTRAL_GOVT",
+      "type": "notification",
+      "status": "notification",
+      "notificationDate": "05-06-2026",
+      "url": "https://www.indiapost.gov.in/api/documents/file/103eold2idj70ejh53if443eosm05ma10sj5x3hgln3a0qs048d50fgue3da11",
+      "sourceUrl": "https://www.indiapost.gov.in/vacancies",
+      "sourceName": "India Post — Vacancies",
+      "official": true,
+      "firstSeen": "2026-10-22T07:36:13.702Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "curated-rrb-ntpc-grad-2026",
+      "title": "RRB NTPC Graduate Level — 3,477 Posts (CEN 06/2026 · Indicative)",
+      "organization": "Railway Recruitment Boards",
+      "category": "RAILWAYS",
+      "type": "Recruitment notification",
+      "status": "notification",
+      "notificationDate": "2026-09-26",
+      "applicationStartDate": "2026-10-08",
+      "lastDate": "2026-11-06",
+      "advertisementNo": "CEN 06/2026",
+      "vacancies": "3,477 (tentative)",
+      "eligibility": "Graduation; age, post and medical standards to be confirmed in the detailed CEN",
+      "applicationUrl": "https://www.rrbapply.gov.in/",
+      "url": "https://www.rrbapply.gov.in/",
+      "notificationUrl": "https://www.rrbcdg.gov.in/",
+      "sourceUrl": "https://www.rrbcdg.gov.in/",
+      "sourceName": "RRB — Official Common Portal",
+      "official": true,
+      "summary": "Indicative notice for 3,477 graduate-level NTPC vacancies. Applications are tentatively scheduled for 8 Oct–6 Nov 2026. Detailed CEN and corrigenda will control eligibility and dates.",
+      "verifiedAt": "2026-09-30",
+      "firstSeen": "2026-10-28T01:22:44.349Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z"
+    },
+    {
+      "id": "curated-rrb-ntpc-ug-2026",
+      "title": "RRB NTPC Undergraduate Level — 1,688 Posts (CEN 07/2026 · Indicative)",
+      "organization": "Railway Recruitment Boards",
+      "category": "RAILWAYS",
+      "type": "Recruitment notification",
+      "status": "notification",
+      "notificationDate": "2026-09-30",
+      "applicationStartDate": "2026-10-15",
+      "lastDate": "2026-11-13",
+      "advertisementNo": "CEN 07/2026",
+      "vacancies": "1,688 (indicative)",
+      "eligibility": "Class 12 or equivalent; confirm post-wise requirements in the detailed CEN",
+      "applicationUrl": "https://www.rrbapply.gov.in/",
+      "url": "https://www.rrbapply.gov.in/",
+      "notificationUrl": "https://www.rrbcdg.gov.in/",
+      "sourceUrl": "https://www.rrbcdg.gov.in/",
+      "sourceName": "RRB — Official Common Portal",
+      "official": true,
+      "summary": "Indicative NTPC undergraduate recruitment. The reported application window is 15 Oct–13 Nov 2026; detailed CEN and any corrigendum will control.",
+      "verifiedAt": "2026-09-30",
+      "firstSeen": "2026-10-28T01:22:44.349Z",
+      "lastSeen": "2026-10-28T01:22:44.349Z"
     },
     {
       "id": "list-of-candidates-qualified-for-interview-https-sbi-bank-in-documents-77530-52947104-cbo-2025-wtqual-screened",
@@ -2622,36 +2781,6 @@
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
-      "id": "online-gds-recruitment-https-www-indiapost-gov-in-vacancies-online-gds",
-      "title": "Online GDS Recruitment",
-      "organization": "India Post",
-      "category": "CENTRAL_GOVT",
-      "type": "notification",
-      "status": "notification",
-      "url": "https://www.indiapost.gov.in/vacancies/online-gds",
-      "sourceUrl": "https://www.indiapost.gov.in/vacancies",
-      "sourceName": "India Post — Vacancies",
-      "official": true,
-      "firstSeen": "2026-10-12T23:00:44.209Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "recruitment-rules-recruitment-rules-https-www-indiapost-gov-in-documents-recruitmentrules",
-      "title": "Recruitment Rules Recruitment Rules",
-      "organization": "India Post",
-      "category": "CENTRAL_GOVT",
-      "type": "notification",
-      "status": "notification",
-      "url": "https://www.indiapost.gov.in/documents/recruitmentrules",
-      "sourceUrl": "https://www.indiapost.gov.in/vacancies",
-      "sourceName": "India Post — Vacancies",
-      "official": true,
-      "firstSeen": "2026-10-19T06:18:02.710Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
       "id": "deputy-manager-law-mmgs-ii-interview-schedule-https-sbi-bank-in-documents-77530-57941334-26102026-sco-02-int-s",
       "title": "DEPUTY MANAGER (LAW)-MMGS-II - INTERVIEW SCHEDULE",
       "organization": "SBI",
@@ -2682,86 +2811,6 @@
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
-      "id": "notification-for-filling-up-of-drivers-ordinary-grade-through-deputation-absorption-basis-on-01-08-2026-https-",
-      "title": "Notification for filling up of Drivers (Ordinary Grade) through deputation /absorption basis on 01.08.2026",
-      "organization": "India Post",
-      "category": "CENTRAL_GOVT",
-      "type": "notification",
-      "status": "notification",
-      "notificationDate": "01.08.2026",
-      "url": "https://www.indiapost.gov.in/api/documents/file/1034tw42vyvr3kbvd3e7gy369dy3beji0s5ja0e34b062aa0eiqj0gxg634ume",
-      "sourceUrl": "https://www.indiapost.gov.in/vacancies",
-      "sourceName": "India Post — Vacancies",
-      "official": true,
-      "firstSeen": "2026-10-19T06:18:02.710Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "direct-recruitment-for-the-post-of-manger-mail-motor-service-mms-in-department-of-posts-https-www-indiapost-go",
-      "title": "Direct Recruitment for the post of Manger Mail Motor Service (MMS) in Department of Posts",
-      "organization": "India Post",
-      "category": "CENTRAL_GOVT",
-      "type": "notification",
-      "status": "notification",
-      "notificationDate": "05-06-2026",
-      "url": "https://www.indiapost.gov.in/api/documents/file/103eold2idj70ejh53if443eosm05ma10sj5x3hgln3a0qs048d50fgue3da11",
-      "sourceUrl": "https://www.indiapost.gov.in/vacancies",
-      "sourceName": "India Post — Vacancies",
-      "official": true,
-      "firstSeen": "2026-10-19T06:18:02.710Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "2-notification-for-filling-up-of-drivers-ordinary-grade-through-deputation-absorption-basis-on-01-08-2026-1-mb",
-      "title": "2 Notification for filling up of Drivers (Ordinary Grade) through deputation /absorption basis on 01.08.2026 1 MB PDF 01-08-2026 View Hindi Version",
-      "organization": "India Post",
-      "category": "CENTRAL_GOVT",
-      "type": "notification",
-      "status": "notification",
-      "notificationDate": "01.08.2026",
-      "url": "https://www.indiapost.gov.in/api/documents/file/103pgjk0mj9n00heh09v82063nq0007d0sjth3igcr04nr70fiaj0eiq939zwj",
-      "sourceUrl": "https://www.indiapost.gov.in/vacancies",
-      "sourceName": "India Post — Vacancies",
-      "official": true,
-      "firstSeen": "2026-10-22T07:36:13.702Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "3-notification-for-filling-up-of-drivers-ordinary-grade-through-deputation-absorption-basis-on-01-08-2026-375-",
-      "title": "3 Notification for filling up of Drivers (Ordinary Grade) through deputation /absorption basis on 01.08.2026 375.5 KB PDF 01-08-2026 View English Version",
-      "organization": "India Post",
-      "category": "CENTRAL_GOVT",
-      "type": "notification",
-      "status": "notification",
-      "notificationDate": "01.08.2026",
-      "url": "https://www.indiapost.gov.in/api/documents/file/1034tw42vyvr3kbvd3e7gy369dy3beji0s5ja0e34b062aa0eiqj0gxg634ume",
-      "sourceUrl": "https://www.indiapost.gov.in/vacancies",
-      "sourceName": "India Post — Vacancies",
-      "official": true,
-      "firstSeen": "2026-10-22T07:36:13.702Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "7-direct-recruitment-for-the-post-of-manger-mail-motor-service-mms-in-department-of-posts-2-5-mb-pdf-05-06-202",
-      "title": "7 Direct Recruitment for the post of Manger Mail Motor Service (MMS) in Department of Posts 2.5 MB PDF 05-06-2026 View English Version",
-      "organization": "India Post",
-      "category": "CENTRAL_GOVT",
-      "type": "notification",
-      "status": "notification",
-      "notificationDate": "05-06-2026",
-      "url": "https://www.indiapost.gov.in/api/documents/file/103eold2idj70ejh53if443eosm05ma10sj5x3hgln3a0qs048d50fgue3da11",
-      "sourceUrl": "https://www.indiapost.gov.in/vacancies",
-      "sourceName": "India Post — Vacancies",
-      "official": true,
-      "firstSeen": "2026-10-22T07:36:13.702Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
       "id": "notice-online-psychometric-test-in-remote-proctored-rpa-mode-https-sbi-bank-in-webfiles-uploads-files-2627-10-",
       "title": "NOTICE: ONLINE PSYCHOMETRIC TEST IN REMOTE PROCTORED (RPA) MODE",
       "organization": "SBI",
@@ -2775,54 +2824,6 @@
       "firstSeen": "2026-10-27T16:39:49.667Z",
       "lastSeen": "2026-10-27T21:20:57.679Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "curated-rrb-ntpc-grad-2026",
-      "title": "RRB NTPC Graduate Level — 3,477 Posts (CEN 06/2026 · Indicative)",
-      "organization": "Railway Recruitment Boards",
-      "category": "RAILWAYS",
-      "type": "Recruitment notification",
-      "status": "notification",
-      "notificationDate": "2026-09-26",
-      "applicationStartDate": "2026-10-08",
-      "lastDate": "2026-11-06",
-      "advertisementNo": "CEN 06/2026",
-      "vacancies": "3,477 (tentative)",
-      "eligibility": "Graduation; age, post and medical standards to be confirmed in the detailed CEN",
-      "applicationUrl": "https://www.rrbapply.gov.in/",
-      "url": "https://www.rrbapply.gov.in/",
-      "notificationUrl": "https://www.rrbcdg.gov.in/",
-      "sourceUrl": "https://www.rrbcdg.gov.in/",
-      "sourceName": "RRB — Official Common Portal",
-      "official": true,
-      "summary": "Indicative notice for 3,477 graduate-level NTPC vacancies. Applications are tentatively scheduled for 8 Oct–6 Nov 2026. Detailed CEN and corrigenda will control eligibility and dates.",
-      "verifiedAt": "2026-09-30",
-      "firstSeen": "2026-10-27T21:20:57.679Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z"
-    },
-    {
-      "id": "curated-rrb-ntpc-ug-2026",
-      "title": "RRB NTPC Undergraduate Level — 1,688 Posts (CEN 07/2026 · Indicative)",
-      "organization": "Railway Recruitment Boards",
-      "category": "RAILWAYS",
-      "type": "Recruitment notification",
-      "status": "notification",
-      "notificationDate": "2026-09-30",
-      "applicationStartDate": "2026-10-15",
-      "lastDate": "2026-11-13",
-      "advertisementNo": "CEN 07/2026",
-      "vacancies": "1,688 (indicative)",
-      "eligibility": "Class 12 or equivalent; confirm post-wise requirements in the detailed CEN",
-      "applicationUrl": "https://www.rrbapply.gov.in/",
-      "url": "https://www.rrbapply.gov.in/",
-      "notificationUrl": "https://www.rrbcdg.gov.in/",
-      "sourceUrl": "https://www.rrbcdg.gov.in/",
-      "sourceName": "RRB — Official Common Portal",
-      "official": true,
-      "summary": "Indicative NTPC undergraduate recruitment. The reported application window is 15 Oct–13 Nov 2026; detailed CEN and any corrigendum will control.",
-      "verifiedAt": "2026-09-30",
-      "firstSeen": "2026-10-27T21:20:57.679Z",
-      "lastSeen": "2026-10-27T21:20:57.679Z"
     },
     {
       "id": "interview-schedule-https-sbi-bank-in-documents-77530-52947104-sco-01-int-sch-pdf-7683188d-9bd8-a487-68c8-87b37",
