@@ -167,7 +167,7 @@ for (const file of files) {
       assert.equal(question.topic, 'Ordering of Sentences', 'CDS II 2020 Q' + n + ' topic regression');
       assert.equal(question.ans, expectedAnswerIndices[n - 41], 'CDS II 2020 Q' + n + ' Set A answer-key regression');
       assert.ok(Array.isArray(question.parts) && question.parts.length === 4, 'CDS II 2020 Q' + n + ' must expose four P/Q/R/S parts');
-      assert.ok(/^S1\\s*:/i.test(question.q) && /\\bS6\\s*:/i.test(question.q), 'CDS II 2020 Q' + n + ' must retain its S1/S6 framing');
+      assert.ok(/^S1\s*:/i.test(question.q) && /\bS6\s*:/i.test(question.q), 'CDS II 2020 Q' + n + ' must retain its S1/S6 framing');
       assert.equal(question.passage, undefined, 'CDS II 2020 Q' + n + ' must not inherit the unrelated comprehension passage');
     }
   }
