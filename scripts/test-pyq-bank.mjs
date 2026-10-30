@@ -157,6 +157,13 @@ for (const file of files) {
       'all the obstacles that have come in his way',
       'has faced all kinds of dangers'
     ], 'NDA II 2017 Q31 part transcription regression');
+    const expectedAnswerIndices = [0, 1, 1, 1, 1, 0, 3, 2, 0, 3];
+    for (let n = 41; n <= 50; n++) {
+      const question = data.find(q => Number(q.n) === n);
+      assert.ok(question, 'NDA II 2017 Q' + n + ' must exist');
+      assert.equal(question.ans, expectedAnswerIndices[n - 41],
+        'NDA II 2017 Q' + n + ' source answer-key regression');
+    }
   }
   if (file === 'cds-2020-II' && exam === 'CDS') {
     const expectedAnswerIndices = [0, 3, 2, 0, 2, 0, 0, 1, 0, 3];
