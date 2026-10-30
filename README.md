@@ -54,6 +54,10 @@ Serving the files over HTTP is recommended over opening `index.html` directly, b
 
 The site uses relative paths. Keep `index.html`, its local assets, scripts and data folders in their existing locations when deploying.
 
+## Deploy to Vercel (static frontend)
+
+Vercel publishes the static frontend from the generated `public/` directory. Run `npm run build` to validate the repository and copy the site pages, styles, assets, JavaScript and learning data into that directory. The Vercel configuration uses this build and output directory. The Express server is a separate backend; when it is hosted independently, configure `VAANI_API_BASE` in the frontend to point to that backend.
+
 ## Data and privacy
 
 - VAANI saves learning progress in browser storage and synchronizes with the Express `/api/accounts/:code` endpoint when a backend is available.
