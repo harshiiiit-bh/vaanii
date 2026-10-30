@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "node server.js",
     "start": "node server.js",
-    "build": "node scripts/check-quality.mjs",
+    "build": "node scripts/check-quality.mjs && node scripts/build-static.mjs",
     "lint": "node scripts/check-quality.mjs",
     "test": "node scripts/check-quality.mjs && node scripts/test-backend-master.mjs && node scripts/test-infrastructure-master.mjs && node scripts/test-complete-audit.mjs",
     "test:backend": "node scripts/test-backend-master.mjs",
