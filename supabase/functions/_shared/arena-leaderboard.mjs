@@ -10,7 +10,7 @@ export function arenaCodeChecksum(body) {
 export function normalizeArenaMatchCode(value) {
   if (typeof value !== "string") return null;
   const code = value.trim().toUpperCase();
-  if (!/^[0-9A-Z]{32}$/.test(code) || code[0] !== "2") return null;
+  if (!/^[0-9A-Z]{32}$/.test(code) || (code[0] !== "2" && code[0] !== "3")) return null;
   return arenaCodeChecksum(code.slice(0, 30)) === code.slice(30) ? code : null;
 }
 
@@ -31,7 +31,7 @@ export function sanitizeArenaRows(input, code) {
     const at = Number(row.at);
     if (!pid || !Number.isFinite(score) || !Number.isInteger(seconds) ||
         !Number.isInteger(total) || !Number.isInteger(at) || !Number.isFinite(at) ||
-        at <= 0 || total < 1 || total > 100 || seconds < 0 || seconds > 86400 ||
+        at <= 0 || total < 1 || total > 1295 || seconds < 0 || seconds > 86400 ||
         score < -total || score > total) continue;
     const correct = Number.isInteger(row.correct) ? row.correct : null;
     const incorrect = Number.isInteger(row.incorrect) ? row.incorrect : null;

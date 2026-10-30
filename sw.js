@@ -36,6 +36,7 @@ self.addEventListener('fetch', event => {
   const url = new URL(request.url);
   const scopePath = scope.pathname.endsWith('/') ? scope.pathname : scope.pathname + '/';
   if (url.origin !== scope.origin || !url.pathname.startsWith(scopePath)) return;
+  if (url.pathname.includes('/api/') || url.pathname.endsWith('/health') || url.pathname.endsWith('runtime-store.json')) return;
 
   if (request.mode === 'navigate') {
     const fallback = new URL('./index.html', scope).href;

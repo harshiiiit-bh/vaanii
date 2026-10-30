@@ -1,3 +1,13 @@
 # Installed dependencies and local tooling
 node_modules/
 **/node_modules/
+data/runtime-store.json
+data/runtime-store.json.tmp
+*.tmp
+backups/
+.env
+.env.*
+!.env.example
+.DS_Store
+vaani-browser-smoke-failure.png
+

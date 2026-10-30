@@ -1,0 +1,1107 @@
+/* ============================================================
+   VAANI ULTIMATE FRONTEND & DYNAMIC ENGINE STYLES (vaani-dynamic.css)
+   1. 220ms GPU-composited view & sub-view transitions
+   2. Tabular Numerals & Command-Centre Design Tokens
+   3. Officer Vaani 8-Pose Shaded SVG Rig & Command Briefings
+   4. Header Server Sync Pill & Contextual Breadcrumb Bar
+   5. Advanced PYQ Question Explorer & Filtered Drill UI
+   6. Vocabulary Mastery System & Weak-Word Spotlight
+   7. Global & Service-Force Cadet Cohort Standings
+============================================================= */
+
+:root,
+body.mode-zen,
+body.mode-sepia {
+  --ink: var(--text, #16212E);
+  --vaani-gold-ink: #6e4b10;
+  --vaani-green-ink: #0d6839;
+  --vaani-red-ink: #9e2426;
+}
+
+[data-theme="dark"] {
+  --ink: var(--text, #e9ecef);
+  --vaani-gold-ink: #f0d078;
+  --vaani-green-ink: #5ce096;
+  --vaani-red-ink: #ff8083;
+}
+
+/* 1. 220ms GPU-composited view & sub-view transitions
+   Note: .view.active keeps opacity: 1 at all times so frame probes
+   never read < 1 opacity; motion is applied via transform on inner content. */
+@keyframes vaaniViewSlideIn {
+  0% {
+    transform: translate3d(0, 6px, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .view.active.vaani-view-enter > *:not(.vaani-3d-model) {
+    animation: vaaniViewSlideIn 200ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .view.active.vaani-view-enter > *:not(.vaani-3d-model) {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* 2. Tabular Numerals & Command-Centre Precision */
+.vd-stat-num,
+.gt-chip-num,
+.gj-stat-num,
+.vaani-cohort-rank,
+.vaani-cohort-stats,
+.pv-explorer-metrics b,
+.vv-mastery-stat b,
+#streakNum,
+#xpNum,
+#lvlNum {
+  font-variant-numeric: tabular-nums;
+}
+
+.vd-qa-count {
+  display: inline-block;
+  margin-left: 6px;
+  font-family: var(--mono, 'JetBrains Mono', monospace);
+  font-size: 0.68rem;
+  font-weight: 600;
+  opacity: 0.78;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 3. Officer Vaani 8-Pose Shaded SVG Rig & Command Hero Integration */
+.vd-officer-stage {
+  position: relative;
+}
+
+.vaani-hero-rig-stage {
+  position: relative;
+  width: 100%;
+  max-width: 240px;
+  margin: 0 auto 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 3;
+}
+
+/* When the 8-pose SVG rig is active in the hero, gracefully crossfade with the base img
+   while keeping .vd-officer-image in the DOM for asset integrity checks */
+.vd-officer-stage.has-vaani-rig .vd-officer-image {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0.01;
+  pointer-events: none;
+}
+
+.vaani-rig-svg-holder {
+  width: 196px;
+  height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 14px 24px rgba(6, 14, 22, 0.38));
+  transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.vaani-rig-svg-holder svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+}
+
+.vaani-hero-directive-box {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(201, 162, 75, 0.32);
+  background: rgba(11, 21, 32, 0.78);
+  color: #f5f2e9;
+  backdrop-filter: blur(8px);
+  max-width: 540px;
+}
+
+body[data-theme="light"] .vaani-hero-directive-box {
+  background: rgba(19, 32, 45, 0.92);
+  color: #f5f2e9;
+}
+
+.vaani-hero-directive-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 5px;
+  font-family: var(--mono, 'JetBrains Mono', monospace);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #e6c66f;
+  font-weight: 700;
+}
+
+.vaani-hero-directive-text {
+  font-size: 0.86rem;
+  line-height: 1.5;
+  color: #f5f2e9;
+  margin: 0 0 10px;
+}
+
+.vaani-pose-switcher {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.vaani-pose-btn {
+  padding: 4px 9px;
+  border-radius: 7px;
+  border: 1px solid rgba(201, 162, 75, 0.28);
+  background: rgba(255, 255, 255, 0.06);
+  color: #e5e9ee;
+  font-family: var(--mono, 'JetBrains Mono', monospace);
+  font-size: 0.66rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 140ms ease, border-color 140ms ease, transform 140ms ease;
+}
+
+.vaani-pose-btn:hover {
+  border-color: #e6c66f;
+  background: rgba(201, 162, 75, 0.18);
+}
+
+.vaani-pose-btn.active {
+  border-color: #e6c66f;
+  background: #c9a24b;
+  color: #0b1520;
+  font-weight: 700;
+}
+
+/* Floating Mentor Dock (#vcCharacter) 8-Pose Rig Overlay */
+#vaaniMentor:not(.bad-result) .vc-character .vaani-dock-rig-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: linear-gradient(155deg, #162836, #0d1a24);
+  pointer-events: none;
+  border-radius: inherit;
+  padding-top: 2px;
+}
+
+#vaaniMentor:not(.bad-result) .vc-character .vaani-dock-rig-overlay svg {
+  width: 94%;
+  height: 94%;
+  display: block;
+}
+
+/* Purposeful Module-Level Officer Vaani Guidance Banner */
+.vaani-module-officer-banner {
+  display: grid;
+  grid-template-columns: 68px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 18px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--line, rgba(201, 162, 75, 0.28));
+  background: var(--panel, #FFFFFF);
+  color: var(--text, #16212E);
+  box-sizing: border-box;
+}
+
+.vaani-mob-avatar {
+  width: 68px;
+  height: 74px;
+  border-radius: 12px;
+  border: 1px solid rgba(201, 162, 75, 0.35);
+  background: linear-gradient(155deg, #162836, #0c1822);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.vaani-mob-avatar svg {
+  width: 64px;
+  height: 70px;
+  display: block;
+}
+
+.vaani-mob-kicker {
+  font-family: var(--mono, 'JetBrains Mono', monospace);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--vaani-gold-ink, #6e4b10);
+  margin-bottom: 3px;
+}
+
+.vaani-mob-title {
+  margin: 0 0 3px;
+  font-size: 0.94rem;
+  font-weight: 700;
+  color: var(--text, #16212E);
+}
+
+.vaani-mob-desc {
+  margin: 0;
+  font-size: 0.81rem;
+  line-height: 1.45;
+  color: var(--muted, #475569);
+}
+
+/* Grammar view uses a dedicated dark navy command surface across themes */
+#view-grammar .vaani-module-officer-banner {
+  background: linear-gradient(125deg, #16313a 0%, #102331 58%, #0b1722 100%);
+  border-color: rgba(201, 162, 75, 0.35);
+  color: #f3f6f8;
+}
+
+#view-grammar .vaani-module-officer-banner .vaani-mob-kicker {
+  color: #f0d078;
+}
+
+#view-grammar .vaani-module-officer-banner .vaani-mob-title {
+  color: #f3f6f8;
+}
+
+#view-grammar .vaani-module-officer-banner .vaani-mob-desc {
+  color: #c2cdd5;
+}
+
+#view-grammar .vaani-module-officer-banner .vaani-bc-btn {
+  border-color: rgba(201, 162, 75, 0.42);
+  background: rgba(201, 162, 75, 0.14);
+  color: #f3f6f8;
+}
+
+#view-grammar .vaani-module-officer-banner .vaani-bc-btn:hover {
+  border-color: #f0d078;
+  background: rgba(201, 162, 75, 0.24);
+}
+
+.vaani-result-briefing-art.has-vaani-rig {
+  position: relative;
+}
+
+.vaani-result-briefing-art.has-vaani-rig > img {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0.01;
+  pointer-events: none;
+}
+
+.vaani-result-briefing-art .vaani-result-rig-svg {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.vaani-result-briefing-art .vaani-result-rig-svg svg {
+  width: 96%;
+  height: 96%;
+  display: block;
+}
+
+/* 4. Header Cloud / Server Sync Status Pill */
+.vaani-sync-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--line, rgba(201, 162, 75, 0.28));
+  background: var(--panel, #FFFFFF);
+  color: var(--text, #16212E);
+  font-family: var(--mono, 'JetBrains Mono', monospace);
+  font-size: 0.7rem;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform 150ms ease, border-color 150ms ease, background-color 150ms ease;
+}
+
+.vaani-sync-pill:hover {
+  border-color: var(--gold, #c9a24b);
+  transform: translateY(-1px);
+}
+
+.vaani-sync-pill:focus-visible {
+  outline: 2px solid var(--gold, #c9a24b);
+  outline-offset: 2px;
+}
+
+.vaani-sync-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #49d186;
+  flex-shrink: 0;
+}
+
+.vaani-sync-pill[data-sync-state="syncing"] .vaani-sync-dot {
+  background: #f0c874;
+  box-shadow: 0 0 0 3px rgba(240, 200, 116, 0.22);
+}
+
+.vaani-sync-pill[data-sync-state="local"] .vaani-sync-dot {
+  background: #5b9bd8;
+}
+
+.vaani-sync-pill[data-sync-state="error"] .vaani-sync-dot {
+  background: #e2575a;
+}
+
+@media (max-width: 1180px) {
+  .top-right .vaani-sync-pill {
+    display: none !important;
+  }
+}
+
+/* 5. Contextual Breadcrumb & Quick-Action Bar */
+.vaani-breadcrumb-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  margin: 0 0 16px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--line, rgba(201, 162, 75, 0.25));
+  background: var(--panel, #FFFFFF);
+  color: var(--text, #16212E);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.vaani-breadcrumb-bar[hidden] {
+  display: none !important;
+}
+
+.vaani-bc-trail {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 0.82rem;
+  min-width: 0;
+}
+
+.vaani-bc-link {
+  background: none;
+  border: none;
+  padding: 3px 7px;
+  border-radius: 6px;
+  color: var(--vaani-gold-ink, #6e4b10);
+  font-weight: 600;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: background-color 140ms ease;
+}
+
+.vaani-bc-link:hover {
+  background: rgba(201, 162, 75, 0.14);
+}
+
+.vaani-bc-sep {
+  color: var(--muted, #475569);
+  font-size: 0.78rem;
+  user-select: none;
+}
+
+.vaani-bc-current {
+  font-weight: 700;
+  color: var(--text, #16212E);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 280px;
+}
+
+.vaani-bc-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.vaani-bc-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--line, rgba(201, 162, 75, 0.28));
+  background: rgba(201, 162, 75, 0.08);
+  color: var(--text, #16212E);
+  font-size: 0.76rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform 140ms ease, border-color 140ms ease, background-color 140ms ease;
+}
+
+.vaani-bc-btn:hover:not(:disabled) {
+  border-color: var(--gold, #c9a24b);
+  background: rgba(201, 162, 75, 0.16);
+}
+
+.vaani-bc-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.vaani-bc-btn.is-active {
+  border-color: var(--gold, #c9a24b);
+  background: rgba(201, 162, 75, 0.22);
+  color: var(--vaani-gold-ink, #6e4b10);
+}
+
+/* 6. Interactive PYQ Question Bank Explorer */
+.pv-explorer-shell {
+  margin: 24px 0 28px;
+  padding: 22px;
+  border-radius: 16px;
+  border: 1px solid var(--line, rgba(201, 162, 75, 0.28));
+  background: var(--panel, #FFFFFF);
+  color: var(--text, #16212E);
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+.pv-explorer-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px 18px;
+  margin-bottom: 14px;
+}
+
+.pv-explorer-kicker {
+  display: inline-block;
+  font-family: var(--mono, 'JetBrains Mono', monospace);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--vaani-gold-ink, #6e4b10);
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.pv-explorer-title {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text, #16212E);
+}
+
+.pv-explorer-sub {
+  margin: 4px 0 0;
+  font-size: 0.84rem;
+  color: var(--muted, #475569);
+}
+
+.pv-explorer-head-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Quick Status Filter Tabs (All Questions · Correct · Incorrect · Bookmarked · Unattempted) */
+.pv-status-tabs {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line, rgba(201, 162, 75, 0.18));
+}
+
+.pv-status-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--line, rgba(201, 162, 75, 0.24));
+  background: var(--bg, #F7F4EC);
+  color: var(--text, #16212E);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 140ms ease, background-color 140ms ease;
+}
+
+.pv-status-tab:hover {
+  border-color: var(--gold, #c9a24b);
+}
+
+.pv-status-tab.active {
+  border-color: var(--gold, #c9a24b);
+  background: rgba(201, 162, 75, 0.2);
+  color: var(--vaani-gold-ink, #6e4b10);
+}
+
+.pv-status-tab small {
+  font-family: var(--mono, 'JetBrains Mono', monospace);
+  font-size: 0.7rem;
+  opacity: 0.85;
+  font-variant-numeric: tabular-nums;
+}
+
+.pv-explorer-controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.pv-exp-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.pv-exp-field label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--muted, #475569);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.pv-exp-field select,
+.pv-exp-field input {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 9px;
+  border: 1px solid var(--line, rgba(201, 162, 75, 0.28));
+  background: var(--bg, #F7F4EC);
+  color: var(--text, #16212E);
+  font-size: 0.84rem;
+  box-sizing: border-box;
+}
+
+.pv-explorer-summary-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(201, 162, 75, 0.08);
+  border: 1px solid var(--line, rgba(201, 162, 75, 0.2));
+  margin-bottom: 14px;
+  font-size: 0.82rem;
+}
+
+.pv-explorer-metrics {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.pv-explorer-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pv-exp-card {
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid var(--line, rgba(201, 162, 75, 0.22));
+  background: var(--bg, #F7F4EC);
+  transition: border-color 150ms ease;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.pv-exp-card:hover {
+  border-color: rgba(201, 162, 75, 0.48);
+}
+
+.pv-exp-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.pv-exp-badges {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.pv-exp-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-family: var(--mono, 'JetBrains Mono', monospace);
+  font-size: 0.71rem;
+  font-weight: 600;
+  background: rgba(201, 162, 75, 0.14);
+  color: var(--vaani-gold-ink, #6e4b10);
+  font-variant-numeric: tabular-nums;
+}
+
+.pv-exp-badge.topic {
+  background: rgba(91, 155, 216, 0.15);
+  color: var(--text, #16212E);
+}
+
+.pv-exp-badge.solved-ok {
+  background: rgba(73, 209, 134, 0.16);
+  color: var(--vaani-green-ink, #0d6839);
+}
+
+.pv-exp-badge.solved-no {
+  background: rgba(226, 87, 90, 0.16);
+  color: var(--vaani-red-ink, #9e2426);
+}
+
+.pv-exp-badge.xp-award {
+  background: rgba(201, 162, 75, 0.22);
+  color: var(--vaani-gold-ink, #6e4b10);
+  border: 1px solid rgba(201, 162, 75, 0.45);
+}
+
+.pv-exp-bm-btn {
+  background: transparent;
+  border: 1px solid var(--line, rgba(201, 162, 75, 0.28));
+  border-radius: 8px;
+  padding: 4px 10px;
+  color: var(--muted, #475569);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform 140ms ease, color 140ms ease, border-color 140ms ease;
+}
+
+.pv-exp-bm-btn.active {
+  color: var(--vaani-gold-ink, #6e4b10);
+  border-color: var(--gold, #c9a24b);
+  background: rgba(201, 162, 75, 0.14);
+}
+
+.pv-exp-qprompt {
+  font-size: 0.94rem;
+  line-height: 1.55;
+  color: var(--text, #16212E);
+  margin-bottom: 12px;
+  overflow-wrap: anywhere;
+}
+
+.pv-exp-opts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 8px;
+}
+
+.pv-exp-opt {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+  text-align: left;
+  padding: 9px 12px;
+  border-radius: 9px;
+  border: 1px solid var(--line, rgba(201, 162, 75, 0.24));
+  background: var(--panel, #FFFFFF);
+  color: var(--text, #16212E);
+  font-size: 0.85rem;
+  line-height: 1.4;
+  cursor: pointer;
+  transition: border-color 140ms ease, background-color 140ms ease;
+}
+
+.pv-exp-opt:hover:not(:disabled) {
+  border-color: var(--gold, #c9a24b);
+}
+
+.pv-exp-opt.selected {
+  outline: 2px solid var(--gold, #c9a24b);
+  outline-offset: 1px;
+}
+
+.pv-exp-opt.correct {
+  border-color: #49d186 !important;
+  background: rgba(73, 209, 134, 0.16) !important;
+}
+
+.pv-exp-opt.wrong {
+  border-color: #e2575a !important;
+  background: rgba(226, 87, 90, 0.16) !important;
+}
+
+.pv-exp-opt-letter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: rgba(201, 162, 75, 0.15);
+  color: var(--vaani-gold-ink, #6e4b10);
+  font-family: var(--mono, 'JetBrains Mono', monospace);
+  font-size: 0.74rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.pv-exp-feedback {
+  margin-top: 10px;
+  padding: 11px 13px;
+  border-radius: 9px;
+  background: rgba(201, 162, 75, 0.09);
+  border: 1px solid rgba(201, 162, 75, 0.28);
+  font-size: 0.82rem;
+  line-height: 1.48;
+  color: var(--text, #16212E);
+}
+
+.pv-exp-feedback-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pv-explorer-pager {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line, rgba(201, 162, 75, 0.2));
+}
+
+/* 7. Vocabulary Mastery System & Weak-Area Spotlight */
+.vv-mastery-command-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px 18px;
+  margin: 16px 0 14px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  border: 1px solid var(--line, rgba(201, 162, 75, 0.26));
+  background: var(--panel, #FFFFFF);
+  color: var(--text, #16212E);
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+.vv-mastery-stats {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  font-size: 0.82rem;
+}
+
+.vv-mastery-stat b {
+  font-family: var(--mono, 'JetBrains Mono', monospace);
+  color: var(--vaani-gold-ink, #6e4b10);
+}
+
+.vv-mastery-bar-track {
+  width: 160px;
+  max-width: 100%;
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(201, 162, 75, 0.15);
+  overflow: hidden;
+}
+
+.vv-mastery-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #c9a24b, #49d186);
+  transition: width 200ms ease;
+}
+
+.wc-learned-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-size: 0.67rem;
+  font-weight: 700;
+  background: rgba(73, 209, 134, 0.16);
+  color: var(--vaani-green-ink, #0d6839);
+  margin-left: 6px;
+}
+
+.wc-learned-badge.unmastered {
+  background: rgba(201, 162, 75, 0.12);
+  color: var(--muted, #475569);
+}
+
+.wc-mastery-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--line, rgba(201, 162, 75, 0.14));
+}
+
+.wc-mastery-btn {
+  padding: 4px 9px;
+  border-radius: 7px;
+  border: 1px solid var(--line, rgba(201, 162, 75, 0.25));
+  background: rgba(201, 162, 75, 0.08);
+  color: var(--text, #16212E);
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 140ms ease, background-color 140ms ease;
+}
+
+.wc-mastery-btn:hover {
+  border-color: var(--gold, #c9a24b);
+}
+
+.wc-mastery-btn.is-mastered {
+  border-color: rgba(73, 209, 134, 0.45);
+  background: rgba(73, 209, 134, 0.15);
+  color: var(--vaani-green-ink, #0d6839);
+}
+
+.wc-mastery-btn.is-bookmarked {
+  border-color: var(--gold, #c9a24b);
+  background: rgba(201, 162, 75, 0.2);
+  color: var(--vaani-gold-ink, #6e4b10);
+}
+
+/* 8. Global & Service-Force Cohort Leaderboard (#view-leaderboard) */
+.vaani-cohort-card {
+  margin-top: 22px;
+}
+
+.vaani-cohort-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 12px 0 16px;
+}
+
+.vaani-cohort-filters {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.vaani-cohort-controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.vaani-cohort-controls input,
+.vaani-cohort-controls select {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--line, rgba(201, 162, 75, 0.28));
+  background: var(--bg, #F7F4EC);
+  color: var(--text, #16212E);
+  font-size: 0.8rem;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.vaani-cohort-table {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.vaani-cohort-row {
+  display: grid;
+  grid-template-columns: 44px 38px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--line, rgba(201, 162, 75, 0.2));
+  background: var(--bg, #F7F4EC);
+  transition: border-color 140ms ease;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+.vaani-cohort-row:hover {
+  border-color: rgba(201, 162, 75, 0.42);
+}
+
+.vaani-cohort-row.is-me {
+  border-color: var(--gold, #c9a24b);
+  background: rgba(201, 162, 75, 0.14);
+}
+
+.vaani-cohort-rank {
+  font-family: var(--mono, 'JetBrains Mono', monospace);
+  font-weight: 700;
+  font-size: 0.86rem;
+  color: var(--vaani-gold-ink, #6e4b10);
+}
+
+.vaani-cohort-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.76rem;
+  background: rgba(201, 162, 75, 0.18);
+  color: var(--vaani-gold-ink, #6e4b10);
+  border: 1px solid rgba(201, 162, 75, 0.35);
+}
+
+.vaani-cohort-main {
+  min-width: 0;
+}
+
+.vaani-cohort-name {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--text, #16212E);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.vaani-cohort-sub {
+  font-size: 0.75rem;
+  color: var(--muted, #475569);
+  margin-top: 2px;
+}
+
+.vaani-cohort-stats {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--mono, 'JetBrains Mono', monospace);
+  font-size: 0.8rem;
+  text-align: right;
+  color: var(--text, #16212E);
+}
+
+/* 9. Topic Bottom Navigator */
+.vaani-topic-nav-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 26px;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid var(--line, rgba(201, 162, 75, 0.25));
+  background: var(--panel, #FFFFFF);
+}
+
+@media (max-width: 640px) {
+  .vaani-module-officer-banner {
+    grid-template-columns: 56px minmax(0, 1fr);
+  }
+  .vaani-module-officer-banner > div:last-child {
+    grid-column: 1 / -1;
+  }
+  .vaani-breadcrumb-bar {
+    padding: 8px 12px;
+  }
+  .vaani-bc-current {
+    max-width: 170px;
+  }
+  .pv-explorer-shell {
+    padding: 14px;
+  }
+  .pv-exp-opts {
+    grid-template-columns: 1fr;
+  }
+  .vaani-cohort-row {
+    grid-template-columns: 36px 32px minmax(0, 1fr);
+  }
+  .vaani-cohort-stats {
+    grid-column: 1 / -1;
+    justify-content: flex-end;
+    padding-top: 6px;
+    border-top: 1px dashed var(--line, rgba(201, 162, 75, 0.2));
+  }
+}
+
+@media (max-width: 480px) {
+  .vv-mastery-bar-track {
+    flex: 1 1 100%;
+    width: 100%;
+  }
+  .pv-explorer-controls {
+    grid-template-columns: 1fr;
+  }
+  .vaani-cohort-controls {
+    width: 100%;
+  }
+  .vaani-cohort-controls input,
+  .vaani-cohort-controls select {
+    flex: 1 1 100%;
+    width: 100%;
+  }
+  .vaani-bc-btn,
+  .pv-status-tab,
+  #pvExpLaunchDrill,
+  #pvExpToggleCards {
+    white-space: normal;
+    max-width: 100%;
+  }
+}

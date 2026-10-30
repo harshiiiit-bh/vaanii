@@ -23,6 +23,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 24
+      - name: Install server dependencies
+        run: npm install --no-audit --no-fund
       - name: Check JavaScript syntax
         shell: bash
         run: |
@@ -35,6 +37,9 @@ jobs:
           node --check scripts/test-notification-sync-utils.mjs
           node --check scripts/test-service-rank-xp.mjs
           node --check scripts/smoke-government-exam-desk.mjs
+          node --check scripts/backup-recovery.mjs
+          node --check scripts/test-backend-master.mjs
+          node --check scripts/test-infrastructure-master.mjs
           node --check supabase/functions/_shared/arena-leaderboard.mjs
       - name: Test Arena leaderboard contract
         run: node scripts/test-arena-leaderboard.mjs
@@ -52,6 +57,10 @@ jobs:
         run: node scripts/test-vocab90.mjs
       - name: Test security boundaries
         run: node scripts/test-security-boundaries.mjs
+      - name: Test Backend Master APIs and progression rules
+        run: node scripts/test-backend-master.mjs
+      - name: Test Infrastructure, CORS, Health Probes, Disaster Recovery & 23 User Journeys
+        run: node scripts/test-infrastructure-master.mjs
       - name: Set up Deno
         uses: denoland/setup-deno@v2
         with:

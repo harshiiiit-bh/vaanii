@@ -4,7 +4,9 @@ import { normalizeArenaMatchCode, sanitizeArenaRows } from "../_shared/arena-lea
 const ALLOWED_ORIGINS = [
   "https://harshiiiit-bh.github.io",
   "http://127.0.0.1:4173",
-  "http://localhost:4173"
+  "http://localhost:4173",
+  "http://127.0.0.1:3000",
+  "http://localhost:3000"
 ];
 
 function isAllowedOrigin(origin: string | null): boolean {
@@ -12,7 +14,10 @@ function isAllowedOrigin(origin: string | null): boolean {
   if (ALLOWED_ORIGINS.includes(origin)) return true;
   try {
     const url = new URL(origin);
-    return url.protocol === "https:" && url.hostname.endsWith("-vaanii.vercel.app");
+    return (
+      url.protocol === "https:" &&
+      (url.hostname.endsWith("-vaanii.vercel.app") || url.hostname.endsWith(".run.app"))
+    );
   } catch {
     return false;
   }

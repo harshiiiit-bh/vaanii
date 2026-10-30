@@ -1,0 +1,21 @@
+{
+  "name": "vaani",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Practise English for NDA and CDS with VAANI: guided grammar lessons, vocabulary, previous-year questions, timed practice and a focused reading workspace.",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js",
+    "build": "node scripts/check-quality.mjs",
+    "lint": "node scripts/check-quality.mjs",
+    "test": "node scripts/check-quality.mjs && node scripts/test-backend-master.mjs && node scripts/test-infrastructure-master.mjs && node scripts/test-complete-audit.mjs",
+    "test:backend": "node scripts/test-backend-master.mjs",
+    "test:infra": "node scripts/test-infrastructure-master.mjs",
+    "test:audit": "node scripts/test-complete-audit.mjs",
+    "backup": "node scripts/backup-recovery.mjs",
+    "backup:drill": "node scripts/backup-recovery.mjs --test-drill"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
