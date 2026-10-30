@@ -1437,6 +1437,17 @@ try {
     'Three-part D must remain No error: '+JSON.stringify(inferredFormats.three.options));
   console.log('PASS PYQ presentation: inferred four-part D=Error in part (d); three-part D=No error');
 
+  const sentenceOrder = await page.evaluate(() => {
+    const blocks = pyqLabeledBlocks({
+      _sourceSec: 'Ordering of Sentences',
+      sec: 'Ordering of Sentences',
+      q: 'S1: Opening. S6: Closing. S: Fourth. P: First. Q: Second. R: Third.'
+    });
+    return Array.isArray(blocks) ? blocks.map(block => block.label).join(',') : null;
+  });
+  assert.equal(sentenceOrder, 'S1,P,Q,R,S,S6',
+    'Ordering of Sentences renderer must place fixed S1/S6 around P/Q/R/S');
+
   const fullPyqAudit = await page.evaluate(() => {
     const previous = PV.session;
     const issues = [];
