@@ -1474,7 +1474,7 @@ try {
               if(index<0)return false;
               optionCursor=index+phrase.length;
               return true;
-            }) && rawOptions.some(value=>/^no\s+error[.!?]?$/i.test(value));
+            }) && rawOptions.some(value=>/^no\s+error[.!?]?$/i.test(String(value).replace(/^\s*(?:\([a-d]\)|[a-d][.)])\s*/i,'')));
 
           const choices=pyqOptionLabels(q);
           if(isLegacyFragmentFormat){
