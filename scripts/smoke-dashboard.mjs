@@ -96,23 +96,59 @@ async function dismissInfoTour() {
       null, { timeout: 5000 });
   }
 }
+async function clickMoreDestination(targetPage, view) {
+  const destinations = {
+    books: { modern:['Book Reading'], flat:['Book Reading'], category:'Library', submenu:'Book Reading' },
+    profile: { modern:['Profile'], flat:['Profile'], category:'Progress & account', submenu:'Profile' },
+    leaderboard: { modern:['Leaderboard','Statistics'], flat:['Statistics','Leaderboard'], category:'Progress & account', submenu:'Statistics' },
+    games: { modern:['Arena','Achievements'], flat:['Achievements','Arena'], category:'Practice', submenu:'Arena' },
+    compare: { modern:['Comparisons'], flat:['Comparisons'], category:'Learn', submenu:'Comparisons' },
+    notifications: { modern:['Notifications'], flat:['Notifications'], category:'Updates', submenu:'Notifications' }
+  };
+  const destination = destinations[view];
+  if (!destination) throw new Error('No More-menu destination is configured for ' + view);
+
+  const sheet = targetPage.locator('#moreSheet');
+  if (await sheet.count() && await sheet.evaluate(el => el.classList.contains('show'))) {
+    await targetPage.evaluate(() => closeMoreSheet());
+    await targetPage.waitForFunction(() => !document.getElementById('moreSheet')?.classList.contains('show'));
+  }
+  await targetPage.locator('#bottomNav button').filter({ hasText:'More' }).click();
+  await targetPage.waitForSelector('#moreSheet.show', { timeout:5000 });
+
+  for (const label of destination.modern) {
+    const item = targetPage.locator('#sheetBody .mobile-more-item').filter({ hasText:label });
+    if (await item.count()) {
+      await item.first().click();
+      return;
+    }
+  }
+  for (const label of destination.flat) {
+    const item = targetPage.locator('#sheetBody .sheet-menu-item').filter({ hasText:label });
+    if (await item.count()) {
+      await item.first().click();
+      return;
+    }
+  }
+
+  // The current mobile menu groups destinations. Open the relevant group,
+  // then select its child route instead of calling switchView directly.
+  const category = targetPage.locator('#sheetBody .sheet-category').filter({ hasText:destination.category });
+  if (!(await category.count())) {
+    throw new Error('More menu has neither a direct ' + view + ' item nor the ' + destination.category + ' group');
+  }
+  await category.first().click();
+  await targetPage.locator('#sheetBody .sheet-menu-item').filter({ hasText:destination.submenu }).click();
+}
 async function clickMainView(name) {
   const desktopButton = page.locator('#vaaniMainNav button[data-view="' + name + '"]');
   const bottomButton = page.locator('#bottomNav button[data-view="' + name + '"]');
   if (await desktopButton.isVisible()) {
     await desktopButton.click();
-  } else if (await bottomButton.count()) {
+  } else if (await bottomButton.isVisible()) {
     await bottomButton.click();
   } else {
-    const moreButton = page.locator('#bottomNav button').filter({ hasText: 'More' });
-    const moreLabels = { books:'Book Reading', profile:'Profile', leaderboard:'Statistics', games:'Achievements', compare:'Comparisons', notifications:'Notifications' };
-    const moreLabel = moreLabels[name];
-    if (moreLabel && await moreButton.isVisible()) {
-      await moreButton.click();
-      await page.locator('#sheetBody .sheet-menu-item').filter({ hasText: moreLabel }).click();
-    } else {
-      throw new Error('No mobile navigation entry is available for ' + name);
-    }
+    await clickMoreDestination(page, name);
   }
   await page.waitForFunction(view => {
     const el = document.getElementById('view-' + view);
@@ -1116,18 +1152,10 @@ try {
   const mobileNavJourney = ['grammar','vocab','pyq','notifications'];
   for (const view of mobileNavJourney) {
     const direct=navPage.locator('#bottomNav button[data-view="' + view + '"]');
-    if (await direct.count()) {
+    if (await direct.isVisible()) {
       await direct.click();
     } else {
-      await navPage.locator('#bottomNav button').filter({hasText:'More'}).click();
-      const notificationItem=navPage.locator('#sheetBody .sheet-menu-item').filter({hasText:'Notifications'});
-      if (await notificationItem.count()) {
-        await notificationItem.click();
-      } else {
-        // Keep the smoke test resilient to a concurrent More-sheet redesign;
-        // Notifications is still a valid primary route.
-        await navPage.evaluate(() => switchView('notifications'));
-      }
+      await clickMoreDestination(navPage, view);
     }
     await navPage.waitForFunction(v => document.getElementById('view-' + v)?.classList.contains('active'), view);
   }
@@ -1437,6 +1465,17 @@ try {
     'Three-part D must remain No error: '+JSON.stringify(inferredFormats.three.options));
   console.log('PASS PYQ presentation: inferred four-part D=Error in part (d); three-part D=No error');
 
+  const sentenceOrder = await page.evaluate(() => {
+    const blocks = pyqLabeledBlocks({
+      _sourceSec: 'Ordering of Sentences',
+      sec: 'Ordering of Sentences',
+      q: 'S1: Opening. S6: Closing. S: Fourth. P: First. Q: Second. R: Third.'
+    });
+    return Array.isArray(blocks) ? blocks.map(block => block.label).join(',') : null;
+  });
+  assert.equal(sentenceOrder, 'S1,P,Q,R,S,S6',
+    'Ordering of Sentences renderer must place fixed S1/S6 around P/Q/R/S');
+
   const fullPyqAudit = await page.evaluate(() => {
     const previous = PV.session;
     const issues = [];
@@ -1474,7 +1513,7 @@ try {
               if(index<0)return false;
               optionCursor=index+phrase.length;
               return true;
-            }) && rawOptions.some(value=>/^no\s+error[.!?]?$/i.test(value));
+            }) && rawOptions.some(value=>/^no\s+error[.!?]?$/i.test(String(value).replace(/^\s*(?:\([a-d]\)|[a-d][.)])\s*/i,'')));
 
           const choices=pyqOptionLabels(q);
           if(isLegacyFragmentFormat){
@@ -1491,7 +1530,7 @@ try {
             if(format==='four-part'&&parts.length!==4)issues.push(q._id+': four-part format does not have four segments');
             if(format==='three-part-no-error'&&parts.length!==3)issues.push(q._id+': three-part-no-error format does not have three segments');
             if(format==='four-part'&&(choices.length!==4||choices[3]!=='Error in part (d)'))issues.push(q._id+': four-part D choice is not Error in part (d)');
-            if(format==='three-part-no-error'&&(choices.length!==4||!/^no\s+error[.!?]?$/i.test(String(choices[3]||''))))issues.push(q._id+': three-part D choice is not No error');
+            if(format==='three-part-no-error'&&(choices.length!==4||!/^no\s+error[.!?]?$/i.test(String(choices[3]||'').replace(/^\s*(?:\([a-d]\)|[a-d][.)])\s*/i,''))))issues.push(q._id+': three-part D choice is not No error');
           }
         }
         checked++;

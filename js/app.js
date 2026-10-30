@@ -1375,6 +1375,10 @@ function pyqLabeledBlocks(q){
     const hasFixed=blocks.some(b=>/^S\d+$/.test(b.label));
     const pqrs=blocks.filter(b=>/^[PQRS]$/.test(b.label));
     if(blocks.length && (pqrs.length>=3 || hasFixed)){
+      if(/ordering of sentences/i.test(String(q._sourceSec||q.sec||''))){
+        const order={S1:0,P:1,Q:2,R:3,S:4,S6:5};
+        blocks.sort((a,b)=>(order[a.label]??50)-(order[b.label]??50));
+      }
       return blocks;
     }
   }
