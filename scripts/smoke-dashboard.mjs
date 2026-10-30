@@ -1491,7 +1491,7 @@ try {
             if(format==='four-part'&&parts.length!==4)issues.push(q._id+': four-part format does not have four segments');
             if(format==='three-part-no-error'&&parts.length!==3)issues.push(q._id+': three-part-no-error format does not have three segments');
             if(format==='four-part'&&(choices.length!==4||choices[3]!=='Error in part (d)'))issues.push(q._id+': four-part D choice is not Error in part (d)');
-            if(format==='three-part-no-error'&&(choices.length!==4||!/^no\s+error[.!?]?$/i.test(String(choices[3]||''))))issues.push(q._id+': three-part D choice is not No error');
+            if(format==='three-part-no-error'&&(choices.length!==4||!/^no\s+error[.!?]?$/i.test(String(choices[3]||'').replace(/^\s*(?:\([a-d]\)|[a-d][.)])\s*/i,''))))issues.push(q._id+': three-part D choice is not No error');
           }
         }
         checked++;
