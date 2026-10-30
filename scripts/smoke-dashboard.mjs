@@ -96,6 +96,50 @@ async function dismissInfoTour() {
       null, { timeout: 5000 });
   }
 }
+async function clickMoreDestination(targetPage, view) {
+  const destinations = {
+    books: { modern:['Book Reading'], flat:['Book Reading'], category:'Library', submenu:'Book Reading' },
+    profile: { modern:['Profile'], flat:['Profile'], category:'Progress & account', submenu:'Profile' },
+    leaderboard: { modern:['Leaderboard','Statistics'], flat:['Statistics','Leaderboard'], category:'Progress & account', submenu:'Statistics' },
+    games: { modern:['Arena','Achievements'], flat:['Achievements','Arena'], category:'Practice', submenu:'Arena' },
+    compare: { modern:['Comparisons'], flat:['Comparisons'], category:'Learn', submenu:'Comparisons' },
+    notifications: { modern:['Notifications'], flat:['Notifications'], category:'Updates', submenu:'Notifications' }
+  };
+  const destination = destinations[view];
+  if (!destination) throw new Error('No More-menu destination is configured for ' + view);
+
+  const sheet = targetPage.locator('#moreSheet');
+  if (await sheet.count() && await sheet.evaluate(el => el.classList.contains('show'))) {
+    await targetPage.evaluate(() => closeMoreSheet());
+    await targetPage.waitForFunction(() => !document.getElementById('moreSheet')?.classList.contains('show'));
+  }
+  await targetPage.locator('#bottomNav button').filter({ hasText:'More' }).click();
+  await targetPage.waitForSelector('#moreSheet.show', { timeout:5000 });
+
+  for (const label of destination.modern) {
+    const item = targetPage.locator('#sheetBody .mobile-more-item').filter({ hasText:label });
+    if (await item.count()) {
+      await item.first().click();
+      return;
+    }
+  }
+  for (const label of destination.flat) {
+    const item = targetPage.locator('#sheetBody .sheet-menu-item').filter({ hasText:label });
+    if (await item.count()) {
+      await item.first().click();
+      return;
+    }
+  }
+
+  // The current mobile menu groups destinations. Open the relevant group,
+  // then select its child route instead of calling switchView directly.
+  const category = targetPage.locator('#sheetBody .sheet-category').filter({ hasText:destination.category });
+  if (!(await category.count())) {
+    throw new Error('More menu has neither a direct ' + view + ' item nor the ' + destination.category + ' group');
+  }
+  await category.first().click();
+  await targetPage.locator('#sheetBody .sheet-menu-item').filter({ hasText:destination.submenu }).click();
+}
 async function clickMainView(name) {
   const desktopButton = page.locator('#vaaniMainNav button[data-view="' + name + '"]');
   const bottomButton = page.locator('#bottomNav button[data-view="' + name + '"]');
@@ -104,28 +148,7 @@ async function clickMainView(name) {
   } else if (await bottomButton.isVisible()) {
     await bottomButton.click();
   } else {
-    const moreButton = page.locator('#bottomNav button').filter({ hasText: 'More' });
-    const moreLabels = { books:'Book Reading', profile:'Profile', leaderboard:'Statistics', games:'Achievements', compare:'Comparisons', notifications:'Notifications' };
-    const moreLabel = moreLabels[name];
-    if (!moreLabel || !(await moreButton.isVisible())) {
-      throw new Error('No mobile navigation entry is available for ' + name);
-    }
-
-    // The More sheet can remain open after a preceding mobile interaction.
-    // Close it before opening so this action always selects a real menu item.
-    const sheet = page.locator('#moreSheet');
-    if (await sheet.count() && await sheet.evaluate(el => el.classList.contains('show'))) {
-      await page.evaluate(() => closeMoreSheet());
-      await page.waitForFunction(() => !document.getElementById('moreSheet')?.classList.contains('show'));
-    }
-    await moreButton.click();
-    await page.waitForSelector('#moreSheet.show', { timeout: 5000 });
-    const modernItem = page.locator('#sheetBody .mobile-more-item').filter({ hasText: moreLabel });
-    if (await modernItem.count()) {
-      await modernItem.first().click();
-    } else {
-      await page.locator('#sheetBody .sheet-menu-item').filter({ hasText: moreLabel }).click();
-    }
+    await clickMoreDestination(page, name);
   }
   await page.waitForFunction(view => {
     const el = document.getElementById('view-' + view);
@@ -1132,17 +1155,7 @@ try {
     if (await direct.isVisible()) {
       await direct.click();
     } else {
-      const moreButton=navPage.locator('#bottomNav button').filter({hasText:'More'});
-      const sheet=navPage.locator('#moreSheet');
-      if(await sheet.count() && await sheet.evaluate(el=>el.classList.contains('show'))){
-        await navPage.evaluate(()=>closeMoreSheet());
-        await navPage.waitForFunction(()=>!document.getElementById('moreSheet')?.classList.contains('show'));
-      }
-      await moreButton.click();
-      await navPage.waitForSelector('#moreSheet.show',{timeout:5000});
-      const modernItem=navPage.locator('#sheetBody .mobile-more-item').filter({hasText:'Notifications'});
-      if(await modernItem.count()) await modernItem.first().click();
-      else await navPage.locator('#sheetBody .sheet-menu-item').filter({hasText:'Notifications'}).click();
+      await clickMoreDestination(navPage, view);
     }
     await navPage.waitForFunction(v => document.getElementById('view-' + v)?.classList.contains('active'), view);
   }
