@@ -67,8 +67,8 @@ jobs:
           deno-version: v2.x
       - name: Type-check Arena Edge Function
         run: deno check supabase/functions/arena-leaderboard/index.ts
-      - name: Check HTML IDs and local dependencies
-        run: node scripts/check-quality.mjs
+      - name: Validate and build static deployment artifact
+        run: npm run build
 
   browser-smoke:
     name: Desktop browser smoke test
