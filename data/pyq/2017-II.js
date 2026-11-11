@@ -658,7 +658,7 @@ var PYQ_2017_II = [
       "would be",
       "were"
     ],
-    "ans": 3
+    "ans": 0
   },
   {
     "y": 2017,
@@ -714,7 +714,7 @@ var PYQ_2017_II = [
       "the words",
       "words"
     ],
-    "ans": 0
+    "ans": 1
   },
   {
     "y": 2017,
