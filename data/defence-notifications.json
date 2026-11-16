@@ -1,344 +1,343 @@
 {
   "version": 1,
-  "generatedAt": "2026-11-16T09:42:44.430Z",
+  "generatedAt": "2026-11-16T20:30:01.347Z",
   "source": "VAANI Government & Defence Notification Engine",
   "checkedSources": [
     {
       "source": "UPSC — Active Examinations",
       "ok": false,
       "found": 0,
-      "durationMs": 658,
+      "durationMs": 837,
       "error": "HTTP 403 Forbidden"
     },
     {
       "source": "UPSC — Forthcoming Examinations",
       "ok": false,
       "found": 0,
-      "durationMs": 604,
+      "durationMs": 718,
       "error": "HTTP 403 Forbidden"
     },
     {
       "source": "UPSC — Examination Notifications",
       "ok": false,
       "found": 0,
-      "durationMs": 600,
+      "durationMs": 713,
       "error": "HTTP 403 Forbidden"
     },
     {
       "source": "UPSC — Official Home",
       "ok": false,
       "found": 0,
-      "durationMs": 595,
+      "durationMs": 709,
       "error": "HTTP 403 Forbidden"
     },
     {
       "source": "Indian Air Force — AFCAT",
       "ok": false,
       "found": 0,
-      "durationMs": 1247,
+      "durationMs": 1167,
       "error": "HTTP 403 Forbidden"
     },
     {
       "source": "Indian Army — Join Indian Army",
       "ok": false,
       "found": 0,
-      "durationMs": 31870,
+      "durationMs": 31763,
       "error": "fetch failed"
     },
     {
       "source": "Indian Navy — Join Indian Navy",
       "ok": false,
       "found": 0,
-      "durationMs": 31867,
+      "durationMs": 31759,
       "error": "fetch failed"
     },
     {
       "source": "Agniveervayu",
       "ok": false,
       "found": 0,
-      "durationMs": 31866,
+      "durationMs": 31756,
       "error": "fetch failed"
     },
     {
       "source": "BSF Recruitment",
       "ok": false,
       "found": 0,
-      "durationMs": 1088,
+      "durationMs": 1208,
       "error": "HTTP 403 Forbidden"
     },
     {
       "source": "CRPF Recruitment",
       "ok": false,
       "found": 0,
-      "durationMs": 31533,
+      "durationMs": 31887,
       "error": "fetch failed"
     },
     {
       "source": "SSC — Official Notice Board",
       "ok": true,
       "found": 0,
-      "durationMs": 1228
+      "durationMs": 1458
     },
     {
       "source": "Railway Recruitment Boards — Employment Notices",
       "ok": false,
       "found": 0,
-      "durationMs": 31959,
+      "durationMs": 31966,
       "error": "fetch failed"
     },
     {
       "source": "IBPS — CRP Updates",
       "ok": true,
-      "found": 16,
-      "durationMs": 2206
+      "found": 17,
+      "durationMs": 3598
     },
     {
       "source": "SBI — Current Openings",
       "ok": true,
       "found": 80,
-      "durationMs": 1262
+      "durationMs": 1283
     },
     {
       "source": "CTET — Official Documents",
       "ok": true,
       "found": 6,
-      "durationMs": 2168
+      "durationMs": 1823
     },
     {
       "source": "KVS — Recruitment Notices",
       "ok": true,
       "found": 0,
-      "durationMs": 3731
+      "durationMs": 3302
     },
     {
       "source": "BPSC — Official Notices",
-      "ok": false,
-      "found": 0,
-      "durationMs": 3614,
-      "error": "fetch failed"
+      "ok": true,
+      "found": 18,
+      "durationMs": 1536
     },
     {
       "source": "UPPSC — Official Notices",
       "ok": true,
       "found": 1,
-      "durationMs": 2531
+      "durationMs": 2038
     },
     {
       "source": "ISRO — Current Opportunities",
       "ok": true,
       "found": 0,
-      "durationMs": 67
+      "durationMs": 3523
     },
     {
       "source": "DRDO — Vacancies",
       "ok": false,
       "found": 0,
-      "durationMs": 2939,
+      "durationMs": 2338,
       "error": "fetch failed"
     },
     {
       "source": "NTA — Official Exam Directory",
       "ok": false,
       "found": 0,
-      "durationMs": 4162,
+      "durationMs": 3739,
       "error": "fetch failed"
     },
     {
       "source": "JEE Main — Official Notices",
       "ok": false,
       "found": 0,
-      "durationMs": 564,
+      "durationMs": 642,
       "error": "HTTP 403 Forbidden"
     },
     {
       "source": "NEET UG — Official Notices",
       "ok": false,
       "found": 0,
-      "durationMs": 672,
+      "durationMs": 659,
       "error": "HTTP 403 Forbidden"
     },
     {
       "source": "UGC NET — Official Notices",
       "ok": false,
       "found": 0,
-      "durationMs": 263,
+      "durationMs": 573,
       "error": "HTTP 403 Forbidden"
     },
     {
       "source": "CSBC Bihar — Police Recruitment",
       "ok": true,
       "found": 43,
-      "durationMs": 1353
+      "durationMs": 2391
     },
     {
       "source": "BPSSC Bihar — Police Recruitment",
       "ok": true,
       "found": 80,
-      "durationMs": 1209
+      "durationMs": 2521
     },
     {
       "source": "UPPRPB — Police Recruitment",
       "ok": true,
       "found": 0,
-      "durationMs": 1725
+      "durationMs": 1757
     },
     {
       "source": "UPSC — Recruitment Advertisements",
       "ok": false,
       "found": 0,
-      "durationMs": 290,
+      "durationMs": 399,
       "error": "HTTP 403 Forbidden"
     },
     {
       "source": "Territorial Army — Official Recruitment",
       "ok": false,
       "found": 0,
-      "durationMs": 958,
+      "durationMs": 1169,
       "error": "fetch failed"
     },
     {
       "source": "CISF — Recruitment Portal",
       "ok": false,
       "found": 0,
-      "durationMs": 31503,
+      "durationMs": 31847,
       "error": "fetch failed"
     },
     {
       "source": "ITBP — Recruitment Portal",
       "ok": false,
       "found": 0,
-      "durationMs": 31721,
+      "durationMs": 31837,
       "error": "fetch failed"
     },
     {
       "source": "SSB — Recruitment Portal",
       "ok": true,
       "found": 2,
-      "durationMs": 1882
+      "durationMs": 1775
     },
     {
       "source": "Assam Rifles — Official Recruitment",
       "ok": false,
       "found": 0,
-      "durationMs": 31788,
+      "durationMs": 31655,
       "error": "fetch failed"
     },
     {
       "source": "Indian Coast Guard — Recruitment Portal",
       "ok": false,
       "found": 0,
-      "durationMs": 1742,
+      "durationMs": 5879,
       "error": "fetch failed"
     },
     {
       "source": "Indian Coast Guard — Official Website",
       "ok": false,
       "found": 0,
-      "durationMs": 3299,
+      "durationMs": 2942,
       "error": "fetch failed"
     },
     {
       "source": "India Post — Vacancies",
       "ok": true,
       "found": 2,
-      "durationMs": 1887
+      "durationMs": 1428
     },
     {
       "source": "India Post — GDS Engagement",
       "ok": true,
       "found": 0,
-      "durationMs": 712
+      "durationMs": 728
     },
     {
       "source": "National Career Service — Government Job Directory",
       "ok": true,
       "found": 1,
-      "durationMs": 2514
+      "durationMs": 2569
     },
     {
       "source": "Haryana Staff Selection Commission — Advertisements",
       "ok": true,
       "found": 1,
-      "durationMs": 1302
+      "durationMs": 1179
     },
     {
       "source": "Madhya Pradesh Employees Selection Board",
       "ok": false,
       "found": 0,
-      "durationMs": 31801,
+      "durationMs": 31977,
       "error": "fetch failed"
     },
     {
       "source": "Rajasthan Staff Selection Board",
       "ok": false,
       "found": 0,
-      "durationMs": 31969,
+      "durationMs": 31798,
       "error": "fetch failed"
     },
     {
       "source": "UPSSSC — Official Recruitment",
       "ok": false,
       "found": 0,
-      "durationMs": 31666,
+      "durationMs": 31919,
       "error": "fetch failed"
     },
     {
       "source": "Bihar Staff Selection Commission",
       "ok": false,
       "found": 0,
-      "durationMs": 4564,
+      "durationMs": 5647,
       "error": "fetch failed"
     },
     {
       "source": "NIELIT — Recruitments",
       "ok": false,
       "found": 0,
-      "durationMs": 3519,
+      "durationMs": 3041,
       "error": "fetch failed"
     },
     {
       "source": "CSIR — Career Opportunities",
       "ok": true,
       "found": 0,
-      "durationMs": 4002
+      "durationMs": 2968
     },
     {
       "source": "RRB Ajmer — Official Notices",
       "ok": false,
       "found": 0,
-      "durationMs": 31875,
+      "durationMs": 31814,
       "error": "fetch failed"
     },
     {
       "source": "RBI — Opportunities",
       "ok": true,
       "found": 0,
-      "durationMs": 1004
+      "durationMs": 982
     },
     {
       "source": "NABARD — Career Notices",
       "ok": false,
       "found": 0,
-      "durationMs": 32076,
+      "durationMs": 31599,
       "error": "fetch failed"
     },
     {
       "source": "SEBI — Opportunities",
       "ok": true,
       "found": 0,
-      "durationMs": 1466
+      "durationMs": 1747
     },
     {
       "source": "JEE Advanced — Official Portal",
       "ok": true,
       "found": 0,
-      "durationMs": 729
+      "durationMs": 756
     },
     {
       "source": "Common Law Admission Test — Official Portal",
       "ok": true,
       "found": 0,
-      "durationMs": 652
+      "durationMs": 682
     }
   ],
   "pruneIds": [],
@@ -388,7 +387,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -404,7 +403,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:54:55.687Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -420,7 +419,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:54:55.687Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -436,7 +435,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:54:55.687Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -452,7 +451,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:54:55.687Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -468,7 +467,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:54:55.687Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -484,7 +483,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:54:55.687Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -500,7 +499,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -516,7 +515,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -532,7 +531,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -548,7 +547,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -564,7 +563,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -580,7 +579,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -596,7 +595,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -612,7 +611,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -628,7 +627,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -644,7 +643,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -660,7 +659,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -676,7 +675,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -692,7 +691,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -708,7 +707,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -724,7 +723,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -740,7 +739,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -756,7 +755,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -772,7 +771,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -788,7 +787,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:54:55.687Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -804,7 +803,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:54:55.687Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -820,7 +819,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:54:55.687Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -836,7 +835,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -852,7 +851,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -868,7 +867,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -884,7 +883,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:54:55.686Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -900,7 +899,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -916,7 +915,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -932,7 +931,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -948,7 +947,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -964,7 +963,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -980,7 +979,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -996,7 +995,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1012,7 +1011,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1028,7 +1027,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1044,7 +1043,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1060,7 +1059,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1076,7 +1075,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1092,7 +1091,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1108,7 +1107,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1124,7 +1123,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.647Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1140,7 +1139,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.647Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1156,7 +1155,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.647Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1172,7 +1171,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.647Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1188,7 +1187,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.647Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1204,7 +1203,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.647Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1220,7 +1219,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.647Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1236,7 +1235,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.647Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1252,7 +1251,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1268,7 +1267,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1284,7 +1283,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1300,7 +1299,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1316,7 +1315,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1332,7 +1331,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1348,7 +1347,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1364,7 +1363,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1380,7 +1379,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1396,7 +1395,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1412,7 +1411,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1428,7 +1427,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1444,7 +1443,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1460,7 +1459,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1476,7 +1475,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.645Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1492,7 +1491,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.645Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1508,7 +1507,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.645Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1524,7 +1523,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.645Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1540,7 +1539,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.645Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1556,7 +1555,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.645Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1571,7 +1570,7 @@
       "sourceName": "SSB — Recruitment Portal",
       "official": true,
       "firstSeen": "2026-10-12T23:00:44.209Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1586,7 +1585,7 @@
       "sourceName": "SSB — Recruitment Portal",
       "official": true,
       "firstSeen": "2026-10-12T23:00:44.209Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1601,7 +1600,7 @@
       "sourceName": "National Career Service — Government Job Directory",
       "official": true,
       "firstSeen": "2026-10-12T23:00:44.209Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1616,7 +1615,7 @@
       "sourceName": "Haryana Staff Selection Commission — Advertisements",
       "official": true,
       "firstSeen": "2026-10-12T23:00:44.209Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1631,7 +1630,7 @@
       "sourceName": "CTET — Official Documents",
       "official": true,
       "firstSeen": "2026-09-29T00:59:54.852Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1646,7 +1645,7 @@
       "sourceName": "CTET — Official Documents",
       "official": true,
       "firstSeen": "2026-09-29T00:59:54.852Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1661,7 +1660,7 @@
       "sourceName": "CTET — Official Documents",
       "official": true,
       "firstSeen": "2026-09-29T00:59:54.852Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1676,7 +1675,7 @@
       "sourceName": "CTET — Official Documents",
       "official": true,
       "firstSeen": "2026-09-29T00:59:54.852Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1691,7 +1690,7 @@
       "sourceName": "CTET — Official Documents",
       "official": true,
       "firstSeen": "2026-09-29T00:59:54.852Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1706,7 +1705,7 @@
       "sourceName": "CTET — Official Documents",
       "official": true,
       "firstSeen": "2026-09-29T00:59:54.852Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1721,7 +1720,7 @@
       "sourceName": "India Post — Vacancies",
       "official": true,
       "firstSeen": "2026-10-12T23:00:44.209Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1736,7 +1735,7 @@
       "sourceName": "India Post — Vacancies",
       "official": true,
       "firstSeen": "2026-10-19T06:18:02.710Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1751,7 +1750,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-09-29T00:59:52.574Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1767,7 +1766,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-09-29T00:59:52.574Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1782,7 +1781,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-09-29T00:59:52.574Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1797,7 +1796,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-09-29T00:59:52.574Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1812,7 +1811,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-09-29T00:59:52.574Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1828,7 +1827,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-09-29T00:59:52.574Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1843,7 +1842,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-09-29T00:59:52.574Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1858,7 +1857,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-09-29T00:59:52.574Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1873,7 +1872,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-09-29T00:59:52.574Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1888,7 +1887,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-09-29T00:59:52.574Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1903,7 +1902,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-09-29T00:59:52.574Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1918,7 +1917,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-09-29T00:59:52.574Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1933,7 +1932,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-09-29T00:59:52.574Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1948,7 +1947,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-09-29T00:59:52.574Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1963,7 +1962,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-09-29T00:59:52.574Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1978,7 +1977,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-09-29T00:59:52.574Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1993,7 +1992,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-09-29T00:59:52.574Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2008,7 +2007,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-09-29T00:59:52.574Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2023,7 +2022,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-09-29T00:59:52.574Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2038,7 +2037,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-09-29T00:59:52.574Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2053,7 +2052,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-09-29T00:59:52.574Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2068,7 +2067,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-09-29T00:59:52.573Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2084,7 +2083,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-09-29T00:59:52.573Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2099,7 +2098,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-09-29T00:59:52.573Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2114,7 +2113,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-09-29T00:59:52.573Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2130,7 +2129,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-09-29T00:59:52.573Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2145,7 +2144,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-09-29T00:59:52.573Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2161,7 +2160,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-09-29T00:59:52.573Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2177,7 +2176,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-09-29T00:59:52.573Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2192,7 +2191,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-09-29T00:59:52.573Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2207,7 +2206,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-09-29T00:59:52.573Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2222,7 +2221,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-09-29T00:59:52.573Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2237,7 +2236,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-09-29T00:59:52.573Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2252,7 +2251,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-09-29T00:59:52.573Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2267,7 +2266,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-09-29T00:59:52.573Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2282,7 +2281,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-09-29T00:59:52.573Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2298,7 +2297,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-09-29T00:59:52.573Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2313,7 +2312,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-09-29T00:59:52.573Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2328,7 +2327,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-09-29T00:59:52.573Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2343,7 +2342,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-09-29T00:59:52.573Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2358,7 +2357,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-09-29T00:59:52.573Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2373,7 +2372,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-09-29T00:59:52.573Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2388,7 +2387,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-09-29T00:59:52.573Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2403,7 +2402,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-09-29T00:59:52.573Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2418,7 +2417,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-10-13T11:48:51.064Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2433,7 +2432,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-10-13T11:48:51.064Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2448,7 +2447,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-10-13T11:48:51.064Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2463,7 +2462,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-10-15T13:27:32.723Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2478,7 +2477,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-10-15T13:27:32.723Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2493,7 +2492,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-10-17T15:35:08.278Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2508,7 +2507,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-10-26T13:02:15.726Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2523,7 +2522,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-10-30T18:39:34.779Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2538,7 +2537,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-10-30T18:39:34.779Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2553,7 +2552,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-10-30T18:39:34.779Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2568,7 +2567,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-10-30T18:39:34.779Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2584,7 +2583,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-11-02T11:04:22.460Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2600,7 +2599,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-11-02T11:04:22.460Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2615,7 +2614,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-11-03T10:53:19.701Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2631,7 +2630,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-11-03T18:29:07.725Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2647,7 +2646,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-11-03T18:29:07.725Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2662,7 +2661,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-09-29T00:59:52.574Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2678,7 +2677,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-11-04T15:27:29.977Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2693,7 +2692,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-11-04T15:27:29.977Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2708,22 +2707,7 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-11-06T15:04:03.330Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "11-nov-26-online-pre-examination-training-for-candidates-who-opted-for-pet-under-crp-rrbs-xv-https-www-ibps-in",
-      "title": "11 Nov 26 Online Pre-Examination Training for Candidates who Opted for PET under CRP- RRBs-XV",
-      "organization": "IBPS",
-      "category": "BANKING",
-      "type": "notification",
-      "status": "notification",
-      "url": "https://www.ibps.in/index.php/rural-bank-xv/",
-      "sourceUrl": "https://www.ibps.in/index.php/crp-updates/",
-      "sourceName": "IBPS — CRP Updates",
-      "official": true,
-      "firstSeen": "2026-11-12T18:56:37.704Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2738,7 +2722,7 @@
       "sourceName": "IBPS — CRP Updates",
       "official": true,
       "firstSeen": "2026-11-12T18:56:37.704Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2753,7 +2737,7 @@
       "sourceName": "IBPS — CRP Updates",
       "official": true,
       "firstSeen": "2026-11-12T18:56:37.704Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2768,7 +2752,7 @@
       "sourceName": "IBPS — CRP Updates",
       "official": true,
       "firstSeen": "2026-11-12T18:56:37.704Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2783,7 +2767,7 @@
       "sourceName": "IBPS — CRP Updates",
       "official": true,
       "firstSeen": "2026-11-12T18:56:37.704Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2798,7 +2782,7 @@
       "sourceName": "IBPS — CRP Updates",
       "official": true,
       "firstSeen": "2026-11-12T18:56:37.704Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2814,7 +2798,7 @@
       "sourceName": "IBPS — CRP Updates",
       "official": true,
       "firstSeen": "2026-11-12T18:56:37.704Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2830,7 +2814,7 @@
       "sourceName": "IBPS — CRP Updates",
       "official": true,
       "firstSeen": "2026-11-12T18:56:37.704Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2846,7 +2830,7 @@
       "sourceName": "IBPS — CRP Updates",
       "official": true,
       "firstSeen": "2026-11-12T18:56:37.704Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2862,7 +2846,7 @@
       "sourceName": "IBPS — CRP Updates",
       "official": true,
       "firstSeen": "2026-11-12T18:56:37.704Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2878,7 +2862,7 @@
       "sourceName": "IBPS — CRP Updates",
       "official": true,
       "firstSeen": "2026-11-12T18:56:37.704Z",
-      "lastSeen": "2026-11-16T09:42:44.430Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -2889,6 +2873,203 @@
       "type": "notification",
       "status": "notification",
       "url": "https://www.ibps.in/index.php/regional-rural-bank",
+      "sourceUrl": "https://www.ibps.in/index.php/crp-updates/",
+      "sourceName": "IBPS — CRP Updates",
+      "official": true,
+      "firstSeen": "2026-11-12T18:56:37.704Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "16-nov-26-provisional-allotment-under-reserve-list-for-crp-po-mts-xv-https-www-ibps-in-index-php-management-tr",
+      "title": "16 Nov 26 Provisional Allotment under Reserve List for CRP-PO/MTs-XV",
+      "organization": "IBPS",
+      "category": "BANKING",
+      "type": "update",
+      "status": "update",
+      "url": "https://www.ibps.in/index.php/management-trainees-xv/",
+      "sourceUrl": "https://www.ibps.in/index.php/crp-updates/",
+      "sourceName": "IBPS — CRP Updates",
+      "official": true,
+      "firstSeen": "2026-11-16T20:30:01.347Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "16-nov-26-provisional-allotment-under-reserve-list-for-crp-spl-xv-https-www-ibps-in-index-php-specialist-offic",
+      "title": "16 Nov 26 Provisional Allotment under Reserve List for CRP-SPL-XV",
+      "organization": "IBPS",
+      "category": "BANKING",
+      "type": "notification",
+      "status": "notification",
+      "url": "https://www.ibps.in/index.php/specialist-officers-xv/",
+      "sourceUrl": "https://www.ibps.in/index.php/crp-updates/",
+      "sourceName": "IBPS — CRP Updates",
+      "official": true,
+      "firstSeen": "2026-11-16T20:30:01.347Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "interview-letter-https-bpsc-bihar-gov-in-interview-letter",
+      "title": "Interview Letter",
+      "organization": "BPSC",
+      "category": "STATE_PSC",
+      "type": "update",
+      "status": "update",
+      "url": "https://bpsc.bihar.gov.in/interview-letter/",
+      "sourceUrl": "https://bpsc.bihar.gov.in/",
+      "sourceName": "BPSC — Official Notices",
+      "official": true,
+      "firstSeen": "2026-11-16T20:30:01.347Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "important-notice-regarding-postponement-of-72nd-cce-preliminary-competitive-examination-https-bpsc-bihar-gov-i",
+      "title": "Important Notice :- Regarding Postponement of 72nd CCE (Preliminary) Competitive Examination.",
+      "organization": "BPSC",
+      "category": "STATE_PSC",
+      "type": "update",
+      "status": "update",
+      "url": "https://bpsc.bihar.gov.in/wp-content/uploads/BPSC_content/Notices/Regarding_postpone_72nd_BPSC_BPSC-20260720-u768lx.pdf",
+      "sourceUrl": "https://bpsc.bihar.gov.in/",
+      "sourceName": "BPSC — Official Notices",
+      "official": true,
+      "firstSeen": "2026-11-16T20:30:01.347Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "corrigendum-integrated-72nd-combined-preliminary-competitive-examination-reduction-of-2-vacancies-of-deputy-su",
+      "title": "Corrigendum: Integrated 72nd Combined (Preliminary) Competitive Examination – Reduction of 2 Vacancies of Deputy Superintendent of Police (BPS).",
+      "organization": "BPSC",
+      "category": "STATE_PSC",
+      "type": "update",
+      "status": "update",
+      "url": "https://bpsc.bihar.gov.in/wp-content/uploads/BPSC_content/Notices/Corrigendum-72nd-CCE-Reduction-of-2-posts-of-BPS_BPSC-20260903-23e57k.pdf",
+      "sourceUrl": "https://bpsc.bihar.gov.in/",
+      "sourceName": "BPSC — Official Notices",
+      "official": true,
+      "firstSeen": "2026-11-16T20:30:01.347Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "important-notice-date-of-commencement-of-examination-for-the-post-of-stenographer-in-bihar-public-service-comm",
+      "title": "Important Notice: Date of Commencement of Examination for the Post of Stenographer in Bihar Public Service Commission, Patna. (Advt. No. 01/2026)",
+      "organization": "BPSC",
+      "category": "STATE_PSC",
+      "type": "update",
+      "status": "update",
+      "url": "https://bpsc.bihar.gov.in/wp-content/uploads/BPSC_content/Notices/Important-Notice-Date-of-012026-Stenographer-BPSC-Exam_BPSC-20260420-zj3eyx.pdf",
+      "sourceUrl": "https://bpsc.bihar.gov.in/",
+      "sourceName": "BPSC — Official Notices",
+      "official": true,
+      "firstSeen": "2026-11-16T20:30:01.347Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "corrigendum-integrated-72nd-combined-preliminary-competitive-examination-deletion-of-44-vacancies-of-sugarcane",
+      "title": "Corrigendum: Integrated 72nd Combined (Preliminary) Competitive Examination – Deletion of 44 Vacancies of Sugarcane Officer.",
+      "organization": "BPSC",
+      "category": "STATE_PSC",
+      "type": "update",
+      "status": "update",
+      "url": "https://bpsc.bihar.gov.in/wp-content/uploads/BPSC_content/Notices/Corrigendum-Integrated-72nd-CCE-Pre-Advt.-44-vacancies-of-Sugarcane-Officer-deleted_BPSC-20260506-0jupsy.pdf",
+      "sourceUrl": "https://bpsc.bihar.gov.in/",
+      "sourceName": "BPSC — Official Notices",
+      "official": true,
+      "firstSeen": "2026-11-16T20:30:01.347Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "important-notice-regarding-introduction-of-5th-answer-option-e-in-mcq-based-examinations-to-be-conducted-by-bp",
+      "title": "Important Notice: Regarding Introduction of 5th Answer Option ‘E’ in MCQ based examinations to be conducted by BPSC.",
+      "organization": "BPSC",
+      "category": "STATE_PSC",
+      "type": "update",
+      "status": "update",
+      "url": "https://bpsc.bihar.gov.in/wp-content/uploads/BPSC_content/Notices/Kaagaz_20260502_160639877178_BPSC-20260502-zjmn51.pdf",
+      "sourceUrl": "https://bpsc.bihar.gov.in/",
+      "sourceName": "BPSC — Official Notices",
+      "official": true,
+      "firstSeen": "2026-11-16T20:30:01.347Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "important-notice-facility-to-edit-gender-in-otr-one-time-registration-https-bpsc-bihar-gov-in-wp-content-uploa",
+      "title": "Important Notice : Facility to edit GENDER in OTR (One Time Registration)",
+      "organization": "BPSC",
+      "category": "STATE_PSC",
+      "type": "update",
+      "status": "update",
+      "notificationDate": "2025-06-26",
+      "url": "https://bpsc.bihar.gov.in/wp-content/uploads/BPSC_content/Notices/NB-2025-06-26-02_BPSC-20250626-vmnwcx.pdf",
+      "sourceUrl": "https://bpsc.bihar.gov.in/",
+      "sourceName": "BPSC — Official Notices",
+      "official": true,
+      "firstSeen": "2026-11-16T20:30:01.347Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "important-notice-advertisement-for-the-posts-of-assistant-professor-in-various-departments-speciality-of-state",
+      "title": "Important Notice:- Advertisement for the Posts of Assistant Professor in various Departments (Speciality) of State Medical College & Hospitals has been cancelled. (Advt. Nos. 04/20",
+      "organization": "BPSC",
+      "category": "STATE_PSC",
+      "type": "notification",
+      "status": "notification",
+      "url": "https://bpsc.bihar.gov.in/wp-content/uploads/BPSC_content/Notices/Important-Notice-04-282025-Advertisement-cancelled_BPSC-20261029-wh9ep8.pdf",
+      "sourceUrl": "https://bpsc.bihar.gov.in/",
+      "sourceName": "BPSC — Official Notices",
+      "official": true,
+      "firstSeen": "2026-11-16T20:30:01.347Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "facility-to-candidates-to-update-data-in-profile-tab-in-online-application-system-https-bpsc-bihar-gov-in-wp-c",
+      "title": "Facility to Candidates to update data in Profile Tab in Online Application System.",
+      "organization": "BPSC",
+      "category": "STATE_PSC",
+      "type": "notification",
+      "status": "notification",
+      "notificationDate": "2025-06-10",
+      "url": "https://bpsc.bihar.gov.in/wp-content/uploads/BPSC_content/Notices/NB-2025-06-10-01.pdf",
+      "sourceUrl": "https://bpsc.bihar.gov.in/",
+      "sourceName": "BPSC — Official Notices",
+      "official": true,
+      "firstSeen": "2026-11-16T20:30:01.347Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "interview-letters-https-bpsc-bihar-gov-in-interview-letter",
+      "title": "Interview Letters",
+      "organization": "BPSC",
+      "category": "STATE_PSC",
+      "type": "update",
+      "status": "update",
+      "url": "https://bpsc.bihar.gov.in/interview-letter/",
+      "sourceUrl": "https://bpsc.bihar.gov.in/",
+      "sourceName": "BPSC — Official Notices",
+      "official": true,
+      "firstSeen": "2026-11-16T20:30:01.347Z",
+      "lastSeen": "2026-11-16T20:30:01.347Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "11-nov-26-online-pre-examination-training-for-candidates-who-opted-for-pet-under-crp-rrbs-xv-https-www-ibps-in",
+      "title": "11 Nov 26 Online Pre-Examination Training for Candidates who Opted for PET under CRP- RRBs-XV",
+      "organization": "IBPS",
+      "category": "BANKING",
+      "type": "notification",
+      "status": "notification",
+      "url": "https://www.ibps.in/index.php/rural-bank-xv/",
       "sourceUrl": "https://www.ibps.in/index.php/crp-updates/",
       "sourceName": "IBPS — CRP Updates",
       "official": true,
