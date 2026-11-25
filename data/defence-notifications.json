@@ -1,343 +1,342 @@
 {
   "version": 1,
-  "generatedAt": "2026-11-25T02:28:17.454Z",
+  "generatedAt": "2026-11-25T22:32:39.924Z",
   "source": "VAANI Government & Defence Notification Engine",
   "checkedSources": [
     {
       "source": "UPSC — Active Examinations",
       "ok": false,
       "found": 0,
-      "durationMs": 935,
+      "durationMs": 626,
       "error": "HTTP 403 Forbidden"
     },
     {
       "source": "UPSC — Forthcoming Examinations",
       "ok": false,
       "found": 0,
-      "durationMs": 845,
+      "durationMs": 601,
       "error": "HTTP 403 Forbidden"
     },
     {
       "source": "UPSC — Examination Notifications",
       "ok": false,
       "found": 0,
-      "durationMs": 844,
+      "durationMs": 590,
       "error": "HTTP 403 Forbidden"
     },
     {
       "source": "UPSC — Official Home",
       "ok": false,
       "found": 0,
-      "durationMs": 840,
+      "durationMs": 595,
       "error": "HTTP 403 Forbidden"
     },
     {
       "source": "Indian Air Force — AFCAT",
       "ok": false,
       "found": 0,
-      "durationMs": 1224,
+      "durationMs": 1127,
       "error": "HTTP 403 Forbidden"
     },
     {
       "source": "Indian Army — Join Indian Army",
       "ok": false,
       "found": 0,
-      "durationMs": 31631,
+      "durationMs": 31885,
       "error": "fetch failed"
     },
     {
       "source": "Indian Navy — Join Indian Navy",
       "ok": false,
       "found": 0,
-      "durationMs": 31629,
+      "durationMs": 31881,
       "error": "fetch failed"
     },
     {
       "source": "Agniveervayu",
       "ok": false,
       "found": 0,
-      "durationMs": 31579,
+      "durationMs": 31878,
       "error": "fetch failed"
     },
     {
       "source": "BSF Recruitment",
       "ok": false,
       "found": 0,
-      "durationMs": 1190,
+      "durationMs": 925,
       "error": "HTTP 403 Forbidden"
     },
     {
       "source": "CRPF Recruitment",
       "ok": false,
       "found": 0,
-      "durationMs": 31718,
+      "durationMs": 31834,
       "error": "fetch failed"
     },
     {
       "source": "SSC — Official Notice Board",
       "ok": true,
       "found": 0,
-      "durationMs": 1619
+      "durationMs": 1221
     },
     {
       "source": "Railway Recruitment Boards — Employment Notices",
       "ok": false,
       "found": 0,
-      "durationMs": 32007,
+      "durationMs": 31978,
       "error": "fetch failed"
     },
     {
       "source": "IBPS — CRP Updates",
       "ok": true,
       "found": 16,
-      "durationMs": 2082
+      "durationMs": 1742
     },
     {
       "source": "SBI — Current Openings",
       "ok": true,
       "found": 80,
-      "durationMs": 3397
+      "durationMs": 2854
     },
     {
       "source": "CTET — Official Documents",
       "ok": true,
       "found": 6,
-      "durationMs": 3401
+      "durationMs": 1882
     },
     {
       "source": "KVS — Recruitment Notices",
       "ok": true,
       "found": 0,
-      "durationMs": 4480
+      "durationMs": 3324
     },
     {
       "source": "BPSC — Official Notices",
       "ok": true,
-      "found": 18,
-      "durationMs": 1849
+      "found": 13,
+      "durationMs": 1537
     },
     {
       "source": "UPPSC — Official Notices",
       "ok": true,
       "found": 1,
-      "durationMs": 2036
+      "durationMs": 1982
     },
     {
       "source": "ISRO — Current Opportunities",
       "ok": true,
       "found": 0,
-      "durationMs": 2616
+      "durationMs": 88
     },
     {
       "source": "DRDO — Vacancies",
       "ok": false,
       "found": 0,
-      "durationMs": 2689,
+      "durationMs": 2275,
       "error": "fetch failed"
     },
     {
       "source": "NTA — Official Exam Directory",
       "ok": false,
       "found": 0,
-      "durationMs": 3707,
+      "durationMs": 3687,
       "error": "fetch failed"
     },
     {
       "source": "JEE Main — Official Notices",
       "ok": false,
       "found": 0,
-      "durationMs": 731,
+      "durationMs": 640,
       "error": "HTTP 403 Forbidden"
     },
     {
       "source": "NEET UG — Official Notices",
       "ok": false,
       "found": 0,
-      "durationMs": 764,
+      "durationMs": 562,
       "error": "HTTP 403 Forbidden"
     },
     {
       "source": "UGC NET — Official Notices",
       "ok": false,
       "found": 0,
-      "durationMs": 454,
+      "durationMs": 297,
       "error": "HTTP 403 Forbidden"
     },
     {
       "source": "CSBC Bihar — Police Recruitment",
       "ok": true,
       "found": 43,
-      "durationMs": 1279
+      "durationMs": 950
     },
     {
       "source": "BPSSC Bihar — Police Recruitment",
       "ok": true,
       "found": 80,
-      "durationMs": 1539
+      "durationMs": 1202
     },
     {
       "source": "UPPRPB — Police Recruitment",
       "ok": true,
       "found": 0,
-      "durationMs": 1973
+      "durationMs": 1737
     },
     {
       "source": "UPSC — Recruitment Advertisements",
       "ok": false,
       "found": 0,
-      "durationMs": 360,
+      "durationMs": 313,
       "error": "HTTP 403 Forbidden"
     },
     {
       "source": "Territorial Army — Official Recruitment",
       "ok": false,
       "found": 0,
-      "durationMs": 967,
+      "durationMs": 1019,
       "error": "fetch failed"
     },
     {
       "source": "CISF — Recruitment Portal",
       "ok": false,
       "found": 0,
-      "durationMs": 31788,
+      "durationMs": 31899,
       "error": "fetch failed"
     },
     {
       "source": "ITBP — Recruitment Portal",
       "ok": false,
       "found": 0,
-      "durationMs": 31953,
+      "durationMs": 31940,
       "error": "fetch failed"
     },
     {
       "source": "SSB — Recruitment Portal",
       "ok": true,
       "found": 2,
-      "durationMs": 1985
+      "durationMs": 1766
     },
     {
       "source": "Assam Rifles — Official Recruitment",
       "ok": false,
       "found": 0,
-      "durationMs": 31804,
+      "durationMs": 31489,
       "error": "fetch failed"
     },
     {
       "source": "Indian Coast Guard — Recruitment Portal",
       "ok": false,
       "found": 0,
-      "durationMs": 1730,
+      "durationMs": 5637,
       "error": "fetch failed"
     },
     {
       "source": "Indian Coast Guard — Official Website",
       "ok": false,
       "found": 0,
-      "durationMs": 3512,
+      "durationMs": 3294,
       "error": "fetch failed"
     },
     {
       "source": "India Post — Vacancies",
       "ok": true,
       "found": 3,
-      "durationMs": 1627
+      "durationMs": 1585
     },
     {
       "source": "India Post — GDS Engagement",
       "ok": true,
       "found": 0,
-      "durationMs": 845
+      "durationMs": 1255
     },
     {
       "source": "National Career Service — Government Job Directory",
       "ok": true,
       "found": 1,
-      "durationMs": 2876
+      "durationMs": 2497
     },
     {
       "source": "Haryana Staff Selection Commission — Advertisements",
       "ok": true,
       "found": 1,
-      "durationMs": 1228
+      "durationMs": 1197
     },
     {
       "source": "Madhya Pradesh Employees Selection Board",
       "ok": false,
       "found": 0,
-      "durationMs": 31632,
+      "durationMs": 31939,
       "error": "fetch failed"
     },
     {
       "source": "Rajasthan Staff Selection Board",
       "ok": false,
       "found": 0,
-      "durationMs": 31966,
+      "durationMs": 31511,
       "error": "fetch failed"
     },
     {
       "source": "UPSSSC — Official Recruitment",
       "ok": false,
       "found": 0,
-      "durationMs": 31968,
+      "durationMs": 31966,
       "error": "fetch failed"
     },
     {
       "source": "Bihar Staff Selection Commission",
       "ok": false,
       "found": 0,
-      "durationMs": 4437,
+      "durationMs": 3526,
       "error": "fetch failed"
     },
     {
       "source": "NIELIT — Recruitments",
-      "ok": false,
+      "ok": true,
       "found": 0,
-      "durationMs": 3129,
-      "error": "fetch failed"
+      "durationMs": 949
     },
     {
       "source": "CSIR — Career Opportunities",
       "ok": true,
       "found": 0,
-      "durationMs": 3008
+      "durationMs": 2622
     },
     {
       "source": "RRB Ajmer — Official Notices",
       "ok": false,
       "found": 0,
-      "durationMs": 31890,
+      "durationMs": 31864,
       "error": "fetch failed"
     },
     {
       "source": "RBI — Opportunities",
       "ok": true,
       "found": 0,
-      "durationMs": 1121
+      "durationMs": 1010
     },
     {
       "source": "NABARD — Career Notices",
       "ok": false,
       "found": 0,
-      "durationMs": 32082,
+      "durationMs": 32378,
       "error": "fetch failed"
     },
     {
       "source": "SEBI — Opportunities",
       "ok": true,
       "found": 0,
-      "durationMs": 997
+      "durationMs": 1358
     },
     {
       "source": "JEE Advanced — Official Portal",
       "ok": true,
       "found": 0,
-      "durationMs": 125
+      "durationMs": 740
     },
     {
       "source": "Common Law Admission Test — Official Portal",
       "ok": true,
       "found": 0,
-      "durationMs": 720
+      "durationMs": 665
     }
   ],
   "pruneIds": [],
@@ -387,7 +386,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -403,7 +402,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:54:55.687Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -419,7 +418,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:54:55.687Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -435,7 +434,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:54:55.687Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -451,7 +450,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:54:55.687Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -467,7 +466,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:54:55.687Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -483,7 +482,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:54:55.687Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -499,7 +498,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -515,7 +514,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -531,7 +530,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -547,7 +546,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -563,7 +562,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -579,7 +578,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -595,7 +594,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -611,7 +610,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -627,7 +626,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -643,7 +642,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -659,7 +658,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -675,7 +674,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -691,7 +690,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -707,7 +706,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -723,7 +722,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -739,7 +738,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -755,7 +754,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -771,7 +770,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -787,7 +786,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:54:55.687Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -803,7 +802,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:54:55.687Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -819,7 +818,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:54:55.687Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -835,7 +834,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -851,7 +850,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.383Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -867,7 +866,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -883,7 +882,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:54:55.686Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -899,7 +898,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -915,7 +914,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -931,7 +930,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -947,7 +946,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -963,7 +962,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -979,7 +978,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -995,7 +994,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1011,7 +1010,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1027,7 +1026,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1043,7 +1042,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1059,7 +1058,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1075,7 +1074,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1091,7 +1090,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1107,7 +1106,7 @@
       "sourceName": "BPSSC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:57.382Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1123,7 +1122,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.647Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1139,7 +1138,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.647Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1155,7 +1154,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.647Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1171,7 +1170,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.647Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1187,7 +1186,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.647Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1203,7 +1202,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.647Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1219,7 +1218,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.647Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1235,7 +1234,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.647Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1251,7 +1250,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1267,7 +1266,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1283,7 +1282,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1299,7 +1298,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1315,7 +1314,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1331,7 +1330,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1347,7 +1346,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1363,7 +1362,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1379,7 +1378,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1395,7 +1394,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1411,7 +1410,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1427,7 +1426,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1443,7 +1442,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1459,7 +1458,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.646Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1475,7 +1474,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.645Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1491,7 +1490,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.645Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1507,7 +1506,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.645Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1523,7 +1522,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.645Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1539,7 +1538,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.645Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1555,7 +1554,7 @@
       "sourceName": "CSBC Bihar — Police Recruitment",
       "official": true,
       "firstSeen": "2026-09-28T14:39:55.645Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1570,7 +1569,7 @@
       "sourceName": "SSB — Recruitment Portal",
       "official": true,
       "firstSeen": "2026-10-12T23:00:44.209Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1585,7 +1584,7 @@
       "sourceName": "SSB — Recruitment Portal",
       "official": true,
       "firstSeen": "2026-10-12T23:00:44.209Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1600,7 +1599,7 @@
       "sourceName": "National Career Service — Government Job Directory",
       "official": true,
       "firstSeen": "2026-10-12T23:00:44.209Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1615,7 +1614,7 @@
       "sourceName": "Haryana Staff Selection Commission — Advertisements",
       "official": true,
       "firstSeen": "2026-10-12T23:00:44.209Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1630,7 +1629,7 @@
       "sourceName": "India Post — Vacancies",
       "official": true,
       "firstSeen": "2026-10-12T23:00:44.209Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1645,7 +1644,7 @@
       "sourceName": "India Post — Vacancies",
       "official": true,
       "firstSeen": "2026-10-19T06:18:02.710Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1660,7 +1659,7 @@
       "sourceName": "IBPS — CRP Updates",
       "official": true,
       "firstSeen": "2026-11-12T18:56:37.704Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1675,7 +1674,7 @@
       "sourceName": "IBPS — CRP Updates",
       "official": true,
       "firstSeen": "2026-11-12T18:56:37.704Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1690,7 +1689,7 @@
       "sourceName": "IBPS — CRP Updates",
       "official": true,
       "firstSeen": "2026-11-12T18:56:37.704Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1705,7 +1704,7 @@
       "sourceName": "IBPS — CRP Updates",
       "official": true,
       "firstSeen": "2026-11-12T18:56:37.704Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1720,7 +1719,7 @@
       "sourceName": "IBPS — CRP Updates",
       "official": true,
       "firstSeen": "2026-11-12T18:56:37.704Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1736,7 +1735,7 @@
       "sourceName": "IBPS — CRP Updates",
       "official": true,
       "firstSeen": "2026-11-12T18:56:37.704Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1752,7 +1751,7 @@
       "sourceName": "IBPS — CRP Updates",
       "official": true,
       "firstSeen": "2026-11-12T18:56:37.704Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1768,7 +1767,7 @@
       "sourceName": "IBPS — CRP Updates",
       "official": true,
       "firstSeen": "2026-11-12T18:56:37.704Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1784,7 +1783,7 @@
       "sourceName": "IBPS — CRP Updates",
       "official": true,
       "firstSeen": "2026-11-12T18:56:37.704Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1800,7 +1799,7 @@
       "sourceName": "IBPS — CRP Updates",
       "official": true,
       "firstSeen": "2026-11-12T18:56:37.704Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1815,7 +1814,7 @@
       "sourceName": "IBPS — CRP Updates",
       "official": true,
       "firstSeen": "2026-11-12T18:56:37.704Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1830,7 +1829,1192 @@
       "sourceName": "BPSC — Official Notices",
       "official": true,
       "firstSeen": "2026-11-16T20:30:01.347Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "important-notice-regarding-introduction-of-5th-answer-option-e-in-mcq-based-examinations-to-be-conducted-by-bp",
+      "title": "Important Notice: Regarding Introduction of 5th Answer Option ‘E’ in MCQ based examinations to be conducted by BPSC.",
+      "organization": "BPSC",
+      "category": "STATE_PSC",
+      "type": "update",
+      "status": "update",
+      "url": "https://bpsc.bihar.gov.in/wp-content/uploads/BPSC_content/Notices/Kaagaz_20260502_160639877178_BPSC-20260502-zjmn51.pdf",
+      "sourceUrl": "https://bpsc.bihar.gov.in/",
+      "sourceName": "BPSC — Official Notices",
+      "official": true,
+      "firstSeen": "2026-11-16T20:30:01.347Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "important-notice-facility-to-edit-gender-in-otr-one-time-registration-https-bpsc-bihar-gov-in-wp-content-uploa",
+      "title": "Important Notice : Facility to edit GENDER in OTR (One Time Registration)",
+      "organization": "BPSC",
+      "category": "STATE_PSC",
+      "type": "update",
+      "status": "update",
+      "notificationDate": "2025-06-26",
+      "url": "https://bpsc.bihar.gov.in/wp-content/uploads/BPSC_content/Notices/NB-2025-06-26-02_BPSC-20250626-vmnwcx.pdf",
+      "sourceUrl": "https://bpsc.bihar.gov.in/",
+      "sourceName": "BPSC — Official Notices",
+      "official": true,
+      "firstSeen": "2026-11-16T20:30:01.347Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "facility-to-candidates-to-update-data-in-profile-tab-in-online-application-system-https-bpsc-bihar-gov-in-wp-c",
+      "title": "Facility to Candidates to update data in Profile Tab in Online Application System.",
+      "organization": "BPSC",
+      "category": "STATE_PSC",
+      "type": "notification",
+      "status": "notification",
+      "notificationDate": "2025-06-10",
+      "url": "https://bpsc.bihar.gov.in/wp-content/uploads/BPSC_content/Notices/NB-2025-06-10-01.pdf",
+      "sourceUrl": "https://bpsc.bihar.gov.in/",
+      "sourceName": "BPSC — Official Notices",
+      "official": true,
+      "firstSeen": "2026-11-16T20:30:01.347Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "interview-letters-https-bpsc-bihar-gov-in-interview-letter",
+      "title": "Interview Letters",
+      "organization": "BPSC",
+      "category": "STATE_PSC",
+      "type": "update",
+      "status": "update",
+      "url": "https://bpsc.bihar.gov.in/interview-letter/",
+      "sourceUrl": "https://bpsc.bihar.gov.in/",
+      "sourceName": "BPSC — Official Notices",
+      "official": true,
+      "firstSeen": "2026-11-16T20:30:01.347Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "20-nov-26-result-status-of-online-main-examination-for-crp-po-mts-xvi-http-ibpsreg-ibps-in-crppoxvijun26-frest",
+      "title": "20 Nov 26 Result Status of Online Main Examination for CRP-PO/MTs-XVI",
+      "organization": "IBPS",
+      "category": "BANKING",
+      "type": "result",
+      "status": "result",
+      "url": "http://ibpsreg.ibps.in/crppoxvijun26/fresta_nov26/login.php?appid=faa539a0e8fbd226743a6f2df8768c59",
+      "sourceUrl": "https://www.ibps.in/index.php/crp-updates/",
+      "sourceName": "IBPS — CRP Updates",
+      "official": true,
+      "firstSeen": "2026-11-20T11:39:46.756Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "ctet-feb26-answer-key-p1-07feb2026-https-cdnbbsr-s3waas-gov-in-s3443dec3062d0286986e21dc0631734c9-uploads-2026",
+      "title": "CTET Feb26 Answer Key P1 07Feb2026",
+      "organization": "CTET",
+      "category": "TEACHING",
+      "type": "answer-key",
+      "status": "answer-key",
+      "url": "https://cdnbbsr.s3waas.gov.in/s3443dec3062d0286986e21dc0631734c9/uploads/2026/04/20260401145739613.pdf",
+      "sourceUrl": "https://ctet.nic.in/documents/",
+      "sourceName": "CTET — Official Documents",
+      "official": true,
+      "firstSeen": "2026-09-29T00:59:54.852Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "ctet-feb26-answer-key-p1-08feb2026-https-cdnbbsr-s3waas-gov-in-s3443dec3062d0286986e21dc0631734c9-uploads-2026",
+      "title": "CTET Feb26 Answer Key P1 08Feb2026",
+      "organization": "CTET",
+      "category": "TEACHING",
+      "type": "answer-key",
+      "status": "answer-key",
+      "url": "https://cdnbbsr.s3waas.gov.in/s3443dec3062d0286986e21dc0631734c9/uploads/2026/04/20260401449979389.pdf",
+      "sourceUrl": "https://ctet.nic.in/documents/",
+      "sourceName": "CTET — Official Documents",
+      "official": true,
+      "firstSeen": "2026-09-29T00:59:54.852Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "ctet-feb26-answer-key-p1-01march2026-https-cdnbbsr-s3waas-gov-in-s3443dec3062d0286986e21dc0631734c9-uploads-20",
+      "title": "CTET Feb26 Answer Key P1 01March2026",
+      "organization": "CTET",
+      "category": "TEACHING",
+      "type": "answer-key",
+      "status": "answer-key",
+      "url": "https://cdnbbsr.s3waas.gov.in/s3443dec3062d0286986e21dc0631734c9/uploads/2026/04/202604011664019376.pdf",
+      "sourceUrl": "https://ctet.nic.in/documents/",
+      "sourceName": "CTET — Official Documents",
+      "official": true,
+      "firstSeen": "2026-09-29T00:59:54.852Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "ctet-feb26-answer-key-p2-07feb2026-https-cdnbbsr-s3waas-gov-in-s3443dec3062d0286986e21dc0631734c9-uploads-2026",
+      "title": "CTET Feb26 Answer Key P2 07Feb2026",
+      "organization": "CTET",
+      "category": "TEACHING",
+      "type": "answer-key",
+      "status": "answer-key",
+      "url": "https://cdnbbsr.s3waas.gov.in/s3443dec3062d0286986e21dc0631734c9/uploads/2026/04/202604011258134140.pdf",
+      "sourceUrl": "https://ctet.nic.in/documents/",
+      "sourceName": "CTET — Official Documents",
+      "official": true,
+      "firstSeen": "2026-09-29T00:59:54.852Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "ctet-feb26-answer-key-p2-08feb2026-https-cdnbbsr-s3waas-gov-in-s3443dec3062d0286986e21dc0631734c9-uploads-2026",
+      "title": "CTET Feb26 Answer Key P2 08Feb2026",
+      "organization": "CTET",
+      "category": "TEACHING",
+      "type": "answer-key",
+      "status": "answer-key",
+      "url": "https://cdnbbsr.s3waas.gov.in/s3443dec3062d0286986e21dc0631734c9/uploads/2026/04/20260401628564007.pdf",
+      "sourceUrl": "https://ctet.nic.in/documents/",
+      "sourceName": "CTET — Official Documents",
+      "official": true,
+      "firstSeen": "2026-09-29T00:59:54.852Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "ctet-feb26-answer-key-p2-01march2026-https-cdnbbsr-s3waas-gov-in-s3443dec3062d0286986e21dc0631734c9-uploads-20",
+      "title": "CTET Feb26 Answer Key P2 01March2026",
+      "organization": "CTET",
+      "category": "TEACHING",
+      "type": "answer-key",
+      "status": "answer-key",
+      "url": "https://cdnbbsr.s3waas.gov.in/s3443dec3062d0286986e21dc0631734c9/uploads/2026/04/2026040116341275.pdf",
+      "sourceUrl": "https://ctet.nic.in/documents/",
+      "sourceName": "CTET — Official Documents",
+      "official": true,
+      "firstSeen": "2026-09-29T00:59:54.852Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "apply-online-online-registration-has-been-extended-till-12-02-2026-new-https-recruitment-sbi-bank-in-crpd-sco-",
+      "title": "APPLY ONLINE (Online Registration has been extended till 12.02.2026) (NEW)",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "notification",
+      "status": "notification",
+      "notificationDate": "12.02.2026",
+      "url": "https://recruitment.sbi.bank.in/crpd-sco-2025-26-20/apply",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-09-29T00:59:52.574Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "interview-schedule-https-sbi-bank-in-documents-77530-52947104-sco-20-int-sch-pdf-ed1f123b-a2a9-8840-ab42-7887c",
+      "title": "INTERVIEW SCHEDULE",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "update",
+      "status": "update",
+      "url": "https://sbi.bank.in/documents/77530/52947104/SCO_20_INT_SCH.pdf/ed1f123b-a2a9-8840-ab42-7887c6abd10f?t=1772793687505",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-09-29T00:59:52.574Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "interview-schedule-https-sbi-bank-in-documents-77530-52947104-16022026-sco-19-int-sch-pdf-3ca84c6c-e39d-e660-7",
+      "title": "INTERVIEW SCHEDULE",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "update",
+      "status": "update",
+      "url": "https://sbi.bank.in/documents/77530/52947104/16022026_SCO_19_INT_SCH.pdf/3ca84c6c-e39d-e660-7fd7-26b185355f5f?t=1771223355268",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-09-29T00:59:52.574Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "corrigendum-130-kb-https-sbi-bank-in-documents-77530-52947104-corrigendum-pdf-da5f16dd-2234-2eb3-5401-ff40b28a",
+      "title": "CORRIGENDUM (130 KB)",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "update",
+      "status": "update",
+      "url": "https://sbi.bank.in/documents/77530/52947104/corrigendum.pdf/da5f16dd-2234-2eb3-5401-ff40b28aa0e6?t=1767267842772",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-09-29T00:59:52.574Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "apply-online-online-registration-has-been-extended-till-10-01-2026-https-recruitment-sbi-bank-in-crpd-sco-2025",
+      "title": "APPLY ONLINE (ONLINE REGISTRATION HAS BEEN EXTENDED TILL 10.01.2026)",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "notification",
+      "status": "notification",
+      "notificationDate": "10.01.2026",
+      "url": "https://recruitment.sbi.bank.in/crpd-sco-2025-26-17/apply",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-09-29T00:59:52.574Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "vp-wealth-srm-interview-schedule-https-sbi-bank-in-documents-77530-52947104-sco-17-int-sch-vp-pdf-a43b21f2-1dd",
+      "title": "VP WEALTH (SRM) – INTERVIEW SCHEDULE",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "update",
+      "status": "update",
+      "url": "https://sbi.bank.in/documents/77530/52947104/SCO_17_INT_SCH+-+VP.pdf/a43b21f2-1ddf-da8f-cc5e-73f82135e1d6?t=1770210833809",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-09-29T00:59:52.574Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "avp-wealth-rm-interview-schedule-https-sbi-bank-in-documents-77530-52947104-sco-17-int-sch-avp-pdf-68fa3771-d1",
+      "title": "AVP WEALTH (RM) – INTERVIEW SCHEDULE",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "update",
+      "status": "update",
+      "url": "https://sbi.bank.in/documents/77530/52947104/SCO_17_INT_SCH_AVP.pdf/68fa3771-d11a-ea1b-c0fb-665c80052fb2?t=1770210852670",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-09-29T00:59:52.574Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "revised-interview-schedule-announced-for-the-candidates-belonging-to-maharashtra-and-erroneously-selected-pref",
+      "title": "REVISED INTERVIEW SCHEDULE ANNOUNCED FOR THE CANDIDATES BELONGING TO MAHARASHTRA AND ERRONEOUSLY SELECTED PREFERENCE AS AMARAVATI CIRLCE",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "update",
+      "status": "update",
+      "url": "https://sbi.bank.in/documents/77530/87413/12022026_SCO_17_INT_SCH+-REVISED_1.pdf/5dd2f70f-4580-5b2f-3c2d-56e5c41f74dc?t=1770901071954",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-09-29T00:59:52.574Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "interview-schedule-https-sbi-bank-in-documents-77530-52947104-06122025-sco-12-int-sch-pdf-7a903555-64a0-96b6-2",
+      "title": "INTERVIEW SCHEDULE",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "update",
+      "status": "update",
+      "url": "https://sbi.bank.in/documents/77530/52947104/06122025_SCO_12_INT_SCH.pdf/7a903555-64a0-96b6-2575-66f52ab75c11?t=1765024438044",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-09-29T00:59:52.574Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "interview-schedule-https-sbi-bank-in-documents-77530-52947104-sco-14-int-sch-pdf-7f5b7e84-f704-9f7d-b3cb-f9ec0",
+      "title": "INTERVIEW SCHEDULE",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "update",
+      "status": "update",
+      "url": "https://sbi.bank.in/documents/77530/52947104/SCO_14_INT_SCH.pdf/7f5b7e84-f704-9f7d-b3cb-f9ec058b5863?t=1762926011499",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-09-29T00:59:52.574Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "interview-schedule-https-sbi-bank-in-documents-77530-52947104-sco-10-int-sch-pdf-954b74db-6e40-b582-0bcb-3d23a",
+      "title": "INTERVIEW SCHEDULE",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "update",
+      "status": "update",
+      "url": "https://sbi.bank.in/documents/77530/52947104/SCO_10_INT_SCH.pdf/954b74db-6e40-b582-0bcb-3d23a89a4bbf?t=1763723789360",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-09-29T00:59:52.574Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "interview-schedule-https-sbi-bank-in-documents-77530-52947104-sco-08-int-sch-281-29-pdf-9d7c98e0-268c-9899-0ac",
+      "title": "INTERVIEW SCHEDULE",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "update",
+      "status": "update",
+      "url": "https://sbi.bank.in/documents/77530/52947104/SCO_08_INT_SCH+%281%29.pdf/9d7c98e0-268c-9899-0acf-c67bbd1b25da?t=1759234489028",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-09-29T00:59:52.574Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "interview-schedule-https-sbi-bank-in-documents-77530-52947104-sco-07-int-sch-pdf-73655a27-446b-cf2a-b7a2-74d05",
+      "title": "INTERVIEW SCHEDULE",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "update",
+      "status": "update",
+      "url": "https://sbi.bank.in/documents/77530/52947104/SCO_07_INT_SCH.pdf/73655a27-446b-cf2a-b7a2-74d053f4ba78?t=1759489306271",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-09-29T00:59:52.574Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "interview-schedule-https-sbi-bank-in-documents-77530-52947104-sco-09-int-sch-pdf-c92bd704-02c4-b70a-8d53-e3b1f",
+      "title": "INTERVIEW SCHEDULE",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "update",
+      "status": "update",
+      "url": "https://sbi.bank.in/documents/77530/52947104/SCO_09_INT_SCH.pdf/c92bd704-02c4-b70a-8d53-e3b1f8314688?t=1759145602209",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-09-29T00:59:52.574Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "preliminary-exam-result-https-sbi-bank-in-web-careers-clk-prephase-2025",
+      "title": "PRELIMINARY EXAM RESULT",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "result",
+      "status": "result",
+      "url": "https://sbi.bank.in/web/careers/clk-prephase-2025",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-09-29T00:59:52.574Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "interview-schedule-145-kb-https-sbi-bank-in-documents-77530-52947104-08052026-sco-25-int-sch-pdf-57f106db-856d",
+      "title": "INTERVIEW SCHEDULE (145 KB)",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "update",
+      "status": "update",
+      "url": "https://sbi.bank.in/documents/77530/52947104/08052026_SCO_25_INT_SCH.pdf/57f106db-856d-3337-0587-ad5427fbae0f?t=1778224795950",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-09-29T00:59:52.573Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "apply-online-apply-online-24-02-2026-to-16-03-2026-new-https-recruitment-sbi-bank-in-crpd-sco-2025-26-24-apply",
+      "title": "APPLY ONLINE APPLY ONLINE (24.02.2026 to 16.03.2026) (NEW)",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "notification",
+      "status": "notification",
+      "notificationDate": "24.02.2026",
+      "url": "https://recruitment.sbi.bank.in/crpd-sco-2025-26-24/apply",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-09-29T00:59:52.573Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "interview-schedule-131-kb-https-sbi-bank-in-documents-77530-52947104-13042026-sco-24-int-sch-pdf-2bc546a9-98cb",
+      "title": "INTERVIEW SCHEDULE (131 KB)",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "update",
+      "status": "update",
+      "url": "https://sbi.bank.in/documents/77530/52947104/13042026_SCO_24_INT_SCH.pdf/2bc546a9-98cb-e1ce-8e98-e74bf24991fa?t=1776059673979",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-09-29T00:59:52.573Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "corrigendum-15-kb-https-sbi-bank-in-documents-77530-52947104-16022026-corrigendum-ad-rs-2025-26-23-pdf-c9f8562",
+      "title": "CORRIGENDUM (15 KB)",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "update",
+      "status": "update",
+      "url": "https://sbi.bank.in/documents/77530/52947104/16022026_CORRIGENDUM_AD_RS_2025_26_23.pdf/c9f8562a-395f-001d-ed53-94487415fc65?t=1771234705111",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-09-29T00:59:52.573Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "apply-online-online-registration-extended-till-11-05-2026-new-https-recruitment-sbi-bank-in-crpd-sco-2026-27-0",
+      "title": "APPLY ONLINE (Online Registration extended till 11.05.2026) (NEW)",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "notification",
+      "status": "notification",
+      "notificationDate": "11.05.2026",
+      "url": "https://recruitment.sbi.bank.in/crpd-sco-2026-27-01/apply",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-09-29T00:59:52.573Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "interview-schedule-123-kb-119-kb-https-sbi-bank-in-documents-77530-57941334-13052026-sco-01-int-sch-pdf-1f5c76",
+      "title": "INTERVIEW SCHEDULE (123 KB) (119 KB)",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "update",
+      "status": "update",
+      "url": "https://sbi.bank.in/documents/77530/57941334/13052026_SCO_01_INT_SCH.pdf/1f5c7634-a558-0f1e-57c8-1d6425e42753?t=1778678836017",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-09-29T00:59:52.573Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "apply-online-26-02-2026-to-18-03-2026-https-recruitment-sbi-bank-in-crpd-rs-2025-26-28-apply",
+      "title": "APPLY ONLINE (26.02.2026 to 18.03.2026)",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "notification",
+      "status": "notification",
+      "notificationDate": "26.02.2026",
+      "url": "https://recruitment.sbi.bank.in/crpd-rs-2025-26-28/apply",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-09-29T00:59:52.573Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "apply-online-apply-online-24-02-2026-to-16-03-2026-new-https-recruitment-sbi-bank-in-crpd-sco-2025-26-25-apply",
+      "title": "APPLY ONLINE APPLY ONLINE (24.02.2026 to 16.03.2026) (NEW)",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "notification",
+      "status": "notification",
+      "notificationDate": "24.02.2026",
+      "url": "https://recruitment.sbi.bank.in/crpd-sco-2025-26-25/apply",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-09-29T00:59:52.573Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "recruitment-results-archive-https-sbi-bank-in-web-careers-recruitment-results-archive",
+      "title": "Recruitment Results & Archive",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "result",
+      "status": "result",
+      "url": "https://sbi.bank.in/web/careers/recruitment-results-archive",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-09-29T00:59:52.573Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "english-959-kb-https-sbi-bank-in-webfiles-uploads-files-2627-08-ja-2026-detailed-advt-eng-pdf",
+      "title": "English) (959 KB)",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "notification",
+      "status": "notification",
+      "url": "https://sbi.bank.in/webfiles/uploads/files_2627/08/JA_2026_Detailed_Advt_Eng.pdf",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-09-29T00:59:52.573Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "pre-examination-training-materials-https-sbi-bank-in-web-careers-ja-studymat-reg-202627",
+      "title": "PRE-EXAMINATION TRAINING MATERIALS",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "update",
+      "status": "update",
+      "url": "https://sbi.bank.in/web/careers/ja-studymat-reg-202627",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-09-29T00:59:52.573Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "preliminary-examination-call-letter-https-ibpsreg-ibps-in-sbijajul26-oecla-sep26-login-php-appid-24c6ba07c2976",
+      "title": "PRELIMINARY EXAMINATION CALL LETTER",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "update",
+      "status": "update",
+      "url": "https://ibpsreg.ibps.in/sbijajul26/oecla_sep26/login.php?appid=24c6ba07c29762dbe2586e1f533198ec",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-09-29T00:59:52.573Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "english-714-kb-https-sbi-bank-in-webfiles-uploads-files-2627-08-ja-2026-backlog-detailed-advt-eng-pdf",
+      "title": "English) (714 KB)",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "notification",
+      "status": "notification",
+      "url": "https://sbi.bank.in/webfiles/uploads/files_2627/08/JA_2026_Backlog_Detailed_Advt_Eng.pdf",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-09-29T00:59:52.573Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "pre-examination-training-materials-https-sbi-bank-in-web-careers-ja-spldrive-pet-2026",
+      "title": "PRE-EXAMINATION TRAINING MATERIALS",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "update",
+      "status": "update",
+      "url": "https://sbi.bank.in/web/careers/ja-spldrive-pet-2026",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-09-29T00:59:52.573Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "preliminary-examination-call-letter-https-ibpsreg-ibps-in-sbijasrdjl26-oecla-sep26-login-php-appid-59aa359ce90",
+      "title": "PRELIMINARY EXAMINATION CALL LETTER",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "update",
+      "status": "update",
+      "url": "https://ibpsreg.ibps.in/sbijasrdjl26/oecla_sep26/login.php?appid=59aa359ce90f3aa7138427a0a18efaa7",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-09-29T00:59:52.573Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "online-written-examination-call-letter-https-ibpsreg-ibps-in-sbiscojun26-oecla-aug26-login-php-appid-97bf52be7",
+      "title": "ONLINE WRITTEN EXAMINATION CALL LETTER",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "update",
+      "status": "update",
+      "url": "https://ibpsreg.ibps.in/sbiscojun26/oecla_aug26/login.php?appid=97bf52be7c16b2339a4baf81fc2afe08",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-09-29T00:59:52.573Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "interview-schedule-https-sbi-bank-in-documents-77530-57941334-31-08-2026-sco-10-int-sch-pdf-65909157-5daf-3d0e",
+      "title": "INTERVIEW SCHEDULE",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "update",
+      "status": "update",
+      "url": "https://sbi.bank.in/documents/77530/57941334/31.08.2026_SCO_10_INT_SCH.pdf/65909157-5daf-3d0e-c5f7-b46871beec51?t=1788174102181",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-09-29T00:59:52.573Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "preliminary-examination-result-https-sbi-bank-in-webfiles-uploads-files-2627-08-sbipo2026-prelims-wtresult-15-",
+      "title": "PRELIMINARY EXAMINATION RESULT",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "result",
+      "status": "result",
+      "url": "https://sbi.bank.in/webfiles/uploads/files_2627/08/SBIPO2026-Prelims-WTRESULT-15_columns.pdf",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-09-29T00:59:52.573Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "marks-secured-by-the-candidates-in-preliminary-examination-https-sbi-bank-in-web-careers-popre-results-2026",
+      "title": "MARKS SECURED BY THE CANDIDATES IN PRELIMINARY EXAMINATION",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "result",
+      "status": "result",
+      "url": "https://sbi.bank.in/web/careers/popre-results-2026",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-09-29T00:59:52.573Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "list-of-provisionally-selected-candidates-214-kb-https-sbi-bank-in-webfiles-uploads-files-2627-apprentices-202",
+      "title": "LIST OF PROVISIONALLY SELECTED CANDIDATES (214 KB)",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "result",
+      "status": "result",
+      "url": "https://sbi.bank.in/webfiles/uploads/files_2627/Apprentices-2026-RESULT-15-FORMAT.pdf",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-09-29T00:59:52.573Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "corrigendum-138-kb-138-kb-https-sbi-bank-in-documents-77530-57941334-23042026-sco-2026-27-04-corri-pdf-60a0b4c",
+      "title": "CORRIGENDUM (138 KB) (138 KB)",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "update",
+      "status": "update",
+      "url": "https://sbi.bank.in/documents/77530/57941334/23042026_SCO-2026-27-04_CORRI.pdf/60a0b4cd-0622-6990-14b5-3544f381f54f?t=1776922725218",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-09-29T00:59:52.573Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "recruitment-results-https-sbi-bank-in-web-careers-recruitment-results",
+      "title": "Recruitment Results",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "result",
+      "status": "result",
+      "url": "https://sbi.bank.in/web/careers/recruitment-results",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-09-29T00:59:52.573Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "assistant-manager-law-jmgs-i-list-of-candidates-provisionally-selected-for-interview-https-sbi-bank-in-webfile",
+      "title": "ASSISTANT MANAGER (LAW)-JMGS-I : LIST OF CANDIDATES PROVISIONALLY SELECTED FOR INTERVIEW",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "result",
+      "status": "result",
+      "url": "https://sbi.bank.in/webfiles/uploads/files_2627/10/SCO_02_AM_RESULT_10_FORMAT.pdf",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-10-13T11:48:51.064Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "deputy-manager-law-mmgs-ii-list-of-candidates-provisionally-selected-for-interview-https-sbi-bank-in-webfiles-",
+      "title": "DEPUTY MANAGER (LAW)-MMGS-II: LIST OF CANDIDATES PROVISIONALLY SELECTED FOR INTERVIEW",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "result",
+      "status": "result",
+      "url": "https://sbi.bank.in/webfiles/uploads/files_2627/10/SCO_02_DM_RESULT_10_FORMAT.pdf",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-10-13T11:48:51.064Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "list-of-candidates-provisionally-selected-for-interview-https-sbi-bank-in-webfiles-uploads-files-2627-10-sco-0",
+      "title": "LIST OF CANDIDATES PROVISIONALLY SELECTED FOR INTERVIEW",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "result",
+      "status": "result",
+      "url": "https://sbi.bank.in/webfiles/uploads/files_2627/10/SCO_03_BMO_RESULT_10_FORMAT.pdf",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-10-13T11:48:51.064Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "main-examination-result-https-sbi-bank-in-webfiles-uploads-files-2627-10-sbipo2026-main-wtresult-15-columns-pd",
+      "title": "MAIN EXAMINATION RESULT",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "result",
+      "status": "result",
+      "url": "https://sbi.bank.in/webfiles/uploads/files_2627/10/SBIPO2026-Main-WTRESULT-15_columns.pdf",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-10-15T13:27:32.723Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "notice-tentative-dates-for-psychometric-test-group-exercise-interviews-https-sbi-bank-in-webfiles-uploads-file",
+      "title": "NOTICE : TENTATIVE DATES FOR PSYCHOMETRIC TEST, GROUP EXERCISE & INTERVIEWS",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "update",
+      "status": "update",
+      "url": "https://sbi.bank.in/webfiles/uploads/files_2627/10/Notice.pdf",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-10-15T13:27:32.723Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "preliminary-exam-result-https-sbi-bank-in-web-careers-ja-spldrive-pre-2026",
+      "title": "PRELIMINARY EXAM RESULT",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "result",
+      "status": "result",
+      "url": "https://sbi.bank.in/web/careers/ja-spldrive-pre-2026",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-10-17T15:35:08.278Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "deputy-manager-law-mmgs-ii-interview-schedule-https-sbi-bank-in-documents-77530-57941334-26102026-sco-02-int-s",
+      "title": "DEPUTY MANAGER (LAW)-MMGS-II - INTERVIEW SCHEDULE",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "update",
+      "status": "update",
+      "url": "https://sbi.bank.in/documents/77530/57941334/26102026_SCO_02_INT_SCH_DM.pdf/c561966e-48f9-19c2-c81c-b44753c0eaae?t=1793019436923",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-10-26T13:02:15.726Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "interview-schedule-https-sbi-bank-in-documents-77530-57941334-sco-11-int-sch-30102026-pdf-9acf4f12-5d7d-fe65-b",
+      "title": "INTERVIEW SCHEDULE",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "update",
+      "status": "update",
+      "url": "https://sbi.bank.in/documents/77530/57941334/SCO_11_INT_SCH_30102026.pdf/9acf4f12-5d7d-fe65-b621-b18438ebaff3?t=1793341187288",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-10-30T18:39:34.779Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "assistant-manager-law-jmgs-i-interview-schedule-https-sbi-bank-in-documents-77530-57941334-26102026-sco-02-int",
+      "title": "ASSISTANT MANAGER (LAW)-JMGS-I - INTERVIEW SCHEDULE",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "update",
+      "status": "update",
+      "url": "https://sbi.bank.in/documents/77530/57941334/26102026_SCO_02_INT_SCH_AM.pdf/9212c674-a64a-ed85-f6a9-43b8ab4c7355?t=1793019403534",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-10-30T18:39:34.779Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "interview-call-letter-https-ibpsreg-ibps-in-sbiscoljun26-intclg-oct26-login-php-appid-e625fb5f5b0c906616020b61",
+      "title": "INTERVIEW CALL LETTER",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "update",
+      "status": "update",
+      "url": "https://ibpsreg.ibps.in/sbiscoljun26/intclg_oct26/login.php?appid=e625fb5f5b0c906616020b61d08dc3ac",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-10-30T18:39:34.779Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "notice-online-psychometric-test-in-remote-proctored-rpa-mode-https-sbi-bank-in-webfiles-uploads-files-2627-10-",
+      "title": "NOTICE: ONLINE PSYCHOMETRIC TEST IN REMOTE PROCTORED (RPA) MODE",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "update",
+      "status": "update",
+      "url": "https://sbi.bank.in/webfiles/uploads/files_2627/10/Important_Notice_for_Psychometric_Test.pdf",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-10-30T18:39:34.779Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "apply-online-02-11-2026-to-23-11-2026-https-recruitment-sbi-bank-in-crpd-sco-2026-27-26-apply",
+      "title": "APPLY ONLINE (02.11.2026 TO 23.11.2026)",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "notification",
+      "status": "notification",
+      "notificationDate": "02.11.2026",
+      "url": "https://recruitment.sbi.bank.in/crpd-sco-2026-27-26/apply",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-11-02T11:04:22.460Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "apply-online-02-11-2026-to-23-11-2026-https-recruitment-sbi-bank-in-crpd-sco-2026-27-27-apply",
+      "title": "APPLY ONLINE (02.11.2026 TO 23.11.2026)",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "notification",
+      "status": "notification",
+      "notificationDate": "02.11.2026",
+      "url": "https://recruitment.sbi.bank.in/crpd-sco-2026-27-27/apply",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-11-02T11:04:22.460Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "interview-schedule-https-sbi-bank-in-documents-77530-57941334-03112026-sco-13-int-sch-pdf-306bfd7a-a611-b353-6",
+      "title": "INTERVIEW SCHEDULE",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "update",
+      "status": "update",
+      "url": "https://sbi.bank.in/documents/77530/57941334/03112026_SCO_13_INT_SCH.pdf/306bfd7a-a611-b353-632a-513ef59347e8?t=1793700988660",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-11-03T10:53:19.701Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "apply-online-online-registration-extended-till-16-11-2026-https-recruitment-sbi-bank-in-crpd-sco-2026-27-30-ap",
+      "title": "APPLY ONLINE (Online Registration Extended till 16.11.2026))",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "notification",
+      "status": "notification",
+      "notificationDate": "16.11.2026",
+      "url": "https://recruitment.sbi.bank.in/crpd-sco-2026-27-30/apply",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-11-04T15:27:29.977Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "interview-schedule-https-sbi-bank-in-documents-77530-57941334-04112026-sco-15-int-sch-pdf-ed29cb0e-85af-6515-6",
+      "title": "INTERVIEW SCHEDULE",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "update",
+      "status": "update",
+      "url": "https://sbi.bank.in/documents/77530/57941334/04112026_SCO_15_INT_SCH.pdf/ed29cb0e-85af-6515-6863-5572fb030080?t=1793776587824",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-11-04T15:27:29.977Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "zonal-head-retail-interview-schedule-https-sbi-bank-in-documents-77530-57941334-06112026-sco-23-int-sch-zh-pdf",
+      "title": "ZONAL HEAD (RETAIL) – INTERVIEW SCHEDULE",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "update",
+      "status": "update",
+      "url": "https://sbi.bank.in/documents/77530/57941334/06112026_SCO_23_INT_SCH_ZH.pdf/8f9a4e60-78d3-597f-7c20-6c2b09db2142?t=1793962103821",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-11-06T15:04:03.330Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "preliminary-exam-result-https-sbi-bank-in-web-careers-japre-results-2026",
+      "title": "PRELIMINARY EXAM RESULT",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "result",
+      "status": "result",
+      "url": "https://sbi.bank.in/web/careers/japre-results-2026",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-11-18T21:57:56.369Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "mains-examination-call-letter-https-ibpsreg-ibps-in-sbijajul26-oecla-nov26-login-php-appid-2b36e1e3caeb9de9629",
+      "title": "MAINS EXAMINATION CALL LETTER",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "update",
+      "status": "update",
+      "url": "https://ibpsreg.ibps.in/sbijajul26/oecla_nov26/login.php?appid=2b36e1e3caeb9de9629bb324f39e78e5",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-11-18T21:57:56.369Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "deputy-manager-ai-specialists-interview-schedule-https-sbi-bank-in-documents-77530-57941334-18112026-sco-11-in",
+      "title": "DEPUTY MANAGER (AI SPECIALISTS) - INTERVIEW SCHEDULE",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "update",
+      "status": "update",
+      "url": "https://sbi.bank.in/documents/77530/57941334/18112026_SCO_11_INT_SCH.pdf/855e83b5-7c8a-3253-7996-57d3085d26e5?t=1795003900788",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-11-18T21:57:56.369Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "apply-online-19-11-2026-to-03-12-2026-https-recruitment-sbi-bank-in-crpd-sco-2026-27-36-apply",
+      "title": "APPLY ONLINE (19.11.2026 TO 03.12.2026)",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "notification",
+      "status": "notification",
+      "notificationDate": "19.11.2026",
+      "url": "https://recruitment.sbi.bank.in/crpd-sco-2026-27-36/apply",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-11-19T21:33:29.657Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "deputy-cto-enterprise-architecture-interview-schedule-https-sbi-bank-in-documents-77530-57941334-19112026-sco-",
+      "title": "DEPUTY CTO (ENTERPRISE ARCHITECTURE)- INTERVIEW SCHEDULE",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "update",
+      "status": "update",
+      "url": "https://sbi.bank.in/documents/77530/57941334/19112026_SCO_13_INT_SCH_DYCTO.pdf/5d43a3b4-4527-ba83-9b47-37e0925fdcc0?t=1795087239884",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-11-19T21:33:29.657Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "apply-online-20-11-2026-to-10-12-2026-https-ibpsreg-ibps-in-sbifteoct26",
+      "title": "APPLY ONLINE (20.11.2026 TO 10.12.2026)",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "notification",
+      "status": "notification",
+      "notificationDate": "20.11.2026",
+      "url": "https://ibpsreg.ibps.in/sbifteoct26/",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-11-20T20:17:42.672Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "interview-call-letter-https-ibpsreg-ibps-in-sbipojun26-geicla-novm26-login-php-appid-c13394dc2fab18c4ca2c73aa0",
+      "title": "INTERVIEW CALL LETTER",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "update",
+      "status": "update",
+      "url": "https://ibpsreg.ibps.in/sbipojun26/geicla_novm26/login.php?appid=c13394dc2fab18c4ca2c73aa0e903f65",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-11-21T17:32:12.379Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "apply-online-online-registration-extended-till-02-12-2026-https-ibpsreg-ibps-in-sbiameoct26",
+      "title": "APPLY ONLINE (Online Registration Extended till 02.12.2026)",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "notification",
+      "status": "notification",
+      "notificationDate": "02.12.2026",
+      "url": "https://ibpsreg.ibps.in/sbiameoct26/",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-11-25T22:32:39.924Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "apply-online-online-registration-extended-till-02-12-2026-https-ibpsreg-ibps-in-sbirscooct26",
+      "title": "APPLY ONLINE (Online Registration Extended till 02.12.2026)",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "notification",
+      "status": "notification",
+      "notificationDate": "02.12.2026",
+      "url": "https://ibpsreg.ibps.in/sbirscooct26/",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-11-25T22:32:39.924Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "main-exam-result-https-sbi-bank-in-webfiles-uploads-files-2627-11-junior-associates-spldrive-2025-26-result-15",
+      "title": "MAIN EXAM RESULT",
+      "organization": "SBI",
+      "category": "BANKING",
+      "type": "result",
+      "status": "result",
+      "url": "https://sbi.bank.in/webfiles/uploads/files_2627/11/Junior_Associates-SPLDRIVE-2025-26-RESULT-15_FORMAT.pdf",
+      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
+      "sourceName": "SBI — Current Openings",
+      "official": true,
+      "firstSeen": "2026-11-25T22:32:39.924Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "document-verification-program-integrated-71st-combined-competitive-examination-https-bpsc-bihar-gov-in-wp-cont",
+      "title": "Document Verification Program : Integrated 71st Combined Competitive Examination",
+      "organization": "BPSC",
+      "category": "STATE_PSC",
+      "type": "update",
+      "status": "update",
+      "url": "https://bpsc.bihar.gov.in/wp-content/uploads/BPSC_content/Notices/DV-Program-Integrated-71st-CCE_BPSC-20261118-vwk9rz.pdf",
+      "sourceUrl": "https://bpsc.bihar.gov.in/",
+      "sourceName": "BPSC — Official Notices",
+      "official": true,
+      "firstSeen": "2026-11-25T22:32:39.924Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "results-prosecution-officer-preliminary-competitive-examination-advt-no-13-2026-https-bpsc-bihar-gov-in-wp-con",
+      "title": "Results : Prosecution Officer (Preliminary) Competitive Examination. (Advt. No. 13/2026)",
+      "organization": "BPSC",
+      "category": "STATE_PSC",
+      "type": "result",
+      "status": "result",
+      "url": "https://bpsc.bihar.gov.in/wp-content/uploads/BPSC_content/Notices/Results-132026-Prosecution-Officer-Preliminary-Examination_BPSC-20261119-d637of.pdf",
+      "sourceUrl": "https://bpsc.bihar.gov.in/",
+      "sourceName": "BPSC — Official Notices",
+      "official": true,
+      "firstSeen": "2026-11-25T22:32:39.924Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
+      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
+    },
+    {
+      "id": "results-research-officer-preliminary-competitive-examination-advt-no-08-2026-https-bpsc-bihar-gov-in-wp-conten",
+      "title": "Results : Research Officer (Preliminary) Competitive Examination. (Advt. No. 08/2026)",
+      "organization": "BPSC",
+      "category": "STATE_PSC",
+      "type": "result",
+      "status": "result",
+      "url": "https://bpsc.bihar.gov.in/wp-content/uploads/BPSC_content/Notices/Results-082026-Research-Officer-Preliminary-Examination_BPSC-20261119-phtmr7.pdf",
+      "sourceUrl": "https://bpsc.bihar.gov.in/",
+      "sourceName": "BPSC — Official Notices",
+      "official": true,
+      "firstSeen": "2026-11-25T22:32:39.924Z",
+      "lastSeen": "2026-11-25T22:32:39.924Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
@@ -1894,37 +3078,6 @@
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
-      "id": "important-notice-regarding-introduction-of-5th-answer-option-e-in-mcq-based-examinations-to-be-conducted-by-bp",
-      "title": "Important Notice: Regarding Introduction of 5th Answer Option ‘E’ in MCQ based examinations to be conducted by BPSC.",
-      "organization": "BPSC",
-      "category": "STATE_PSC",
-      "type": "update",
-      "status": "update",
-      "url": "https://bpsc.bihar.gov.in/wp-content/uploads/BPSC_content/Notices/Kaagaz_20260502_160639877178_BPSC-20260502-zjmn51.pdf",
-      "sourceUrl": "https://bpsc.bihar.gov.in/",
-      "sourceName": "BPSC — Official Notices",
-      "official": true,
-      "firstSeen": "2026-11-16T20:30:01.347Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "important-notice-facility-to-edit-gender-in-otr-one-time-registration-https-bpsc-bihar-gov-in-wp-content-uploa",
-      "title": "Important Notice : Facility to edit GENDER in OTR (One Time Registration)",
-      "organization": "BPSC",
-      "category": "STATE_PSC",
-      "type": "update",
-      "status": "update",
-      "notificationDate": "2025-06-26",
-      "url": "https://bpsc.bihar.gov.in/wp-content/uploads/BPSC_content/Notices/NB-2025-06-26-02_BPSC-20250626-vmnwcx.pdf",
-      "sourceUrl": "https://bpsc.bihar.gov.in/",
-      "sourceName": "BPSC — Official Notices",
-      "official": true,
-      "firstSeen": "2026-11-16T20:30:01.347Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
       "id": "important-notice-advertisement-for-the-posts-of-assistant-professor-in-various-departments-speciality-of-state",
       "title": "Important Notice:- Advertisement for the Posts of Assistant Professor in various Departments (Speciality) of State Medical College & Hospitals has been cancelled. (Advt. Nos. 04/20",
       "organization": "BPSC",
@@ -1940,369 +3093,6 @@
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
     {
-      "id": "facility-to-candidates-to-update-data-in-profile-tab-in-online-application-system-https-bpsc-bihar-gov-in-wp-c",
-      "title": "Facility to Candidates to update data in Profile Tab in Online Application System.",
-      "organization": "BPSC",
-      "category": "STATE_PSC",
-      "type": "notification",
-      "status": "notification",
-      "notificationDate": "2025-06-10",
-      "url": "https://bpsc.bihar.gov.in/wp-content/uploads/BPSC_content/Notices/NB-2025-06-10-01.pdf",
-      "sourceUrl": "https://bpsc.bihar.gov.in/",
-      "sourceName": "BPSC — Official Notices",
-      "official": true,
-      "firstSeen": "2026-11-16T20:30:01.347Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "interview-letters-https-bpsc-bihar-gov-in-interview-letter",
-      "title": "Interview Letters",
-      "organization": "BPSC",
-      "category": "STATE_PSC",
-      "type": "update",
-      "status": "update",
-      "url": "https://bpsc.bihar.gov.in/interview-letter/",
-      "sourceUrl": "https://bpsc.bihar.gov.in/",
-      "sourceName": "BPSC — Official Notices",
-      "official": true,
-      "firstSeen": "2026-11-16T20:30:01.347Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "20-nov-26-result-status-of-online-main-examination-for-crp-po-mts-xvi-http-ibpsreg-ibps-in-crppoxvijun26-frest",
-      "title": "20 Nov 26 Result Status of Online Main Examination for CRP-PO/MTs-XVI",
-      "organization": "IBPS",
-      "category": "BANKING",
-      "type": "result",
-      "status": "result",
-      "url": "http://ibpsreg.ibps.in/crppoxvijun26/fresta_nov26/login.php?appid=faa539a0e8fbd226743a6f2df8768c59",
-      "sourceUrl": "https://www.ibps.in/index.php/crp-updates/",
-      "sourceName": "IBPS — CRP Updates",
-      "official": true,
-      "firstSeen": "2026-11-20T11:39:46.756Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "ctet-feb26-answer-key-p1-07feb2026-https-cdnbbsr-s3waas-gov-in-s3443dec3062d0286986e21dc0631734c9-uploads-2026",
-      "title": "CTET Feb26 Answer Key P1 07Feb2026",
-      "organization": "CTET",
-      "category": "TEACHING",
-      "type": "answer-key",
-      "status": "answer-key",
-      "url": "https://cdnbbsr.s3waas.gov.in/s3443dec3062d0286986e21dc0631734c9/uploads/2026/04/20260401145739613.pdf",
-      "sourceUrl": "https://ctet.nic.in/documents/",
-      "sourceName": "CTET — Official Documents",
-      "official": true,
-      "firstSeen": "2026-09-29T00:59:54.852Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "ctet-feb26-answer-key-p1-08feb2026-https-cdnbbsr-s3waas-gov-in-s3443dec3062d0286986e21dc0631734c9-uploads-2026",
-      "title": "CTET Feb26 Answer Key P1 08Feb2026",
-      "organization": "CTET",
-      "category": "TEACHING",
-      "type": "answer-key",
-      "status": "answer-key",
-      "url": "https://cdnbbsr.s3waas.gov.in/s3443dec3062d0286986e21dc0631734c9/uploads/2026/04/20260401449979389.pdf",
-      "sourceUrl": "https://ctet.nic.in/documents/",
-      "sourceName": "CTET — Official Documents",
-      "official": true,
-      "firstSeen": "2026-09-29T00:59:54.852Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "ctet-feb26-answer-key-p1-01march2026-https-cdnbbsr-s3waas-gov-in-s3443dec3062d0286986e21dc0631734c9-uploads-20",
-      "title": "CTET Feb26 Answer Key P1 01March2026",
-      "organization": "CTET",
-      "category": "TEACHING",
-      "type": "answer-key",
-      "status": "answer-key",
-      "url": "https://cdnbbsr.s3waas.gov.in/s3443dec3062d0286986e21dc0631734c9/uploads/2026/04/202604011664019376.pdf",
-      "sourceUrl": "https://ctet.nic.in/documents/",
-      "sourceName": "CTET — Official Documents",
-      "official": true,
-      "firstSeen": "2026-09-29T00:59:54.852Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "ctet-feb26-answer-key-p2-07feb2026-https-cdnbbsr-s3waas-gov-in-s3443dec3062d0286986e21dc0631734c9-uploads-2026",
-      "title": "CTET Feb26 Answer Key P2 07Feb2026",
-      "organization": "CTET",
-      "category": "TEACHING",
-      "type": "answer-key",
-      "status": "answer-key",
-      "url": "https://cdnbbsr.s3waas.gov.in/s3443dec3062d0286986e21dc0631734c9/uploads/2026/04/202604011258134140.pdf",
-      "sourceUrl": "https://ctet.nic.in/documents/",
-      "sourceName": "CTET — Official Documents",
-      "official": true,
-      "firstSeen": "2026-09-29T00:59:54.852Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "ctet-feb26-answer-key-p2-08feb2026-https-cdnbbsr-s3waas-gov-in-s3443dec3062d0286986e21dc0631734c9-uploads-2026",
-      "title": "CTET Feb26 Answer Key P2 08Feb2026",
-      "organization": "CTET",
-      "category": "TEACHING",
-      "type": "answer-key",
-      "status": "answer-key",
-      "url": "https://cdnbbsr.s3waas.gov.in/s3443dec3062d0286986e21dc0631734c9/uploads/2026/04/20260401628564007.pdf",
-      "sourceUrl": "https://ctet.nic.in/documents/",
-      "sourceName": "CTET — Official Documents",
-      "official": true,
-      "firstSeen": "2026-09-29T00:59:54.852Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "ctet-feb26-answer-key-p2-01march2026-https-cdnbbsr-s3waas-gov-in-s3443dec3062d0286986e21dc0631734c9-uploads-20",
-      "title": "CTET Feb26 Answer Key P2 01March2026",
-      "organization": "CTET",
-      "category": "TEACHING",
-      "type": "answer-key",
-      "status": "answer-key",
-      "url": "https://cdnbbsr.s3waas.gov.in/s3443dec3062d0286986e21dc0631734c9/uploads/2026/04/2026040116341275.pdf",
-      "sourceUrl": "https://ctet.nic.in/documents/",
-      "sourceName": "CTET — Official Documents",
-      "official": true,
-      "firstSeen": "2026-09-29T00:59:54.852Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "apply-online-online-registration-has-been-extended-till-12-02-2026-new-https-recruitment-sbi-bank-in-crpd-sco-",
-      "title": "APPLY ONLINE (Online Registration has been extended till 12.02.2026) (NEW)",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "notification",
-      "status": "notification",
-      "notificationDate": "12.02.2026",
-      "url": "https://recruitment.sbi.bank.in/crpd-sco-2025-26-20/apply",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-09-29T00:59:52.574Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "interview-schedule-https-sbi-bank-in-documents-77530-52947104-sco-20-int-sch-pdf-ed1f123b-a2a9-8840-ab42-7887c",
-      "title": "INTERVIEW SCHEDULE",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "update",
-      "status": "update",
-      "url": "https://sbi.bank.in/documents/77530/52947104/SCO_20_INT_SCH.pdf/ed1f123b-a2a9-8840-ab42-7887c6abd10f?t=1772793687505",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-09-29T00:59:52.574Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "interview-schedule-https-sbi-bank-in-documents-77530-52947104-16022026-sco-19-int-sch-pdf-3ca84c6c-e39d-e660-7",
-      "title": "INTERVIEW SCHEDULE",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "update",
-      "status": "update",
-      "url": "https://sbi.bank.in/documents/77530/52947104/16022026_SCO_19_INT_SCH.pdf/3ca84c6c-e39d-e660-7fd7-26b185355f5f?t=1771223355268",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-09-29T00:59:52.574Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "corrigendum-130-kb-https-sbi-bank-in-documents-77530-52947104-corrigendum-pdf-da5f16dd-2234-2eb3-5401-ff40b28a",
-      "title": "CORRIGENDUM (130 KB)",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "update",
-      "status": "update",
-      "url": "https://sbi.bank.in/documents/77530/52947104/corrigendum.pdf/da5f16dd-2234-2eb3-5401-ff40b28aa0e6?t=1767267842772",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-09-29T00:59:52.574Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "apply-online-online-registration-has-been-extended-till-10-01-2026-https-recruitment-sbi-bank-in-crpd-sco-2025",
-      "title": "APPLY ONLINE (ONLINE REGISTRATION HAS BEEN EXTENDED TILL 10.01.2026)",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "notification",
-      "status": "notification",
-      "notificationDate": "10.01.2026",
-      "url": "https://recruitment.sbi.bank.in/crpd-sco-2025-26-17/apply",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-09-29T00:59:52.574Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "vp-wealth-srm-interview-schedule-https-sbi-bank-in-documents-77530-52947104-sco-17-int-sch-vp-pdf-a43b21f2-1dd",
-      "title": "VP WEALTH (SRM) – INTERVIEW SCHEDULE",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "update",
-      "status": "update",
-      "url": "https://sbi.bank.in/documents/77530/52947104/SCO_17_INT_SCH+-+VP.pdf/a43b21f2-1ddf-da8f-cc5e-73f82135e1d6?t=1770210833809",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-09-29T00:59:52.574Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "avp-wealth-rm-interview-schedule-https-sbi-bank-in-documents-77530-52947104-sco-17-int-sch-avp-pdf-68fa3771-d1",
-      "title": "AVP WEALTH (RM) – INTERVIEW SCHEDULE",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "update",
-      "status": "update",
-      "url": "https://sbi.bank.in/documents/77530/52947104/SCO_17_INT_SCH_AVP.pdf/68fa3771-d11a-ea1b-c0fb-665c80052fb2?t=1770210852670",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-09-29T00:59:52.574Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "revised-interview-schedule-announced-for-the-candidates-belonging-to-maharashtra-and-erroneously-selected-pref",
-      "title": "REVISED INTERVIEW SCHEDULE ANNOUNCED FOR THE CANDIDATES BELONGING TO MAHARASHTRA AND ERRONEOUSLY SELECTED PREFERENCE AS AMARAVATI CIRLCE",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "update",
-      "status": "update",
-      "url": "https://sbi.bank.in/documents/77530/87413/12022026_SCO_17_INT_SCH+-REVISED_1.pdf/5dd2f70f-4580-5b2f-3c2d-56e5c41f74dc?t=1770901071954",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-09-29T00:59:52.574Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "interview-schedule-https-sbi-bank-in-documents-77530-52947104-06122025-sco-12-int-sch-pdf-7a903555-64a0-96b6-2",
-      "title": "INTERVIEW SCHEDULE",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "update",
-      "status": "update",
-      "url": "https://sbi.bank.in/documents/77530/52947104/06122025_SCO_12_INT_SCH.pdf/7a903555-64a0-96b6-2575-66f52ab75c11?t=1765024438044",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-09-29T00:59:52.574Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "interview-schedule-https-sbi-bank-in-documents-77530-52947104-sco-14-int-sch-pdf-7f5b7e84-f704-9f7d-b3cb-f9ec0",
-      "title": "INTERVIEW SCHEDULE",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "update",
-      "status": "update",
-      "url": "https://sbi.bank.in/documents/77530/52947104/SCO_14_INT_SCH.pdf/7f5b7e84-f704-9f7d-b3cb-f9ec058b5863?t=1762926011499",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-09-29T00:59:52.574Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "interview-schedule-https-sbi-bank-in-documents-77530-52947104-sco-10-int-sch-pdf-954b74db-6e40-b582-0bcb-3d23a",
-      "title": "INTERVIEW SCHEDULE",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "update",
-      "status": "update",
-      "url": "https://sbi.bank.in/documents/77530/52947104/SCO_10_INT_SCH.pdf/954b74db-6e40-b582-0bcb-3d23a89a4bbf?t=1763723789360",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-09-29T00:59:52.574Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "interview-schedule-https-sbi-bank-in-documents-77530-52947104-sco-08-int-sch-281-29-pdf-9d7c98e0-268c-9899-0ac",
-      "title": "INTERVIEW SCHEDULE",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "update",
-      "status": "update",
-      "url": "https://sbi.bank.in/documents/77530/52947104/SCO_08_INT_SCH+%281%29.pdf/9d7c98e0-268c-9899-0acf-c67bbd1b25da?t=1759234489028",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-09-29T00:59:52.574Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "interview-schedule-https-sbi-bank-in-documents-77530-52947104-sco-07-int-sch-pdf-73655a27-446b-cf2a-b7a2-74d05",
-      "title": "INTERVIEW SCHEDULE",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "update",
-      "status": "update",
-      "url": "https://sbi.bank.in/documents/77530/52947104/SCO_07_INT_SCH.pdf/73655a27-446b-cf2a-b7a2-74d053f4ba78?t=1759489306271",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-09-29T00:59:52.574Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "interview-schedule-https-sbi-bank-in-documents-77530-52947104-sco-09-int-sch-pdf-c92bd704-02c4-b70a-8d53-e3b1f",
-      "title": "INTERVIEW SCHEDULE",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "update",
-      "status": "update",
-      "url": "https://sbi.bank.in/documents/77530/52947104/SCO_09_INT_SCH.pdf/c92bd704-02c4-b70a-8d53-e3b1f8314688?t=1759145602209",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-09-29T00:59:52.574Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "preliminary-exam-result-https-sbi-bank-in-web-careers-clk-prephase-2025",
-      "title": "PRELIMINARY EXAM RESULT",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "result",
-      "status": "result",
-      "url": "https://sbi.bank.in/web/careers/clk-prephase-2025",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-09-29T00:59:52.574Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
       "id": "main-exam-result-https-sbi-bank-in-documents-77530-52947104-27022026-junior-associates-mains-2025-result-15-fo",
       "title": "MAIN EXAM RESULT",
       "organization": "SBI",
@@ -2314,552 +3104,6 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-09-29T00:59:52.574Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "interview-schedule-145-kb-https-sbi-bank-in-documents-77530-52947104-08052026-sco-25-int-sch-pdf-57f106db-856d",
-      "title": "INTERVIEW SCHEDULE (145 KB)",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "update",
-      "status": "update",
-      "url": "https://sbi.bank.in/documents/77530/52947104/08052026_SCO_25_INT_SCH.pdf/57f106db-856d-3337-0587-ad5427fbae0f?t=1778224795950",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-09-29T00:59:52.573Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "apply-online-apply-online-24-02-2026-to-16-03-2026-new-https-recruitment-sbi-bank-in-crpd-sco-2025-26-24-apply",
-      "title": "APPLY ONLINE APPLY ONLINE (24.02.2026 to 16.03.2026) (NEW)",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "notification",
-      "status": "notification",
-      "notificationDate": "24.02.2026",
-      "url": "https://recruitment.sbi.bank.in/crpd-sco-2025-26-24/apply",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-09-29T00:59:52.573Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "interview-schedule-131-kb-https-sbi-bank-in-documents-77530-52947104-13042026-sco-24-int-sch-pdf-2bc546a9-98cb",
-      "title": "INTERVIEW SCHEDULE (131 KB)",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "update",
-      "status": "update",
-      "url": "https://sbi.bank.in/documents/77530/52947104/13042026_SCO_24_INT_SCH.pdf/2bc546a9-98cb-e1ce-8e98-e74bf24991fa?t=1776059673979",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-09-29T00:59:52.573Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "corrigendum-15-kb-https-sbi-bank-in-documents-77530-52947104-16022026-corrigendum-ad-rs-2025-26-23-pdf-c9f8562",
-      "title": "CORRIGENDUM (15 KB)",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "update",
-      "status": "update",
-      "url": "https://sbi.bank.in/documents/77530/52947104/16022026_CORRIGENDUM_AD_RS_2025_26_23.pdf/c9f8562a-395f-001d-ed53-94487415fc65?t=1771234705111",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-09-29T00:59:52.573Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "apply-online-online-registration-extended-till-11-05-2026-new-https-recruitment-sbi-bank-in-crpd-sco-2026-27-0",
-      "title": "APPLY ONLINE (Online Registration extended till 11.05.2026) (NEW)",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "notification",
-      "status": "notification",
-      "notificationDate": "11.05.2026",
-      "url": "https://recruitment.sbi.bank.in/crpd-sco-2026-27-01/apply",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-09-29T00:59:52.573Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "interview-schedule-123-kb-119-kb-https-sbi-bank-in-documents-77530-57941334-13052026-sco-01-int-sch-pdf-1f5c76",
-      "title": "INTERVIEW SCHEDULE (123 KB) (119 KB)",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "update",
-      "status": "update",
-      "url": "https://sbi.bank.in/documents/77530/57941334/13052026_SCO_01_INT_SCH.pdf/1f5c7634-a558-0f1e-57c8-1d6425e42753?t=1778678836017",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-09-29T00:59:52.573Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "apply-online-26-02-2026-to-18-03-2026-https-recruitment-sbi-bank-in-crpd-rs-2025-26-28-apply",
-      "title": "APPLY ONLINE (26.02.2026 to 18.03.2026)",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "notification",
-      "status": "notification",
-      "notificationDate": "26.02.2026",
-      "url": "https://recruitment.sbi.bank.in/crpd-rs-2025-26-28/apply",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-09-29T00:59:52.573Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "apply-online-apply-online-24-02-2026-to-16-03-2026-new-https-recruitment-sbi-bank-in-crpd-sco-2025-26-25-apply",
-      "title": "APPLY ONLINE APPLY ONLINE (24.02.2026 to 16.03.2026) (NEW)",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "notification",
-      "status": "notification",
-      "notificationDate": "24.02.2026",
-      "url": "https://recruitment.sbi.bank.in/crpd-sco-2025-26-25/apply",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-09-29T00:59:52.573Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "recruitment-results-archive-https-sbi-bank-in-web-careers-recruitment-results-archive",
-      "title": "Recruitment Results & Archive",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "result",
-      "status": "result",
-      "url": "https://sbi.bank.in/web/careers/recruitment-results-archive",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-09-29T00:59:52.573Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "english-959-kb-https-sbi-bank-in-webfiles-uploads-files-2627-08-ja-2026-detailed-advt-eng-pdf",
-      "title": "English) (959 KB)",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "notification",
-      "status": "notification",
-      "url": "https://sbi.bank.in/webfiles/uploads/files_2627/08/JA_2026_Detailed_Advt_Eng.pdf",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-09-29T00:59:52.573Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "pre-examination-training-materials-https-sbi-bank-in-web-careers-ja-studymat-reg-202627",
-      "title": "PRE-EXAMINATION TRAINING MATERIALS",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "update",
-      "status": "update",
-      "url": "https://sbi.bank.in/web/careers/ja-studymat-reg-202627",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-09-29T00:59:52.573Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "preliminary-examination-call-letter-https-ibpsreg-ibps-in-sbijajul26-oecla-sep26-login-php-appid-24c6ba07c2976",
-      "title": "PRELIMINARY EXAMINATION CALL LETTER",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "update",
-      "status": "update",
-      "url": "https://ibpsreg.ibps.in/sbijajul26/oecla_sep26/login.php?appid=24c6ba07c29762dbe2586e1f533198ec",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-09-29T00:59:52.573Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "english-714-kb-https-sbi-bank-in-webfiles-uploads-files-2627-08-ja-2026-backlog-detailed-advt-eng-pdf",
-      "title": "English) (714 KB)",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "notification",
-      "status": "notification",
-      "url": "https://sbi.bank.in/webfiles/uploads/files_2627/08/JA_2026_Backlog_Detailed_Advt_Eng.pdf",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-09-29T00:59:52.573Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "pre-examination-training-materials-https-sbi-bank-in-web-careers-ja-spldrive-pet-2026",
-      "title": "PRE-EXAMINATION TRAINING MATERIALS",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "update",
-      "status": "update",
-      "url": "https://sbi.bank.in/web/careers/ja-spldrive-pet-2026",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-09-29T00:59:52.573Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "preliminary-examination-call-letter-https-ibpsreg-ibps-in-sbijasrdjl26-oecla-sep26-login-php-appid-59aa359ce90",
-      "title": "PRELIMINARY EXAMINATION CALL LETTER",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "update",
-      "status": "update",
-      "url": "https://ibpsreg.ibps.in/sbijasrdjl26/oecla_sep26/login.php?appid=59aa359ce90f3aa7138427a0a18efaa7",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-09-29T00:59:52.573Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "online-written-examination-call-letter-https-ibpsreg-ibps-in-sbiscojun26-oecla-aug26-login-php-appid-97bf52be7",
-      "title": "ONLINE WRITTEN EXAMINATION CALL LETTER",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "update",
-      "status": "update",
-      "url": "https://ibpsreg.ibps.in/sbiscojun26/oecla_aug26/login.php?appid=97bf52be7c16b2339a4baf81fc2afe08",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-09-29T00:59:52.573Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "interview-schedule-https-sbi-bank-in-documents-77530-57941334-31-08-2026-sco-10-int-sch-pdf-65909157-5daf-3d0e",
-      "title": "INTERVIEW SCHEDULE",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "update",
-      "status": "update",
-      "url": "https://sbi.bank.in/documents/77530/57941334/31.08.2026_SCO_10_INT_SCH.pdf/65909157-5daf-3d0e-c5f7-b46871beec51?t=1788174102181",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-09-29T00:59:52.573Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "preliminary-examination-result-https-sbi-bank-in-webfiles-uploads-files-2627-08-sbipo2026-prelims-wtresult-15-",
-      "title": "PRELIMINARY EXAMINATION RESULT",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "result",
-      "status": "result",
-      "url": "https://sbi.bank.in/webfiles/uploads/files_2627/08/SBIPO2026-Prelims-WTRESULT-15_columns.pdf",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-09-29T00:59:52.573Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "marks-secured-by-the-candidates-in-preliminary-examination-https-sbi-bank-in-web-careers-popre-results-2026",
-      "title": "MARKS SECURED BY THE CANDIDATES IN PRELIMINARY EXAMINATION",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "result",
-      "status": "result",
-      "url": "https://sbi.bank.in/web/careers/popre-results-2026",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-09-29T00:59:52.573Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "list-of-provisionally-selected-candidates-214-kb-https-sbi-bank-in-webfiles-uploads-files-2627-apprentices-202",
-      "title": "LIST OF PROVISIONALLY SELECTED CANDIDATES (214 KB)",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "result",
-      "status": "result",
-      "url": "https://sbi.bank.in/webfiles/uploads/files_2627/Apprentices-2026-RESULT-15-FORMAT.pdf",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-09-29T00:59:52.573Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "corrigendum-138-kb-138-kb-https-sbi-bank-in-documents-77530-57941334-23042026-sco-2026-27-04-corri-pdf-60a0b4c",
-      "title": "CORRIGENDUM (138 KB) (138 KB)",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "update",
-      "status": "update",
-      "url": "https://sbi.bank.in/documents/77530/57941334/23042026_SCO-2026-27-04_CORRI.pdf/60a0b4cd-0622-6990-14b5-3544f381f54f?t=1776922725218",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-09-29T00:59:52.573Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "recruitment-results-https-sbi-bank-in-web-careers-recruitment-results",
-      "title": "Recruitment Results",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "result",
-      "status": "result",
-      "url": "https://sbi.bank.in/web/careers/recruitment-results",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-09-29T00:59:52.573Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "assistant-manager-law-jmgs-i-list-of-candidates-provisionally-selected-for-interview-https-sbi-bank-in-webfile",
-      "title": "ASSISTANT MANAGER (LAW)-JMGS-I : LIST OF CANDIDATES PROVISIONALLY SELECTED FOR INTERVIEW",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "result",
-      "status": "result",
-      "url": "https://sbi.bank.in/webfiles/uploads/files_2627/10/SCO_02_AM_RESULT_10_FORMAT.pdf",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-10-13T11:48:51.064Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "deputy-manager-law-mmgs-ii-list-of-candidates-provisionally-selected-for-interview-https-sbi-bank-in-webfiles-",
-      "title": "DEPUTY MANAGER (LAW)-MMGS-II: LIST OF CANDIDATES PROVISIONALLY SELECTED FOR INTERVIEW",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "result",
-      "status": "result",
-      "url": "https://sbi.bank.in/webfiles/uploads/files_2627/10/SCO_02_DM_RESULT_10_FORMAT.pdf",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-10-13T11:48:51.064Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "list-of-candidates-provisionally-selected-for-interview-https-sbi-bank-in-webfiles-uploads-files-2627-10-sco-0",
-      "title": "LIST OF CANDIDATES PROVISIONALLY SELECTED FOR INTERVIEW",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "result",
-      "status": "result",
-      "url": "https://sbi.bank.in/webfiles/uploads/files_2627/10/SCO_03_BMO_RESULT_10_FORMAT.pdf",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-10-13T11:48:51.064Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "main-examination-result-https-sbi-bank-in-webfiles-uploads-files-2627-10-sbipo2026-main-wtresult-15-columns-pd",
-      "title": "MAIN EXAMINATION RESULT",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "result",
-      "status": "result",
-      "url": "https://sbi.bank.in/webfiles/uploads/files_2627/10/SBIPO2026-Main-WTRESULT-15_columns.pdf",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-10-15T13:27:32.723Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "notice-tentative-dates-for-psychometric-test-group-exercise-interviews-https-sbi-bank-in-webfiles-uploads-file",
-      "title": "NOTICE : TENTATIVE DATES FOR PSYCHOMETRIC TEST, GROUP EXERCISE & INTERVIEWS",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "update",
-      "status": "update",
-      "url": "https://sbi.bank.in/webfiles/uploads/files_2627/10/Notice.pdf",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-10-15T13:27:32.723Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "preliminary-exam-result-https-sbi-bank-in-web-careers-ja-spldrive-pre-2026",
-      "title": "PRELIMINARY EXAM RESULT",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "result",
-      "status": "result",
-      "url": "https://sbi.bank.in/web/careers/ja-spldrive-pre-2026",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-10-17T15:35:08.278Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "deputy-manager-law-mmgs-ii-interview-schedule-https-sbi-bank-in-documents-77530-57941334-26102026-sco-02-int-s",
-      "title": "DEPUTY MANAGER (LAW)-MMGS-II - INTERVIEW SCHEDULE",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "update",
-      "status": "update",
-      "url": "https://sbi.bank.in/documents/77530/57941334/26102026_SCO_02_INT_SCH_DM.pdf/c561966e-48f9-19c2-c81c-b44753c0eaae?t=1793019436923",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-10-26T13:02:15.726Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "interview-schedule-https-sbi-bank-in-documents-77530-57941334-sco-11-int-sch-30102026-pdf-9acf4f12-5d7d-fe65-b",
-      "title": "INTERVIEW SCHEDULE",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "update",
-      "status": "update",
-      "url": "https://sbi.bank.in/documents/77530/57941334/SCO_11_INT_SCH_30102026.pdf/9acf4f12-5d7d-fe65-b621-b18438ebaff3?t=1793341187288",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-10-30T18:39:34.779Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "assistant-manager-law-jmgs-i-interview-schedule-https-sbi-bank-in-documents-77530-57941334-26102026-sco-02-int",
-      "title": "ASSISTANT MANAGER (LAW)-JMGS-I - INTERVIEW SCHEDULE",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "update",
-      "status": "update",
-      "url": "https://sbi.bank.in/documents/77530/57941334/26102026_SCO_02_INT_SCH_AM.pdf/9212c674-a64a-ed85-f6a9-43b8ab4c7355?t=1793019403534",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-10-30T18:39:34.779Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "interview-call-letter-https-ibpsreg-ibps-in-sbiscoljun26-intclg-oct26-login-php-appid-e625fb5f5b0c906616020b61",
-      "title": "INTERVIEW CALL LETTER",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "update",
-      "status": "update",
-      "url": "https://ibpsreg.ibps.in/sbiscoljun26/intclg_oct26/login.php?appid=e625fb5f5b0c906616020b61d08dc3ac",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-10-30T18:39:34.779Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "notice-online-psychometric-test-in-remote-proctored-rpa-mode-https-sbi-bank-in-webfiles-uploads-files-2627-10-",
-      "title": "NOTICE: ONLINE PSYCHOMETRIC TEST IN REMOTE PROCTORED (RPA) MODE",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "update",
-      "status": "update",
-      "url": "https://sbi.bank.in/webfiles/uploads/files_2627/10/Important_Notice_for_Psychometric_Test.pdf",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-10-30T18:39:34.779Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "apply-online-02-11-2026-to-23-11-2026-https-recruitment-sbi-bank-in-crpd-sco-2026-27-26-apply",
-      "title": "APPLY ONLINE (02.11.2026 TO 23.11.2026)",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "notification",
-      "status": "notification",
-      "notificationDate": "02.11.2026",
-      "url": "https://recruitment.sbi.bank.in/crpd-sco-2026-27-26/apply",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-11-02T11:04:22.460Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "apply-online-02-11-2026-to-23-11-2026-https-recruitment-sbi-bank-in-crpd-sco-2026-27-27-apply",
-      "title": "APPLY ONLINE (02.11.2026 TO 23.11.2026)",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "notification",
-      "status": "notification",
-      "notificationDate": "02.11.2026",
-      "url": "https://recruitment.sbi.bank.in/crpd-sco-2026-27-27/apply",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-11-02T11:04:22.460Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "interview-schedule-https-sbi-bank-in-documents-77530-57941334-03112026-sco-13-int-sch-pdf-306bfd7a-a611-b353-6",
-      "title": "INTERVIEW SCHEDULE",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "update",
-      "status": "update",
-      "url": "https://sbi.bank.in/documents/77530/57941334/03112026_SCO_13_INT_SCH.pdf/306bfd7a-a611-b353-632a-513ef59347e8?t=1793700988660",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-11-03T10:53:19.701Z",
       "lastSeen": "2026-11-25T02:28:17.454Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
@@ -2892,159 +3136,6 @@
       "sourceName": "SBI — Current Openings",
       "official": true,
       "firstSeen": "2026-11-03T18:29:07.725Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "apply-online-online-registration-extended-till-16-11-2026-https-recruitment-sbi-bank-in-crpd-sco-2026-27-30-ap",
-      "title": "APPLY ONLINE (Online Registration Extended till 16.11.2026))",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "notification",
-      "status": "notification",
-      "notificationDate": "16.11.2026",
-      "url": "https://recruitment.sbi.bank.in/crpd-sco-2026-27-30/apply",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-11-04T15:27:29.977Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "interview-schedule-https-sbi-bank-in-documents-77530-57941334-04112026-sco-15-int-sch-pdf-ed29cb0e-85af-6515-6",
-      "title": "INTERVIEW SCHEDULE",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "update",
-      "status": "update",
-      "url": "https://sbi.bank.in/documents/77530/57941334/04112026_SCO_15_INT_SCH.pdf/ed29cb0e-85af-6515-6863-5572fb030080?t=1793776587824",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-11-04T15:27:29.977Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "zonal-head-retail-interview-schedule-https-sbi-bank-in-documents-77530-57941334-06112026-sco-23-int-sch-zh-pdf",
-      "title": "ZONAL HEAD (RETAIL) – INTERVIEW SCHEDULE",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "update",
-      "status": "update",
-      "url": "https://sbi.bank.in/documents/77530/57941334/06112026_SCO_23_INT_SCH_ZH.pdf/8f9a4e60-78d3-597f-7c20-6c2b09db2142?t=1793962103821",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-11-06T15:04:03.330Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "preliminary-exam-result-https-sbi-bank-in-web-careers-japre-results-2026",
-      "title": "PRELIMINARY EXAM RESULT",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "result",
-      "status": "result",
-      "url": "https://sbi.bank.in/web/careers/japre-results-2026",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-11-18T21:57:56.369Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "mains-examination-call-letter-https-ibpsreg-ibps-in-sbijajul26-oecla-nov26-login-php-appid-2b36e1e3caeb9de9629",
-      "title": "MAINS EXAMINATION CALL LETTER",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "update",
-      "status": "update",
-      "url": "https://ibpsreg.ibps.in/sbijajul26/oecla_nov26/login.php?appid=2b36e1e3caeb9de9629bb324f39e78e5",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-11-18T21:57:56.369Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "deputy-manager-ai-specialists-interview-schedule-https-sbi-bank-in-documents-77530-57941334-18112026-sco-11-in",
-      "title": "DEPUTY MANAGER (AI SPECIALISTS) - INTERVIEW SCHEDULE",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "update",
-      "status": "update",
-      "url": "https://sbi.bank.in/documents/77530/57941334/18112026_SCO_11_INT_SCH.pdf/855e83b5-7c8a-3253-7996-57d3085d26e5?t=1795003900788",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-11-18T21:57:56.369Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "apply-online-19-11-2026-to-03-12-2026-https-recruitment-sbi-bank-in-crpd-sco-2026-27-36-apply",
-      "title": "APPLY ONLINE (19.11.2026 TO 03.12.2026)",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "notification",
-      "status": "notification",
-      "notificationDate": "19.11.2026",
-      "url": "https://recruitment.sbi.bank.in/crpd-sco-2026-27-36/apply",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-11-19T21:33:29.657Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "deputy-cto-enterprise-architecture-interview-schedule-https-sbi-bank-in-documents-77530-57941334-19112026-sco-",
-      "title": "DEPUTY CTO (ENTERPRISE ARCHITECTURE)- INTERVIEW SCHEDULE",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "update",
-      "status": "update",
-      "url": "https://sbi.bank.in/documents/77530/57941334/19112026_SCO_13_INT_SCH_DYCTO.pdf/5d43a3b4-4527-ba83-9b47-37e0925fdcc0?t=1795087239884",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-11-19T21:33:29.657Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "apply-online-20-11-2026-to-10-12-2026-https-ibpsreg-ibps-in-sbifteoct26",
-      "title": "APPLY ONLINE (20.11.2026 TO 10.12.2026)",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "notification",
-      "status": "notification",
-      "notificationDate": "20.11.2026",
-      "url": "https://ibpsreg.ibps.in/sbifteoct26/",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-11-20T20:17:42.672Z",
-      "lastSeen": "2026-11-25T02:28:17.454Z",
-      "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
-    },
-    {
-      "id": "interview-call-letter-https-ibpsreg-ibps-in-sbipojun26-geicla-novm26-login-php-appid-c13394dc2fab18c4ca2c73aa0",
-      "title": "INTERVIEW CALL LETTER",
-      "organization": "SBI",
-      "category": "BANKING",
-      "type": "update",
-      "status": "update",
-      "url": "https://ibpsreg.ibps.in/sbipojun26/geicla_novm26/login.php?appid=c13394dc2fab18c4ca2c73aa0e903f65",
-      "sourceUrl": "https://sbi.bank.in/en/web/careers/current-openings",
-      "sourceName": "SBI — Current Openings",
-      "official": true,
-      "firstSeen": "2026-11-21T17:32:12.379Z",
       "lastSeen": "2026-11-25T02:28:17.454Z",
       "summary": "Automatically discovered from the organisation's public source page. Open the official source and verify the complete notice before applying."
     },
