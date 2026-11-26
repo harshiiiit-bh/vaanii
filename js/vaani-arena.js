@@ -2254,7 +2254,8 @@
 
     /* Fallback for legacy structured data. */
     if(Array.isArray(q.parts) && q.parts.length){
-      var labels = sec.indexOf('ordering of words') >= 0 ? ['P','Q','R','S'] : ['a','b','c','d'];
+      var orderingParts = /ordering of (words|sentences)/i.test(sec);
+      var labels = orderingParts ? ['P','Q','R','S'] : ['a','b','c','d'];
       var rows=q.parts.map(function(part,i){
         var label=labels[i]||String(i+1);
         return '<div class="vx-question-part-row"><span>'+esc(label)+'</span><p>'+esc(part)+'</p></div>';

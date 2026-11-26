@@ -157,17 +157,26 @@ for (const file of files) {
       'all the obstacles that have come in his way',
       'has faced all kinds of dangers'
     ], 'NDA II 2017 Q31 part transcription regression');
+    const expectedAnswerIndices = [0, 1, 1, 1, 1, 0, 3, 2, 0, 3];
+    for (let n = 41; n <= 50; n++) {
+      const question = data.find(q => Number(q.n) === n);
+      assert.ok(question, 'NDA II 2017 Q' + n + ' must exist');
+      assert.equal(question.ans, expectedAnswerIndices[n - 41],
+        'NDA II 2017 Q' + n + ' source answer-key regression');
+    }
   }
   if (file === 'cds-2020-II' && exam === 'CDS') {
-    const q41 = data.find(q => Number(q.n) === 41);
-    const q43 = data.find(q => Number(q.n) === 43);
-    const q50 = data.find(q => Number(q.n) === 50);
-    assert.equal(q41.q, 'He has been one the most revered member of the committee of enquiry. No error', 'CDS II 2020 Q41 transcription regression');
-    assert.equal(q41.ans, 1, 'CDS II 2020 Q41 answer-key regression');
-    assert.equal(q43.q, '‘Where there is a will then there is a way’ is an old epithet. No error', 'CDS II 2020 Q43 transcription regression');
-    assert.equal(q43.ans, 3, 'CDS II 2020 Q43 answer-key regression');
-    assert.equal(q50.q, 'Irrigation works have a special importance in an agricultural countries like India, Where rainfall is unequally distributed throughout the seasons. No error', 'CDS II 2020 Q50 transcription regression');
-    assert.equal(q50.ans, 2, 'CDS II 2020 Q50 answer-key regression');
+    const expectedAnswerIndices = [0, 3, 2, 0, 2, 0, 0, 1, 0, 3];
+    for (let n = 41; n <= 50; n++) {
+      const question = data.find(q => Number(q.n) === n);
+      assert.ok(question, 'CDS II 2020 Q' + n + ' must exist');
+      assert.equal(question.sec, 'Ordering of Sentences', 'CDS II 2020 Q' + n + ' section regression');
+      assert.equal(question.topic, 'Ordering of Sentences', 'CDS II 2020 Q' + n + ' topic regression');
+      assert.equal(question.ans, expectedAnswerIndices[n - 41], 'CDS II 2020 Q' + n + ' Set A answer-key regression');
+      assert.ok(Array.isArray(question.parts) && question.parts.length === 4, 'CDS II 2020 Q' + n + ' must expose four P/Q/R/S parts');
+      assert.ok(/^S1\s*:/i.test(question.q) && /\bS6\s*:/i.test(question.q), 'CDS II 2020 Q' + n + ' must retain its S1/S6 framing');
+      assert.equal(question.passage, undefined, 'CDS II 2020 Q' + n + ' must not inherit the unrelated comprehension passage');
+    }
   }
   papers++;
 }

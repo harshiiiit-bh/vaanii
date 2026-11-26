@@ -10,4 +10,4 @@ backups/
 !.env.example
 .DS_Store
 vaani-browser-smoke-failure.png
-
+/public/
